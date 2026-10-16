@@ -55,3 +55,10 @@ fun plan(today: Long, stats: PracticeStats, catalog: List<ExerciseId>, options: 
 
 - Les deux calculateurs sont purs et testés en JVM (`Clock.fixed`, jours `Long`).
 - Le jour logique à 04:00 (option écartée par D16) reste possible plus tard : il suffit de changer la fonction qui calcule `localEpochDay` à l'écriture, sans migration de la série.
+
+## Complément (lot L6) : définition de « contenu » et sessions comptées
+
+- **Contenu** : une session a du contenu si elle a au moins une réponse (`session_answers`) dont `trim(text) <> ''`. Les tirages seuls et la grille seule ne comptent pas : un tirage n'est pas une production.
+- **Session comptée** : une session avec contenu, qu'elle soit `COMPLETED` ou inachevée (`IN_PROGRESS` sans activité depuis plus de 24 h, comparaison stricte). La session en cours active est exclue. Cette définition vaut pour les jours pratiqués (D35), le nombre de sessions et les comptages par exercice. Elle remplace la règle « statut `COMPLETED` » de la section « Session comptée ».
+- **Délai de 24 h** : il se compte depuis la dernière activité (`lastActivityAtEpochMillis`, mis à jour par `saveSnapshot` et `updateSession`), pas depuis le début (D36). La purge supprime les sessions en cours vides au-delà de ce délai ; une session avec contenu n'est jamais supprimée.
+- Le passage de minuit local et le changement de fuseau relèvent du lot L11.
