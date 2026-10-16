@@ -89,3 +89,7 @@ Le chargement à l'exécution lit `assets.open(path).bufferedReader().use { it.r
 - Un fichier JSON Schema (draft 2020-12) pourra être ajouté plus tard pour l'autocomplétion. Il n'est pas exécuté par les tests en v1.
 - Faire évoluer le format implique d'incrémenter `schemaVersion` et de mettre à jour cet ADR.
 - Si une table est corrompue à l'exécution (cas impossible si la CI est verte), le chargeur lève une erreur explicite et l'exercice concerné affiche un message ; le reste de l'app fonctionne.
+
+## Complément (2026-10-16, décision D45)
+
+Option « contre-stéréotype » de Status Numbers : le statut tiré est choisi à l'opposé de l'étiquette `rank:*` du rôle (rang haut → statut bas, et inversement). Aucun champ ni tag supplémentaire dans le schéma.

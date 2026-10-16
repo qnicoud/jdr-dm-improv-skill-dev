@@ -33,3 +33,7 @@ Toute la logique métier (tirage, minuteur, détection, série, séance du jour,
 - Deux styles de test coexistent : Jupiter pour le pur, JUnit 4 pour Robolectric et Compose. La règle est simple : tout ce qui demande Android est en JUnit 4.
 - `koverVerify` bloque la CI sous 80 % sur le domaine.
 - Les tests de contenu (tables JSON) et le corpus doré de détection font partie de `testDebugUnitTest` : une table cassée ou une régression de détection fait échouer la CI.
+
+## Complément (2026-10-16, décision D43)
+
+Plugin ktlint retenu : `org.jlleitschuh.gradle.ktlint` 14.2.0 (ktlint 1.8.0), déjà en place depuis le lot 1.

@@ -355,3 +355,9 @@ DÉCISION 12: mode dégradé quand la table est illisible : « Écrire mon propr
 DÉCISION 13: contraintes One-Page et domaines Constraint Box — (a) plafond 5 PNJ, compteur souple « 80 caractères » par motivation, champ « si les PJ ne font rien », un seul domaine (« Lieu ») sans sélecteur en v1 ; (b) formulaire libre — recommandation (a) car la contrainte est la valeur de l'exercice ; 13b : texte modifiable depuis l'historique — non en v1.
 DÉCISION 14: rythme Crazy Eights (vibration chaque minute) — (a) réglage désactivé par défaut, (b) activé, (c) absent — recommandation (a).
 DÉCISION 15: partage du texte depuis S09 — (a) feuille de partage Android (sans permission), (b) copier seulement, (c) aucun — recommandation (a).
+
+## 9. Décisions issues des maquettes (2026-10-16)
+
+- D46 : Progrès, quand le jour de grâce a servi dans la semaine, le texte devient « Jour de grâce utilisé cette semaine · rechargé lundi » (au lieu de « disponible »).
+- D47 : à 200 % avec clavier, 3 lignes de saisie visibles sont acceptées ; à vérifier sur appareil réel (lot L12).
+- D48 : le panneau des 5 éléments de Connect the Story peut dépasser 35 % de l'écran **uniquement déplié à la demande** ; il est replié par défaut dès que le clavier s'ouvre. Exception documentée.

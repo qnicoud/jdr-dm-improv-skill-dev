@@ -36,3 +36,7 @@ Deux exercices doivent repérer dans un texte libre en français des éléments 
 - La qualité de la détection dépend surtout des `keywords` rédigés. Le brief du `redacteur-contenu` doit le préciser : choisir les formes fléchies les plus probables (« lanterne », « lanternes », « lampe ») plutôt que des synonymes rares.
 - Le corpus est un livrable du `testeur` (lot 4), à rédiger en parallèle du moteur.
 - Brancher Snowball ne demande qu'une implémentation de `Stemmer`, appliquée des deux côtés (texte et mots-clés).
+
+## Complément (2026-10-16, décision D44)
+
+Les répliques (`story_elements`, catégorie réplique) gardent leurs `keywords` en suites de mots. Après la première mesure du corpus doré (lot L8), on ajoute des variantes aux entrées dont le rappel est insuffisant, plutôt que d'assouplir l'algorithme.

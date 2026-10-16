@@ -15,7 +15,7 @@
 - D25–D42 tranchées le 2026-10-16 : **toutes les recommandations retenues** ; reportées dans `docs/architecture.md` §15, ADR 0004 et 0010, `docs/ux/parcours.md` §8.
 - Phase 2 terminée (2026-10-16) : 10 maquettes dans `docs/mockups/` (index : `docs/mockups/index.md`), intégrées à l'artefact (version 4, section « Maquettes », fichiers publiés sous `mockups/`).
 - Phase 3 démarrée : **L1 vert** (versions de l'ADR 0001, aucun repli), APK debug installée sur le téléphone de l'utilisateur (Galaxy Z Flip3, `R5CTA23GG8K`) ; **contenu v1 écrit** (10 tables, `docs/research/04-notes-contenu.md`). Commit initial fait en 9 commits logiques (règles git : `CLAUDE.md` § Git).
-- **Décisions ouvertes D43–D48** dans l'artefact : D43 plugin ktlint, D44 mots-clés des répliques, D45 contre-stéréotype Status, D46 texte du jour de grâce (Progrès), D47 saisie à 200 %, D48 panneau Connect the Story > 35 %.
+- D43–D48 tranchées le 2026-10-16 (recommandations retenues, reportées dans ADR 0007/0008/0009 et `parcours.md` §9) : D43 plugin ktlint, D44 mots-clés des répliques, D45 contre-stéréotype Status, D46 texte du jour de grâce (Progrès), D47 saisie à 200 %, D48 panneau Connect the Story > 35 %.
 - **Prochaine action** : relire `decisions` (D43–D48) via `ArtifactData`, reporter (ADR 0007/0008/0009, `docs/ux/`) ; puis lancer en parallèle L2, L3, L4, L6, L7 (§14), chacun `dev-android` en worktree sur sa branche `feat/lNN-…` ; redéployer sur le téléphone à chaque lot visible.
 
 ## Décisions (issues de la phase 0) — TRANCHÉES le 2026-10-16
