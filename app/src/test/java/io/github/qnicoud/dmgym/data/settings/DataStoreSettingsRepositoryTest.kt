@@ -1,9 +1,11 @@
 package io.github.qnicoud.dmgym.data.settings
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
@@ -147,6 +149,21 @@ class DataStoreSettingsRepositoryTest {
         }
 
     @Test
+    fun `a huge duration is capped instead of overflowing`() =
+        runBlocking {
+            val repo = DataStoreSettingsRepository(store)
+
+            repo.update { it.copy(durations = mapOf(crazy to Duration.INFINITE)) }
+
+            assertTrue(
+                repo.settings
+                    .first()
+                    .durations
+                    .getValue(crazy) > 1000.minutes,
+            )
+        }
+
+    @Test
     fun `a value of the wrong type falls back to the default`() =
         runBlocking {
             store.edit {
@@ -164,10 +181,16 @@ class DataStoreSettingsRepositoryTest {
     fun `a corrupted file yields the defaults instead of crashing`() =
         runBlocking {
             file.writeBytes(byteArrayOf(0x7f, 0x01, 0x42, 0x13, 0x55))
-            val corrupted = PreferenceDataStoreFactory.create(scope = scope, produceFile = { file })
+            val corrupted =
+                PreferenceDataStoreFactory.create(
+                    corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+                    scope = scope,
+                    produceFile = { file },
+                )
+            val repo = repository(corrupted)
 
-            val read = repository(corrupted).settings.first()
-
-            assertEquals(Settings(untimed = setOf(onePage)), read)
+            assertEquals(Settings(untimed = setOf(onePage)), repo.settings.first())
+            repo.update { it.copy(soundEnabled = false) }
+            assertFalse(repo.settings.first().soundEnabled)
         }
 }

@@ -3,6 +3,7 @@ package io.github.qnicoud.dmgym.data.settings
 import android.content.Context
 import android.util.Log
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
@@ -107,7 +108,8 @@ class DataStoreSettingsRepository(
         durations.forEach { (id, duration) ->
             val clamped = durationDefaults[id]?.let { DurationBounds.of(it).clamp(duration) } ?: duration
             if (clamped.isPositive()) {
-                prefs[intPreferencesKey(DURATION_PREFIX + id.value)] = clamped.inWholeSeconds.toInt()
+                prefs[intPreferencesKey(DURATION_PREFIX + id.value)] =
+                    clamped.inWholeSeconds.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
             }
         }
     }
@@ -146,6 +148,9 @@ class DataStoreSettingsRepository(
             context: Context,
             scope: CoroutineScope,
         ): DataStore<Preferences> =
-            PreferenceDataStoreFactory.create(scope = scope) { context.preferencesDataStoreFile(FILE_NAME) }
+            PreferenceDataStoreFactory.create(
+                corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+                scope = scope,
+            ) { context.preferencesDataStoreFile(FILE_NAME) }
     }
 }
