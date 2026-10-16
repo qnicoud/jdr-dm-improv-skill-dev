@@ -16,7 +16,8 @@
 - Phase 2 terminée (2026-10-16) : 10 maquettes dans `docs/mockups/` (index : `docs/mockups/index.md`), intégrées à l'artefact (version 4, section « Maquettes », fichiers publiés sous `mockups/`).
 - Phase 3 démarrée : **L1 vert** (versions de l'ADR 0001, aucun repli), APK debug installée sur le téléphone de l'utilisateur (Galaxy Z Flip3, `R5CTA23GG8K`) ; **contenu v1 écrit** (10 tables, `docs/research/04-notes-contenu.md`). Commit initial fait en 9 commits logiques (règles git : `CLAUDE.md` § Git).
 - D43–D48 tranchées le 2026-10-16 (recommandations retenues, reportées dans ADR 0007/0008/0009 et `parcours.md` §9) : D43 plugin ktlint, D44 mots-clés des répliques, D45 contre-stéréotype Status, D46 texte du jour de grâce (Progrès), D47 saisie à 200 %, D48 panneau Connect the Story > 35 %.
-- **Prochaine action** : relire `decisions` (D43–D48) via `ArtifactData`, reporter (ADR 0007/0008/0009, `docs/ux/`) ; puis lancer en parallèle L2, L3, L4, L6, L7 (§14), chacun `dev-android` en worktree sur sa branche `feat/lNN-…` ; redéployer sur le téléphone à chaque lot visible.
+- **En cours (2026-10-16)** : 6 agents en worktree, chacun sur sa branche — `feat/l2-tables-engine`, `feat/l3-timer-settings` (crée `core/settings`), `feat/l4-detection` (moteur + test de mesure), `test/l4-detection-corpus` (`testeur`, corpus doré), `feat/l6-room-history`, `feat/l7-navigation-home` (réglages provisoires, branchement après fusion de L3).
+- **Prochaine action** : à chaque retour → vérifier (`./gradlew check`), revue `kotlin-reviewer`, commits logiques sur la branche, fusion `--no-ff` dans `main` ; aligner le format du corpus entre L4 et le testeur ; petite tâche de branchement L7 ↔ L3 (réglages) ; redéployer sur le téléphone après L7 ; ensuite L5.
 
 ## Décisions (issues de la phase 0) — TRANCHÉES le 2026-10-16
 
