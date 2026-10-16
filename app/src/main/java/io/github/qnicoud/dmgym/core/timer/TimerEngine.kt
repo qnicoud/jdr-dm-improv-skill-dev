@@ -33,15 +33,35 @@ class TimerEngine(
         return TickResult(TimerState.Overtime(state.endAtElapsed, state.durationMs), expired)
     }
 
+    /**
+     * Met en pause après un `tick` implicite : une échéance franchie avant la pause n'est pas perdue,
+     * elle est rendue dans [TickResult.expired] et le temps additionnel est mis en pause.
+     */
     fun pause(
         state: TimerState,
         now: Long,
-    ): TimerState =
-        when (state) {
-            is TimerState.Running -> TimerState.Paused((state.endAtElapsed - now).coerceAtLeast(0), state.durationMs)
-            is TimerState.Untimed -> TimerState.UntimedPaused(now - state.startedAtElapsed)
-            else -> state
-        }
+    ): TickResult {
+        val ticked = tick(state, now)
+        val paused =
+            when (val current = ticked.state) {
+                is TimerState.Running -> {
+                    TimerState.Paused((current.endAtElapsed - now).coerceAtLeast(0), current.durationMs)
+                }
+
+                is TimerState.Overtime -> {
+                    TimerState.OvertimePaused((now - current.endAtElapsed).coerceAtLeast(0), current.durationMs)
+                }
+
+                is TimerState.Untimed -> {
+                    TimerState.UntimedPaused(now - current.startedAtElapsed)
+                }
+
+                else -> {
+                    current
+                }
+            }
+        return TickResult(paused, ticked.expired)
+    }
 
     fun resume(
         state: TimerState,
@@ -49,8 +69,51 @@ class TimerEngine(
     ): TimerState =
         when (state) {
             is TimerState.Paused -> TimerState.Running(now + state.remainingMs, state.durationMs)
+            is TimerState.OvertimePaused -> TimerState.Overtime(now - state.overtimeMs, state.durationMs)
             is TimerState.UntimedPaused -> TimerState.Untimed(now - state.elapsedMs)
             else -> state
+        }
+
+    /** Photographie [state] sur l'heure murale pour survivre à la mort du processus. */
+    fun snapshot(
+        state: TimerState,
+        wallNow: Long,
+        elapsedNow: Long,
+    ): TimerSnapshot =
+        when (state) {
+            is TimerState.Idle -> {
+                TimerSnapshot.Idle(state.durationMs)
+            }
+
+            is TimerState.Running -> {
+                TimerSnapshot.Running(
+                    wallNow + (state.endAtElapsed - elapsedNow),
+                    state.durationMs,
+                )
+            }
+
+            is TimerState.Paused -> {
+                TimerSnapshot.Paused(state.remainingMs, state.durationMs)
+            }
+
+            is TimerState.Overtime -> {
+                TimerSnapshot.Overtime(
+                    wallNow + (state.endAtElapsed - elapsedNow),
+                    state.durationMs,
+                )
+            }
+
+            is TimerState.OvertimePaused -> {
+                TimerSnapshot.OvertimePaused(state.overtimeMs, state.durationMs)
+            }
+
+            is TimerState.Untimed -> {
+                TimerSnapshot.Untimed(wallNow - (elapsedNow - state.startedAtElapsed))
+            }
+
+            is TimerState.UntimedPaused -> {
+                TimerSnapshot.UntimedPaused(state.elapsedMs)
+            }
         }
 
     /**
@@ -58,6 +121,51 @@ class TimerEngine(
      * Une échéance déjà dépassée donne directement `Overtime`, sans événement (signal périmé).
      */
     fun restore(
+        snapshot: TimerSnapshot,
+        wallNow: Long,
+        elapsedNow: Long,
+    ): TimerState =
+        when (snapshot) {
+            is TimerSnapshot.Idle -> {
+                TimerState.Idle(snapshot.durationMs)
+            }
+
+            is TimerSnapshot.Running -> {
+                restoreCountdown(
+                    snapshot.endAtWallMillis,
+                    snapshot.durationMs,
+                    wallNow,
+                    elapsedNow,
+                )
+            }
+
+            is TimerSnapshot.Overtime -> {
+                restoreCountdown(
+                    snapshot.endAtWallMillis,
+                    snapshot.durationMs,
+                    wallNow,
+                    elapsedNow,
+                )
+            }
+
+            is TimerSnapshot.Paused -> {
+                TimerState.Paused(snapshot.remainingMs, snapshot.durationMs)
+            }
+
+            is TimerSnapshot.OvertimePaused -> {
+                TimerState.OvertimePaused(snapshot.overtimeMs, snapshot.durationMs)
+            }
+
+            is TimerSnapshot.Untimed -> {
+                TimerState.Untimed(elapsedNow - (wallNow - snapshot.startedAtWallMillis))
+            }
+
+            is TimerSnapshot.UntimedPaused -> {
+                TimerState.UntimedPaused(snapshot.elapsedMs)
+            }
+        }
+
+    private fun restoreCountdown(
         endAtWallMillis: Long,
         durationMs: Long,
         wallNow: Long,
@@ -79,13 +187,19 @@ class TimerEngine(
             is TimerState.Idle -> state.durationMs
             is TimerState.Running -> (state.endAtElapsed - now).coerceAtLeast(0)
             is TimerState.Paused -> state.remainingMs
-            is TimerState.Overtime, is TimerState.Untimed, is TimerState.UntimedPaused -> 0
+            is TimerState.Overtime, is TimerState.OvertimePaused -> 0
+            is TimerState.Untimed, is TimerState.UntimedPaused -> 0
         }
 
     fun overtimeMs(
         state: TimerState,
         now: Long,
-    ): Long = if (state is TimerState.Overtime) (now - state.endAtElapsed).coerceAtLeast(0) else 0
+    ): Long =
+        when (state) {
+            is TimerState.Overtime -> (now - state.endAtElapsed).coerceAtLeast(0)
+            is TimerState.OvertimePaused -> state.overtimeMs
+            else -> 0
+        }
 
     fun elapsedMs(
         state: TimerState,
@@ -95,9 +209,16 @@ class TimerEngine(
             is TimerState.Idle -> 0
             is TimerState.Running -> state.durationMs - remainingMs(state, now)
             is TimerState.Paused -> state.durationMs - state.remainingMs
-            is TimerState.Overtime -> state.durationMs + overtimeMs(state, now)
+            is TimerState.Overtime, is TimerState.OvertimePaused -> durationOf(state) + overtimeMs(state, now)
             is TimerState.Untimed -> (now - state.startedAtElapsed).coerceAtLeast(0)
             is TimerState.UntimedPaused -> state.elapsedMs
+        }
+
+    private fun durationOf(state: TimerState): Long =
+        when (state) {
+            is TimerState.Overtime -> state.durationMs
+            is TimerState.OvertimePaused -> state.durationMs
+            else -> 0
         }
 
     /** Planifie les occurrences des événements pour une durée donnée, triées par décalage. */
@@ -130,10 +251,14 @@ class TimerEngine(
      */
     fun due(
         plan: List<PlannedEvent>,
-        previousElapsedMs: Long,
+        previousElapsedMs: Long?,
         elapsedMs: Long,
     ): List<FiredEvent> {
-        val crossed = plan.filter { it.offsetMs > previousElapsedMs && it.offsetMs <= elapsedMs }
+        val crossed =
+            plan.filter {
+                (previousElapsedMs == null || it.offsetMs > previousElapsedMs) &&
+                    it.offsetMs <= elapsedMs
+            }
         val latestPeriodic =
             crossed
                 .filter {

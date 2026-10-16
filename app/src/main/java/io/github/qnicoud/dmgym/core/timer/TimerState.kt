@@ -22,6 +22,12 @@ sealed interface TimerState {
         val durationMs: Long,
     ) : TimerState
 
+    /** Pause du temps additionnel : seul le dépassement déjà écoulé est conservé. */
+    data class OvertimePaused(
+        val overtimeMs: Long,
+        val durationMs: Long,
+    ) : TimerState
+
     data class Untimed(
         val startedAtElapsed: Long,
     ) : TimerState
@@ -44,3 +50,41 @@ data class TickResult(
     val state: TimerState,
     val expired: TimerEvent.Expired? = null,
 )
+
+/**
+ * Photographie d'un état sur l'heure murale, à placer dans le `SavedStateHandle` (ADR 0006) :
+ * les instants monotones ne survivent pas à la mort du processus.
+ */
+sealed interface TimerSnapshot {
+    data class Idle(
+        val durationMs: Long,
+    ) : TimerSnapshot
+
+    data class Running(
+        val endAtWallMillis: Long,
+        val durationMs: Long,
+    ) : TimerSnapshot
+
+    data class Paused(
+        val remainingMs: Long,
+        val durationMs: Long,
+    ) : TimerSnapshot
+
+    data class Overtime(
+        val endAtWallMillis: Long,
+        val durationMs: Long,
+    ) : TimerSnapshot
+
+    data class OvertimePaused(
+        val overtimeMs: Long,
+        val durationMs: Long,
+    ) : TimerSnapshot
+
+    data class Untimed(
+        val startedAtWallMillis: Long,
+    ) : TimerSnapshot
+
+    data class UntimedPaused(
+        val elapsedMs: Long,
+    ) : TimerSnapshot
+}

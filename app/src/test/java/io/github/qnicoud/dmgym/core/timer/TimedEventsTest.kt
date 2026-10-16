@@ -97,4 +97,16 @@ class TimedEventsTest {
         assertEquals(false, engine.due(plan, 0, 12_000).single().stale)
         assertEquals(true, engine.due(plan, 0, 12_001).single().stale)
     }
+
+    @Test
+    fun `an event at offset zero is included on the first evaluation only`() {
+        val immediate = TimedEvent.Once(0.0, 0.0)
+        val plan = engine.plan(listOf(immediate), 60_000, Random(0))
+
+        assertEquals(
+            listOf(FiredEvent(immediate, 0, stale = false)),
+            engine.due(plan, previousElapsedMs = null, elapsedMs = 0),
+        )
+        assertEquals(emptyList<FiredEvent>(), engine.due(plan, previousElapsedMs = 0, elapsedMs = 250))
+    }
 }
