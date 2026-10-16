@@ -158,14 +158,72 @@ class KeywordDetectorTest {
     }
 
     @Test
-    fun `detection of 5000 characters stays fast`() {
-        val text = "Le voyageur traverse la forêt sombre près d’une auberge. ".repeat(88)
-        val targets =
-            (1..8).map { target("t$it", "mot$it", "lanterne", "vieille femme", "chandelier", fuzzy = true) }
-        repeat(20) { detector.detect(text, targets) }
+    fun `multi token keyword rejects punctuation between tokens`() {
+        val old = target("old", "vieille femme")
 
-        val nanos = measureNanoTime { repeat(20) { detector.detect(text, targets) } } / 20
+        assertFalse(detect("Une vieille. Femme sourit", old).isDetected("old"))
+        assertFalse(detect("Une vieille, femme sourit", old).isDetected("old"))
+        assertTrue(detect("Une vieille-femme sourit", old).isDetected("old"))
+        assertTrue(detect("Une vieille\n femme sourit", old).isDetected("old"))
+        assertTrue(detect("Une vieille ’ femme sourit", old).isDetected("old"))
+    }
 
-        assertTrue(nanos < 20_000_000, "took ${nanos / 1_000_000.0} ms")
+    @Test
+    fun `overlapping ranges of one target are merged`() {
+        val result = detect("un pont levis", target("p", "pont", "pont levis"))
+
+        assertEquals(listOf(3..12), result.matches["p"])
+    }
+
+    @Test
+    fun `touching but separate ranges stay distinct`() {
+        val result = detect("pont pont", target("p", "pont"))
+
+        assertEquals(listOf(0..3, 5..8), result.matches["p"])
+    }
+
+    @Test
+    fun `targets copy their lists defensively`() {
+        val keywords = mutableListOf("pont")
+        val built = DetectionTarget("p", keywords)
+        keywords.clear()
+
+        assertEquals(listOf("pont"), built.keywords)
+    }
+
+    @Test
+    fun `compiled targets can be reused`() {
+        val compiled = detector.compile(listOf(target("p", "pont"), target("c", "chandelier", fuzzy = true)))
+
+        assertEquals(setOf("p"), detector.detect("un pont", compiled).matches.keys)
+        assertEquals(setOf("c"), detector.detect("un chandelie", compiled).matches.keys)
+    }
+
+    @Test
+    fun `fuzzy skips words whose length differs by more than one`() {
+        val chandelier = target("c", "chandelier", fuzzy = true)
+
+        assertFalse(detect("chandel", chandelier).isDetected("c"))
+        assertFalse(detect("chandeliersss", chandelier).isDetected("c"))
+    }
+
+    @Test
+    fun `detection of a realistic text against five targets stays fast`() {
+        val text = "Le voyageur traverse la forêt sombre près d’une auberge, puis il croise un vieux pont. ".repeat(23)
+        val compiled =
+            detector.compile(
+                listOf(
+                    target("a", "lanterne", "lanternes", fuzzy = true),
+                    target("b", "vieille femme", "sorcière"),
+                    target("c", "chandelier", "chandeliers", fuzzy = true),
+                    target("d", "pont", "ponts"),
+                    target("e", "arc-en-ciel", "auberge"),
+                ),
+            )
+        repeat(200) { detector.detect(text, compiled) }
+
+        val nanos = measureNanoTime { repeat(100) { detector.detect(text, compiled) } } / 100
+
+        assertTrue(nanos < 5_000_000, "took ${nanos / 1_000_000.0} ms")
     }
 }
