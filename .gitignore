@@ -1,5 +1,7 @@
 .gradle/
-build/
+/build/
+/app/build/
+/build-logic/build/
 *.iml
 .idea/
 local.properties
@@ -7,3 +9,4 @@ local.properties
 captures/
 *.jks
 *.keystore
+/.claude/worktrees/
