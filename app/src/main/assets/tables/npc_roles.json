@@ -1,0 +1,279 @@
+{
+  "schemaVersion": 1,
+  "table": "npc_roles",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "mendiant-connait-tous-secrets-quartier",
+      "text": "un mendiant qui connaît tous les secrets du quartier",
+      "difficulty": 1,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "reine-ennuie-teste-chaque-visiteur",
+      "text": "une reine qui s'ennuie et teste chaque visiteur",
+      "difficulty": 1,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "apprenti-forgeron-ose-pas-lever-yeux",
+      "text": "un apprenti forgeron qui n'ose pas lever les yeux",
+      "difficulty": 1,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "capitaine-garde-autorite",
+      "text": "un capitaine de garde sûr de son autorité",
+      "difficulty": 1,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "marchande-sait-qu-seule-detient-marchandise",
+      "text": "une marchande qui sait qu'elle seule détient la marchandise",
+      "difficulty": 1,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "valet-repond-oui-tout-par-habitude",
+      "text": "un valet qui répond oui à tout par habitude",
+      "difficulty": 1,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "petite-fille-garde-puits-vend-eau",
+      "text": "une petite fille qui garde le puits et vend l'eau",
+      "difficulty": 1,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "aubergiste-regne-salle-comme-royaume",
+      "text": "un aubergiste qui règne sur sa salle comme sur un royaume",
+      "difficulty": 1,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "messager-epuise-apporte-mauvaises-nouvelles",
+      "text": "un messager épuisé qui apporte de mauvaises nouvelles",
+      "difficulty": 1,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "grand-pretre-accoutume-qu-on-ecoute",
+      "text": "un grand prêtre accoutumé à ce qu'on l'écoute en silence",
+      "difficulty": 1,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "vieille-magicienne-parle-voix-basse-fait",
+      "text": "une vieille magicienne qui parle à voix basse et se fait pourtant entendre",
+      "difficulty": 2,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "chevalier-dechu-excuse-tout",
+      "text": "un chevalier déchu qui s'excuse de tout",
+      "difficulty": 2,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "jeune-heritier-arrogant-jamais-essuye-refus",
+      "text": "un jeune héritier arrogant qui n'a jamais essuyé de refus",
+      "difficulty": 2,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "pecheur-taciturne-evite-regard-nobles",
+      "text": "un pêcheur taciturne qui évite le regard des nobles",
+      "difficulty": 2,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "guerisseuse-village-tous-craignent-peu",
+      "text": "une guérisseuse de village que tous craignent un peu",
+      "difficulty": 2,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "ministre-terrifie-par-propre-souverain",
+      "text": "un ministre terrifié par son propre souverain",
+      "difficulty": 2,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "voleur-charmeur-domine-chaque-piece-ou",
+      "text": "un voleur charmeur qui domine chaque pièce où il entre",
+      "difficulty": 2,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "dame-compagnie-cache-beaucoup-talents",
+      "text": "une dame de compagnie qui cache beaucoup de talents",
+      "difficulty": 2,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "bourreau-poli-calme-tres-aise-avec",
+      "text": "un bourreau poli, calme et très à l'aise avec son rôle",
+      "difficulty": 2,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "erudit-maladroit-embrouille-devant-temoins",
+      "text": "un érudit maladroit qui s'embrouille devant témoins",
+      "difficulty": 2,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "cheffe-bande-sourit-toujours-avant-menacer",
+      "text": "une cheffe de bande qui sourit toujours avant de menacer",
+      "difficulty": 2,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "garde-poste-depuis-veille-meurt-sommeil",
+      "text": "un garde posté là depuis la veille, qui meurt de sommeil",
+      "difficulty": 2,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "prince-joue-humilite-pour-mieux-tromper",
+      "text": "un prince qui joue l'humilité pour mieux tromper son monde",
+      "difficulty": 3,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "dragon-vieillissant-craint-etre-abandonne",
+      "text": "un dragon vieillissant qui craint d'être abandonné",
+      "difficulty": 3,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "mendiant-agit-comme-maitre-rue-entiere",
+      "text": "un mendiant qui agit comme le maître de la rue entière",
+      "difficulty": 3,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "cheffe-mercenaire-doute-chacun-ordres",
+      "text": "une cheffe mercenaire qui doute de chacun de ses ordres",
+      "difficulty": 3,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "fantome-courtois-exige-qu-on-laisse",
+      "text": "un fantôme courtois qui exige qu'on le laisse parler",
+      "difficulty": 3,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "roi-inquiet-excuse-deranger-propres-sujets",
+      "text": "un roi inquiet qui s'excuse de déranger ses propres sujets",
+      "difficulty": 3,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "petit-fonctionnaire-prend-plaisir-dire-non",
+      "text": "un petit fonctionnaire qui prend plaisir à dire non",
+      "difficulty": 3,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "geant-timide-efforce-paraitre-plus-petit",
+      "text": "un géant timide qui s'efforce de paraître plus petit",
+      "difficulty": 3,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "enfant-orphelin-commande-toute-bande-gamins",
+      "text": "un enfant orphelin qui commande à toute une bande de gamins",
+      "difficulty": 3,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "tyran-vient-demander-aide-humblement-sans",
+      "text": "un tyran qui vient demander de l'aide, humblement et sans y croire",
+      "difficulty": 3,
+      "tags": [
+        "rank:low"
+      ]
+    },
+    {
+      "id": "serveuse-donne-ton-toute-taverne",
+      "text": "une serveuse qui donne le ton à toute la taverne",
+      "difficulty": 3,
+      "tags": [
+        "rank:high"
+      ]
+    },
+    {
+      "id": "oracle-doute-propres-propheties",
+      "text": "un oracle qui doute de ses propres prophéties",
+      "difficulty": 3,
+      "tags": [
+        "rank:low"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "table": "problems",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "pont-mene-village-ete-emporte-cette",
+      "text": "Le pont qui mène au village a été emporté cette nuit, et les vivres n'arrivent plus.",
+      "difficulty": 1
+    },
+    {
+      "id": "enfant-village-pretend-avoir-vu-cadavre",
+      "text": "Un enfant du village prétend avoir vu un cadavre dans le puits, mais personne n'en a retrouvé.",
+      "difficulty": 1
+    },
+    {
+      "id": "chevaux-auberge-refusent-avancer-route-nord",
+      "text": "Les chevaux de l'auberge refusent d'avancer sur la route du nord.",
+      "difficulty": 1
+    },
+    {
+      "id": "marchand-devait-payer-aventuriers-introuvable-boutique",
+      "text": "Le marchand qui devait payer les aventuriers est introuvable, et sa boutique est vide.",
+      "difficulty": 1
+    },
+    {
+      "id": "tempete-bloque-col-trois-groupes-rivaux",
+      "text": "Une tempête bloque le col, et trois groupes rivaux se retrouvent dans la même auberge.",
+      "difficulty": 1
+    },
+    {
+      "id": "guide-groupe-foule-cheville-milieu-foret",
+      "text": "Le guide du groupe s'est foulé la cheville au milieu de la forêt, loin de tout.",
+      "difficulty": 1
+    },
+    {
+      "id": "message-code-ete-glisse-sac-personnage",
+      "text": "Un message codé a été glissé dans le sac d'un personnage sans qu'il sache par qui.",
+      "difficulty": 1
+    },
+    {
+      "id": "torche-eteint-derniere-reserve-huile-vide",
+      "text": "La torche s'éteint, la dernière réserve d'huile est vide, et la galerie continue.",
+      "difficulty": 1
+    },
+    {
+      "id": "seigneur-local-exige-preuve-bonne-foi",
+      "text": "Le seigneur local exige une preuve de bonne foi avant de laisser les voyageurs repartir.",
+      "difficulty": 1
+    },
+    {
+      "id": "animal-blesse-suit-groupe-depuis-matin",
+      "text": "Un animal blessé suit le groupe depuis ce matin et gémit de plus en plus fort.",
+      "difficulty": 1
+    },
+    {
+      "id": "carte-ne-correspond-plus-paysage-riviere",
+      "text": "La carte ne correspond plus au paysage : une rivière a changé de lit.",
+      "difficulty": 1
+    },
+    {
+      "id": "puits-village-donne-eau-rend-gens",
+      "text": "Le puits du village donne une eau qui rend les gens très bavards.",
+      "difficulty": 1
+    },
+    {
+      "id": "deux-freres-reclament-meme-heritage-chacun",
+      "text": "Deux frères réclament le même héritage, et chacun jure que l'autre a falsifié le testament.",
+      "difficulty": 2
+    },
+    {
+      "id": "seul-medecin-ville-refuse-soigner-blesse",
+      "text": "Le seul médecin de la ville refuse de soigner un blessé tant qu'on ne lui a pas rendu son fils.",
+      "difficulty": 2
+    },
+    {
+      "id": "rumeur-accuse-innocent-foule-rassemble-deja",
+      "text": "Une rumeur accuse un innocent, et la foule se rassemble déjà devant sa maison.",
+      "difficulty": 2
+    },
+    {
+      "id": "gardien-phare-disparu-mais-lumiere-brille",
+      "text": "Le gardien du phare a disparu, mais la lumière brille encore, chaque soir, sans que personne l'allume.",
+      "difficulty": 2
+    },
+    {
+      "id": "caravane-arrive-avec-marchandises-ville-interdites",
+      "text": "Une caravane arrive avec des marchandises que la ville a interdites hier soir.",
+      "difficulty": 2
+    },
+    {
+      "id": "chef-gardes-offre-pot-vin-personnages",
+      "text": "Le chef des gardes offre un pot-de-vin aux personnages pour qu'ils ferment les yeux.",
+      "difficulty": 2
+    },
+    {
+      "id": "double-parfait-personnages-ete-vu-ville",
+      "text": "Un double parfait d'un des personnages a été vu dans une ville qu'il n'a jamais visitée.",
+      "difficulty": 2
+    },
+    {
+      "id": "temple-perdu-relique-pretre-soupconne-propres",
+      "text": "Le temple a perdu sa relique, et le prêtre soupçonne un de ses propres fidèles.",
+      "difficulty": 2
+    },
+    {
+      "id": "dette-ancienne-personnage-rachetee-par-quelqu",
+      "text": "Une dette ancienne d'un personnage est rachetée par quelqu'un qui ne réclame rien en échange.",
+      "difficulty": 2
+    },
+    {
+      "id": "village-entier-jure-avoir-jamais-vu",
+      "text": "Un village entier jure n'avoir jamais vu l'homme dont les personnages portent le portrait.",
+      "difficulty": 2
+    },
+    {
+      "id": "maitre-guilde-ordonne-personnages-espionner-allie",
+      "text": "Le maître d'une guilde ordonne aux personnages d'espionner un allié qu'ils estiment.",
+      "difficulty": 2
+    },
+    {
+      "id": "femme-demande-asile-mais-ceux-poursuivent",
+      "text": "Une femme demande l'asile, mais ceux qui la poursuivent sont des gens respectables.",
+      "difficulty": 2
+    },
+    {
+      "id": "chemin-plus-court-traverse-champ-qu",
+      "text": "Le chemin le plus court traverse un champ qu'une communauté considère comme sacré.",
+      "difficulty": 2
+    },
+    {
+      "id": "tour-pousse-nuit-milieu-champs-corbeaux",
+      "text": "Une tour a poussé en une nuit au milieu des champs, et les corbeaux s'y rassemblent.",
+      "difficulty": 2
+    },
+    {
+      "id": "deux-camps-guerre-ont-chacun-engage",
+      "text": "Les deux camps d'une guerre ont chacun engagé les personnages, sans le savoir, pour la même mission.",
+      "difficulty": 3
+    },
+    {
+      "id": "remede-sauverait-ville-demande-sacrifier-seul",
+      "text": "Le remède qui sauverait la ville demande de sacrifier le seul bien d'un ennemi juré des personnages.",
+      "difficulty": 3
+    },
+    {
+      "id": "chaque-promesse-faite-voix-haute-vallee",
+      "text": "Chaque promesse faite à voix haute dans la vallée se réalise, et un habitant a promis le pire.",
+      "difficulty": 3
+    },
+    {
+      "id": "personnage-decouvre-qu-dernier-souvenir-evenement",
+      "text": "Un personnage découvre qu'il est le dernier à se souvenir d'un événement que tout le monde nie.",
+      "difficulty": 3
+    },
+    {
+      "id": "roi-mort-mais-heritier-nourrisson-trois",
+      "text": "Le roi est mort, mais son héritier est un nourrisson, et trois régents se disputent la garde.",
+      "difficulty": 3
+    },
+    {
+      "id": "serment-lie-personnages-leur-protecteur-oblige",
+      "text": "Le serment qui lie les personnages à leur protecteur les oblige désormais à désobéir à la loi.",
+      "difficulty": 3
+    },
+    {
+      "id": "nuit-dure-maintenant-deux-fois-plus",
+      "text": "La nuit dure maintenant deux fois plus longtemps, et les anciens se taisent quand on les interroge.",
+      "difficulty": 3
+    },
+    {
+      "id": "rancon-exigee-contre-otage-exactement-somme",
+      "text": "La rançon exigée contre un otage est exactement la somme que les personnages viennent de toucher.",
+      "difficulty": 3
+    },
+    {
+      "id": "traitre-ete-demasque-mais-sauve-vie",
+      "text": "Un traître a été démasqué, mais il a sauvé la vie d'un personnage la semaine dernière.",
+      "difficulty": 3
+    },
+    {
+      "id": "epidemie-touche-seulement-ceux-ont-menti",
+      "text": "Une épidémie touche seulement ceux qui ont menti dans l'année, et elle s'étend.",
+      "difficulty": 3
+    },
+    {
+      "id": "pour-atteindre-sortie-faut-abandonner-compagnon",
+      "text": "Pour atteindre la sortie, il faut abandonner un compagnon qui ne pourra pas suivre le rythme.",
+      "difficulty": 3
+    },
+    {
+      "id": "verite-meurtre-connue-tous-mais-dire",
+      "text": "La vérité sur le meurtre est connue de tous, mais dire le nom du coupable condamnerait le village entier.",
+      "difficulty": 3
+    }
+  ]
+}

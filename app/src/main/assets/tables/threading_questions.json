@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "table": "threading_questions",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "quoi-sert-cette-image-concretement-pour",
+      "text": "À quoi sert cette image, concrètement, pour ceux qui la voient tous les jours ?",
+      "difficulty": 1,
+      "category": "what"
+    },
+    {
+      "id": "qu-rend-inhabituelle-premier-regard",
+      "text": "Qu'est-ce qui la rend inhabituelle au premier regard ?",
+      "difficulty": 1,
+      "category": "what"
+    },
+    {
+      "id": "quoi-faite-quel-etat-trouve",
+      "text": "De quoi est-elle faite, et dans quel état se trouve-t-elle ?",
+      "difficulty": 1,
+      "category": "what"
+    },
+    {
+      "id": "passe-si-quelqu-detruit-ou-deplace",
+      "text": "Que se passe-t-il si quelqu'un la détruit ou la déplace ?",
+      "difficulty": 2,
+      "category": "what"
+    },
+    {
+      "id": "remarquerait-enfant-voyant-adultes-ont-plus",
+      "text": "Que remarquerait un enfant en la voyant, que les adultes n'ont plus remarqué ?",
+      "difficulty": 1,
+      "category": "what"
+    },
+    {
+      "id": "qu-qu-cache-ou-protege",
+      "text": "Qu'est-ce qu'elle cache ou protège ?",
+      "difficulty": 2,
+      "category": "what"
+    },
+    {
+      "id": "qu-cette-image-pas-place",
+      "text": "Qu'est-ce qui, dans cette image, n'est pas à sa place ?",
+      "difficulty": 2,
+      "category": "what"
+    },
+    {
+      "id": "quelle-regle-non-ecrite-existe-autour",
+      "text": "Quelle règle non écrite existe autour d'elle, que tout le monde respecte sans en parler ?",
+      "difficulty": 3,
+      "category": "what"
+    },
+    {
+      "id": "depuis-combien-temps",
+      "text": "Depuis combien de temps est-elle là ?",
+      "difficulty": 1,
+      "category": "origin"
+    },
+    {
+      "id": "comment-arrivee-cet-endroit",
+      "text": "Comment est-elle arrivée à cet endroit ?",
+      "difficulty": 1,
+      "category": "origin"
+    },
+    {
+      "id": "quel-evenement-laisse-cette-trace",
+      "text": "Quel événement a laissé cette trace ?",
+      "difficulty": 2,
+      "category": "origin"
+    },
+    {
+      "id": "creee-pourquoi-moment",
+      "text": "Qui l'a créée, et pourquoi à ce moment-là ?",
+      "difficulty": 2,
+      "category": "origin"
+    },
+    {
+      "id": "quelle-version-histoire-raconte-on-village",
+      "text": "Quelle version de son histoire raconte-t-on dans le village, et qu'a-t-elle de faux ?",
+      "difficulty": 2,
+      "category": "origin"
+    },
+    {
+      "id": "quel-prix-ete-paye-pour-qu",
+      "text": "Quel prix a été payé pour qu'elle existe ?",
+      "difficulty": 3,
+      "category": "origin"
+    },
+    {
+      "id": "passe-derniere-fois-quelqu-utilisee",
+      "text": "Que s'est-il passé la dernière fois que quelqu'un l'a utilisée ?",
+      "difficulty": 3,
+      "category": "origin"
+    },
+    {
+      "id": "quelle-erreur-depart-rendue-qu-aujourd",
+      "text": "Quelle erreur de départ l'a rendue ce qu'elle est aujourd'hui ?",
+      "difficulty": 3,
+      "category": "origin"
+    },
+    {
+      "id": "occupe-ou-occupait",
+      "text": "Qui s'en occupe, ou s'en occupait ?",
+      "difficulty": 1,
+      "category": "who"
+    },
+    {
+      "id": "voudrait-posseder-pour-quelle-raison",
+      "text": "Qui voudrait la posséder, et pour quelle raison ?",
+      "difficulty": 1,
+      "category": "who"
+    },
+    {
+      "id": "voudrait-qu-disparaisse",
+      "text": "Qui voudrait qu'elle disparaisse ?",
+      "difficulty": 2,
+      "category": "who"
+    },
+    {
+      "id": "peur-moque-ouvertement",
+      "text": "Qui en a peur, et qui s'en moque ouvertement ?",
+      "difficulty": 2,
+      "category": "who"
+    },
+    {
+      "id": "connait-verite-mais-ose-pas-parler",
+      "text": "Qui connaît sa vérité, mais n'ose pas en parler ?",
+      "difficulty": 2,
+      "category": "who"
+    },
+    {
+      "id": "perdu-quelque-chose-cause",
+      "text": "Qui a perdu quelque chose à cause d'elle ?",
+      "difficulty": 3,
+      "category": "who"
+    },
+    {
+      "id": "quel-personnage-ordinaire-vie-liee-cette",
+      "text": "Quel personnage ordinaire a sa vie liée à cette image sans le savoir ?",
+      "difficulty": 3,
+      "category": "who"
+    },
+    {
+      "id": "vit-lisiere-cette-histoire-tire-profit",
+      "text": "Qui vit à la lisière de cette histoire et en tire un profit discret ?",
+      "difficulty": 3,
+      "category": "who"
+    },
+    {
+      "id": "quoi-tu-viens-imaginer-touche-autre",
+      "text": "En quoi ce que tu viens d'imaginer touche-t-il un autre lieu de ton monde ?",
+      "difficulty": 2,
+      "category": "link"
+    },
+    {
+      "id": "quel-autre-objet-ou-lieu-partage",
+      "text": "Quel autre objet ou lieu partage son secret ?",
+      "difficulty": 2,
+      "category": "link"
+    },
+    {
+      "id": "quel-personnage-deja-invente-concerne-par",
+      "text": "Quel personnage déjà inventé est concerné par cette image ?",
+      "difficulty": 2,
+      "category": "link"
+    },
+    {
+      "id": "quelle-consequence-lointaine-cela-pourrait-avoir",
+      "text": "Quelle conséquence lointaine cela pourrait-il avoir dans une autre région ?",
+      "difficulty": 3,
+      "category": "link"
+    },
+    {
+      "id": "si-tu-devais-relier-organisation-puissante",
+      "text": "Si tu devais la relier à une organisation puissante, laquelle serait la plus surprenante ?",
+      "difficulty": 3,
+      "category": "link"
+    },
+    {
+      "id": "quel-conflit-deja-present-ton-monde",
+      "text": "Quel conflit déjà présent dans ton monde cette image vient-elle aggraver ?",
+      "difficulty": 3,
+      "category": "link"
+    },
+    {
+      "id": "quelle-scene-pourrait-jouer-table-soir",
+      "text": "Quelle scène pourrait se jouer à sa table, dès ce soir, avec les joueurs ?",
+      "difficulty": 1,
+      "category": "link"
+    },
+    {
+      "id": "quelle-phrase-dirais-tu-voix-haute",
+      "text": "Quelle phrase dirais-tu à voix haute pour la décrire aux joueurs ?",
+      "difficulty": 1,
+      "category": "link"
+    },
+    {
+      "id": "decouvriraient-personnages-creusant-cela-deplairait",
+      "text": "Que découvriraient les personnages en creusant, et à qui cela déplairait-il ?",
+      "difficulty": 2,
+      "category": "link"
+    }
+  ]
+}

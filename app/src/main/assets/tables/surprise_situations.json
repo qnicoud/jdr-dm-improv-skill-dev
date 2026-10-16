@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "table": "surprise_situations",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "joueur-dit-je-vole-cheval-maire",
+      "text": "Le joueur dit : « Je vole le cheval du maire, tout de suite. »",
+      "difficulty": 1
+    },
+    {
+      "id": "joueur-refuse-entrer-donjon-veut-ouvrir",
+      "text": "Le joueur refuse d'entrer dans le donjon et veut ouvrir une boutique au village.",
+      "difficulty": 1
+    },
+    {
+      "id": "joueur-decide-parler-monstre-lieu-combattre",
+      "text": "Le joueur décide de parler au monstre au lieu de le combattre.",
+      "difficulty": 1
+    },
+    {
+      "id": "joueur-veut-acheter-tout-stock-cordes",
+      "text": "Le joueur veut acheter tout le stock de cordes de la ville.",
+      "difficulty": 1
+    },
+    {
+      "id": "joueur-declare-qu-endort-pleine-mission",
+      "text": "Le joueur déclare qu'il s'endort en pleine mission, pour voir ce qui se passera.",
+      "difficulty": 1
+    },
+    {
+      "id": "joueur-annonce-qu-jette-meilleure-arme",
+      "text": "Le joueur annonce qu'il jette sa meilleure arme dans la rivière.",
+      "difficulty": 1
+    },
+    {
+      "id": "joueur-demande-rencontrer-cuisinier-car-estime",
+      "text": "Le joueur demande à rencontrer le cuisinier, car il estime qu'il sait tout.",
+      "difficulty": 1
+    },
+    {
+      "id": "joueur-veut-escalader-toit-taverne-pour",
+      "text": "Le joueur veut escalader le toit de la taverne pour surveiller la rue.",
+      "difficulty": 1
+    },
+    {
+      "id": "joueur-declare-qu-suit-secret-pnj",
+      "text": "Le joueur déclare qu'il suit en secret le PNJ le plus ennuyeux de la ville.",
+      "difficulty": 1
+    },
+    {
+      "id": "joueur-ouvre-coffre-piege-disant-qu",
+      "text": "Le joueur ouvre le coffre piégé en disant qu'il fait confiance au destin.",
+      "difficulty": 1
+    },
+    {
+      "id": "joueur-tue-seul-temoin-pouvait-innocenter",
+      "text": "Le joueur tue le seul témoin qui pouvait innocenter le groupe.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-revele-ennemi-plan-secret-equipe",
+      "text": "Le joueur révèle à un ennemi le plan secret de l'équipe, pour gagner sa confiance.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-propose-echanger-prisonnier-contre-animal",
+      "text": "Le joueur propose d'échanger le prisonnier contre un animal de compagnie.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-ment-pretendant-etre-heritier-perdu",
+      "text": "Le joueur ment en prétendant être l'héritier perdu d'un noble absent.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-veut-incendier-bibliotheque-pour-effacer",
+      "text": "Le joueur veut incendier la bibliothèque pour effacer une preuve.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-decide-rejoindre-rangs-adversaire-pour",
+      "text": "Le joueur décide de rejoindre les rangs de l'adversaire pour l'espionner.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-cree-volontairement-scandale-pleine-ceremonie",
+      "text": "Le joueur crée volontairement un scandale en pleine cérémonie.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-accuse-publiquement-allie-plus-respecte",
+      "text": "Le joueur accuse publiquement l'allié le plus respecté du groupe.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-fait-serment-solennel-qu-sait",
+      "text": "Le joueur fait un serment solennel qu'il sait ne pas pouvoir tenir.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-demande-permission-mener-prochaine-scene",
+      "text": "Le joueur demande la permission de mener la prochaine scène en tant que PNJ.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-propose-vendre-informations-groupe-faction",
+      "text": "Le joueur propose de vendre les informations du groupe à la faction rivale.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-annonce-qu-quitte-aventure-retourne",
+      "text": "Le joueur annonce qu'il quitte l'aventure et retourne dans sa famille.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-libere-monstre-enchaine-prend-sous",
+      "text": "Le joueur libère le monstre enchaîné et le prend sous sa protection.",
+      "difficulty": 2
+    },
+    {
+      "id": "joueur-contredit-regle-dieu-devant-temple",
+      "text": "Le joueur contredit la règle d'un dieu devant son temple entier.",
+      "difficulty": 3
+    },
+    {
+      "id": "joueur-demande-serieusement-arrive-personnages-personne",
+      "text": "Le joueur demande, sérieusement, ce qui arrive aux personnages que personne n'a jamais rencontrés.",
+      "difficulty": 3
+    },
+    {
+      "id": "joueur-pose-question-fond-monde-dont",
+      "text": "Le joueur pose une question de fond sur le monde dont tu n'as pas la réponse.",
+      "difficulty": 3
+    },
+    {
+      "id": "joueur-oppose-veto-scene-reste-table",
+      "text": "Le joueur oppose son veto à une scène que le reste de la table attend avec impatience.",
+      "difficulty": 3
+    },
+    {
+      "id": "joueur-detruit-objet-central-ton-intrigue",
+      "text": "Le joueur détruit l'objet central de ton intrigue, trois séances trop tôt.",
+      "difficulty": 3
+    },
+    {
+      "id": "joueur-sauve-mechant-tous-autres-joueurs",
+      "text": "Le joueur sauve le méchant, et tous les autres joueurs se tournent vers toi.",
+      "difficulty": 3
+    },
+    {
+      "id": "joueur-decouvre-secret-majeur-histoire-lisant",
+      "text": "Le joueur découvre le secret majeur de l'histoire en lisant la mauvaise page de ton écran.",
+      "difficulty": 3
+    },
+    {
+      "id": "joueur-met-colere-contre-autre-joueur",
+      "text": "Le joueur se met en colère contre un autre joueur, en vrai, et la scène s'en ressent.",
+      "difficulty": 3
+    },
+    {
+      "id": "joueur-exige-on-rejoue-scene-terminee",
+      "text": "Le joueur exige que l'on rejoue une scène terminée, avec une issue différente.",
+      "difficulty": 3
+    },
+    {
+      "id": "joueur-propose-abandonner-campagne-actuelle-pour",
+      "text": "Le joueur propose d'abandonner la campagne actuelle pour la suite d'une idée qui le passionne.",
+      "difficulty": 3
+    },
+    {
+      "id": "joueur-fait-appel-faction-oubliee-dont",
+      "text": "Le joueur fait appel à une faction oubliée dont tu ne te souviens plus des détails.",
+      "difficulty": 3
+    }
+  ]
+}

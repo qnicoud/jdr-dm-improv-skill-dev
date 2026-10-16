@@ -1,0 +1,480 @@
+{
+  "schemaVersion": 1,
+  "table": "sensory_words",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "poussiereux",
+      "text": "poussiéreux",
+      "difficulty": 1,
+      "category": "sight",
+      "keywords": [
+        "poussiéreux",
+        "poussiéreuse",
+        "poussière"
+      ]
+    },
+    {
+      "id": "eclatant",
+      "text": "éclatant",
+      "difficulty": 1,
+      "category": "sight",
+      "keywords": [
+        "éclatant",
+        "éclatante",
+        "éclat"
+      ]
+    },
+    {
+      "id": "rouille",
+      "text": "rouillé",
+      "difficulty": 1,
+      "category": "sight",
+      "keywords": [
+        "rouillé",
+        "rouillée"
+      ]
+    },
+    {
+      "id": "dore",
+      "text": "doré",
+      "difficulty": 1,
+      "category": "sight",
+      "keywords": [
+        "doré",
+        "dorée",
+        "dorure"
+      ]
+    },
+    {
+      "id": "fissure",
+      "text": "fissuré",
+      "difficulty": 2,
+      "category": "sight",
+      "keywords": [
+        "fissuré",
+        "fissurée",
+        "fissures"
+      ]
+    },
+    {
+      "id": "tremblotant",
+      "text": "tremblotant",
+      "difficulty": 2,
+      "category": "sight",
+      "keywords": [
+        "tremblotant",
+        "tremblotante",
+        "tremblote"
+      ]
+    },
+    {
+      "id": "mouchete",
+      "text": "moucheté",
+      "difficulty": 2,
+      "category": "sight",
+      "keywords": [
+        "moucheté",
+        "mouchetée",
+        "tacheté"
+      ]
+    },
+    {
+      "id": "diaphane",
+      "text": "diaphane",
+      "difficulty": 3,
+      "category": "sight",
+      "keywords": [
+        "diaphane",
+        "diaphanes",
+        "transparent"
+      ]
+    },
+    {
+      "id": "ebreche",
+      "text": "ébréché",
+      "difficulty": 2,
+      "category": "sight",
+      "keywords": [
+        "ébréché",
+        "ébréchée",
+        "ébréchure"
+      ]
+    },
+    {
+      "id": "moire",
+      "text": "moiré",
+      "difficulty": 3,
+      "category": "sight",
+      "keywords": [
+        "moiré",
+        "moirée",
+        "moirure"
+      ]
+    },
+    {
+      "id": "grincant",
+      "text": "grinçant",
+      "difficulty": 1,
+      "category": "hearing",
+      "keywords": [
+        "grinçant",
+        "grinçante",
+        "grincement",
+        "grince"
+      ]
+    },
+    {
+      "id": "chuchote",
+      "text": "chuchoté",
+      "difficulty": 1,
+      "category": "hearing",
+      "keywords": [
+        "chuchote",
+        "chuchotement",
+        "chuchotements"
+      ]
+    },
+    {
+      "id": "tonitruant",
+      "text": "tonitruant",
+      "difficulty": 1,
+      "category": "hearing",
+      "keywords": [
+        "tonitruant",
+        "tonitruante",
+        "tonnerre"
+      ]
+    },
+    {
+      "id": "crepitant",
+      "text": "crépitant",
+      "difficulty": 2,
+      "category": "hearing",
+      "keywords": [
+        "crépite",
+        "crépitement",
+        "crépitant",
+        "crépitements"
+      ]
+    },
+    {
+      "id": "bourdonnant",
+      "text": "bourdonnant",
+      "difficulty": 2,
+      "category": "hearing",
+      "keywords": [
+        "bourdonne",
+        "bourdonnement",
+        "bourdonnant"
+      ]
+    },
+    {
+      "id": "etouffe",
+      "text": "étouffé",
+      "difficulty": 3,
+      "category": "hearing",
+      "keywords": [
+        "étouffé",
+        "étouffée",
+        "étouffés"
+      ]
+    },
+    {
+      "id": "goutte-goutte",
+      "text": "goutte à goutte",
+      "difficulty": 2,
+      "category": "hearing",
+      "keywords": [
+        "goutte à goutte",
+        "gouttes",
+        "goutte"
+      ]
+    },
+    {
+      "id": "sourd",
+      "text": "sourd",
+      "difficulty": 3,
+      "category": "hearing",
+      "keywords": [
+        "sourd",
+        "sourde",
+        "sourds"
+      ]
+    },
+    {
+      "id": "feu-bois",
+      "text": "feu de bois",
+      "difficulty": 1,
+      "category": "smell",
+      "keywords": [
+        "feu de bois",
+        "bois brûlé",
+        "cheminée"
+      ]
+    },
+    {
+      "id": "moisi",
+      "text": "moisi",
+      "difficulty": 1,
+      "category": "smell",
+      "keywords": [
+        "moisi",
+        "moisie",
+        "moisissure"
+      ]
+    },
+    {
+      "id": "pain-chaud",
+      "text": "pain chaud",
+      "difficulty": 1,
+      "category": "smell",
+      "keywords": [
+        "pain chaud",
+        "pain"
+      ]
+    },
+    {
+      "id": "resine",
+      "text": "résine",
+      "difficulty": 2,
+      "category": "smell",
+      "keywords": [
+        "résine",
+        "résineux",
+        "résineuse"
+      ]
+    },
+    {
+      "id": "cuir-mouille",
+      "text": "cuir mouillé",
+      "difficulty": 2,
+      "category": "smell",
+      "keywords": [
+        "cuir mouillé",
+        "cuir"
+      ]
+    },
+    {
+      "id": "encens",
+      "text": "encens",
+      "difficulty": 2,
+      "category": "smell",
+      "keywords": [
+        "encens",
+        "encensoir"
+      ]
+    },
+    {
+      "id": "metallique",
+      "text": "métallique",
+      "difficulty": 3,
+      "category": "smell",
+      "keywords": [
+        "métallique",
+        "métalliques",
+        "métal"
+      ]
+    },
+    {
+      "id": "fleur-fanee",
+      "text": "fleur fanée",
+      "difficulty": 3,
+      "category": "smell",
+      "keywords": [
+        "fleur fanée",
+        "fleurs fanées",
+        "fané",
+        "fanées"
+      ]
+    },
+    {
+      "id": "sale",
+      "text": "salé",
+      "difficulty": 1,
+      "category": "taste",
+      "keywords": [
+        "salé",
+        "salée",
+        "sel"
+      ]
+    },
+    {
+      "id": "amer",
+      "text": "amer",
+      "difficulty": 1,
+      "category": "taste",
+      "keywords": [
+        "amer",
+        "amère",
+        "amertume"
+      ]
+    },
+    {
+      "id": "sucre",
+      "text": "sucré",
+      "difficulty": 1,
+      "category": "taste",
+      "keywords": [
+        "sucré",
+        "sucrée"
+      ]
+    },
+    {
+      "id": "fume",
+      "text": "fumé",
+      "difficulty": 2,
+      "category": "taste",
+      "keywords": [
+        "fumé",
+        "fumée",
+        "fumet"
+      ]
+    },
+    {
+      "id": "acide",
+      "text": "acide",
+      "difficulty": 2,
+      "category": "taste",
+      "keywords": [
+        "acide",
+        "acides",
+        "acidité"
+      ]
+    },
+    {
+      "id": "terreux",
+      "text": "terreux",
+      "difficulty": 2,
+      "category": "taste",
+      "keywords": [
+        "terreux",
+        "terreuse",
+        "terreuses"
+      ]
+    },
+    {
+      "id": "cendreux",
+      "text": "cendreux",
+      "difficulty": 3,
+      "category": "taste",
+      "keywords": [
+        "cendre",
+        "cendres",
+        "cendreux",
+        "cendreuse"
+      ]
+    },
+    {
+      "id": "poivre",
+      "text": "poivré",
+      "difficulty": 3,
+      "category": "taste",
+      "keywords": [
+        "poivré",
+        "poivrée"
+      ]
+    },
+    {
+      "id": "glace",
+      "text": "glacé",
+      "difficulty": 1,
+      "category": "touch",
+      "keywords": [
+        "glacé",
+        "glacée",
+        "glacial"
+      ]
+    },
+    {
+      "id": "rugueux",
+      "text": "rugueux",
+      "difficulty": 1,
+      "category": "touch",
+      "keywords": [
+        "rugueux",
+        "rugueuse",
+        "rugosité"
+      ]
+    },
+    {
+      "id": "collant",
+      "text": "collant",
+      "difficulty": 1,
+      "category": "touch",
+      "keywords": [
+        "collant",
+        "collante",
+        "poisseux",
+        "poisseuse"
+      ]
+    },
+    {
+      "id": "visqueux",
+      "text": "visqueux",
+      "difficulty": 2,
+      "category": "touch",
+      "keywords": [
+        "visqueux",
+        "visqueuse",
+        "viscosité"
+      ]
+    },
+    {
+      "id": "soyeux",
+      "text": "soyeux",
+      "difficulty": 2,
+      "category": "touch",
+      "keywords": [
+        "soyeux",
+        "soyeuse",
+        "soie"
+      ]
+    },
+    {
+      "id": "granuleux",
+      "text": "granuleux",
+      "difficulty": 2,
+      "category": "touch",
+      "keywords": [
+        "granuleux",
+        "granuleuse",
+        "sable"
+      ]
+    },
+    {
+      "id": "brulant",
+      "text": "brûlant",
+      "difficulty": 3,
+      "category": "touch",
+      "keywords": [
+        "brûlant",
+        "brûlante",
+        "brûlure"
+      ]
+    },
+    {
+      "id": "piquant",
+      "text": "piquant",
+      "difficulty": 3,
+      "category": "touch",
+      "keywords": [
+        "piquant",
+        "piquante",
+        "piquants",
+        "piqûre"
+      ]
+    },
+    {
+      "id": "tiede",
+      "text": "tiède",
+      "difficulty": 3,
+      "category": "touch",
+      "keywords": [
+        "tiède",
+        "tièdes",
+        "tiédeur"
+      ]
+    }
+  ]
+}

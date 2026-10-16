@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "table": "core_images",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "cle-rouillee-laquelle-manque-dent",
+      "text": "une clé rouillée à laquelle il manque une dent",
+      "difficulty": 1
+    },
+    {
+      "id": "cloche-felee-posee-envers-champ",
+      "text": "une cloche fêlée posée à l'envers dans un champ",
+      "difficulty": 1
+    },
+    {
+      "id": "gant-enfant-brode-retrouve-sommet-tour",
+      "text": "un gant d'enfant brodé, retrouvé au sommet d'une tour",
+      "difficulty": 1
+    },
+    {
+      "id": "lanterne-brule-sans-huile-ni-meche",
+      "text": "une lanterne qui brûle sans huile ni mèche",
+      "difficulty": 1
+    },
+    {
+      "id": "chaise-bois-sculptee-trop-grande-pour",
+      "text": "une chaise de bois sculptée, trop grande pour n'importe quel humain",
+      "difficulty": 1
+    },
+    {
+      "id": "pomme-pierre-parfaitement-mure-autel",
+      "text": "une pomme de pierre parfaitement mûre sur un autel",
+      "difficulty": 1
+    },
+    {
+      "id": "cerf-volant-dechire-accroche-potence",
+      "text": "un cerf-volant déchiré accroché à une potence",
+      "difficulty": 1
+    },
+    {
+      "id": "echelle-appuyee-contre-mur-sans-toit",
+      "text": "une échelle appuyée contre un mur sans toit ni étage",
+      "difficulty": 1
+    },
+    {
+      "id": "bol-terre-cuite-toujours-rempli-eau",
+      "text": "un bol en terre cuite toujours rempli d'eau tiède",
+      "difficulty": 1
+    },
+    {
+      "id": "botte-pleine-sable-jamais-videe",
+      "text": "une botte pleine de sable, jamais vidée",
+      "difficulty": 1
+    },
+    {
+      "id": "miroir-poche-dont-reflet-retarde-seconde",
+      "text": "un miroir de poche dont le reflet retarde d'une seconde",
+      "difficulty": 1
+    },
+    {
+      "id": "sifflet-os-seuls-certains-animaux-entendent",
+      "text": "un sifflet en os que seuls certains animaux entendent",
+      "difficulty": 1
+    },
+    {
+      "id": "porte-plantee-seule-milieu-prairie-fermee",
+      "text": "une porte plantée seule au milieu d'une prairie, fermée à clé",
+      "difficulty": 2
+    },
+    {
+      "id": "arbre-dont-chaque-feuille-porte-nom",
+      "text": "un arbre dont chaque feuille porte un nom gravé",
+      "difficulty": 2
+    },
+    {
+      "id": "ruban-rouge-noue-autour-poignet-squelette",
+      "text": "un ruban rouge noué autour du poignet d'un squelette",
+      "difficulty": 2
+    },
+    {
+      "id": "pont-dont-moitie-bois-neuf-autre",
+      "text": "un pont dont la moitié est en bois neuf, l'autre en pierre ancienne",
+      "difficulty": 2
+    },
+    {
+      "id": "horloge-dont-chiffres-sont-visages",
+      "text": "une horloge dont les chiffres sont des visages",
+      "difficulty": 2
+    },
+    {
+      "id": "livre-comptes-ou-chaque-page-signee",
+      "text": "un livre de comptes où chaque page est signée du même nom, par des mains différentes",
+      "difficulty": 2
+    },
+    {
+      "id": "puits-dont-eau-monte-quand-quelqu",
+      "text": "un puits dont l'eau monte quand quelqu'un ment à proximité",
+      "difficulty": 2
+    },
+    {
+      "id": "chapeau-bal-poussiereux-contenant-nid-oiseau",
+      "text": "un chapeau de bal poussiéreux contenant un nid d'oiseau abandonné",
+      "difficulty": 2
+    },
+    {
+      "id": "cuillere-argent-gravee-serment-plantee-mur",
+      "text": "une cuillère d'argent gravée d'un serment, plantée dans un mur",
+      "difficulty": 2
+    },
+    {
+      "id": "cheval-bois-grandeur-nature-use-par",
+      "text": "un cheval de bois grandeur nature, usé par des siècles de caresses",
+      "difficulty": 2
+    },
+    {
+      "id": "tas-cendre-dispose-forme-main-ouverte",
+      "text": "un tas de cendre disposé en forme de main ouverte",
+      "difficulty": 2
+    },
+    {
+      "id": "couronne-ferraille-posee-tete-statue-mendiant",
+      "text": "une couronne de ferraille posée sur la tête d'une statue de mendiant",
+      "difficulty": 2
+    },
+    {
+      "id": "tambour-sans-peau-quelqu-frappe-encore",
+      "text": "un tambour sans peau, que quelqu'un frappe encore à intervalles réguliers",
+      "difficulty": 2
+    },
+    {
+      "id": "carte-tracee-peau-tambour-avec-lieu",
+      "text": "une carte tracée sur la peau d'un tambour, avec un lieu barré de rouge",
+      "difficulty": 2
+    },
+    {
+      "id": "navire-verre-echoue-plage-empli-chants",
+      "text": "un navire de verre échoué sur une plage, empli de chants d'oiseaux",
+      "difficulty": 3
+    },
+    {
+      "id": "riviere-coule-montant-long-falaise",
+      "text": "une rivière qui coule en montant le long d'une falaise",
+      "difficulty": 3
+    },
+    {
+      "id": "banquet-dresse-pour-cent-convives-tous",
+      "text": "un banquet dressé pour cent convives, tous partis avant le premier plat",
+      "difficulty": 3
+    },
+    {
+      "id": "enfant-pierre-dont-yeux-couvrent-chaque",
+      "text": "un enfant de pierre dont les yeux se couvrent chaque matin de rosée",
+      "difficulty": 3
+    },
+    {
+      "id": "epee-sans-lame-mais-dont-poignee",
+      "text": "une épée sans lame, mais dont la poignée est toujours chaude",
+      "difficulty": 3
+    },
+    {
+      "id": "escalier-colimacon-descend-ciel",
+      "text": "un escalier en colimaçon qui descend dans le ciel",
+      "difficulty": 3
+    },
+    {
+      "id": "nom-efface-tous-registres-mais-grave",
+      "text": "un nom effacé de tous les registres, mais gravé sur chaque seuil d'une rue",
+      "difficulty": 3
+    },
+    {
+      "id": "champ-ble-dont-chaque-epi-ete",
+      "text": "un champ de blé dont chaque épi a été noué avec soin par des doigts minuscules",
+      "difficulty": 3
+    },
+    {
+      "id": "lit-camp-tribunal-avec-couverture-encore",
+      "text": "un lit de camp dans un tribunal, avec une couverture encore tiède",
+      "difficulty": 3
+    },
+    {
+      "id": "balance-dont-plateau-contient-voix-enregistree",
+      "text": "une balance dont un plateau contient une voix enregistrée dans un coquillage",
+      "difficulty": 3
+    },
+    {
+      "id": "lune-bronze-suspendue-dessus-place-qu",
+      "text": "une lune de bronze suspendue au-dessus d'une place, qu'on astique chaque semaine",
+      "difficulty": 3
+    }
+  ]
+}

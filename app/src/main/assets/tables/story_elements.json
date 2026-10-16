@@ -1,0 +1,1650 @@
+{
+  "schemaVersion": 1,
+  "table": "story_elements",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "auberge-bord-route",
+      "text": "une auberge de bord de route",
+      "difficulty": 1,
+      "category": "place",
+      "keywords": [
+        "auberge",
+        "auberges",
+        "aubergiste"
+      ]
+    },
+    {
+      "id": "vieux-pont-pierre",
+      "text": "un vieux pont de pierre",
+      "difficulty": 1,
+      "category": "place",
+      "keywords": [
+        "pont",
+        "ponts"
+      ]
+    },
+    {
+      "id": "cave-humide",
+      "text": "une cave humide",
+      "difficulty": 1,
+      "category": "place",
+      "keywords": [
+        "cave",
+        "caves"
+      ]
+    },
+    {
+      "id": "cimetiere-colline",
+      "text": "un cimetière sur une colline",
+      "difficulty": 1,
+      "category": "place",
+      "keywords": [
+        "cimetière",
+        "cimetières"
+      ]
+    },
+    {
+      "id": "moulin-abandonne",
+      "text": "un moulin abandonné",
+      "difficulty": 1,
+      "category": "place",
+      "keywords": [
+        "moulin",
+        "moulins"
+      ]
+    },
+    {
+      "id": "marche-bruyant",
+      "text": "un marché bruyant",
+      "difficulty": 1,
+      "category": "place",
+      "keywords": [
+        "marché",
+        "marchés"
+      ]
+    },
+    {
+      "id": "clairiere-foret",
+      "text": "une clairière dans la forêt",
+      "difficulty": 1,
+      "category": "place",
+      "keywords": [
+        "clairière",
+        "clairières"
+      ]
+    },
+    {
+      "id": "port-brumeux",
+      "text": "un port brumeux",
+      "difficulty": 1,
+      "category": "place",
+      "keywords": [
+        "port",
+        "ports",
+        "quai",
+        "quais"
+      ]
+    },
+    {
+      "id": "chapelle-isolee",
+      "text": "une chapelle isolée",
+      "difficulty": 1,
+      "category": "place",
+      "keywords": [
+        "chapelle",
+        "chapelles"
+      ]
+    },
+    {
+      "id": "cuisine-chateau",
+      "text": "une cuisine de château",
+      "difficulty": 1,
+      "category": "place",
+      "keywords": [
+        "cuisine",
+        "cuisines"
+      ]
+    },
+    {
+      "id": "bibliotheque-sans-fin",
+      "text": "une bibliothèque sans fin",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "bibliothèque",
+        "bibliothèques"
+      ]
+    },
+    {
+      "id": "mine-inondee",
+      "text": "une mine inondée",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "mine",
+        "mines",
+        "minier"
+      ]
+    },
+    {
+      "id": "phare-bord-falaise",
+      "text": "un phare au bord de la falaise",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "phare",
+        "phares"
+      ]
+    },
+    {
+      "id": "salle-bal-vide",
+      "text": "une salle de bal vide",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "bal",
+        "salle de bal"
+      ]
+    },
+    {
+      "id": "marais-passerelles-bois",
+      "text": "un marais aux passerelles de bois",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "marais",
+        "marécage",
+        "marécages"
+      ]
+    },
+    {
+      "id": "caravane-arretee-carrefour",
+      "text": "une caravane arrêtée au carrefour",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "caravane",
+        "caravanes",
+        "carrefour"
+      ]
+    },
+    {
+      "id": "jardin-statues",
+      "text": "un jardin de statues",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "statue",
+        "statues",
+        "jardin"
+      ]
+    },
+    {
+      "id": "atelier-horloger",
+      "text": "un atelier d'horloger",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "horloger",
+        "horlogère",
+        "atelier"
+      ]
+    },
+    {
+      "id": "bain-public",
+      "text": "un bain public",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "bain",
+        "bains",
+        "thermes"
+      ]
+    },
+    {
+      "id": "prison-abandonnee",
+      "text": "une prison abandonnée",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "prison",
+        "prisons",
+        "cellule",
+        "cellules"
+      ]
+    },
+    {
+      "id": "foret-rubans-noues",
+      "text": "une forêt de rubans noués",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "forêt",
+        "forêts",
+        "rubans"
+      ]
+    },
+    {
+      "id": "escalier-falaise",
+      "text": "un escalier dans la falaise",
+      "difficulty": 2,
+      "category": "place",
+      "keywords": [
+        "escalier",
+        "escaliers"
+      ]
+    },
+    {
+      "id": "ville-construite-carcasse",
+      "text": "une ville construite sur une carcasse",
+      "difficulty": 3,
+      "category": "place",
+      "keywords": [
+        "carcasse",
+        "carcasses"
+      ]
+    },
+    {
+      "id": "tribunal-sans-juge",
+      "text": "un tribunal sans juge",
+      "difficulty": 3,
+      "category": "place",
+      "keywords": [
+        "tribunal",
+        "tribunaux"
+      ]
+    },
+    {
+      "id": "canal-souterrain",
+      "text": "un canal souterrain",
+      "difficulty": 3,
+      "category": "place",
+      "keywords": [
+        "canal",
+        "canaux",
+        "souterrain"
+      ]
+    },
+    {
+      "id": "monastere-suspendu",
+      "text": "un monastère suspendu",
+      "difficulty": 3,
+      "category": "place",
+      "keywords": [
+        "monastère",
+        "monastères"
+      ]
+    },
+    {
+      "id": "champ-bataille-ancien",
+      "text": "un champ de bataille ancien",
+      "difficulty": 3,
+      "category": "place",
+      "keywords": [
+        "champ de bataille",
+        "champs de bataille"
+      ]
+    },
+    {
+      "id": "salon-the-haute-societe",
+      "text": "un salon de thé de la haute société",
+      "difficulty": 3,
+      "category": "place",
+      "keywords": [
+        "salon de thé",
+        "thé"
+      ]
+    },
+    {
+      "id": "observatoire-tour",
+      "text": "un observatoire sur une tour",
+      "difficulty": 3,
+      "category": "place",
+      "keywords": [
+        "observatoire",
+        "observatoires"
+      ]
+    },
+    {
+      "id": "navire-echoue-colline",
+      "text": "un navire échoué sur une colline",
+      "difficulty": 3,
+      "category": "place",
+      "keywords": [
+        "navire",
+        "navires",
+        "bateau"
+      ]
+    },
+    {
+      "id": "banquet-fige-temps",
+      "text": "un banquet figé dans le temps",
+      "difficulty": 3,
+      "category": "place",
+      "keywords": [
+        "banquet",
+        "banquets"
+      ]
+    },
+    {
+      "id": "salle-trone-sans-siege",
+      "text": "une salle du trône sans siège",
+      "difficulty": 3,
+      "category": "place",
+      "keywords": [
+        "trône",
+        "trônes"
+      ]
+    },
+    {
+      "id": "lanterne-vitre-fendue",
+      "text": "une lanterne à la vitre fendue",
+      "difficulty": 1,
+      "category": "object",
+      "keywords": [
+        "lanterne",
+        "lanternes",
+        "falot"
+      ]
+    },
+    {
+      "id": "cle-rouillee",
+      "text": "une clé rouillée",
+      "difficulty": 1,
+      "category": "object",
+      "keywords": [
+        "clé",
+        "clés",
+        "clef",
+        "clefs"
+      ]
+    },
+    {
+      "id": "lettre-cachetee",
+      "text": "une lettre cachetée",
+      "difficulty": 1,
+      "category": "object",
+      "keywords": [
+        "lettre",
+        "lettres",
+        "courrier"
+      ]
+    },
+    {
+      "id": "couteau-ebreche",
+      "text": "un couteau ébréché",
+      "difficulty": 1,
+      "category": "object",
+      "keywords": [
+        "couteau",
+        "couteaux"
+      ]
+    },
+    {
+      "id": "bourse-trouee",
+      "text": "une bourse trouée",
+      "difficulty": 1,
+      "category": "object",
+      "keywords": [
+        "bourse",
+        "bourses"
+      ]
+    },
+    {
+      "id": "livre-sans-titre",
+      "text": "un livre sans titre",
+      "difficulty": 1,
+      "category": "object",
+      "keywords": [
+        "livre",
+        "livres",
+        "bouquin"
+      ]
+    },
+    {
+      "id": "bougie-noire",
+      "text": "une bougie noire",
+      "difficulty": 1,
+      "category": "object",
+      "keywords": [
+        "bougie",
+        "bougies"
+      ]
+    },
+    {
+      "id": "miroir-fele",
+      "text": "un miroir fêlé",
+      "difficulty": 1,
+      "category": "object",
+      "keywords": [
+        "miroir",
+        "miroirs"
+      ]
+    },
+    {
+      "id": "corde-nouee",
+      "text": "une corde nouée",
+      "difficulty": 1,
+      "category": "object",
+      "keywords": [
+        "corde",
+        "cordes"
+      ]
+    },
+    {
+      "id": "chapeau-troue",
+      "text": "un chapeau troué",
+      "difficulty": 1,
+      "category": "object",
+      "keywords": [
+        "chapeau",
+        "chapeaux"
+      ]
+    },
+    {
+      "id": "sablier-coule-envers",
+      "text": "un sablier qui coule à l'envers",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "sablier",
+        "sabliers"
+      ]
+    },
+    {
+      "id": "piece-or-gravee-visage-inconnu",
+      "text": "une pièce d'or gravée d'un visage inconnu",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "pièce d'or",
+        "pièces d'or"
+      ]
+    },
+    {
+      "id": "eventail-baleines-cassees",
+      "text": "un éventail aux baleines cassées",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "éventail",
+        "éventails"
+      ]
+    },
+    {
+      "id": "carte-dechiree-deux",
+      "text": "une carte déchirée en deux",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "carte",
+        "cartes"
+      ]
+    },
+    {
+      "id": "coffret-ferme-cle-sans-serrure",
+      "text": "un coffret fermé à clé sans serrure",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "coffret",
+        "coffrets"
+      ]
+    },
+    {
+      "id": "tambour-sans-peau",
+      "text": "un tambour sans peau",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "tambour",
+        "tambours"
+      ]
+    },
+    {
+      "id": "collier-dents",
+      "text": "un collier de dents",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "collier",
+        "colliers"
+      ]
+    },
+    {
+      "id": "marionnette-bois",
+      "text": "une marionnette de bois",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "marionnette",
+        "marionnettes"
+      ]
+    },
+    {
+      "id": "fiole-bouchee-cire",
+      "text": "une fiole bouchée à la cire",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "fiole",
+        "fioles"
+      ]
+    },
+    {
+      "id": "drapeau-lambeaux",
+      "text": "un drapeau en lambeaux",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "drapeau",
+        "drapeaux",
+        "étendard"
+      ]
+    },
+    {
+      "id": "epingle-argent",
+      "text": "une épingle en argent",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "épingle",
+        "épingles"
+      ]
+    },
+    {
+      "id": "poupee-sans-visage",
+      "text": "une poupée sans visage",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "poupée",
+        "poupées"
+      ]
+    },
+    {
+      "id": "contrat-signe-mauvais-nom",
+      "text": "un contrat signé du mauvais nom",
+      "difficulty": 3,
+      "category": "object",
+      "keywords": [
+        "contrat",
+        "contrats"
+      ]
+    },
+    {
+      "id": "gant-enfant-brode",
+      "text": "un gant d'enfant brodé",
+      "difficulty": 3,
+      "category": "object",
+      "keywords": [
+        "gant",
+        "gants"
+      ]
+    },
+    {
+      "id": "horloge-chiffres-effaces",
+      "text": "une horloge aux chiffres effacés",
+      "difficulty": 3,
+      "category": "object",
+      "keywords": [
+        "horloge",
+        "horloges",
+        "pendule"
+      ]
+    },
+    {
+      "id": "masque-theatre-ebreche",
+      "text": "un masque de théâtre ébréché",
+      "difficulty": 3,
+      "category": "object",
+      "keywords": [
+        "masque",
+        "masques"
+      ]
+    },
+    {
+      "id": "sifflet-os",
+      "text": "un sifflet en os",
+      "difficulty": 3,
+      "category": "object",
+      "keywords": [
+        "sifflet",
+        "sifflets"
+      ]
+    },
+    {
+      "id": "balance-dereglee",
+      "text": "une balance déréglée",
+      "difficulty": 3,
+      "category": "object",
+      "keywords": [
+        "balance",
+        "balances"
+      ]
+    },
+    {
+      "id": "tonneau-perce",
+      "text": "un tonneau percé",
+      "difficulty": 1,
+      "category": "object",
+      "keywords": [
+        "tonneau",
+        "tonneaux"
+      ]
+    },
+    {
+      "id": "pipe-terre-cuite",
+      "text": "une pipe en terre cuite",
+      "difficulty": 2,
+      "category": "object",
+      "keywords": [
+        "pipe",
+        "pipes"
+      ]
+    },
+    {
+      "id": "etui-aiguilles-brode",
+      "text": "un étui à aiguilles brodé",
+      "difficulty": 3,
+      "category": "object",
+      "keywords": [
+        "étui",
+        "étuis",
+        "aiguilles"
+      ]
+    },
+    {
+      "id": "tetu-comme-mule",
+      "text": "têtu comme une mule",
+      "difficulty": 1,
+      "category": "trait",
+      "keywords": [
+        "têtu",
+        "têtue",
+        "têtus",
+        "entêté"
+      ]
+    },
+    {
+      "id": "toujours-retard",
+      "text": "toujours en retard",
+      "difficulty": 1,
+      "category": "trait",
+      "keywords": [
+        "retard",
+        "retards"
+      ]
+    },
+    {
+      "id": "generosite-excessive",
+      "text": "d'une générosité excessive",
+      "difficulty": 1,
+      "category": "trait",
+      "keywords": [
+        "généreux",
+        "généreuse",
+        "générosité"
+      ]
+    },
+    {
+      "id": "peureux-point-trembler",
+      "text": "peureux au point de trembler",
+      "difficulty": 1,
+      "category": "trait",
+      "keywords": [
+        "peureux",
+        "peureuse",
+        "tremble",
+        "trembler"
+      ]
+    },
+    {
+      "id": "bavard-incapable-taire",
+      "text": "bavard et incapable de se taire",
+      "difficulty": 1,
+      "category": "trait",
+      "keywords": [
+        "bavard",
+        "bavarde",
+        "bavardage"
+      ]
+    },
+    {
+      "id": "jaloux-tout-monde",
+      "text": "jaloux de tout le monde",
+      "difficulty": 1,
+      "category": "trait",
+      "keywords": [
+        "jaloux",
+        "jalouse",
+        "jalousie"
+      ]
+    },
+    {
+      "id": "obsede-par-proprete",
+      "text": "obsédé par la propreté",
+      "difficulty": 1,
+      "category": "trait",
+      "keywords": [
+        "propreté",
+        "propres",
+        "maniaque"
+      ]
+    },
+    {
+      "id": "gourmand-jamais-rassasie",
+      "text": "gourmand, jamais rassasié",
+      "difficulty": 1,
+      "category": "trait",
+      "keywords": [
+        "gourmand",
+        "gourmande",
+        "gourmandise"
+      ]
+    },
+    {
+      "id": "paresseux-reveur",
+      "text": "paresseux et rêveur",
+      "difficulty": 1,
+      "category": "trait",
+      "keywords": [
+        "paresseux",
+        "paresseuse",
+        "paresse",
+        "rêveur"
+      ]
+    },
+    {
+      "id": "menteur-compulsif",
+      "text": "menteur compulsif",
+      "difficulty": 2,
+      "category": "trait",
+      "keywords": [
+        "menteur",
+        "menteuse",
+        "mensonge",
+        "mensonges"
+      ]
+    },
+    {
+      "id": "superstitieux-jusqu-absurde",
+      "text": "superstitieux jusqu'à l'absurde",
+      "difficulty": 2,
+      "category": "trait",
+      "keywords": [
+        "superstitieux",
+        "superstitieuse",
+        "superstition"
+      ]
+    },
+    {
+      "id": "trop-honnete-pour-propre-bien",
+      "text": "trop honnête pour son propre bien",
+      "difficulty": 2,
+      "category": "trait",
+      "keywords": [
+        "honnête",
+        "honnêtes",
+        "honnêteté"
+      ]
+    },
+    {
+      "id": "ambitieux-sans-scrupules",
+      "text": "ambitieux et sans scrupules",
+      "difficulty": 2,
+      "category": "trait",
+      "keywords": [
+        "ambitieux",
+        "ambitieuse",
+        "ambition"
+      ]
+    },
+    {
+      "id": "mefiant-envers-inconnus",
+      "text": "méfiant envers les inconnus",
+      "difficulty": 2,
+      "category": "trait",
+      "keywords": [
+        "méfiant",
+        "méfiante",
+        "méfiance"
+      ]
+    },
+    {
+      "id": "curieux-point-etre-dangereux",
+      "text": "curieux au point d'en être dangereux",
+      "difficulty": 2,
+      "category": "trait",
+      "keywords": [
+        "curieux",
+        "curieuse",
+        "curiosité"
+      ]
+    },
+    {
+      "id": "pacifiste-mais-arme-jusqu-dents",
+      "text": "pacifiste mais armé jusqu'aux dents",
+      "difficulty": 2,
+      "category": "trait",
+      "keywords": [
+        "pacifiste",
+        "pacifistes",
+        "pacifisme"
+      ]
+    },
+    {
+      "id": "nostalgique-epoque-revolue",
+      "text": "nostalgique d'une époque révolue",
+      "difficulty": 2,
+      "category": "trait",
+      "keywords": [
+        "nostalgique",
+        "nostalgie",
+        "nostalgiques"
+      ]
+    },
+    {
+      "id": "charmeur-invetere",
+      "text": "charmeur invétéré",
+      "difficulty": 2,
+      "category": "trait",
+      "keywords": [
+        "charmeur",
+        "charmeuse",
+        "charme"
+      ]
+    },
+    {
+      "id": "rancunier-depuis-annees",
+      "text": "rancunier depuis des années",
+      "difficulty": 2,
+      "category": "trait",
+      "keywords": [
+        "rancunier",
+        "rancunière",
+        "rancune"
+      ]
+    },
+    {
+      "id": "incapable-dire-non",
+      "text": "incapable de dire non",
+      "difficulty": 3,
+      "category": "trait",
+      "keywords": [
+        "incapable de dire non",
+        "dire non"
+      ]
+    },
+    {
+      "id": "persuade-etre-grand-heros",
+      "text": "persuadé d'être un grand héros",
+      "difficulty": 3,
+      "category": "trait",
+      "keywords": [
+        "héros",
+        "héroïne",
+        "héroïque"
+      ]
+    },
+    {
+      "id": "honteux-propre-bonte",
+      "text": "honteux de sa propre bonté",
+      "difficulty": 3,
+      "category": "trait",
+      "keywords": [
+        "honteux",
+        "honteuse",
+        "honte"
+      ]
+    },
+    {
+      "id": "rit-quand-peur",
+      "text": "qui rit quand il a peur",
+      "difficulty": 3,
+      "category": "trait",
+      "keywords": [
+        "rire",
+        "rit",
+        "rient"
+      ]
+    },
+    {
+      "id": "obeit-reglement-lettre",
+      "text": "qui obéit au règlement à la lettre",
+      "difficulty": 3,
+      "category": "trait",
+      "keywords": [
+        "règlement",
+        "règlements",
+        "à la lettre"
+      ]
+    },
+    {
+      "id": "parle-toujours-troisieme-personne",
+      "text": "qui parle toujours à la troisième personne",
+      "difficulty": 3,
+      "category": "trait",
+      "keywords": [
+        "troisième personne"
+      ]
+    },
+    {
+      "id": "doute-tout-sauf-lui-meme",
+      "text": "qui doute de tout, sauf de lui-même",
+      "difficulty": 3,
+      "category": "trait",
+      "keywords": [
+        "doute",
+        "doutes",
+        "douter"
+      ]
+    },
+    {
+      "id": "pitie-humilie-autres",
+      "text": "d'une pitié qui humilie les autres",
+      "difficulty": 3,
+      "category": "trait",
+      "keywords": [
+        "pitié",
+        "pitoyable"
+      ]
+    },
+    {
+      "id": "fataliste-convaincu-tout-ecrit",
+      "text": "fataliste, convaincu que tout est écrit",
+      "difficulty": 3,
+      "category": "trait",
+      "keywords": [
+        "fataliste",
+        "fatalisme",
+        "destin"
+      ]
+    },
+    {
+      "id": "collectionne-promesses-autres",
+      "text": "qui collectionne les promesses des autres",
+      "difficulty": 3,
+      "category": "trait",
+      "keywords": [
+        "promesse",
+        "promesses",
+        "collectionne"
+      ]
+    },
+    {
+      "id": "avare-meticuleux",
+      "text": "avare et méticuleux",
+      "difficulty": 1,
+      "category": "trait",
+      "keywords": [
+        "avare",
+        "avares",
+        "avarice"
+      ]
+    },
+    {
+      "id": "optimisme-deraisonnable",
+      "text": "d'un optimisme déraisonnable",
+      "difficulty": 2,
+      "category": "trait",
+      "keywords": [
+        "optimiste",
+        "optimisme",
+        "optimistes"
+      ]
+    },
+    {
+      "id": "odeur-pain-brule",
+      "text": "une odeur de pain brûlé",
+      "difficulty": 1,
+      "category": "sensory",
+      "keywords": [
+        "pain brûlé",
+        "brûlé",
+        "brûlée"
+      ]
+    },
+    {
+      "id": "grincement-porte",
+      "text": "le grincement d'une porte",
+      "difficulty": 1,
+      "category": "sensory",
+      "keywords": [
+        "grincement",
+        "grince",
+        "grincer"
+      ]
+    },
+    {
+      "id": "fumee-acre-air",
+      "text": "une fumée âcre dans l'air",
+      "difficulty": 1,
+      "category": "sensory",
+      "keywords": [
+        "fumée",
+        "âcre"
+      ]
+    },
+    {
+      "id": "froid-pique-doigts",
+      "text": "un froid qui pique les doigts",
+      "difficulty": 1,
+      "category": "sensory",
+      "keywords": [
+        "froid",
+        "froide"
+      ]
+    },
+    {
+      "id": "gout-sel-levres",
+      "text": "le goût du sel sur les lèvres",
+      "difficulty": 1,
+      "category": "sensory",
+      "keywords": [
+        "sel",
+        "salé"
+      ]
+    },
+    {
+      "id": "tintement-troupeau-loin",
+      "text": "le tintement d'un troupeau au loin",
+      "difficulty": 1,
+      "category": "sensory",
+      "keywords": [
+        "troupeau",
+        "tintement",
+        "clarines"
+      ]
+    },
+    {
+      "id": "odeur-pluie-poussiere",
+      "text": "une odeur de pluie sur la poussière",
+      "difficulty": 1,
+      "category": "sensory",
+      "keywords": [
+        "pluie",
+        "poussière"
+      ]
+    },
+    {
+      "id": "crepitement-feu",
+      "text": "le crépitement d'un feu",
+      "difficulty": 1,
+      "category": "sensory",
+      "keywords": [
+        "crépitement",
+        "crépite",
+        "feu"
+      ]
+    },
+    {
+      "id": "lumiere-doree-fin-journee",
+      "text": "une lumière dorée de fin de journée",
+      "difficulty": 1,
+      "category": "sensory",
+      "keywords": [
+        "dorée",
+        "doré",
+        "dorure"
+      ]
+    },
+    {
+      "id": "parfum-fleurs-fanees",
+      "text": "un parfum de fleurs fanées",
+      "difficulty": 1,
+      "category": "sensory",
+      "keywords": [
+        "parfum",
+        "fleurs fanées",
+        "fanées"
+      ]
+    },
+    {
+      "id": "goutte-goutte-noir",
+      "text": "un goutte-à-goutte dans le noir",
+      "difficulty": 2,
+      "category": "sensory",
+      "keywords": [
+        "goutte-à-goutte",
+        "goutte",
+        "gouttes"
+      ]
+    },
+    {
+      "id": "gout-fer-bouche",
+      "text": "le goût du fer dans la bouche",
+      "difficulty": 2,
+      "category": "sensory",
+      "keywords": [
+        "fer",
+        "métallique"
+      ]
+    },
+    {
+      "id": "silence-bourdonne",
+      "text": "un silence qui bourdonne",
+      "difficulty": 2,
+      "category": "sensory",
+      "keywords": [
+        "bourdonne",
+        "bourdonnement",
+        "bourdonnements"
+      ]
+    },
+    {
+      "id": "brume-colle-peau",
+      "text": "une brume qui colle à la peau",
+      "difficulty": 2,
+      "category": "sensory",
+      "keywords": [
+        "brume",
+        "brumeux"
+      ]
+    },
+    {
+      "id": "odeur-huile-chaude",
+      "text": "une odeur d'huile chaude",
+      "difficulty": 2,
+      "category": "sensory",
+      "keywords": [
+        "huile"
+      ]
+    },
+    {
+      "id": "murmures-derriere-cloison",
+      "text": "des murmures derrière une cloison",
+      "difficulty": 2,
+      "category": "sensory",
+      "keywords": [
+        "murmure",
+        "murmures",
+        "cloison"
+      ]
+    },
+    {
+      "id": "poussiere-or-rayon-lumiere",
+      "text": "une poussière d'or dans un rayon de lumière",
+      "difficulty": 2,
+      "category": "sensory",
+      "keywords": [
+        "poussière d'or",
+        "rayon"
+      ]
+    },
+    {
+      "id": "gout-sucre-miel-mele-cendre",
+      "text": "le goût sucré du miel mêlé de cendre",
+      "difficulty": 2,
+      "category": "sensory",
+      "keywords": [
+        "miel",
+        "cendre"
+      ]
+    },
+    {
+      "id": "sol-collant-sous-semelles",
+      "text": "un sol collant sous les semelles",
+      "difficulty": 2,
+      "category": "sensory",
+      "keywords": [
+        "collant",
+        "poisseux"
+      ]
+    },
+    {
+      "id": "vent-charge-odeur-algues",
+      "text": "un vent chargé d'odeur d'algues",
+      "difficulty": 2,
+      "category": "sensory",
+      "keywords": [
+        "algues",
+        "algue"
+      ]
+    },
+    {
+      "id": "cloche-felee-sonne-faux",
+      "text": "une cloche fêlée qui sonne faux",
+      "difficulty": 2,
+      "category": "sensory",
+      "keywords": [
+        "fêlée",
+        "fêlure",
+        "sonne faux"
+      ]
+    },
+    {
+      "id": "bruit-pas-arrete-quand-on-arrete",
+      "text": "un bruit de pas qui s'arrête quand on s'arrête",
+      "difficulty": 3,
+      "category": "sensory",
+      "keywords": [
+        "bruit de pas",
+        "bruits de pas"
+      ]
+    },
+    {
+      "id": "chaleur-four-piece-vide",
+      "text": "une chaleur de four dans une pièce vide",
+      "difficulty": 3,
+      "category": "sensory",
+      "keywords": [
+        "chaleur",
+        "four"
+      ]
+    },
+    {
+      "id": "odeur-encens-lieu-sans-autel",
+      "text": "une odeur d'encens sur un lieu sans autel",
+      "difficulty": 3,
+      "category": "sensory",
+      "keywords": [
+        "encens"
+      ]
+    },
+    {
+      "id": "gout-cuivre-mensonge",
+      "text": "le goût de cuivre d'un mensonge",
+      "difficulty": 3,
+      "category": "sensory",
+      "keywords": [
+        "cuivre"
+      ]
+    },
+    {
+      "id": "velours-froid-humide-sous-doigts",
+      "text": "un velours froid et humide sous les doigts",
+      "difficulty": 3,
+      "category": "sensory",
+      "keywords": [
+        "velours"
+      ]
+    },
+    {
+      "id": "chants-lointains-ne-suivent-aucune-melodie",
+      "text": "des chants lointains qui ne suivent aucune mélodie",
+      "difficulty": 3,
+      "category": "sensory",
+      "keywords": [
+        "chants",
+        "chant",
+        "mélodie"
+      ]
+    },
+    {
+      "id": "etincelles-penombre",
+      "text": "des étincelles dans la pénombre",
+      "difficulty": 3,
+      "category": "sensory",
+      "keywords": [
+        "étincelles",
+        "étincelle",
+        "pénombre"
+      ]
+    },
+    {
+      "id": "silence-soudain-oiseaux",
+      "text": "le silence soudain des oiseaux",
+      "difficulty": 3,
+      "category": "sensory",
+      "keywords": [
+        "oiseaux",
+        "oiseau"
+      ]
+    },
+    {
+      "id": "sensation-etre-observe",
+      "text": "la sensation d'être observé",
+      "difficulty": 3,
+      "category": "sensory",
+      "keywords": [
+        "observé",
+        "observée",
+        "épié"
+      ]
+    },
+    {
+      "id": "odeur-lilas-plein-hiver",
+      "text": "une odeur de lilas en plein hiver",
+      "difficulty": 3,
+      "category": "sensory",
+      "keywords": [
+        "lilas"
+      ]
+    },
+    {
+      "id": "gouttes-cire-brulante-main",
+      "text": "des gouttes de cire brûlante sur la main",
+      "difficulty": 3,
+      "category": "sensory",
+      "keywords": [
+        "cire"
+      ]
+    },
+    {
+      "id": "vous-auriez-pas-vu-mon-chien",
+      "text": "« Vous n'auriez pas vu mon chien ? »",
+      "difficulty": 1,
+      "category": "line",
+      "keywords": [
+        "mon chien",
+        "son chien",
+        "chien perdu"
+      ]
+    },
+    {
+      "id": "ici-on-ne-paie-jamais-avance",
+      "text": "« Ici, on ne paie jamais d'avance. »",
+      "difficulty": 1,
+      "category": "line",
+      "keywords": [
+        "d'avance",
+        "payer d'avance",
+        "paie d'avance"
+      ]
+    },
+    {
+      "id": "je-ai-rien-vu-je-ai",
+      "text": "« Je n'ai rien vu, je n'ai rien entendu. »",
+      "difficulty": 1,
+      "category": "line",
+      "keywords": [
+        "rien vu",
+        "rien entendu"
+      ]
+    },
+    {
+      "id": "chut-ils-pourraient-nous-entendre",
+      "text": "« Chut, ils pourraient nous entendre. »",
+      "difficulty": 1,
+      "category": "line",
+      "keywords": [
+        "chut"
+      ]
+    },
+    {
+      "id": "faut-tu-partes-avant-aube",
+      "text": "« Il faut que tu partes avant l'aube. »",
+      "difficulty": 1,
+      "category": "line",
+      "keywords": [
+        "avant l'aube",
+        "aube"
+      ]
+    },
+    {
+      "id": "tout-ca-faute-boulanger",
+      "text": "« Tout ça, c'est la faute du boulanger. »",
+      "difficulty": 1,
+      "category": "line",
+      "keywords": [
+        "boulanger"
+      ]
+    },
+    {
+      "id": "prenez-moins-manteau",
+      "text": "« Prenez au moins ce manteau. »",
+      "difficulty": 1,
+      "category": "line",
+      "keywords": [
+        "manteau"
+      ]
+    },
+    {
+      "id": "laisse-cette-porte-ouverte",
+      "text": "« Qui a laissé cette porte ouverte ? »",
+      "difficulty": 1,
+      "category": "line",
+      "keywords": [
+        "porte ouverte",
+        "laissé cette porte"
+      ]
+    },
+    {
+      "id": "ai-quelque-chose-vous-montrer",
+      "text": "« J'ai quelque chose à vous montrer. »",
+      "difficulty": 1,
+      "category": "line",
+      "keywords": [
+        "quelque chose à vous montrer",
+        "à vous montrer"
+      ]
+    },
+    {
+      "id": "jamais-venu-ici-vous-entendez",
+      "text": "« Il n'est jamais venu ici, vous m'entendez ? »",
+      "difficulty": 1,
+      "category": "line",
+      "keywords": [
+        "jamais venu",
+        "jamais été ici"
+      ]
+    },
+    {
+      "id": "pas-ma-dette-sienne",
+      "text": "« Ce n'est pas ma dette, c'est la sienne. »",
+      "difficulty": 2,
+      "category": "line",
+      "keywords": [
+        "dette",
+        "dettes"
+      ]
+    },
+    {
+      "id": "je-sais-vous-avez-fait-hiver",
+      "text": "« Je sais ce que vous avez fait l'hiver dernier. »",
+      "difficulty": 2,
+      "category": "line",
+      "keywords": [
+        "l'hiver dernier",
+        "hiver dernier"
+      ]
+    },
+    {
+      "id": "parait-roi-ne-dort-plus",
+      "text": "« Il paraît que le roi ne dort plus. »",
+      "difficulty": 2,
+      "category": "line",
+      "keywords": [
+        "roi ne dort plus",
+        "ne dort plus",
+        "le roi"
+      ]
+    },
+    {
+      "id": "morts-ne-rendent-pas-qu-ils",
+      "text": "« Les morts ne rendent pas ce qu'ils prennent. »",
+      "difficulty": 2,
+      "category": "line",
+      "keywords": [
+        "morts",
+        "rendent"
+      ]
+    },
+    {
+      "id": "ne-regardez-surtout-pas-derriere-vous",
+      "text": "« Ne regardez surtout pas derrière vous. »",
+      "difficulty": 2,
+      "category": "line",
+      "keywords": [
+        "derrière vous",
+        "pas regarder derrière"
+      ]
+    },
+    {
+      "id": "je-ne-suis-pas-celui-vous",
+      "text": "« Je ne suis pas celui que vous cherchez. »",
+      "difficulty": 2,
+      "category": "line",
+      "keywords": [
+        "cherchez"
+      ]
+    },
+    {
+      "id": "me-doit-service-plus-encore",
+      "text": "« Il me doit un service, et plus encore. »",
+      "difficulty": 2,
+      "category": "line",
+      "keywords": [
+        "me doit",
+        "un service"
+      ]
+    },
+    {
+      "id": "vous-etes-retard-generation",
+      "text": "« Vous êtes en retard d'une génération. »",
+      "difficulty": 2,
+      "category": "line",
+      "keywords": [
+        "génération",
+        "générations"
+      ]
+    },
+    {
+      "id": "vous-attendait-mais-pas-soir",
+      "text": "« Elle vous attendait, mais pas ce soir. »",
+      "difficulty": 2,
+      "category": "line",
+      "keywords": [
+        "vous attendait",
+        "attendait"
+      ]
+    },
+    {
+      "id": "pain-plus-cher-qu-hier",
+      "text": "« Le pain est plus cher qu'hier. »",
+      "difficulty": 2,
+      "category": "line",
+      "keywords": [
+        "pain plus cher",
+        "plus cher qu'hier"
+      ]
+    },
+    {
+      "id": "on-dit-ne-pas-vous-dire",
+      "text": "« On m'a dit de ne pas vous le dire. »",
+      "difficulty": 2,
+      "category": "line",
+      "keywords": [
+        "de ne pas vous le dire",
+        "ne pas vous le dire"
+      ]
+    },
+    {
+      "id": "pardonne-moi-je-avais-pas-choix",
+      "text": "« Pardonne-moi, je n'avais pas le choix. »",
+      "difficulty": 3,
+      "category": "line",
+      "keywords": [
+        "pardonne-moi",
+        "pas le choix"
+      ]
+    },
+    {
+      "id": "silence-prix-ta-survie",
+      "text": "« Le silence est le prix de ta survie. »",
+      "difficulty": 3,
+      "category": "line",
+      "keywords": [
+        "prix de ta survie",
+        "survie"
+      ]
+    },
+    {
+      "id": "je-vous-ai-sauves-pour-cela",
+      "text": "« Je vous ai sauvés, et c'est pour cela que je suis damné. »",
+      "difficulty": 3,
+      "category": "line",
+      "keywords": [
+        "damné",
+        "damnée",
+        "sauvés"
+      ]
+    },
+    {
+      "id": "trois-verites-ici-seule-dangereuse",
+      "text": "« Il y a trois vérités ici, et une seule est dangereuse. »",
+      "difficulty": 3,
+      "category": "line",
+      "keywords": [
+        "trois vérités",
+        "vérités"
+      ]
+    },
+    {
+      "id": "tu-parles-comme-celui-ai-enterre",
+      "text": "« Tu parles comme celui que j'ai enterré. »",
+      "difficulty": 3,
+      "category": "line",
+      "keywords": [
+        "enterré",
+        "enterrer"
+      ]
+    },
+    {
+      "id": "meme-anges-ont-besoin-alibi",
+      "text": "« Même les anges ont besoin d'un alibi. »",
+      "difficulty": 3,
+      "category": "line",
+      "keywords": [
+        "anges",
+        "ange",
+        "alibi"
+      ]
+    },
+    {
+      "id": "votre-nom-figure-liste-je-regrette",
+      "text": "« Votre nom figure sur une liste que je regrette d'avoir lue. »",
+      "difficulty": 3,
+      "category": "line",
+      "keywords": [
+        "liste",
+        "regrette",
+        "figure sur une liste"
+      ]
+    },
+    {
+      "id": "brule-moi-si-tu-veux-mais",
+      "text": "« Brûle-moi si tu veux, mais lis d'abord. »",
+      "difficulty": 3,
+      "category": "line",
+      "keywords": [
+        "brûle-moi",
+        "brûler",
+        "lis d'abord"
+      ]
+    },
+    {
+      "id": "tu-appelles-courage-je-appelle-dette",
+      "text": "« Ce que tu appelles courage, je l'appelle dette. »",
+      "difficulty": 3,
+      "category": "line",
+      "keywords": [
+        "courage",
+        "appelle dette"
+      ]
+    },
+    {
+      "id": "maisons-ne-pardonnent-pas-etre-quittees",
+      "text": "« Il y a des maisons qui ne pardonnent pas d'être quittées. »",
+      "difficulty": 3,
+      "category": "line",
+      "keywords": [
+        "maisons qui ne pardonnent pas",
+        "ne pardonnent pas"
+      ]
+    },
+    {
+      "id": "derniere-fois-etait-moi-victime",
+      "text": "« La dernière fois, c'était moi, la victime. »",
+      "difficulty": 3,
+      "category": "line",
+      "keywords": [
+        "victime",
+        "victimes",
+        "la victime"
+      ]
+    }
+  ]
+}

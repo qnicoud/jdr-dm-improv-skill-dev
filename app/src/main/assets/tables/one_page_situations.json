@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "table": "one_page_situations",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "village-pecheurs-divise-uns-veulent-vendre",
+      "text": "Un village de pêcheurs se divise : les uns veulent vendre le port à une compagnie, les autres refusent.",
+      "difficulty": 1
+    },
+    {
+      "id": "auberge-detenue-par-famille-dont-deux",
+      "text": "Une auberge est détenue par une famille dont les deux fils se détestent.",
+      "difficulty": 1
+    },
+    {
+      "id": "marche-ville-menace-par-taxe-injuste",
+      "text": "Un marché de ville est menacé par une taxe injuste décidée dans l'ombre.",
+      "difficulty": 1
+    },
+    {
+      "id": "trois-apprentis-meme-guilde-convoitent-place",
+      "text": "Trois apprentis d'une même guilde convoitent la place du maître qui vieillit.",
+      "difficulty": 1
+    },
+    {
+      "id": "hameau-montagne-doit-choisir-hebergera-refugies",
+      "text": "Un hameau de montagne doit choisir qui hébergera les réfugiés d'un village voisin.",
+      "difficulty": 1
+    },
+    {
+      "id": "couvent-recoit-visite-inspecteur-venu-chercher",
+      "text": "Un couvent reçoit la visite d'un inspecteur venu y chercher un fugitif.",
+      "difficulty": 1
+    },
+    {
+      "id": "theatre-itinerant-accuse-vol-alors-coupable",
+      "text": "Un théâtre itinérant est accusé d'un vol, alors que le coupable est un spectateur.",
+      "difficulty": 1
+    },
+    {
+      "id": "ferme-hantee-par-fantome-reclame-fin",
+      "text": "Une ferme est hantée par un fantôme qui réclame la fin d'un procès ancien.",
+      "difficulty": 1
+    },
+    {
+      "id": "cour-royale-prepare-mariage-cache-accord",
+      "text": "Une cour royale prépare un mariage qui cache un accord de paix très fragile.",
+      "difficulty": 2
+    },
+    {
+      "id": "ville-assiegee-compte-trois-factions-chacune",
+      "text": "Une ville assiégée compte trois factions, chacune prête à négocier sa propre reddition.",
+      "difficulty": 2
+    },
+    {
+      "id": "expedition-revient-avec-etranger-malade-toute",
+      "text": "Une expédition revient avec un étranger malade, que toute la ville veut soigner ou chasser.",
+      "difficulty": 2
+    },
+    {
+      "id": "duc-eveque-marchand-disputent-mine-argent",
+      "text": "Un duc, un évêque et un marchand se disputent la mine d'argent qui s'épuise.",
+      "difficulty": 2
+    },
+    {
+      "id": "confrerie-passeurs-decouvre-qu-membres-vend",
+      "text": "Une confrérie de passeurs découvre qu'un de ses membres vend ses routes aux douaniers.",
+      "difficulty": 2
+    },
+    {
+      "id": "tournoi-annuel-truque-par-moins-quatre",
+      "text": "Un tournoi annuel est truqué par au moins quatre personnes, qui l'ignorent entre elles.",
+      "difficulty": 2
+    },
+    {
+      "id": "academie-magie-cache-mort-suspecte-professeur",
+      "text": "Une académie de magie cache la mort suspecte d'un professeur.",
+      "difficulty": 2
+    },
+    {
+      "id": "rebellion-naissante-appuie-document-peut-etre",
+      "text": "Une rébellion naissante s'appuie sur un document qui n'est peut-être qu'un faux.",
+      "difficulty": 2
+    },
+    {
+      "id": "orphelinat-finance-par-bienfaiteur-dont-fortune",
+      "text": "Un orphelinat est financé par un bienfaiteur dont la fortune vient d'un crime.",
+      "difficulty": 2
+    },
+    {
+      "id": "navire-commerce-retrouve-avec-passager-clandestin",
+      "text": "Un navire de commerce se retrouve avec un passager clandestin que tous veulent livrer ou protéger.",
+      "difficulty": 2
+    },
+    {
+      "id": "cite-etat-organise-elections-favori-imposteur",
+      "text": "Une cité-État organise ses élections, et le favori est un imposteur.",
+      "difficulty": 2
+    },
+    {
+      "id": "empire-declin-voit-trois-generaux-comploter",
+      "text": "Un empire en déclin voit trois généraux comploter, chacun persuadé d'agir pour le bien commun.",
+      "difficulty": 3
+    },
+    {
+      "id": "guerre-religion-eclate-autour-miracle-personne",
+      "text": "Une guerre de religion éclate autour d'un miracle que personne n'a vraiment vu.",
+      "difficulty": 3
+    },
+    {
+      "id": "barrage-menace-rompre-seuls-ceux-ont",
+      "text": "Un barrage menace de rompre, et seuls ceux qui l'ont construit connaissent les failles.",
+      "difficulty": 3
+    },
+    {
+      "id": "conseil-ville-marchande-paralyse-par-chantage",
+      "text": "Le conseil d'une ville marchande est paralysé par un chantage qui les touche tous différemment.",
+      "difficulty": 3
+    },
+    {
+      "id": "prophetie-annonce-chute-trone-chacun-efforce",
+      "text": "Une prophétie annonce la chute d'un trône, et chacun s'efforce de la faire s'accomplir ou de l'empêcher.",
+      "difficulty": 3
+    },
+    {
+      "id": "forteresse-frontaliere-change-mains-chaque-saison",
+      "text": "Une forteresse frontalière change de mains chaque saison, selon des accords que personne n'assume.",
+      "difficulty": 3
+    },
+    {
+      "id": "peuple-nomades-demande-droit-passage-terres",
+      "text": "Un peuple de nomades demande un droit de passage sur des terres qui appartiennent à quatre seigneurs.",
+      "difficulty": 3
+    },
+    {
+      "id": "epidemie-reves-partages-lie-gens-tout",
+      "text": "Une épidémie de rêves partagés lie des gens que tout oppose et révèle leurs secrets.",
+      "difficulty": 3
+    },
+    {
+      "id": "guilde-assassins-recoit-contrat-propres-fondateurs",
+      "text": "Une guilde d'assassins reçoit un contrat sur l'un de ses propres fondateurs.",
+      "difficulty": 3
+    },
+    {
+      "id": "dieu-mineur-demande-qu-on-enterre",
+      "text": "Un dieu mineur demande qu'on l'enterre vivant, et son clergé se divise.",
+      "difficulty": 3
+    },
+    {
+      "id": "heritage-magique-partage-entre-cinq-cousins",
+      "text": "Un héritage magique est partagé entre cinq cousins qui se méfient les uns des autres.",
+      "difficulty": 3
+    },
+    {
+      "id": "grande-bibliotheque-brule-chacun-raison-differente",
+      "text": "Une grande bibliothèque brûle, et chacun a une raison différente de s'en réjouir.",
+      "difficulty": 3
+    }
+  ]
+}

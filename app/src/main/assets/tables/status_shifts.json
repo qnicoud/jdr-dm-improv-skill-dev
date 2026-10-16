@@ -1,0 +1,279 @@
+{
+  "schemaVersion": 1,
+  "table": "status_shifts",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "compagnon-pnj-arrive-renfort-piece-penche",
+      "text": "Un compagnon du PNJ arrive en renfort, et la pièce penche de son côté.",
+      "difficulty": 1,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "pnj-decouvre-qu-detient-seule-cle",
+      "text": "Le PNJ découvre qu'il détient la seule clé qui compte ici.",
+      "difficulty": 1,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "invite-marque-entre-fait-signe-pnj",
+      "text": "Un invité de marque entre et fait signe au PNJ de poursuivre, avec respect.",
+      "difficulty": 1,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "pnj-recoit-message-lui-assure-appui",
+      "text": "Le PNJ reçoit un message qui lui assure l'appui d'un puissant.",
+      "difficulty": 1,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "on-apprend-soudain-pnj-paye-dette",
+      "text": "On apprend soudain que le PNJ a payé la dette de tous les présents.",
+      "difficulty": 2,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "pnj-entend-par-hasard-secret-compromet",
+      "text": "Le PNJ entend, par hasard, un secret qui compromet son interlocuteur.",
+      "difficulty": 2,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "foule-met-applaudir-pnj-pour-geste",
+      "text": "La foule se met à applaudir le PNJ pour un geste qu'il n'avait pas remarqué.",
+      "difficulty": 2,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "pnj-reconnait-chez-vis-vis-ancien",
+      "text": "Le PNJ reconnaît chez son vis-à-vis un ancien débiteur.",
+      "difficulty": 2,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "tonnerre-eclate-moment-ou-pnj-leve",
+      "text": "Le tonnerre éclate au moment où le PNJ lève la main, et chacun recule.",
+      "difficulty": 2,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "pnj-trouve-arme-tous-cherchaient-cachee",
+      "text": "Le PNJ trouve l'arme que tous cherchaient, cachée dans sa manche.",
+      "difficulty": 2,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "pnj-comprend-adversaire-menti-identite-depuis",
+      "text": "Le PNJ comprend que son adversaire a menti sur son identité depuis le début.",
+      "difficulty": 3,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "pnj-nomme-poste-lui-donne-autorite",
+      "text": "Le PNJ est nommé à un poste qui lui donne autorité sur tous les présents.",
+      "difficulty": 3,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "lumieres-eteignent-pnj-seul-voir-noir",
+      "text": "Les lumières s'éteignent, et le PNJ est le seul à voir dans le noir.",
+      "difficulty": 3,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "quelqu-lui-avoue-crime-oreille-pleine",
+      "text": "Quelqu'un lui avoue un crime à l'oreille, en pleine conversation.",
+      "difficulty": 3,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "animal-sacre-approche-pnj-couche-pieds",
+      "text": "Un animal sacré s'approche du PNJ et se couche à ses pieds.",
+      "difficulty": 3,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "pnj-apercoit-interlocuteur-peur-lui-decide",
+      "text": "Le PNJ s'aperçoit que son interlocuteur a peur de lui, et décide d'en jouer.",
+      "difficulty": 2,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "messager-annonce-victoire-camp-pnj",
+      "text": "Un messager annonce la victoire du camp du PNJ.",
+      "difficulty": 1,
+      "tags": [
+        "shift:up"
+      ]
+    },
+    {
+      "id": "pnj-apercoit-qu-perdu-bourse-plein",
+      "text": "Le PNJ s'aperçoit qu'il a perdu sa bourse en plein milieu de la discussion.",
+      "difficulty": 1,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "superieur-pnj-entre-lui-ordonne-taire",
+      "text": "Un supérieur du PNJ entre et lui ordonne de se taire.",
+      "difficulty": 1,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "pnj-trebuche-devant-tout-monde-rire",
+      "text": "Le PNJ trébuche devant tout le monde, et un rire éclate.",
+      "difficulty": 1,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "pnj-apprend-famille-vient-etre-arretee",
+      "text": "Le PNJ apprend que sa famille vient d'être arrêtée.",
+      "difficulty": 1,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "proche-pnj-revele-secret-honteux-voix",
+      "text": "Un proche du PNJ révèle un secret honteux à voix haute.",
+      "difficulty": 2,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "pnj-entend-nom-bouche-inconnu-associe",
+      "text": "Le PNJ entend son nom dans la bouche d'un inconnu, associé à une accusation.",
+      "difficulty": 2,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "gardes-arrivent-dirigent-droit-vers-lui",
+      "text": "Les gardes arrivent et se dirigent droit vers lui.",
+      "difficulty": 2,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "pnj-comprend-piege-dont-vantait-referme",
+      "text": "Le PNJ comprend que le piège dont il se vantait s'est refermé sur lui.",
+      "difficulty": 2,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "cloche-sonne-pnj-realise-qu-retard",
+      "text": "Une cloche sonne, et le PNJ réalise qu'il est en retard pour un rendez-vous capital.",
+      "difficulty": 2,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "pnj-voit-entrer-quelqu-qu-croyait",
+      "text": "Le PNJ voit entrer quelqu'un qu'il croyait mort depuis des années.",
+      "difficulty": 2,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "on-decouvre-titre-pnj-revendique-ne",
+      "text": "On découvre que le titre que le PNJ revendique ne lui appartient pas.",
+      "difficulty": 3,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "pnj-pris-malaise-tout-monde-remarque",
+      "text": "Le PNJ est pris d'un malaise, et tout le monde le remarque, y compris lui.",
+      "difficulty": 3,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "pnj-perd-voix-moment-ou-devait",
+      "text": "Le PNJ perd la voix au moment où il devait répondre.",
+      "difficulty": 3,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "vrai-proprietaire-lieux-apparait-salue-pnj",
+      "text": "Le vrai propriétaire des lieux apparaît, et salue le PNJ comme un invité.",
+      "difficulty": 3,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "pnj-recoit-lettre-lui-retire-tout",
+      "text": "Le PNJ reçoit une lettre qui lui retire tout soutien officiel.",
+      "difficulty": 3,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "enfant-dit-tout-haut-pnj-essayait",
+      "text": "Un enfant dit tout haut ce que le PNJ essayait de cacher.",
+      "difficulty": 3,
+      "tags": [
+        "shift:down"
+      ]
+    },
+    {
+      "id": "pnj-apercoit-plan-ne-marche-plus",
+      "text": "Le PNJ s'aperçoit que le plan ne marche plus et que personne ne l'attend.",
+      "difficulty": 1,
+      "tags": [
+        "shift:down"
+      ]
+    }
+  ]
+}

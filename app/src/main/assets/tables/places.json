@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "table": "places",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "auberge-bord-route-ou-cheminee-fume",
+      "text": "Une auberge de bord de route où la cheminée fume plus que le dîner.",
+      "difficulty": 1
+    },
+    {
+      "id": "marche-couvert-heure-fermeture-ou-marchands",
+      "text": "Un marché couvert à l'heure de la fermeture, où les marchands bradent leurs restes.",
+      "difficulty": 1
+    },
+    {
+      "id": "clairiere-avec-vieille-pierre-dressee-couverte",
+      "text": "Une clairière avec une vieille pierre dressée couverte de mousse.",
+      "difficulty": 1
+    },
+    {
+      "id": "pont-pierre-use-avec-peage-tenu",
+      "text": "Un pont de pierre usé, avec un péage tenu par un vieillard têtu.",
+      "difficulty": 1
+    },
+    {
+      "id": "moulin-eau-abandonne-dont-roue-grince",
+      "text": "Un moulin à eau abandonné dont la roue grince encore.",
+      "difficulty": 1
+    },
+    {
+      "id": "cave-humide-pleine-tonneaux-toiles-araignee",
+      "text": "Une cave humide pleine de tonneaux et de toiles d'araignée.",
+      "difficulty": 1
+    },
+    {
+      "id": "cimetiere-village-niche-sommet-colline-venteuse",
+      "text": "Un cimetière de village niché au sommet d'une colline venteuse.",
+      "difficulty": 1
+    },
+    {
+      "id": "petite-chapelle-dont-cloche-sonne-toute",
+      "text": "Une petite chapelle dont la cloche sonne toute seule certains soirs.",
+      "difficulty": 1
+    },
+    {
+      "id": "cuisine-chateau-ou-on-prepare-banquet",
+      "text": "Une cuisine de château où l'on prépare un banquet que personne n'a annoncé.",
+      "difficulty": 1
+    },
+    {
+      "id": "ferme-isolee-dont-volets-sont-tous",
+      "text": "Une ferme isolée dont les volets sont tous fermés en plein jour.",
+      "difficulty": 1
+    },
+    {
+      "id": "quai-port-encombre-caisses-cordages-marins",
+      "text": "Un quai de port encombré de caisses, de cordages et de marins pressés.",
+      "difficulty": 1
+    },
+    {
+      "id": "grotte-dont-entree-dissimulee-derriere-cascade",
+      "text": "Une grotte dont l'entrée est dissimulée derrière une cascade.",
+      "difficulty": 1
+    },
+    {
+      "id": "amphitheatre-pierre-envahi-par-herbes-ou",
+      "text": "Un amphithéâtre de pierre envahi par les herbes, où résonne chaque murmure.",
+      "difficulty": 2
+    },
+    {
+      "id": "bibliotheque-dont-rayons-montent-plus-haut",
+      "text": "Une bibliothèque dont les rayons montent plus haut que la lumière n'atteint.",
+      "difficulty": 2
+    },
+    {
+      "id": "marais-ou-passerelles-bois-pourri-relient",
+      "text": "Un marais où des passerelles de bois pourri relient des cabanes sur pilotis.",
+      "difficulty": 2
+    },
+    {
+      "id": "salle-bal-poussiereuse-dont-tous-miroirs",
+      "text": "Une salle de bal poussiéreuse dont tous les miroirs ont été retournés contre le mur.",
+      "difficulty": 2
+    },
+    {
+      "id": "phare-dont-escalier-compte-bien-plus",
+      "text": "Un phare dont l'escalier compte bien plus de marches qu'il n'y paraît de l'extérieur.",
+      "difficulty": 2
+    },
+    {
+      "id": "galerie-mine-inondee-ou-on-avance",
+      "text": "Une galerie de mine inondée, où l'on avance sur des planches posées sur l'eau noire.",
+      "difficulty": 2
+    },
+    {
+      "id": "caravanserail-carrefour-quatre-routes-plein-langues",
+      "text": "Un caravansérail au carrefour de quatre routes, plein de langues mêlées.",
+      "difficulty": 2
+    },
+    {
+      "id": "jardin-statues-dont-certaines-semblent-avoir",
+      "text": "Un jardin de statues dont certaines semblent avoir changé de place.",
+      "difficulty": 2
+    },
+    {
+      "id": "navire-echoue-colline-transforme-maison-par",
+      "text": "Un navire échoué sur une colline, transformé en maison par des familles entières.",
+      "difficulty": 2
+    },
+    {
+      "id": "salle-trone-dont-siege-ete-scie",
+      "text": "Une salle du trône dont le siège a été scié en deux.",
+      "difficulty": 2
+    },
+    {
+      "id": "bain-public-vapeur-ou-tiennent-vraies",
+      "text": "Un bain public de vapeur où se tiennent les vraies négociations de la ville.",
+      "difficulty": 2
+    },
+    {
+      "id": "foret-dont-tous-arbres-portent-rubans",
+      "text": "Une forêt dont tous les arbres portent des rubans noués par des inconnus.",
+      "difficulty": 2
+    },
+    {
+      "id": "atelier-horloger-ou-chaque-pendule-marque",
+      "text": "Un atelier d'horloger où chaque pendule marque une heure différente.",
+      "difficulty": 2
+    },
+    {
+      "id": "escalier-exterieur-creuse-falaise-sans-rambarde",
+      "text": "Un escalier extérieur creusé dans une falaise, sans rambarde, battu par les embruns.",
+      "difficulty": 2
+    },
+    {
+      "id": "ville-batie-dos-immense-carcasse-pierre",
+      "text": "Une ville bâtie sur le dos d'une immense carcasse de pierre, où l'on entend parfois un souffle.",
+      "difficulty": 3
+    },
+    {
+      "id": "tribunal-ou-verdicts-sont-rendus-par",
+      "text": "Un tribunal où les verdicts sont rendus par tirage au sort, sous le regard d'un public muet.",
+      "difficulty": 3
+    },
+    {
+      "id": "salle-banquet-ou-convives-sont-immobiles",
+      "text": "Une salle de banquet où les convives sont immobiles depuis des décennies, la table intacte.",
+      "difficulty": 3
+    },
+    {
+      "id": "canal-souterrain-eclaire-champignons-seuls-passeurs",
+      "text": "Un canal souterrain éclairé de champignons, que seuls les passeurs savent parcourir.",
+      "difficulty": 3
+    },
+    {
+      "id": "monastere-suspendu-paroi-accessible-seulement-par",
+      "text": "Un monastère suspendu à une paroi, accessible seulement par un panier et une corde.",
+      "difficulty": 3
+    },
+    {
+      "id": "champ-bataille-ancien-ou-chaque-soir",
+      "text": "Un champ de bataille ancien où chaque soir, des lueurs rejouent le combat.",
+      "difficulty": 3
+    },
+    {
+      "id": "salon-the-haute-societe-ou-chaque",
+      "text": "Un salon de thé de haute société, où chaque tasse servie est un message politique.",
+      "difficulty": 3
+    },
+    {
+      "id": "prison-dont-cellules-sont-ouvertes-rue",
+      "text": "Une prison dont les cellules sont ouvertes : c'est la rue autour qui est murée.",
+      "difficulty": 3
+    },
+    {
+      "id": "observatoire-sommet-tour-dont-telescope-braque",
+      "text": "Un observatoire au sommet d'une tour dont le télescope est braqué sur le sol.",
+      "difficulty": 3
+    }
+  ]
+}
