@@ -94,6 +94,43 @@ class DrawerTest {
     }
 
     @Test
+    fun `exclusion is a preference filled up with excluded entries only if needed`() {
+        repeat(20) { seed ->
+            val drawn = drawer(seed).draw(table, 5, exclude = setOf("cave", "pont"))
+
+            assertEquals(5, drawn.size)
+            assertEquals(1, drawn.count { it.id in setOf("cave", "pont") })
+        }
+    }
+
+    @Test
+    fun `exclusion is lifted before difficulty`() {
+        repeat(20) { seed ->
+            val drawn = drawer(seed).draw(table, 2, difficulty = 3..3, exclude = setOf("mine"))
+
+            assertEquals(setOf("mine", "puits"), drawn.map { it.id }.toSet())
+        }
+    }
+
+    @Test
+    fun `non excluded entries come first within a difficulty tier`() {
+        repeat(20) { seed ->
+            val drawn = drawer(seed).draw(table, 1, difficulty = 3..3, exclude = setOf("mine"))
+
+            assertEquals("puits", drawn.single().id)
+        }
+    }
+
+    @Test
+    fun `entries without category are all distinct`() {
+        val uncategorized = TestTables.fixtureSmall().copy(entries = List(3) { TableEntry("e$it", "t$it", 1) })
+
+        val drawn = drawer().draw(uncategorized, 3, distinctBy = DistinctBy.Category)
+
+        assertEquals(3, drawn.size)
+    }
+
+    @Test
     fun `difficulty is relaxed after exclusion`() {
         val drawn = drawer().draw(table, 4, difficulty = 3..3)
 
