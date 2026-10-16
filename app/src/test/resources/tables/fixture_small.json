@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "table": "places",
+  "locale": "fr",
+  "entries": [
+    { "id": "cave", "text": "une cave", "difficulty": 1, "category": "a", "tags": ["rank:high"] },
+    { "id": "pont", "text": "un pont", "difficulty": 1, "category": "a", "tags": ["rank:low"] },
+    { "id": "tour", "text": "une tour", "difficulty": 2, "category": "b", "tags": ["rank:high"] },
+    { "id": "gue", "text": "un gué", "difficulty": 2, "category": "b", "tags": ["rank:low"] },
+    { "id": "mine", "text": "une mine", "difficulty": 3, "category": "c", "keywords": ["mine", "mines"], "fuzzy": false },
+    { "id": "puits", "text": "un puits", "difficulty": 3 }
+  ]
+}
