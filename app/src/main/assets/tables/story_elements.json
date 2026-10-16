@@ -124,7 +124,8 @@
       "keywords": [
         "mine",
         "mines",
-        "minier"
+        "minier",
+        "minière"
       ]
     },
     {
@@ -155,7 +156,8 @@
       "keywords": [
         "marais",
         "marécage",
-        "marécages"
+        "marécages",
+        "marécageux"
       ]
     },
     {
@@ -177,7 +179,8 @@
       "keywords": [
         "statue",
         "statues",
-        "jardin"
+        "jardin",
+        "jardins"
       ]
     },
     {
@@ -188,6 +191,7 @@
       "keywords": [
         "horloger",
         "horlogère",
+        "horlogers",
         "atelier"
       ]
     },
@@ -222,7 +226,8 @@
       "keywords": [
         "forêt",
         "forêts",
-        "rubans"
+        "rubans",
+        "ruban"
       ]
     },
     {
@@ -293,7 +298,8 @@
       "category": "place",
       "keywords": [
         "salon de thé",
-        "thé"
+        "thé",
+        "thés"
       ]
     },
     {
@@ -314,7 +320,8 @@
       "keywords": [
         "navire",
         "navires",
-        "bateau"
+        "bateau",
+        "bateaux"
       ]
     },
     {
@@ -652,7 +659,8 @@
       "keywords": [
         "étui",
         "étuis",
-        "aiguilles"
+        "aiguilles",
+        "aiguille"
       ]
     },
     {
@@ -663,8 +671,8 @@
       "keywords": [
         "têtu",
         "têtue",
-        "têtus",
-        "entêté"
+        "entêté",
+        "entêtée"
       ]
     },
     {
@@ -685,7 +693,8 @@
       "keywords": [
         "généreux",
         "généreuse",
-        "générosité"
+        "générosité",
+        "généreusement"
       ]
     },
     {
@@ -696,8 +705,8 @@
       "keywords": [
         "peureux",
         "peureuse",
-        "tremble",
-        "trembler"
+        "trembler",
+        "tremblait"
       ]
     },
     {
@@ -708,6 +717,7 @@
       "keywords": [
         "bavard",
         "bavarde",
+        "bavards",
         "bavardage"
       ]
     },
@@ -741,6 +751,7 @@
       "keywords": [
         "gourmand",
         "gourmande",
+        "gourmands",
         "gourmandise"
       ]
     },
@@ -752,8 +763,8 @@
       "keywords": [
         "paresseux",
         "paresseuse",
-        "paresse",
-        "rêveur"
+        "rêveur",
+        "rêveuse"
       ]
     },
     {
@@ -765,7 +776,7 @@
         "menteur",
         "menteuse",
         "mensonge",
-        "mensonges"
+        "mentir"
       ]
     },
     {
@@ -776,7 +787,8 @@
       "keywords": [
         "superstitieux",
         "superstitieuse",
-        "superstition"
+        "superstition",
+        "superstitions"
       ]
     },
     {
@@ -798,7 +810,8 @@
       "keywords": [
         "ambitieux",
         "ambitieuse",
-        "ambition"
+        "ambition",
+        "ambitions"
       ]
     },
     {
@@ -809,7 +822,8 @@
       "keywords": [
         "méfiant",
         "méfiante",
-        "méfiance"
+        "méfiance",
+        "méfier"
       ]
     },
     {
@@ -907,7 +921,8 @@
       "keywords": [
         "rire",
         "rit",
-        "rient"
+        "rient",
+        "riait"
       ]
     },
     {
@@ -938,7 +953,8 @@
       "keywords": [
         "doute",
         "doutes",
-        "douter"
+        "douter",
+        "doutait"
       ]
     },
     {
@@ -959,7 +975,8 @@
       "keywords": [
         "fataliste",
         "fatalisme",
-        "destin"
+        "destin",
+        "destins"
       ]
     },
     {
@@ -1003,7 +1020,8 @@
       "keywords": [
         "pain brûlé",
         "brûlé",
-        "brûlée"
+        "brûlée",
+        "brûlés"
       ]
     },
     {
@@ -1014,7 +1032,8 @@
       "keywords": [
         "grincement",
         "grince",
-        "grincer"
+        "grincer",
+        "grinçait"
       ]
     },
     {
@@ -1024,6 +1043,7 @@
       "category": "sensory",
       "keywords": [
         "fumée",
+        "fumées",
         "âcre"
       ]
     },
@@ -1034,7 +1054,9 @@
       "category": "sensory",
       "keywords": [
         "froid",
-        "froide"
+        "froide",
+        "froids",
+        "froides"
       ]
     },
     {
@@ -1044,7 +1066,9 @@
       "category": "sensory",
       "keywords": [
         "sel",
-        "salé"
+        "salé",
+        "salée",
+        "salés"
       ]
     },
     {
@@ -1054,6 +1078,7 @@
       "category": "sensory",
       "keywords": [
         "troupeau",
+        "troupeaux",
         "tintement",
         "clarines"
       ]
@@ -1076,7 +1101,8 @@
       "keywords": [
         "crépitement",
         "crépite",
-        "feu"
+        "feu",
+        "feux"
       ]
     },
     {
@@ -1087,7 +1113,8 @@
       "keywords": [
         "dorée",
         "doré",
-        "dorure"
+        "dorées",
+        "dorés"
       ]
     },
     {
@@ -1097,7 +1124,8 @@
       "category": "sensory",
       "keywords": [
         "parfum",
-        "fleurs fanées",
+        "parfums",
+        "fané",
         "fanées"
       ]
     },
@@ -1119,7 +1147,8 @@
       "category": "sensory",
       "keywords": [
         "fer",
-        "métallique"
+        "métallique",
+        "métalliques"
       ]
     },
     {
@@ -1129,6 +1158,7 @@
       "category": "sensory",
       "keywords": [
         "bourdonne",
+        "bourdonnait",
         "bourdonnement",
         "bourdonnements"
       ]
@@ -1140,7 +1170,9 @@
       "category": "sensory",
       "keywords": [
         "brume",
-        "brumeux"
+        "brumeux",
+        "brumeuse",
+        "brumes"
       ]
     },
     {
@@ -1149,7 +1181,8 @@
       "difficulty": 2,
       "category": "sensory",
       "keywords": [
-        "huile"
+        "huile",
+        "huiles"
       ]
     },
     {
@@ -1160,6 +1193,7 @@
       "keywords": [
         "murmure",
         "murmures",
+        "murmurait",
         "cloison"
       ]
     },
@@ -1170,7 +1204,8 @@
       "category": "sensory",
       "keywords": [
         "poussière d'or",
-        "rayon"
+        "rayon",
+        "rayons"
       ]
     },
     {
@@ -1180,7 +1215,8 @@
       "category": "sensory",
       "keywords": [
         "miel",
-        "cendre"
+        "cendre",
+        "cendres"
       ]
     },
     {
@@ -1190,7 +1226,9 @@
       "category": "sensory",
       "keywords": [
         "collant",
-        "poisseux"
+        "collante",
+        "poisseux",
+        "poisseuse"
       ]
     },
     {
@@ -1210,6 +1248,7 @@
       "category": "sensory",
       "keywords": [
         "fêlée",
+        "fêlé",
         "fêlure",
         "sonne faux"
       ]
@@ -1231,7 +1270,8 @@
       "category": "sensory",
       "keywords": [
         "chaleur",
-        "four"
+        "four",
+        "fours"
       ]
     },
     {
@@ -1258,7 +1298,9 @@
       "difficulty": 3,
       "category": "sensory",
       "keywords": [
-        "velours"
+        "velours",
+        "veloutée",
+        "veloutés"
       ]
     },
     {
@@ -1269,7 +1311,8 @@
       "keywords": [
         "chants",
         "chant",
-        "mélodie"
+        "mélodie",
+        "chanter"
       ]
     },
     {
@@ -1301,6 +1344,7 @@
       "keywords": [
         "observé",
         "observée",
+        "observés",
         "épié"
       ]
     },
@@ -1319,7 +1363,8 @@
       "difficulty": 3,
       "category": "sensory",
       "keywords": [
-        "cire"
+        "cire",
+        "cires"
       ]
     },
     {
@@ -1330,6 +1375,7 @@
       "keywords": [
         "mon chien",
         "son chien",
+        "ma chienne",
         "chien perdu"
       ]
     },
@@ -1370,7 +1416,8 @@
       "category": "line",
       "keywords": [
         "avant l'aube",
-        "aube"
+        "aube",
+        "aubes"
       ]
     },
     {
@@ -1379,7 +1426,10 @@
       "difficulty": 1,
       "category": "line",
       "keywords": [
-        "boulanger"
+        "boulanger",
+        "boulangère",
+        "boulangers",
+        "boulangères"
       ]
     },
     {
@@ -1388,7 +1438,8 @@
       "difficulty": 1,
       "category": "line",
       "keywords": [
-        "manteau"
+        "manteau",
+        "manteaux"
       ]
     },
     {
@@ -1408,7 +1459,9 @@
       "category": "line",
       "keywords": [
         "quelque chose à vous montrer",
-        "à vous montrer"
+        "à vous montrer",
+        "quelque chose à te montrer",
+        "à te montrer"
       ]
     },
     {
@@ -1418,6 +1471,7 @@
       "category": "line",
       "keywords": [
         "jamais venu",
+        "jamais venue",
         "jamais été ici"
       ]
     },
@@ -1458,8 +1512,9 @@
       "difficulty": 2,
       "category": "line",
       "keywords": [
-        "morts",
-        "rendent"
+        "les morts",
+        "morts ne rendent",
+        "ne rendent pas"
       ]
     },
     {
@@ -1478,7 +1533,8 @@
       "difficulty": 2,
       "category": "line",
       "keywords": [
-        "cherchez"
+        "cherchez",
+        "cherches"
       ]
     },
     {
@@ -1528,7 +1584,8 @@
       "category": "line",
       "keywords": [
         "de ne pas vous le dire",
-        "ne pas vous le dire"
+        "ne pas vous le dire",
+        "ne pas te le dire"
       ]
     },
     {
@@ -1559,7 +1616,8 @@
       "keywords": [
         "damné",
         "damnée",
-        "sauvés"
+        "sauvés",
+        "sauvées"
       ]
     },
     {
@@ -1569,7 +1627,8 @@
       "category": "line",
       "keywords": [
         "trois vérités",
-        "vérités"
+        "vérités",
+        "vérité"
       ]
     },
     {
@@ -1579,7 +1638,9 @@
       "category": "line",
       "keywords": [
         "enterré",
-        "enterrer"
+        "enterrer",
+        "enterra",
+        "enterrée"
       ]
     },
     {
@@ -1590,7 +1651,8 @@
       "keywords": [
         "anges",
         "ange",
-        "alibi"
+        "alibi",
+        "alibis"
       ]
     },
     {
@@ -1600,6 +1662,7 @@
       "category": "line",
       "keywords": [
         "liste",
+        "listes",
         "regrette",
         "figure sur une liste"
       ]
@@ -1622,6 +1685,7 @@
       "category": "line",
       "keywords": [
         "courage",
+        "courageuse",
         "appelle dette"
       ]
     },
@@ -1632,7 +1696,8 @@
       "category": "line",
       "keywords": [
         "maisons qui ne pardonnent pas",
-        "ne pardonnent pas"
+        "ne pardonnent pas",
+        "ne pardonne pas"
       ]
     },
     {

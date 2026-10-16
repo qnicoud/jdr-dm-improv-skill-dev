@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.core.tables
 
+import io.github.qnicoud.dmgym.core.detection.TextNormalizer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -36,14 +37,6 @@ class TablesContentTest {
         )
 
     private val idPattern = Regex("[a-z0-9]+(-[a-z0-9]+)*")
-
-    /** Mirrors the detection normalizer (ADR 0008): lowercase, NFD, no diacritics, ligatures expanded. */
-    private fun normalize(text: String): String =
-        Normalizer
-            .normalize(text.lowercase(java.util.Locale.ROOT), Normalizer.Form.NFD)
-            .replace(Regex("\\p{Mn}"), "")
-            .replace("œ", "oe")
-            .replace("æ", "ae")
 
     private fun load(id: TableId): TableFile {
         val file = TestTables.assetFile(id)
@@ -91,7 +84,7 @@ class TablesContentTest {
             assertTrue(it.text.length <= 200, "${it.id}: text too long")
             assertTrue(Normalizer.isNormalized(it.text, Normalizer.Form.NFC), "${it.id}: not NFC")
         }
-        assertEquals(entries.size, entries.map { normalize(it.text) }.toSet().size, "duplicate texts")
+        assertEquals(entries.size, entries.map { TextNormalizer.normalize(it.text) }.toSet().size, "duplicate texts")
     }
 
     @ParameterizedTest
@@ -121,7 +114,7 @@ class TablesContentTest {
         entries.forEach { entry ->
             if (required) assertTrue(entry.keywords.size in 1..4, "${entry.id}: ${entry.keywords.size} keywords")
             entry.keywords.forEach { assertTrue(it.isNotBlank(), "${entry.id}: blank keyword") }
-            val normalized = entry.keywords.map(::normalize)
+            val normalized = entry.keywords.map(TextNormalizer::normalize)
             assertEquals(normalized.size, normalized.toSet().size, "${entry.id}: duplicate keywords")
             if (entry.fuzzy) {
                 assertTrue(entry.keywords.any { it.length >= 8 }, "${entry.id}: fuzzy without a long keyword")
