@@ -4,6 +4,7 @@ import kotlinx.serialization.SerializationException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class TableFileTest {
@@ -25,6 +26,15 @@ class TableFileTest {
         val json = """{"schemaVersion":1,"table":"t","locale":"fr","entries":[],"extra":1}"""
 
         assertThrows(SerializationException::class.java) { TableFile.decode(json) }
+    }
+
+    @Test
+    fun `unsupported schema version is rejected with a clear message`() {
+        val json = """{"schemaVersion":2,"table":"t","locale":"fr","entries":[]}"""
+
+        val error = assertThrows(IllegalArgumentException::class.java) { TableFile.decode(json) }
+
+        assertTrue(error.message.orEmpty().contains("schemaVersion"))
     }
 
     @Test

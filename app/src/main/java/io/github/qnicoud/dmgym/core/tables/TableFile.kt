@@ -19,6 +19,15 @@ data class TableFile(
                 isLenient = false
             }
 
-        fun decode(text: String): TableFile = strictJson.decodeFromString(serializer(), text)
+        const val SUPPORTED_SCHEMA_VERSION = 1
+
+        /** @throws IllegalArgumentException if `schemaVersion` is not [SUPPORTED_SCHEMA_VERSION]. */
+        fun decode(text: String): TableFile =
+            strictJson.decodeFromString(serializer(), text).also {
+                require(it.schemaVersion == SUPPORTED_SCHEMA_VERSION) {
+                    "Unsupported schemaVersion ${it.schemaVersion} for table '${it.table}' " +
+                        "(expected $SUPPORTED_SCHEMA_VERSION)"
+                }
+            }
     }
 }
