@@ -22,7 +22,8 @@
       "keywords": [
         "éclatant",
         "éclatante",
-        "éclat"
+        "éclatantes",
+        "éclatants"
       ]
     },
     {
@@ -43,7 +44,8 @@
       "keywords": [
         "doré",
         "dorée",
-        "dorure"
+        "dorés",
+        "dorées"
       ]
     },
     {
@@ -65,7 +67,8 @@
       "keywords": [
         "tremblotant",
         "tremblotante",
-        "tremblote"
+        "tremblote",
+        "tremblotait"
       ]
     },
     {
@@ -76,7 +79,8 @@
       "keywords": [
         "moucheté",
         "mouchetée",
-        "tacheté"
+        "tacheté",
+        "tachetée"
       ]
     },
     {
@@ -87,7 +91,8 @@
       "keywords": [
         "diaphane",
         "diaphanes",
-        "transparent"
+        "transparent",
+        "transparente"
       ]
     },
     {
@@ -98,6 +103,7 @@
       "keywords": [
         "ébréché",
         "ébréchée",
+        "ébréchées",
         "ébréchure"
       ]
     },
@@ -109,6 +115,7 @@
       "keywords": [
         "moiré",
         "moirée",
+        "moirés",
         "moirure"
       ]
     },
@@ -120,8 +127,8 @@
       "keywords": [
         "grinçant",
         "grinçante",
-        "grincement",
-        "grince"
+        "grince",
+        "grincer"
       ]
     },
     {
@@ -152,9 +159,9 @@
       "difficulty": 2,
       "category": "hearing",
       "keywords": [
-        "crépite",
-        "crépitement",
         "crépitant",
+        "crépitante",
+        "crépitement",
         "crépitements"
       ]
     },
@@ -166,7 +173,8 @@
       "keywords": [
         "bourdonne",
         "bourdonnement",
-        "bourdonnant"
+        "bourdonnant",
+        "bourdonnante"
       ]
     },
     {
@@ -177,7 +185,8 @@
       "keywords": [
         "étouffé",
         "étouffée",
-        "étouffés"
+        "étouffés",
+        "étouffer"
       ]
     },
     {
@@ -210,7 +219,8 @@
       "keywords": [
         "feu de bois",
         "bois brûlé",
-        "cheminée"
+        "cheminée",
+        "cheminées"
       ]
     },
     {
@@ -221,6 +231,7 @@
       "keywords": [
         "moisi",
         "moisie",
+        "moisis",
         "moisissure"
       ]
     },
@@ -231,7 +242,8 @@
       "category": "smell",
       "keywords": [
         "pain chaud",
-        "pain"
+        "pain",
+        "pains"
       ]
     },
     {
@@ -242,7 +254,8 @@
       "keywords": [
         "résine",
         "résineux",
-        "résineuse"
+        "résineuse",
+        "résineuses"
       ]
     },
     {
@@ -252,7 +265,8 @@
       "category": "smell",
       "keywords": [
         "cuir mouillé",
-        "cuir"
+        "cuir",
+        "cuirs"
       ]
     },
     {
@@ -262,7 +276,8 @@
       "category": "smell",
       "keywords": [
         "encens",
-        "encensoir"
+        "encensoir",
+        "encensoirs"
       ]
     },
     {
@@ -273,7 +288,8 @@
       "keywords": [
         "métallique",
         "métalliques",
-        "métal"
+        "métal",
+        "métaux"
       ]
     },
     {
@@ -282,9 +298,9 @@
       "difficulty": 3,
       "category": "smell",
       "keywords": [
-        "fleur fanée",
-        "fleurs fanées",
         "fané",
+        "fanée",
+        "fanés",
         "fanées"
       ]
     },
@@ -307,6 +323,7 @@
       "keywords": [
         "amer",
         "amère",
+        "amers",
         "amertume"
       ]
     },
@@ -317,7 +334,9 @@
       "category": "taste",
       "keywords": [
         "sucré",
-        "sucrée"
+        "sucrée",
+        "sucrés",
+        "sucrées"
       ]
     },
     {
@@ -327,8 +346,9 @@
       "category": "taste",
       "keywords": [
         "fumé",
-        "fumée",
-        "fumet"
+        "fumés",
+        "fumet",
+        "goût de fumée"
       ]
     },
     {
@@ -350,7 +370,8 @@
       "keywords": [
         "terreux",
         "terreuse",
-        "terreuses"
+        "terreuses",
+        "terre humide"
       ]
     },
     {
@@ -372,7 +393,9 @@
       "category": "taste",
       "keywords": [
         "poivré",
-        "poivrée"
+        "poivrée",
+        "poivrés",
+        "poivrées"
       ]
     },
     {
@@ -383,6 +406,7 @@
       "keywords": [
         "glacé",
         "glacée",
+        "glacés",
         "glacial"
       ]
     },
@@ -394,6 +418,7 @@
       "keywords": [
         "rugueux",
         "rugueuse",
+        "rugueuses",
         "rugosité"
       ]
     },
@@ -417,6 +442,7 @@
       "keywords": [
         "visqueux",
         "visqueuse",
+        "visqueuses",
         "viscosité"
       ]
     },
@@ -439,7 +465,8 @@
       "keywords": [
         "granuleux",
         "granuleuse",
-        "sable"
+        "granuleuses",
+        "sables"
       ]
     },
     {
@@ -450,6 +477,7 @@
       "keywords": [
         "brûlant",
         "brûlante",
+        "brûlants",
         "brûlure"
       ]
     },
@@ -473,7 +501,8 @@
       "keywords": [
         "tiède",
         "tièdes",
-        "tiédeur"
+        "tiédeur",
+        "tiédir"
       ]
     }
   ]
