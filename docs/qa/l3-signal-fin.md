@@ -16,12 +16,14 @@ Cible : `platform/AndroidEndSignal` (ADR 0006, architecture §7). Appareil : Sam
 | 2 | Sonnerie | oui | non | bip seul | |
 | 3 | Sonnerie | non | oui | deux impulsions seules | |
 | 4 | Sonnerie | non | non | rien | |
-| 5 | Vibreur | oui | oui | **pas de bip**, deux impulsions | |
+| 5 | Vibreur | oui | oui | **pas de bip**, deux impulsions (usage ALARM) | |
 | 6 | Vibreur | oui | non | rien | |
-| 7 | Silencieux | oui | oui | **pas de bip** ; vibration selon fabricant (noter) | |
+| 7 | Silencieux | oui | oui | **pas de bip** ; vibration attendue (usage ALARM, non filtré par le retour haptique) : noter si le fabricant la bloque | |
 | 8 | Ne pas déranger (alarmes seules) | oui | oui | pas de bip ; noter la vibration | |
 
 ## Points transverses
+
+- [ ] Vibration en usage ALARM (`VibrationAttributes` dès Android 13, `AudioAttributes` avant) : elle doit jouer même si le retour haptique système est désactivé.
 
 - [ ] Pendant une vidéo ou de la musique (Decision Point) : le bip se superpose sans couper ni baisser le média (pas de focus audio).
 - [ ] Bip court, doux, non agressif (< 1 s), sans clic au début ni à la fin.
