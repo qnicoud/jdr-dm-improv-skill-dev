@@ -97,6 +97,15 @@ details.note textarea { width: 100%; box-sizing: border-box; margin-top: 6px; mi
 .panel ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
 .research { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .research .panel { align-content: start; }
+.mk { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.mk-tab { text-align: left; display: grid; gap: 2px; padding: 10px 12px; min-height: 48px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.mk-tab small { color: var(--muted); font-size: .78rem; }
+.mk-tab[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.mk-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mk-frame { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.mk-bar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: .85rem; }
+.mk-bar a { color: var(--accent); }
+#mk-view { display: block; width: 100%; height: 900px; max-height: 85vh; border: 0; background: #E6DFD2; }
 .empty { border: 1px dashed var(--line); border-radius: 8px; padding: 22px; text-align: center; color: var(--muted); }
 table.risks { width: 100%; border-collapse: collapse; font-size: .92rem; }
 table.risks td, table.risks th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
@@ -120,11 +129,11 @@ footer { font-size: .85rem; color: var(--muted); }
     <div class="phases" aria-label="Avancement par phase">
       <div class="phase" data-s="done"><span class="eyebrow">Phase 0</span><b>Recherche</b><small>Terminée le 16/10/2026</small></div>
       <div class="phase" data-s="done"><span class="eyebrow">Phase 1</span><b>Cadrage et décisions</b><small>Terminée le 16/10/2026</small></div>
-      <div class="phase" data-s="now"><span class="eyebrow">Phase 2</span><b>Conception</b><small>En cours : architecture et UX</small></div>
-      <div class="phase"><span class="eyebrow">Phase 3</span><b>Réalisation</b><small>Code Kotlin/Compose en TDD</small></div>
+      <div class="phase" data-s="done"><span class="eyebrow">Phase 2</span><b>Conception</b><small>Terminée : ADR, UX, 10 maquettes</small></div>
+      <div class="phase" data-s="now"><span class="eyebrow">Phase 3</span><b>Réalisation</b><small>En cours : build de test vert, contenu écrit</small></div>
     </div>
     <div class="tally">
-      <strong id="count">0 / 42</strong><span class="muted">décisions tranchées</span>
+      <strong id="count">0 / 48</strong><span class="muted">décisions tranchées</span>
       <div class="meter" role="progressbar" aria-label="Décisions tranchées" aria-valuemin="0" aria-valuemax="24" aria-valuenow="0" id="meter"><i></i></div>
     </div>
     <nav class="toc" aria-label="Sections">
@@ -249,9 +258,14 @@ footer { font-size: .85rem; color: var(--muted); }
     </div>
   </section>
 
-  <section id="maquettes" class="group">
+  <section id="maquettes" class="group" style="display:grid;gap:12px">
     <div class="group-head"><h2>Maquettes</h2><span class="muted">phase 2</span></div>
-    <div class="empty">Aucune maquette pour l'instant. Une fois les décisions tranchées, l'UX designer définit les parcours et le design system, puis le maquettiste produit les écrans (accueil, exercice, fin de minuteur, journal, statistiques). Ils s'afficheront ici pour validation.</div>
+    <p class="muted" style="margin:0">10 écrans prioritaires, en clair et en sombre (bascule dans chaque maquette), avec le panneau d'annotations à droite. Variantes à 200 % sur Séance du jour, Constraint Box, Connect the Story et Bilan. Remarques bienvenues : elles iront au maquettiste.</p>
+    <div class="mk" role="group" aria-label="Choisir une maquette"><button type="button" class="mk-tab" data-f="mockups/01-accueil.html" aria-pressed="true"><b>Accueil</b><small>S02 · normal et vide</small></button><button type="button" class="mk-tab" data-f="mockups/02-seance-du-jour.html" aria-pressed="false"><b>Séance du jour</b><small>S03 · aperçu, 200 %</small></button><button type="button" class="mk-tab" data-f="mockups/03-constraint-box.html" aria-pressed="false"><b>Constraint Box</b><small>S05 · surlignage, 200 %</small></button><button type="button" class="mk-tab" data-f="mockups/04-crazy-eights.html" aria-pressed="false"><b>Crazy Eights</b><small>S05 · 8 champs</small></button><button type="button" class="mk-tab" data-f="mockups/05-minuteur-etats.html" aria-pressed="false"><b>Minuteur</b><small>états : prêt, en cours, pause, temps additionnel</small></button><button type="button" class="mk-tab" data-f="mockups/06-connect-the-story.html" aria-pressed="false"><b>Connect the Story</b><small>S05 · cochage, 200 %</small></button><button type="button" class="mk-tab" data-f="mockups/07-status-numbers.html" aria-pressed="false"><b>Status Numbers</b><small>S05 · carte, bascule</small></button><button type="button" class="mk-tab" data-f="mockups/08-bilan.html" aria-pressed="false"><b>Bilan</b><small>S06 · auto-évaluation, bijou</small></button><button type="button" class="mk-tab" data-f="mockups/09-historique.html" aria-pressed="false"><b>Historique</b><small>S08 et S09</small></button><button type="button" class="mk-tab" data-f="mockups/10-progres.html" aria-pressed="false"><b>Progrès</b><small>S10 · sessions, série, grâce</small></button></div>
+    <div class="mk-frame">
+      <div class="mk-bar"><span id="mk-name" class="mono muted">docs/mockups/01-accueil.html</span><a id="mk-open" href="mockups/01-accueil.html" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div>
+      <iframe id="mk-view" src="mockups/01-accueil.html" title="Maquette : Accueil" loading="lazy"></iframe>
+    </div>
   </section>
 
   <section id="risques" class="group">
@@ -261,9 +275,9 @@ footer { font-size: .85rem; color: var(--muted); }
         <thead><tr><th>Niveau</th><th>Risque</th><th>Parade</th></tr></thead>
         <tbody>
           <tr><td><span class="sev hi">Élevé</span></td><td>Détection approximative des mots en français (flexions, faux positifs).</td><td>Mots-clés fournis par le rédacteur, normalisation, corpus de test d'environ 100 phrases, cochage manuel qui fait foi.</td></tr>
-          <tr><td><span class="sev hi">Élevé</span></td><td>Combinaison KSP, Kotlin 2.4.21 et AGP 9.4 non confirmée.</td><td>Build de test minimal en tout premier lot ; repli sur AGP 9.3.1 ou Room 2.8.5.</td></tr>
+          <tr><td><span class="sev">Levé</span></td><td>Combinaison KSP, Kotlin 2.4.21 et AGP 9.4.</td><td>Build de test minimal vert le 16/10/2026, sans aucun repli.</td></tr>
           <tr><td><span class="sev">Moyen</span></td><td>Minuteur fiable (rotation, arrière-plan, son en mode silencieux).</td><td>Horodatage plus état sauvegardé ; tests sur un vrai téléphone.</td></tr>
-          <tr><td><span class="sev">Moyen</span></td><td>Volume de contenu original (environ 12 tables de 30 entrées ou plus, avec mots-clés et niveau de difficulté).</td><td>Rédacteur de contenu en parallèle, validation des tables par tests.</td></tr>
+          <tr><td><span class="sev">Levé</span></td><td>Volume de contenu original (environ 12 tables de 30 entrées ou plus, avec mots-clés et niveau de difficulté).</td><td>10 tables écrites (31 à 158 entrées), vérifiées par script ; tests JVM au lot L2.</td></tr>
           <tr><td><span class="sev">Faible</span></td><td>JDK système 27 trop récent pour la chaîne de build.</td><td>JDK 21 déjà installé, déclaré dans <span class="mono">gradle-daemon-jvm.properties</span>.</td></tr>
         </tbody>
       </table>
@@ -274,12 +288,26 @@ footer { font-size: .85rem; color: var(--muted); }
 </div>
 
 <script>
+(function () {
+  const tabs = document.querySelectorAll(".mk-tab");
+  const view = document.getElementById("mk-view");
+  const open = document.getElementById("mk-open");
+  const name = document.getElementById("mk-name");
+  tabs.forEach(b => b.addEventListener("click", () => {
+    tabs.forEach(t => t.setAttribute("aria-pressed", t === b ? "true" : "false"));
+    const f = b.dataset.f;
+    view.src = f; open.href = f; name.textContent = "docs/" + f;
+    view.title = "Maquette : " + b.querySelector("b").textContent;
+  }));
+})();
+
 const GROUPS = [
   { key: "tech", title: "Technique", desc: "Socle de build et choix de bibliothèques" },
   { key: "detect", title: "Détection des mots imposés", desc: "Constraint Box et Connect the Story" },
   { key: "product", title: "Produit et UX", desc: "Comportements visibles, contenu, feuille de route" },
   { key: "p2tech", title: "Phase 2 · Technique", desc: "Questions soulevées par l'architecte" },
   { key: "p2ux", title: "Phase 2 · UX", desc: "Questions soulevées par l'UX designer, à trancher avant les maquettes" },
+  { key: "p3", title: "Retours des maquettes, du contenu et du build", desc: "Questions soulevées par le maquettiste, le rédacteur et le développeur" },
 ];
 const L = (t, u) => ({ t, u });
 const DECISIONS = [
@@ -455,6 +483,31 @@ const DECISIONS = [
     ctx: "Depuis le détail d'une session dans l'historique. La feuille de partage Android ne demande aucune permission.",
     opts: [["share", "Feuille de partage Android", true], ["copy", "Copier seulement"], ["none", "Aucun partage"]],
     src: [L("parcours.md §8", ""), L("Rapport C, recommandation 8", "")] },
+
+  { id: "D43", g: "p3", from: "développeur", q: "Quel plugin Gradle pour ktlint ?",
+    ctx: "L'ADR 0007 laissait le choix ouvert. Le build de test utilise déjà jlleitschuh 14.2.0 (ktlint 1.8.0) et il est vert.",
+    opts: [["jl", "Garder jlleitschuh (déjà en place)", true], ["kt", "Passer à Kotlinter"], ["cli", "ktlint en ligne de commande, sans plugin"]],
+    src: [L("ADR 0001, résultat du lot 1", ""), L("ktlint-gradle", "https://github.com/JLLeitschuh/ktlint-gradle")] },
+  { id: "D44", g: "p3", from: "rédacteur", q: "Mots-clés des répliques dans Connect the Story ?",
+    ctx: "Les répliques sont repérées par de courtes suites de mots (« rien vu », « vous attendait »). C'est précis, mais elles risquent de passer sous l'objectif de 85 % de détection. Le corpus de test le dira.",
+    opts: [["after", "Garder, puis ajouter des variantes après la première mesure du corpus", true], ["keep", "Garder tels quels"]],
+    src: [L("docs/research/04-notes-contenu.md", ""), L("ADR 0008", "")] },
+  { id: "D45", g: "p3", from: "rédacteur", q: "Comment choisir un rôle « contre-stéréotype » dans Status Numbers ?",
+    ctx: "Chaque rôle porte une étiquette de rang social (rank:haut, rank:bas…). Le contre-emploi consiste à tirer un statut opposé à ce rang.",
+    opts: [["invert", "Inverser l'étiquette de rang, sans changer le format", true], ["tag", "Ajouter une étiquette dédiée sur certains rôles"]],
+    src: [L("ADR 0009", "")] },
+  { id: "D46", g: "p3", from: "maquettiste", q: "Écran Progrès : afficher le jour de grâce comme « disponible » alors qu'il a servi lundi ?",
+    ctx: "La maquette montre un jour de grâce utilisé le lundi 12, tandis que le texte dit « disponible ». Il faut un texte cohérent avec la règle du lundi (D35).",
+    opts: [["text", "Texte « utilisé cette semaine, rechargé lundi »", true], ["prev", "Placer le jour utilisé la semaine précédente"], ["keep", "Garder le brief tel quel"]],
+    src: [L("Maquette 10 Progrès", "mockups/10-progres.html")] },
+  { id: "D47", g: "p3", from: "maquettiste", q: "À 200 % de taille de police avec le clavier, il reste 3 lignes de saisie. Acceptable ?",
+    ctx: "Calculé sur un petit écran de 360 × 640. À vérifier sur un vrai téléphone.",
+    opts: [["accept", "Accepter, puis vérifier sur appareil", true], ["hide", "Masquer le titre de la barre du haut"], ["full", "Passer la saisie en plein écran"]],
+    src: [L("Maquette 03 Constraint Box", "mockups/03-constraint-box.html"), L("WCAG 1.4.4", "https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html")] },
+  { id: "D48", g: "p3", from: "maquettiste", q: "Le panneau des 5 éléments de Connect the Story dépasse 35 % de l'écran une fois déplié. Que fait-on ?",
+    ctx: "Déplié, il occupe environ 56 % de l'écran avant l'ouverture du clavier. Replié, il respecte la limite.",
+    opts: [["except", "Exception documentée : déplié seulement à la demande", true], ["scroll", "Défilement interne dans le panneau"]],
+    src: [L("Maquette 06 Connect the Story", "mockups/06-connect-the-story.html")] },
 ];
 
 const byId = Object.fromEntries(DECISIONS.map(d => [d.id, d]));
