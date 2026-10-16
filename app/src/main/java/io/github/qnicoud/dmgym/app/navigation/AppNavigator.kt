@@ -1,16 +1,18 @@
 package io.github.qnicoud.dmgym.app.navigation
 
+import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 
 /**
  * Opérations de navigation sur la pile de retour (ADR 0003). Home est toujours la racine ;
  * les onglets Historique et Progrès se posent au-dessus et se remplacent entre eux.
  */
 class AppNavigator(
-    private val backStack: MutableList<NavKey>,
+    val backStack: NavBackStack<NavKey>,
 ) {
     fun openExercise(
-        exerciseId: String,
+        exerciseId: ExerciseId,
         resumeSessionId: Long? = null,
         fromDaily: Boolean = false,
     ) {

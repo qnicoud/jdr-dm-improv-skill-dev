@@ -1,8 +1,9 @@
 package io.github.qnicoud.dmgym.feature.home
 
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 /** Un exercice tel que l'accueil le présente. [durationSeconds] vaut `null` pour « Sans minuteur ». */
 data class ExerciseSummary(
@@ -10,28 +11,20 @@ data class ExerciseSummary(
     val durationSeconds: Int?,
 )
 
-/**
- * Port de l'accueil : la liste des exercices avec leur durée réglée.
- * Provisoire : sera alimenté par `SettingsRepository` (lot L3) après fusion.
- */
+/** Port de l'accueil : la liste des exercices avec leur durée réglée. */
 interface ExerciseCatalog {
     val exercises: Flow<List<ExerciseSummary>>
 }
 
-/** Durées par défaut de la SPEC (docs/ux/parcours.md, DÉCISION 4). */
-class DefaultExerciseCatalog : ExerciseCatalog {
-    override val exercises: Flow<List<ExerciseSummary>> = flowOf(DEFAULTS)
-
-    private companion object {
-        val DEFAULTS =
-            listOf(
-                ExerciseSummary(ExerciseId.CRAZY_EIGHTS, 8 * 60),
-                ExerciseSummary(ExerciseId.CONSTRAINT_BOX, 5 * 60),
-                ExerciseSummary(ExerciseId.CORE_IMAGE, 10 * 60),
-                ExerciseSummary(ExerciseId.STATUS_NUMBERS, 3 * 60),
-                ExerciseSummary(ExerciseId.DECISION_POINT, 30),
-                ExerciseSummary(ExerciseId.CONNECT_STORY, 10 * 60),
-                ExerciseSummary(ExerciseId.ONE_PAGE, null),
-            )
-    }
+/** Adaptateur sur les réglages : durée enregistrée, sinon durée par défaut ; « sans minuteur » prioritaire. */
+class SettingsExerciseCatalog(
+    settings: SettingsRepository,
+) : ExerciseCatalog {
+    override val exercises: Flow<List<ExerciseSummary>> =
+        settings.settings.map { s ->
+            ExerciseId.ALL.map { id ->
+                val duration = s.durations[id] ?: ExerciseId.DEFAULT_DURATIONS.getValue(id)
+                ExerciseSummary(id, if (id in s.untimed) null else duration.inWholeSeconds.toInt())
+            }
+        }
 }

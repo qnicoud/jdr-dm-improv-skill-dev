@@ -36,7 +36,7 @@ object HomeTags {
     const val WELCOME = "home_welcome"
     const val SETTINGS_BUTTON = "home_settings"
 
-    fun card(id: ExerciseId) = "exercise_card_${id.key}"
+    fun card(id: ExerciseId) = "exercise_card_${id.value}"
 }
 
 /** Point d'entrée de la route Home : branche le ViewModel. */
@@ -80,7 +80,7 @@ fun HomeScreen(
                 ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            item(key = "stats") { SessionsBanner(state.sessionCount) }
+            if (!state.isLoading) item(key = "stats") { SessionsBanner(state.sessionCount) }
             if (state.isEmpty) item(key = "welcome") { Welcome() }
             resumeSlot?.let { item(key = "resume") { it() } }
             dailySlot?.let { item(key = "daily") { it() } }
@@ -91,7 +91,7 @@ fun HomeScreen(
                     modifier = Modifier.semantics { heading() },
                 )
             }
-            items(state.exercises, key = { it.id.key }) { summary ->
+            items(state.exercises, key = { it.id.value }) { summary ->
                 ExerciseCard(summary, onClick = { onExerciseClick(summary.id) })
             }
         }
@@ -144,7 +144,7 @@ private fun Welcome() {
 private fun HomeScreenPreview() {
     DmGymTheme {
         HomeScreen(
-            state = HomeUiState(exercises = DefaultExercisesForPreview),
+            state = HomeUiState(isLoading = false, sessionCount = 12, exercises = DefaultExercisesForPreview),
             onExerciseClick = {},
             onSettingsClick = {},
         )

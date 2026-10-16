@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -13,12 +14,12 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import io.github.qnicoud.dmgym.app.AppContainer
-import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.feature.daily.DailyScreen
 import io.github.qnicoud.dmgym.feature.exercise.ExerciseScreen
 import io.github.qnicoud.dmgym.feature.history.HistoryScreen
 import io.github.qnicoud.dmgym.feature.history.SessionDetailScreen
 import io.github.qnicoud.dmgym.feature.home.HomeRoute
+import io.github.qnicoud.dmgym.feature.home.HomeViewModel
 import io.github.qnicoud.dmgym.feature.settings.SettingsScreen
 import io.github.qnicoud.dmgym.feature.stats.StatsScreen
 
@@ -28,18 +29,18 @@ import io.github.qnicoud.dmgym.feature.stats.StatsScreen
  */
 @Composable
 fun AppNavDisplay(
-    backStack: List<NavKey>,
     navigator: AppNavigator,
     container: AppContainer,
     modifier: Modifier = Modifier,
 ) {
     val currentTab = navigator.currentTab()
+    val provider = remember(navigator, container) { appEntryProvider(navigator, container) }
     Scaffold(
         modifier = modifier,
         bottomBar = { currentTab?.let { AppNavigationBar(it, navigator::selectTab) } },
     ) { padding ->
         NavDisplay(
-            backStack = backStack,
+            backStack = navigator.backStack,
             modifier = Modifier.padding(padding).consumeWindowInsets(padding),
             onBack = { navigator.back() },
             entryDecorators =
@@ -47,12 +48,11 @@ fun AppNavDisplay(
                     rememberSaveableStateHolderNavEntryDecorator(),
                     rememberViewModelStoreNavEntryDecorator(),
                 ),
-            entryProvider = appEntryProvider(navigator, container),
+            entryProvider = provider,
         )
     }
 }
 
-@Composable
 private fun appEntryProvider(
     navigator: AppNavigator,
     container: AppContainer,
@@ -60,8 +60,8 @@ private fun appEntryProvider(
     entryProvider {
         entry<Home> {
             HomeRoute(
-                viewModel = viewModel(factory = container.homeViewModelFactory),
-                onExerciseClick = { id: ExerciseId -> navigator.openExercise(id.key) },
+                viewModel = viewModel { HomeViewModel(container.exerciseCatalog, container.historyRepository) },
+                onExerciseClick = { navigator.openExercise(it) },
                 onSettingsClick = navigator::openSettings,
             )
         }

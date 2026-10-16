@@ -65,6 +65,7 @@ object DmIcons {
             ExerciseId.DECISION_POINT -> Route
             ExerciseId.CONNECT_STORY -> Link
             ExerciseId.ONE_PAGE -> Doc
+            else -> error("Unknown exercise: ${id.value}")
         }
 }
 

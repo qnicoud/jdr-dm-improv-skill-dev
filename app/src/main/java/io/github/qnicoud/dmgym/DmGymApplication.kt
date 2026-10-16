@@ -5,5 +5,5 @@ import io.github.qnicoud.dmgym.app.AppContainer
 import io.github.qnicoud.dmgym.app.DefaultAppContainer
 
 class DmGymApplication : Application() {
-    val container: AppContainer by lazy { DefaultAppContainer() }
+    val container: AppContainer by lazy { DefaultAppContainer(this) }
 }

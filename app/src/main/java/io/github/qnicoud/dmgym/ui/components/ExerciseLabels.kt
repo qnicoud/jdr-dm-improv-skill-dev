@@ -16,6 +16,7 @@ val ExerciseId.nameRes: Int
             ExerciseId.DECISION_POINT -> R.string.exercise_decision_point
             ExerciseId.CONNECT_STORY -> R.string.exercise_connect_story
             ExerciseId.ONE_PAGE -> R.string.exercise_one_page
+            else -> error("Unknown exercise: $value")
         }
 
 /** Discipline d'origine de l'exercice. */
@@ -30,4 +31,5 @@ val ExerciseId.disciplineRes: Int
             ExerciseId.DECISION_POINT -> R.string.discipline_decision_point
             ExerciseId.CONNECT_STORY -> R.string.discipline_connect_story
             ExerciseId.ONE_PAGE -> R.string.discipline_one_page
+            else -> error("Unknown exercise: $value")
         }

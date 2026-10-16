@@ -1,10 +1,12 @@
 package io.github.qnicoud.dmgym.feature.home
 
 import app.cash.turbine.test
+import io.github.qnicoud.dmgym.app.FakeHistoryRepository
+import io.github.qnicoud.dmgym.app.FakeSettingsRepository
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -12,13 +14,20 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
+    private val settings = FakeSettingsRepository()
+    private val sessionCount = MutableStateFlow(0)
+
+    private fun viewModel() = HomeViewModel(SettingsExerciseCatalog(settings), FakeHistoryRepository(sessionCount))
+
     @BeforeEach
     fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
 
@@ -28,51 +37,69 @@ class HomeViewModelTest {
     @Test
     fun `lists the seven exercises in order with default durations`() =
         runTest {
-            val viewModel = HomeViewModel(DefaultExerciseCatalog())
-            viewModel.uiState.test {
+            viewModel().uiState.test {
                 val state = expectMostRecentItem()
-                assertEquals(ExerciseId.entries, state.exercises.map { it.id })
-                assertEquals(
-                    listOf(480, 300, 600, 180, 30, 600, null),
-                    state.exercises.map { it.durationSeconds },
-                )
+                assertEquals(ExerciseId.ALL, state.exercises.map { it.id })
+                assertEquals(listOf(480, 300, 600, 180, 30, 600, null), state.exercises.map { it.durationSeconds })
             }
         }
 
     @Test
-    fun `one page has no timer`() =
+    fun `one page has no timer by default`() =
         runTest {
-            val viewModel = HomeViewModel(DefaultExerciseCatalog())
-            viewModel.uiState.test {
+            viewModel().uiState.test {
                 val state = expectMostRecentItem()
                 assertNull(state.exercises.single { it.id == ExerciseId.ONE_PAGE }.durationSeconds)
             }
         }
 
     @Test
-    fun `starts with zero sessions which is the empty state`() =
+    fun `is loading until history and settings have emitted`() =
         runTest {
-            val viewModel = HomeViewModel(DefaultExerciseCatalog())
-            viewModel.uiState.test {
+            val never = MutableSharedFlow<Int>()
+            val vm = HomeViewModel(SettingsExerciseCatalog(settings), FakeHistoryRepository(never))
+            vm.uiState.test {
+                val state = awaitItem()
+                assertTrue(state.isLoading)
+                assertFalse(state.isEmpty)
+                never.emit(0)
+                assertTrue(awaitItem().isEmpty)
+            }
+        }
+
+    @Test
+    fun `empty state only when loaded with zero sessions`() =
+        runTest {
+            viewModel().uiState.test {
                 val state = expectMostRecentItem()
+                assertFalse(state.isLoading)
                 assertEquals(0, state.sessionCount)
                 assertTrue(state.isEmpty)
             }
         }
 
     @Test
-    fun `follows the catalog when a duration changes`() =
+    fun `exposes the real session count`() =
         runTest {
-            val source = MutableStateFlow(listOf(ExerciseSummary(ExerciseId.CRAZY_EIGHTS, 480)))
-            val viewModel = HomeViewModel(FakeCatalog(source))
-            viewModel.uiState.test {
-                assertEquals(480, expectMostRecentItem().exercises.single().durationSeconds)
-                source.value = listOf(ExerciseSummary(ExerciseId.CRAZY_EIGHTS, 600))
-                assertEquals(600, awaitItem().exercises.single().durationSeconds)
+            sessionCount.value = 47
+            viewModel().uiState.test {
+                val state = expectMostRecentItem()
+                assertEquals(47, state.sessionCount)
+                assertFalse(state.isEmpty)
+                sessionCount.value = 48
+                assertEquals(48, awaitItem().sessionCount)
             }
         }
 
-    private class FakeCatalog(
-        override val exercises: Flow<List<ExerciseSummary>>,
-    ) : ExerciseCatalog
+    @Test
+    fun `follows the settings when a duration changes or the timer is removed`() =
+        runTest {
+            viewModel().uiState.test {
+                expectMostRecentItem()
+                settings.update { it.copy(durations = mapOf(ExerciseId.CRAZY_EIGHTS to 12.minutes)) }
+                assertEquals(720, awaitItem().exercises.first().durationSeconds)
+                settings.update { it.copy(untimed = setOf(ExerciseId.CRAZY_EIGHTS)) }
+                assertNull(awaitItem().exercises.first().durationSeconds)
+            }
+        }
 }

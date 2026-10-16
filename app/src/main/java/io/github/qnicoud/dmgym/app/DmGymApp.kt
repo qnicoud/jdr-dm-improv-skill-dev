@@ -3,7 +3,6 @@ package io.github.qnicoud.dmgym.app
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import io.github.qnicoud.dmgym.app.navigation.AppNavDisplay
 import io.github.qnicoud.dmgym.app.navigation.AppNavigator
@@ -17,8 +16,8 @@ fun DmGymApp(
     modifier: Modifier = Modifier,
 ) {
     val backStack = rememberNavBackStack(Home)
-    val navigator = remember(backStack) { AppNavigator(backStack as MutableList<NavKey>) }
+    val navigator = remember(backStack) { AppNavigator(backStack) }
     DmGymTheme {
-        AppNavDisplay(backStack = backStack, navigator = navigator, container = container, modifier = modifier)
+        AppNavDisplay(navigator = navigator, container = container, modifier = modifier)
     }
 }
