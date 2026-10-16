@@ -1,0 +1,86 @@
+package io.github.qnicoud.dmgym.ui.theme
+
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.ui.graphics.Color
+
+/** Mode clair « Parchemin » (docs/ux/design-system.md §2.1). */
+val LightColors: ColorScheme =
+    lightColorScheme(
+        primary = Color(0xFF8A2E1C),
+        onPrimary = Color(0xFFFFFFFF),
+        primaryContainer = Color(0xFFFFDAD0),
+        onPrimaryContainer = Color(0xFF3B0C03),
+        secondary = Color(0xFF3F5565),
+        onSecondary = Color(0xFFFFFFFF),
+        secondaryContainer = Color(0xFFD9E6F0),
+        onSecondaryContainer = Color(0xFF112430),
+        tertiary = Color(0xFF6B5000),
+        onTertiary = Color(0xFFFFFFFF),
+        tertiaryContainer = Color(0xFFFFE08A),
+        onTertiaryContainer = Color(0xFF231A00),
+        error = Color(0xFFB3261E),
+        onError = Color(0xFFFFFFFF),
+        errorContainer = Color(0xFFFFDAD6),
+        onErrorContainer = Color(0xFF410002),
+        background = Color(0xFFFBF5EA),
+        onBackground = Color(0xFF2A211C),
+        surface = Color(0xFFFBF5EA),
+        onSurface = Color(0xFF2A211C),
+        surfaceVariant = Color(0xFFF0E6D6),
+        onSurfaceVariant = Color(0xFF4F433A),
+        outline = Color(0xFF7A6C5F),
+        outlineVariant = Color(0xFFD3C5B3),
+        scrim = Color(0xFF000000),
+        inverseSurface = Color(0xFF3B322B),
+        inverseOnSurface = Color(0xFFF7EDE0),
+        inversePrimary = Color(0xFFFFB4A2),
+        surfaceDim = Color(0xFFE3DACB),
+        surfaceBright = Color(0xFFFBF5EA),
+        surfaceContainerLowest = Color(0xFFFFFDF8),
+        surfaceContainerLow = Color(0xFFF6EFE2),
+        surfaceContainer = Color(0xFFF0E6D6),
+        surfaceContainerHigh = Color(0xFFEAE0CF),
+        surfaceContainerHighest = Color(0xFFE4D9C7),
+    )
+
+/** Mode sombre « Cuir à la torche » (docs/ux/design-system.md §2.2). */
+val DarkColors: ColorScheme =
+    darkColorScheme(
+        primary = Color(0xFFFFB4A2),
+        onPrimary = Color(0xFF5B1608),
+        primaryContainer = Color(0xFF7A2A18),
+        onPrimaryContainer = Color(0xFFFFDAD0),
+        secondary = Color(0xFFB7CAD9),
+        onSecondary = Color(0xFF1C3342),
+        secondaryContainer = Color(0xFF2E4252),
+        onSecondaryContainer = Color(0xFFD9E6F0),
+        tertiary = Color(0xFFF2C94C),
+        onTertiary = Color(0xFF3B2D00),
+        tertiaryContainer = Color(0xFF5A4300),
+        onTertiaryContainer = Color(0xFFFFE08A),
+        error = Color(0xFFFFB4AB),
+        onError = Color(0xFF690005),
+        errorContainer = Color(0xFF93000A),
+        onErrorContainer = Color(0xFFFFDAD6),
+        background = Color(0xFF1B1612),
+        onBackground = Color(0xFFEDE0D4),
+        surface = Color(0xFF1B1612),
+        onSurface = Color(0xFFEDE0D4),
+        surfaceVariant = Color(0xFF26201B),
+        onSurfaceVariant = Color(0xFFCFC2B5),
+        outline = Color(0xFF988B7F),
+        outlineVariant = Color(0xFF4F443A),
+        scrim = Color(0xFF000000),
+        inverseSurface = Color(0xFFEDE0D4),
+        inverseOnSurface = Color(0xFF35291F),
+        inversePrimary = Color(0xFF8A2E1C),
+        surfaceDim = Color(0xFF14100D),
+        surfaceBright = Color(0xFF3F3832),
+        surfaceContainerLowest = Color(0xFF120E0B),
+        surfaceContainerLow = Color(0xFF211B16),
+        surfaceContainer = Color(0xFF26201B),
+        surfaceContainerHigh = Color(0xFF302A24),
+        surfaceContainerHighest = Color(0xFF3B342E),
+    )
