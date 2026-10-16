@@ -6,22 +6,59 @@ import io.github.qnicoud.dmgym.core.history.ExerciseCountRecord
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.history.RubricRecord
 import io.github.qnicoud.dmgym.core.history.SessionDetail
+import io.github.qnicoud.dmgym.core.history.SessionNotFoundException
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.data.history.db.SessionDao
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.time.Clock
 import java.time.Duration
 
+/**
+ * @param clock horloge injectée, sans valeur par défaut : l'application passe l'horloge système.
+ * @param ticks signal qui recalcule le seuil des 24 h (au moins une émission, puis périodique) ;
+ *   voir [periodicTicks]. Injectable pour piloter le temps dans les tests.
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
 class RoomHistoryRepository(
     private val dao: SessionDao,
-    private val clock: Clock = Clock.systemUTC(),
+    private val clock: Clock,
+    ticks: Flow<Unit>,
 ) : HistoryRepository {
+    private val staleThresholds: Flow<Long> = ticks.map { staleBefore() }.distinctUntilChanged()
+
     private fun staleBefore(): Long = clock.millis() - IN_PROGRESS_TTL.toMillis()
 
     override suspend fun createSession(session: SessionRecord): Long = dao.insert(session.toEntity())
 
-    override suspend fun updateSession(session: SessionRecord) = dao.update(session.toEntity())
+    override suspend fun updateSession(session: SessionRecord) {
+        if (dao.updateOutcome(session.toEntity(), clock.millis()) != 1) throw SessionNotFoundException(session.id)
+    }
+
+    override suspend fun saveSnapshot(
+        session: SessionRecord,
+        draws: List<DrawRecord>,
+        answers: List<AnswerRecord>,
+        rubric: List<RubricRecord>,
+    ) {
+        val id = session.id
+        try {
+            dao.saveSnapshot(
+                session.toEntity(),
+                draws.map { it.toEntity(id) },
+                answers.map { it.toEntity(id) },
+                rubric.map { it.toEntity(id) },
+                clock.millis(),
+            )
+        } catch (e: IllegalStateException) {
+            throw SessionNotFoundException(id).apply { initCause(e) }
+        }
+    }
 
     override suspend fun deleteSession(id: Long) = dao.deleteById(id)
 
@@ -44,18 +81,21 @@ class RoomHistoryRepository(
         exerciseId: String?,
         gemsOnly: Boolean,
     ): Flow<List<SessionRecord>> =
-        dao.observeHistory(exerciseId, gemsOnly, staleBefore()).map { list -> list.map { it.toRecord() } }
+        staleThresholds
+            .flatMapLatest { dao.observeHistory(exerciseId, gemsOnly, it) }
+            .map { list -> list.map { it.toRecord() } }
 
     override fun observeDetail(id: Long): Flow<SessionDetail?> = dao.observeDetail(id).map { it?.toDetail() }
 
-    override fun observePracticedDays(): Flow<List<Long>> = dao.observePracticedDays()
+    override fun observePracticedDays(): Flow<List<Long>> =
+        staleThresholds.flatMapLatest { dao.observePracticedDays(it) }
 
-    override fun observeCompletedCount(): Flow<Int> = dao.observeCompletedCount()
+    override fun observeSessionCount(): Flow<Int> = staleThresholds.flatMapLatest { dao.observeSessionCount(it) }
 
-    override suspend fun countByExercise(
+    override suspend fun countSessionsByExercise(
         fromEpochDay: Long,
         toEpochDay: Long,
-    ): List<ExerciseCountRecord> = dao.countByExercise(fromEpochDay, toEpochDay).map { it.toRecord() }
+    ): List<ExerciseCountRecord> = dao.countByExercise(fromEpochDay, toEpochDay, staleBefore()).map { it.toRecord() }
 
     override suspend fun purgeEmptyInProgress(): Int = dao.purgeEmptyInProgress(staleBefore())
 
@@ -63,3 +103,12 @@ class RoomHistoryRepository(
         val IN_PROGRESS_TTL: Duration = Duration.ofHours(24)
     }
 }
+
+/** Émet immédiatement puis à chaque [period] ; alimente le seuil d'« inachevée » en production. */
+fun periodicTicks(period: Duration): Flow<Unit> =
+    flow {
+        while (true) {
+            emit(Unit)
+            delay(period.toMillis())
+        }
+    }

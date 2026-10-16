@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ffbb5722b48b4aba4379a652297b899d",
+    "identityHash": "b46a0054ef7cba2c9cc5bcbe0d259c15",
     "entities": [
       {
         "tableName": "sessions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exerciseId` TEXT NOT NULL, `status` TEXT NOT NULL, `startedAtEpochMillis` INTEGER NOT NULL, `endedAtEpochMillis` INTEGER, `zoneId` TEXT NOT NULL, `localEpochDay` INTEGER NOT NULL, `plannedDurationSec` INTEGER, `activeDurationSec` INTEGER NOT NULL, `overtimeSec` INTEGER NOT NULL, `difficulty` INTEGER NOT NULL, `optionsJson` TEXT NOT NULL, `selfRating` INTEGER, `isGem` INTEGER NOT NULL, `fromDaily` INTEGER NOT NULL, `drawSeed` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exerciseId` TEXT NOT NULL, `status` TEXT NOT NULL, `startedAtEpochMillis` INTEGER NOT NULL, `lastActivityAtEpochMillis` INTEGER NOT NULL, `endedAtEpochMillis` INTEGER, `zoneId` TEXT NOT NULL, `localEpochDay` INTEGER NOT NULL, `plannedDurationSec` INTEGER, `activeDurationSec` INTEGER NOT NULL, `overtimeSec` INTEGER NOT NULL, `difficulty` INTEGER NOT NULL, `optionsJson` TEXT NOT NULL, `selfRating` INTEGER, `isGem` INTEGER NOT NULL, `fromDaily` INTEGER NOT NULL, `drawSeed` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -29,6 +29,12 @@
           {
             "fieldPath": "startedAtEpochMillis",
             "columnName": "startedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastActivityAtEpochMillis",
+            "columnName": "lastActivityAtEpochMillis",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -321,7 +327,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ffbb5722b48b4aba4379a652297b899d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b46a0054ef7cba2c9cc5bcbe0d259c15')"
     ]
   }
 }

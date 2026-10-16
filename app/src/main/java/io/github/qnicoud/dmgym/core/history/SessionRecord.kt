@@ -8,6 +8,8 @@ data class SessionRecord(
     val exerciseId: String,
     val status: SessionStatus,
     val startedAtEpochMillis: Long,
+    /** Dernière écriture de contenu ; le délai de 24 h (D36) se compte depuis cet instant. */
+    val lastActivityAtEpochMillis: Long = startedAtEpochMillis,
     val endedAtEpochMillis: Long? = null,
     val zoneId: String,
     val localEpochDay: Long,

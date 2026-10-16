@@ -18,6 +18,7 @@ data class SessionEntity(
     val exerciseId: String,
     val status: String,
     val startedAtEpochMillis: Long,
+    val lastActivityAtEpochMillis: Long,
     val endedAtEpochMillis: Long?,
     val zoneId: String,
     val localEpochDay: Long,

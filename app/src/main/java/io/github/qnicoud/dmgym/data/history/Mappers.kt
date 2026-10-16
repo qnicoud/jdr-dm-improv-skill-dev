@@ -20,6 +20,7 @@ internal fun SessionRecord.toEntity() =
         exerciseId = exerciseId,
         status = status.name,
         startedAtEpochMillis = startedAtEpochMillis,
+        lastActivityAtEpochMillis = lastActivityAtEpochMillis,
         endedAtEpochMillis = endedAtEpochMillis,
         zoneId = zoneId,
         localEpochDay = localEpochDay,
@@ -38,8 +39,9 @@ internal fun SessionEntity.toRecord() =
     SessionRecord(
         id = id,
         exerciseId = exerciseId,
-        status = SessionStatus.valueOf(status),
+        status = parseStatus(status),
         startedAtEpochMillis = startedAtEpochMillis,
+        lastActivityAtEpochMillis = lastActivityAtEpochMillis,
         endedAtEpochMillis = endedAtEpochMillis,
         zoneId = zoneId,
         localEpochDay = localEpochDay,
@@ -78,3 +80,7 @@ internal fun SessionWithChildren.toDetail() =
         answers = answers.map { it.toRecord() }.sortedWith(compareBy({ it.fieldKey }, { it.groupIndex })),
         rubric = rubric.map { it.toRecord() }.sortedBy { it.questionKey },
     )
+
+private fun parseStatus(raw: String): SessionStatus =
+    SessionStatus.entries.firstOrNull { it.name == raw }
+        ?: error("Unknown session status '$raw' in the history database")
