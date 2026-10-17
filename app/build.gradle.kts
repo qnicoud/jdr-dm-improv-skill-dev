@@ -21,12 +21,20 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 1
-        versionName = "0.1.0"
+        versionName = "1.0.0-rc1"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Vérification locale seulement (docs/qa/release.md) : signature debug et id distinct,
+            // pour ne jamais écraser ni désinstaller l'app installée. Jamais utilisé en CI ni en publication.
+            if (providers.gradleProperty("dmgym.signReleaseWithDebug").isPresent) {
+                signingConfig = signingConfigs.getByName("debug")
+                applicationIdSuffix = ".release"
+            }
         }
     }
 

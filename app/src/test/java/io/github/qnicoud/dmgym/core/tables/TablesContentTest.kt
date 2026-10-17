@@ -3,14 +3,14 @@ package io.github.qnicoud.dmgym.core.tables
 import io.github.qnicoud.dmgym.core.detection.TextNormalizer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.io.File
 import java.text.Normalizer
 
 /**
- * Content validation of the shipped tables (ADR 0009). A missing table is skipped until L12;
- * a present table that is invalid fails.
+ * Content validation of the shipped tables (ADR 0009). Every table must exist and be valid.
  */
 class TablesContentTest {
     private data class Rules(
@@ -36,11 +36,31 @@ class TablesContentTest {
                 ),
         )
 
+    @Test
+    fun `the ten expected tables are shipped`() {
+        val expected =
+            setOf(
+                "problems",
+                "places",
+                "sensory_words",
+                "core_images",
+                "threading_questions",
+                "npc_roles",
+                "status_shifts",
+                "surprise_situations",
+                "story_elements",
+                "one_page_situations",
+            )
+
+        assertEquals(expected, TableId.entries.map { it.fileName }.toSet())
+        expected.forEach { assertTrue(File(TestTables.assetsDir(), "$it.json").exists(), "$it.json missing") }
+    }
+
     private val idPattern = Regex("[a-z0-9]+(-[a-z0-9]+)*")
 
     private fun load(id: TableId): TableFile {
         val file = TestTables.assetFile(id)
-        assumeTrue(file.exists(), "table ${id.fileName} not written yet")
+        assertTrue(file.exists(), "table ${id.fileName} is missing from the assets")
         return TableFile.decode(file.readText())
     }
 
