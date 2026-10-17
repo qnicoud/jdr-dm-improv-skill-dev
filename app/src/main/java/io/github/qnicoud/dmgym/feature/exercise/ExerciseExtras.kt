@@ -53,6 +53,8 @@ object ExerciseExtraTags {
     const val END_NOTE = "exercise_end_note"
 
     fun option(key: String) = "exercise_option_$key"
+
+    fun optionHelp(key: String) = "exercise_option_help_$key"
 }
 
 /** Interrupteurs propres à l'exercice, affichés avant le départ ; les valeurs sont enregistrées avec la session. */
@@ -68,18 +70,32 @@ fun OptionsPanel(
         Text(stringResource(R.string.options_title), style = MaterialTheme.typography.titleMedium)
         options.forEach { option ->
             val checked = values[option.key] ?: option.default
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+            Column(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 56.dp)
                         .testTag(ExerciseExtraTags.option(option.key))
                         .toggleable(value = checked, role = Role.Switch, onValueChange = { onChanged(option.key, it) }),
             ) {
-                Text(stringResource(option.label), modifier = Modifier.weight(1f).padding(end = 16.dp))
-                Switch(checked = checked, onCheckedChange = null)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
+                ) {
+                    Text(stringResource(option.label), modifier = Modifier.weight(1f).padding(end = 16.dp))
+                    Switch(checked = checked, onCheckedChange = null)
+                }
+                option.help?.let {
+                    Text(
+                        stringResource(it),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier =
+                            Modifier
+                                .padding(end = 16.dp, bottom = 8.dp)
+                                .testTag(ExerciseExtraTags.optionHelp(option.key)),
+                    )
+                }
             }
         }
     }

@@ -183,6 +183,8 @@ data class ExerciseOption(
     val key: String,
     val label: StringResId,
     val default: Boolean = false,
+    /** Court texte d'aide affiché sous l'interrupteur. */
+    val help: StringResId? = null,
 )
 
 /** Question Oui/Non de l'auto-évaluation. */

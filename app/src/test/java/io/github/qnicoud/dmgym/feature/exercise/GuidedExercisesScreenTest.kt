@@ -180,4 +180,12 @@ class GuidedExercisesScreenTest {
         assertEquals(Phase.Active, vm.uiState.value.session.phase)
         compose.onNodeWithTag(ExerciseExtraTags.SCENE_DONE).assertIsDisplayed()
     }
+
+    @Test
+    fun `status numbers explains what each option does`() {
+        launch(StatusNumbers.definition)
+        listOf(StatusNumbers.OPTION_COUNTER, StatusNumbers.OPTION_SHIFT).forEach {
+            compose.onNodeWithTag(ExerciseExtraTags.optionHelp(it), useUnmergedTree = true).assertIsDisplayed()
+        }
+    }
 }

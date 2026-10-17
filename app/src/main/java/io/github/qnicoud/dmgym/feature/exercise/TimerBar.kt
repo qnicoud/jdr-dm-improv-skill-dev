@@ -17,12 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -138,19 +142,37 @@ private fun DrawScope.drawFill(
     color: Color,
     fraction: Float,
 ) {
-    drawRect(color.copy(alpha = TRACK_ALPHA), size = size)
-    drawRect(color, size = Size(size.width * fraction, size.height))
+    val radius = CornerRadius(size.height / 2)
+    drawRoundRect(color.copy(alpha = TRACK_ALPHA), size = size, cornerRadius = radius)
+    val width = progressFillWidth(size.width, size.height, fraction)
+    if (width > 0f) drawRoundRect(color, size = Size(width, size.height), cornerRadius = radius)
 }
 
+/** Largeur du remplissage : jamais sous la hauteur de la barre, pour que les deux demi-cercles restent visibles. */
+internal fun progressFillWidth(
+    trackWidth: Float,
+    height: Float,
+    fraction: Float,
+): Float = if (fraction <= 0f) 0f else (trackWidth * fraction).coerceAtLeast(height).coerceAtMost(trackWidth)
+
 private fun DrawScope.drawOutline(color: Color) {
-    drawRect(color, style = Stroke(width = 2.dp.toPx()), size = size)
+    val stroke = 2.dp.toPx()
+    drawRoundRect(
+        color,
+        topLeft = Offset(stroke / 2, stroke / 2),
+        size = Size(size.width - stroke, size.height - stroke),
+        cornerRadius = CornerRadius((size.height - stroke) / 2),
+        style = Stroke(width = stroke),
+    )
 }
 
 /** Barre pleine à rayures diagonales : elle ne diminue plus, le temps additionnel n'est pas une alerte. */
 private fun DrawScope.drawStripes(color: Color) {
-    drawRect(color.copy(alpha = TRACK_ALPHA), size = size)
+    val radius = CornerRadius(size.height / 2)
+    drawRoundRect(color.copy(alpha = TRACK_ALPHA), size = size, cornerRadius = radius)
     val step = STRIPE_STEP.toPx()
-    clipRect {
+    val shape = Path().apply { addRoundRect(RoundRect(Rect(Offset.Zero, size), radius)) }
+    clipPath(shape) {
         var x = -size.height
         while (x < size.width) {
             drawLine(color, Offset(x, size.height), Offset(x + size.height, 0f), strokeWidth = step / 2)
