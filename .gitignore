@@ -10,3 +10,6 @@ captures/
 *.jks
 *.keystore
 /.claude/worktrees/
+*.apk
+*.aab
+*.idsig
