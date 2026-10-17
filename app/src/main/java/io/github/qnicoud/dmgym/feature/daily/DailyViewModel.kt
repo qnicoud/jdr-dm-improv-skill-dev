@@ -7,6 +7,7 @@ import io.github.qnicoud.dmgym.core.daily.DailyPlan
 import io.github.qnicoud.dmgym.core.daily.DailyPlanSource
 import io.github.qnicoud.dmgym.core.daily.DailyProgress
 import io.github.qnicoud.dmgym.core.daily.ExerciseProgress
+import io.github.qnicoud.dmgym.core.daily.clearReplacements
 import io.github.qnicoud.dmgym.core.daily.dailyProgress
 import io.github.qnicoud.dmgym.core.daily.replacementsFor
 import io.github.qnicoud.dmgym.core.daily.withReplacement
@@ -62,6 +63,9 @@ data class DailyUiState(
 /**
  * Séance du jour (ADR 0011, architecture §10) : plan déterministe, remplacements du jour dans les réglages
  * et avancement déduit de l'historique du jour.
+ *
+ * Deux instances coexistent (accueil et écran de la séance), chacune dans le store de son entrée de navigation ;
+ * c'est accepté pour l'instant, les deux lisent les mêmes sources.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class DailyViewModel(
@@ -91,7 +95,11 @@ class DailyViewModel(
 
     /** À appeler à la reprise de l'écran : le jour a pu changer pendant qu'il était en arrière-plan (D16). */
     fun refreshToday() {
-        today.value = clock.localEpochDay()
+        val day = clock.localEpochDay()
+        today.value = day
+        viewModelScope.launch {
+            settings.update { if (it.dailyEpochDay != null && it.dailyEpochDay != day) it.clearReplacements() else it }
+        }
     }
 
     /** Remplace l'exercice de [position] par [exercise], si celui-ci est encore à faire et n'est pas déjà dans la séance. */

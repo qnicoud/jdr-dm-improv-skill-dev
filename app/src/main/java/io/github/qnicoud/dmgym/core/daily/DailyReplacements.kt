@@ -38,27 +38,19 @@ fun Settings.withReplacement(
     exercise: ExerciseId,
 ): Settings = copy(dailyEpochDay = today, dailyReplacements = replacementsFor(today) + (position to exercise))
 
-/** Applique les remplacements ; ceux qui doubleraient un autre exercice, ou inconnus, sont ignorés. */
+fun Settings.clearReplacements(): Settings = copy(dailyEpochDay = null, dailyReplacements = emptyMap())
+
+/**
+ * Applique les remplacements, indépendamment de leur ordre : la séance obtenue doit comporter trois exercices
+ * distincts. Les remplacements inconnus ou hors séance sont ignorés ; en cas de doublon, celui de la position
+ * la plus haute est abandonné jusqu'à ce que la séance soit valide.
+ */
 fun DailyPlan.withReplacements(replacements: Map<Int, ExerciseId>): DailyPlan {
-    val applied =
-        replacements.entries.sortedBy { it.key }.fold(exercises) { current, (position, id) ->
-            replaceAt(current, position, id)
-        }
-    return copy(exercises = applied)
-}
-
-private fun replaceAt(
-    current: List<ExerciseId>,
-    position: Int,
-    id: ExerciseId,
-): List<ExerciseId> =
-    if (isValidReplacement(current, position, id)) current.toMutableList().apply { set(position, id) } else current
-
-private fun isValidReplacement(
-    current: List<ExerciseId>,
-    position: Int,
-    id: ExerciseId,
-): Boolean {
-    val duplicate = current.withIndex().any { it.index != position && it.value == id }
-    return position in current.indices && id in ExerciseId.ALL && !duplicate
+    var kept = replacements.filter { (position, id) -> position in exercises.indices && id in ExerciseId.ALL }
+    while (true) {
+        val result = exercises.mapIndexed { index, original -> kept[index] ?: original }
+        if (result.toSet().size == result.size) return copy(exercises = result)
+        val conflicting = kept.keys.filter { position -> result.count { it == result[position] } > 1 }
+        kept = kept - (conflicting.maxOrNull() ?: return copy(exercises = result))
+    }
 }

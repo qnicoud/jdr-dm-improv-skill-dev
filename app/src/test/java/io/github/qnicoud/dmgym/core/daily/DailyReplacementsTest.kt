@@ -81,6 +81,22 @@ class DailyReplacementsTest {
     }
 
     @Test
+    fun `the order of the replacements does not matter`() {
+        val abc = DailyPlan(1, listOf(ExerciseId.CRAZY_EIGHTS, ExerciseId.CORE_IMAGE, ExerciseId.CONNECT_STORY))
+        val applied = abc.withReplacements(mapOf(1 to ExerciseId.STATUS_NUMBERS, 0 to ExerciseId.CORE_IMAGE))
+        assertEquals(
+            listOf(ExerciseId.CORE_IMAGE, ExerciseId.STATUS_NUMBERS, ExerciseId.CONNECT_STORY),
+            applied.exercises,
+        )
+    }
+
+    @Test
+    fun `conflicting replacements are dropped so the plan stays distinct`() {
+        val applied = plan.withReplacements(mapOf(0 to ExerciseId.STATUS_NUMBERS, 1 to ExerciseId.STATUS_NUMBERS))
+        assertEquals(3, applied.exercises.toSet().size)
+    }
+
+    @Test
     fun `no replacement means no change`() {
         assertEquals(plan, plan.withReplacements(emptyMap()))
         assertNull(Settings().dailyEpochDay)
