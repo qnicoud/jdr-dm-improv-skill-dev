@@ -26,9 +26,12 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.feature.daily.DailyCard
+import io.github.qnicoud.dmgym.feature.daily.DailyViewModel
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 
@@ -43,17 +46,30 @@ object HomeTags {
 @Composable
 fun HomeRoute(
     viewModel: HomeViewModel,
+    dailyViewModel: DailyViewModel,
     onExerciseClick: (ExerciseId) -> Unit,
+    onDailyClick: () -> Unit,
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    HomeScreen(state, onExerciseClick, onSettingsClick, modifier)
+    val daily by dailyViewModel.uiState.collectAsStateWithLifecycle()
+    LifecycleResumeEffect(dailyViewModel) {
+        dailyViewModel.refreshToday()
+        onPauseOrDispose {}
+    }
+    HomeScreen(
+        state = state,
+        onExerciseClick = onExerciseClick,
+        onSettingsClick = onSettingsClick,
+        modifier = modifier,
+        dailySlot = if (daily.isLoading) null else ({ DailyCard(daily, onDailyClick) }),
+    )
 }
 
 /**
  * Accueil (S02). Les emplacements [resumeSlot] (carte « Reprendre ») et [dailySlot] (« Séance du jour »)
- * sont réservés ; leur logique arrive avec les lots L9 et L11.
+ * sont réservés : la carte « Reprendre » arrive avec le lot L9, [DailyCard] est branchée par [HomeRoute].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
