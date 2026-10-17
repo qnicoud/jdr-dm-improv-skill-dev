@@ -16,7 +16,7 @@ import androidx.navigation3.ui.NavDisplay
 import io.github.qnicoud.dmgym.app.AppContainer
 import io.github.qnicoud.dmgym.feature.daily.DailyRoute
 import io.github.qnicoud.dmgym.feature.daily.DailyViewModel
-import io.github.qnicoud.dmgym.feature.exercise.ExerciseScreen
+import io.github.qnicoud.dmgym.feature.exercise.ExerciseEntry
 import io.github.qnicoud.dmgym.feature.history.HistoryScreen
 import io.github.qnicoud.dmgym.feature.history.SessionDetailScreen
 import io.github.qnicoud.dmgym.feature.home.HomeRoute
@@ -69,7 +69,7 @@ private fun appEntryProvider(
                 onSettingsClick = navigator::openSettings,
             )
         }
-        entry<Exercise> { route -> ExerciseScreen(route.exerciseId, onBack = { navigator.back() }) }
+        entry<Exercise> { route -> ExerciseEntry(route, container, onBack = { navigator.back() }) }
         entry<Daily> {
             DailyRoute(
                 viewModel = viewModel { container.dailyViewModel() },

@@ -122,4 +122,71 @@
   <string name="settings_title">Réglages</string>
   <string name="session_detail_title">Détail de la session</string>
   <string name="placeholder_coming_soon">Cet écran arrive bientôt.</string>
+
+  <!-- Exercice : écran générique (S04, S05, S06) -->
+  <string name="exercise_start">Commencer</string>
+  <string name="exercise_finish">Terminer</string>
+  <string name="exercise_pause">Pause</string>
+  <string name="exercise_resume">Reprendre</string>
+  <string name="exercise_saved">Enregistré</string>
+  <string name="exercise_save_failed">Enregistrement impossible</string>
+  <string name="exercise_loading">Tirage en cours</string>
+  <string name="exercise_progress">%1$d/%2$d</string>
+  <string name="exercise_progress_description">%1$d réponses sur %2$d</string>
+
+  <!-- Minuteur -->
+  <string name="timer_ready">Prêt</string>
+  <string name="timer_paused">En pause</string>
+  <string name="timer_last_minute">Dernière minute</string>
+  <string name="timer_overtime">Temps additionnel</string>
+  <string name="timer_untimed">Sans minuteur</string>
+  <string name="timer_description_remaining">Minuteur : %1$s restantes</string>
+  <string name="timer_description_overtime">Minuteur : temps additionnel, %1$s</string>
+  <string name="timer_description_paused">Minuteur en pause : %1$s</string>
+  <string name="timer_description_elapsed">Chronomètre : %1$s écoulées</string>
+  <string name="timer_description_ready">Minuteur prêt : %1$s</string>
+  <string name="announce_started">C’est parti.</string>
+  <string name="announce_halfway">La moitié du temps est écoulée.</string>
+  <string name="announce_last_minute">Il reste une minute.</string>
+  <string name="announce_time_up">Temps écoulé. Tu peux continuer à écrire.</string>
+
+  <!-- Tirage -->
+  <string name="draw_reroll">Relancer le tirage</string>
+  <plurals name="draw_reroll_count">
+    <item quantity="one">%1$d relance</item>
+    <item quantity="other">%1$d relances</item>
+  </plurals>
+  <string name="draw_description">Tirage : %1$s</string>
+  <string name="draw_check_used">Utilisé</string>
+  <string name="draw_error_title">Les tirages de cet exercice sont indisponibles</string>
+  <string name="draw_error_body">Rien n’est perdu : tes sessions sont intactes.</string>
+  <string name="draw_retry">Réessayer</string>
+  <string name="draw_reroll_failed">Impossible de relancer le tirage pour l’instant.</string>
+  <string name="start_failed">Impossible de démarrer la session. Réessaie.</string>
+  <string name="draw_free_subject">Écrire mon propre sujet</string>
+  <string name="draw_free_subject_hint">Ton sujet</string>
+
+  <!-- Saisie -->
+  <string name="field_default_label">Réponse %1$d</string>
+  <string name="field_default_hint">Ta première idée, même mauvaise</string>
+  <string name="question_progress">Question %1$d sur %2$d</string>
+  <string name="question_next">Question suivante</string>
+  <string name="group_title">Élément %1$d</string>
+  <string name="group_add">Ajouter un élément</string>
+
+  <!-- Bilan (S06) -->
+  <string name="end_title">Session enregistrée</string>
+  <string name="end_recap">Durée : %1$s</string>
+  <string name="end_level_title">Ton niveau (facultatif)</string>
+  <string name="level_draft">Brouillon</string>
+  <string name="level_solid">Solide</string>
+  <string name="level_ready">Prêt pour la table</string>
+  <string name="level_description">%1$s, %2$d sur 3</string>
+  <string name="end_rubric_title">Quelques questions</string>
+  <string name="rubric_yes">Oui</string>
+  <string name="rubric_no">Non</string>
+  <string name="gem_keep">Garder comme bijou</string>
+  <string name="gem_kept">Bijou</string>
+  <string name="end_done">Terminé</string>
+  <string name="end_skip">Passer</string>
 </resources>
