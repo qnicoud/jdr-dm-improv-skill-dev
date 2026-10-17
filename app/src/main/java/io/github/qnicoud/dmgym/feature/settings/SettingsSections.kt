@@ -191,16 +191,18 @@ private fun ActionRow(
     trailing: (@Composable () -> Unit)? = null,
 ) {
     Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .heightIn(min = 56.dp)
-                .clickable(role = Role.Button, onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
+        Column(
+            modifier =
+                modifier
+                    .weight(1f)
+                    .heightIn(min = 56.dp)
+                    .clickable(role = Role.Button, onClick = onClick)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.Center,
+        ) {
             Text(label, style = MaterialTheme.typography.bodyLarge)
             Text(hint, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -208,7 +210,7 @@ private fun ActionRow(
     }
 }
 
-/** Coche de validation à côté du bouton d'export ; annoncée par TalkBack, elle remplace le texte (recette 8.5). */
+/** Coche de validation à côté du bouton d'export, hors de la ligne cliquable pour que sa zone vive soit annoncée (recette 8.5). */
 @Composable
 private fun ExportDoneCheck() {
     Icon(
@@ -217,6 +219,7 @@ private fun ExportDoneCheck() {
         tint = MaterialTheme.colorScheme.primary,
         modifier =
             Modifier
+                .padding(end = 16.dp)
                 .semantics { liveRegion = LiveRegionMode.Polite }
                 .testTag(SettingsTags.EXPORT_DONE),
     )

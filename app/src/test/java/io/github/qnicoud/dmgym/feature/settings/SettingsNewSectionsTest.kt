@@ -3,6 +3,7 @@ package io.github.qnicoud.dmgym.feature.settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
@@ -233,6 +234,11 @@ class SettingsNewSectionsTest {
             .performScrollTo()
             .assertIsDisplayed()
             .assertContentDescriptionEquals("Export terminé.")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite))
+        // La coche est hors de la ligne cliquable : sa zone vive n'est pas fusionnée dans le bouton.
+        compose
+            .onNodeWithTag(SettingsTags.EXPORT)
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.LiveRegion))
         compose.onNodeWithTag(SettingsTags.DATA_MESSAGE).assertDoesNotExist()
     }
 
