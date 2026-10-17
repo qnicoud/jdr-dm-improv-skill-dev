@@ -22,6 +22,15 @@ class AppNavigatorTest {
     }
 
     @Test
+    fun `about opens above settings and back returns to settings`() {
+        navigator.openSettings()
+        navigator.openAbout()
+        assertEquals(listOf<NavKey>(Home, Settings, About), stack.toList())
+        assertTrue(navigator.back())
+        assertEquals(Settings, stack.last())
+    }
+
+    @Test
     fun `opening settings pushes settings and back pops it`() {
         navigator.openSettings()
         assertEquals(Settings, stack.last())

@@ -28,6 +28,10 @@ class AppNavigator(
         backStack.add(SessionDetail(sessionId))
     }
 
+    fun openAbout() {
+        backStack.add(About)
+    }
+
     fun openSettings() {
         backStack.add(Settings)
     }
