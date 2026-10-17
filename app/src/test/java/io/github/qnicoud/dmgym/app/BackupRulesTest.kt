@@ -43,7 +43,7 @@ class BackupRulesTest {
     fun `device transfer includes database and preferences`() {
         val transfer = section("data_extraction_rules", "device-transfer")
 
-        assertTrue(domainsOf(transfer, "include").containsAll(setOf("database", "file", "root")))
+        assertEquals(setOf("database", "sharedpref", "file"), domainsOf(transfer, "include"))
         assertTrue(domainsOf(transfer, "exclude").isEmpty())
     }
 
