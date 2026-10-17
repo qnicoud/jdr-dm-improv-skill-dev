@@ -20,6 +20,24 @@ class AppNavigator(
         backStack.add(Exercise(exerciseId, resumeSessionId, fromDaily))
     }
 
+    /**
+     * Enchaîne sur l'exercice suivant de la séance du jour en remplaçant l'exercice terminé : « retour » mène alors
+     * à l'aperçu de la séance (S03), pas à un exercice fini.
+     */
+    fun openNextDailyExercise(exerciseId: ExerciseId) {
+        replaceTop(Exercise(exerciseId, fromDaily = true))
+    }
+
+    /** Remplace le dernier exercice de la séance par sa fin (S07). */
+    fun finishDailySession() {
+        replaceTop(DailyDone)
+    }
+
+    private fun replaceTop(route: Route) {
+        if (backStack.size > 1) backStack.removeAt(backStack.lastIndex)
+        backStack.add(route)
+    }
+
     fun openDaily() {
         backStack.add(Daily)
     }

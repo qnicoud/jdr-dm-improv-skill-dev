@@ -2,30 +2,24 @@ package io.github.qnicoud.dmgym.feature.daily
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.qnicoud.dmgym.core.daily.DailyOptions
 import io.github.qnicoud.dmgym.core.daily.DailyPlan
+import io.github.qnicoud.dmgym.core.daily.DailyPlanResolver
 import io.github.qnicoud.dmgym.core.daily.DailyPlanSource
 import io.github.qnicoud.dmgym.core.daily.DailyProgress
 import io.github.qnicoud.dmgym.core.daily.ExerciseProgress
 import io.github.qnicoud.dmgym.core.daily.clearReplacements
 import io.github.qnicoud.dmgym.core.daily.dailyProgress
-import io.github.qnicoud.dmgym.core.daily.replacementsFor
 import io.github.qnicoud.dmgym.core.daily.withReplacement
-import io.github.qnicoud.dmgym.core.daily.withReplacements
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import io.github.qnicoud.dmgym.core.time.localEpochDay
 import io.github.qnicoud.dmgym.feature.home.ExerciseCatalog
 import io.github.qnicoud.dmgym.feature.home.ExerciseSummary
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.Clock
@@ -67,7 +61,6 @@ data class DailyUiState(
  * Deux instances coexistent (accueil et écran de la séance), chacune dans le store de son entrée de navigation ;
  * c'est accepté pour l'instant, les deux lisent les mêmes sources.
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 class DailyViewModel(
     history: HistoryRepository,
     private val settings: SettingsRepository,
@@ -77,20 +70,13 @@ class DailyViewModel(
 ) : ViewModel() {
     private val today = MutableStateFlow(clock.localEpochDay())
 
-    private val basePlan =
-        combine(today, settings.settings.map { it.dailyIncludeOnePage }.distinctUntilChanged()) { day, onePage ->
-            day to DailyOptions(includeOnePage = onePage)
-        }.mapLatest { (day, options) -> planSource.planFor(day, ExerciseId.ALL, options) }
-
     val uiState: StateFlow<DailyUiState> =
         combine(
-            basePlan,
-            settings.settings,
+            DailyPlanResolver(settings, planSource).observe(today),
             catalog.exercises,
             history.observeHistory(),
-        ) { plan, current, exercises, sessions ->
-            val resolved = plan.withReplacements(current.replacementsFor(plan.epochDay))
-            toUiState(resolved, exercises, dailyProgress(resolved.exercises, plan.epochDay, sessions))
+        ) { plan, exercises, sessions ->
+            toUiState(plan, exercises, dailyProgress(plan.exercises, plan.epochDay, sessions))
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), DailyUiState())
 
     /** À appeler à la reprise de l'écran : le jour a pu changer pendant qu'il était en arrière-plan (D16). */
