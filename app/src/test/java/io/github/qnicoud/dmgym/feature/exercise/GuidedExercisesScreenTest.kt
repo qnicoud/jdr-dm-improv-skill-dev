@@ -17,6 +17,7 @@ import androidx.lifecycle.SavedStateHandle
 import io.github.qnicoud.dmgym.app.FakeSettingsRepository
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
+import io.github.qnicoud.dmgym.core.exercise.FirstPick
 import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.core.exercise.definitions.CoreImage
 import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
@@ -155,6 +156,26 @@ class GuidedExercisesScreenTest {
         tap(ExerciseTags.FINISH)
         compose.onNodeWithTag(ExerciseTags.END_PROMPT).assertTextContains("Laquelle aurais-tu jouée en premier ?")
         compose.onNodeWithTag(ExerciseTags.END_HINT).assertIsDisplayed()
+        tap(ExerciseTags.DONE)
+    }
+
+    @Test
+    fun `decision point review lets pick the answer played first, optionally`() {
+        val vm = launch(DecisionPoint.definition)
+        tap(ExerciseTags.START)
+        DecisionPoint.FIELD_KEYS.forEachIndexed { index, key ->
+            compose.onNodeWithTag(ExerciseTags.field(AnswerKey(key))).performTextInput("idée $index")
+        }
+        tap(ExerciseTags.FINISH)
+        DecisionPoint.FIELD_KEYS.forEachIndexed { index, key ->
+            compose.onNodeWithTag(ExerciseExtraTags.firstPick(key)).assertTextContains("idée $index", substring = true)
+        }
+        tap(ExerciseExtraTags.firstPick("answer_2"))
+        assertEquals("answer_2", FirstPick.chosen(vm.uiState.value.session.rubric))
+        tap(ExerciseExtraTags.firstPick("answer_3"))
+        assertEquals("answer_3", FirstPick.chosen(vm.uiState.value.session.rubric))
+        tap(ExerciseExtraTags.firstPick("answer_3"))
+        assertEquals(null, FirstPick.chosen(vm.uiState.value.session.rubric))
         tap(ExerciseTags.DONE)
     }
 

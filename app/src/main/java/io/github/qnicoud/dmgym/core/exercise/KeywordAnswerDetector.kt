@@ -55,6 +55,16 @@ class KeywordAnswerDetector(
         return known.associate { DrawKey(it.slotKey, it.position) to result.isDetected(keyOf(it)) }
     }
 
+    override fun occurrences(
+        draws: List<Draw>,
+        text: String,
+    ): Map<DrawKey, Int> {
+        val known = draws.filter { keyOf(it) in targets }
+        if (known.isEmpty()) return emptyMap()
+        val matches = engine.detect(text, compiledFor(known)).matches
+        return known.associate { DrawKey(it.slotKey, it.position) to matches[keyOf(it)].orEmpty().size }
+    }
+
     override fun highlights(
         draws: List<Draw>,
         text: String,

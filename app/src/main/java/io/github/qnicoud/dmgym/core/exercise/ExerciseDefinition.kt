@@ -93,7 +93,7 @@ data class TableSlot(
     }
 }
 
-/** La carte est choisie à l'opposé du rang (`rank:*`) du rôle tiré dans [roleSlot], quand [option] est active (D45). */
+/** La carte suit le rang (`rank:*`) du rôle tiré dans [roleSlot], à l'opposé quand [option] est active (D45). */
 data class RankContrast(
     val roleSlot: String,
     val option: String,
@@ -255,6 +255,8 @@ data class ExerciseDefinition(
     val endPrompt: StringResId? = null,
     /** Suggestion du bilan tant qu'aucune réponse n'est marquée du drapeau (Decision Point : case « jamais »). */
     val endFlagHint: StringResId? = null,
+    /** Vrai si le bilan propose de choisir l'une des réponses du formulaire (Decision Point, [FirstPick]). */
+    val endChoice: Boolean = false,
 ) {
     init {
         require(rubric.size in RUBRIC_SIZE) { "rubric must have 2 or 3 questions" }

@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.settings
 
+import io.github.qnicoud.dmgym.core.exercise.FirstPick
 import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionStatus
@@ -54,8 +55,14 @@ class SessionExportFormatter(
         )
         appendSection(
             "Grille",
-            detail.rubric.map { "${labels.question(exercise, it.questionKey)} : ${if (it.value) "oui" else "non"}" },
+            detail.rubric
+                .filterNot { FirstPick.isKey(it.questionKey) }
+                .map { "${labels.question(exercise, it.questionKey)} : ${if (it.value) "oui" else "non"}" },
         )
+        val chosen = FirstPick.chosen(detail.rubric.associate { it.questionKey to it.value })
+        detail.answers.firstOrNull { it.fieldKey == chosen && it.text.isNotBlank() }?.let {
+            appendLine("Jouée en premier : ${it.text}")
+        }
     }
 
     /** Le premier groupe (PNJ n°1) garde le libellé seul ; les suivants sont numérotés. */

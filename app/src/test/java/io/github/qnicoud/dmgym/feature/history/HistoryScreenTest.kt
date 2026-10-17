@@ -74,6 +74,7 @@ class HistoryScreenTest {
                         onClearFilter = { cleared++ },
                         onOpenSession = { opened += it },
                         onChooseExercise = { chosen++ },
+                        onSettingsClick = {},
                     )
                 }
             }

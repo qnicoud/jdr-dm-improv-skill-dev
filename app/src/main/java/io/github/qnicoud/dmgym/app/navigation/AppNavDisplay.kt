@@ -150,6 +150,7 @@ private fun appEntryProvider(
                     },
                 onOpenSession = navigator::openSessionDetail,
                 onChooseExercise = { navigator.selectTab(Home) },
+                onSettingsClick = navigator::openSettings,
             )
         }
         entry<SessionDetail> { route ->
@@ -168,6 +169,7 @@ private fun appEntryProvider(
                 onChooseExercise = { navigator.selectTab(Home) },
                 onShowGems = { navigator.openHistory(HistoryFilter.Gems) },
                 onShowExercise = { navigator.openHistory(HistoryFilter.exercise(it)) },
+                onSettingsClick = navigator::openSettings,
             )
         }
         entry<Settings> {

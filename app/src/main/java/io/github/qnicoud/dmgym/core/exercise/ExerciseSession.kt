@@ -21,6 +21,13 @@ data class Answer(
 data class ElementCheck(
     val auto: Boolean,
     val manual: Boolean? = null,
+    /** Occurrences détectées au dernier recalcul (non enregistré). */
+    val occurrences: Int = 0,
+    /**
+     * Occurrences au moment du cochage manuel (non enregistré ; `null` : inconnu, adopté au prochain recalcul).
+     * Une occurrence de plus annule un décochage manuel (ADR 0008).
+     */
+    val manualAt: Int? = null,
 ) {
     val checked: Boolean get() = manual ?: auto
 }

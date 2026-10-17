@@ -35,8 +35,10 @@ sealed interface ExerciseAction {
         val key: AnswerKey,
     ) : ExerciseAction
 
+    /** [occurrences] : nombre d'occurrences par tirage ; absent, il vaut 1 si détecté et 0 sinon. */
     data class AutoDetected(
         val detected: Map<DrawKey, Boolean>,
+        val occurrences: Map<DrawKey, Int> = emptyMap(),
     ) : ExerciseAction
 
     data class CheckToggled(

@@ -43,10 +43,15 @@ class SlotConditionsTest {
         )
 
     @Test
-    fun `band of a rank is the opposite one`() {
-        assertEquals(1..3, contrastBand(listOf("rank:high")))
-        assertEquals(8..10, contrastBand(listOf("rank:low")))
-        assertEquals(null, contrastBand(listOf("shift:up")))
+    fun `cards follow the rank by default and take the opposite one against the stereotype`() {
+        assertEquals((7..10).toList(), statusCards(listOf("rank:high"), counter = false))
+        assertEquals((4..7).toList(), statusCards(listOf("rank:mid"), counter = false))
+        assertEquals((1..4).toList(), statusCards(listOf("rank:low"), counter = false))
+        assertEquals((1..10).toList(), statusCards(listOf("shift:up"), counter = false))
+        assertEquals((1..3).toList(), statusCards(listOf("rank:high"), counter = true))
+        assertEquals((8..10).toList(), statusCards(listOf("rank:low"), counter = true))
+        assertEquals(listOf(1, 2, 3, 8, 9, 10), statusCards(listOf("rank:mid"), counter = true))
+        assertEquals((1..10).toList(), statusCards(emptyList(), counter = true))
         assertEquals(StatusLevel.Low, statusLevel(3))
         assertEquals(StatusLevel.Medium, statusLevel(5))
         assertEquals(StatusLevel.High, statusLevel(8))
@@ -73,7 +78,7 @@ class SlotConditionsTest {
         }
 
     @Test
-    fun `counter stereotype leaves the card free without rank tag or when off`() =
+    fun `the card follows the rank when the option is off and is free without rank tag`() =
         runTest {
             val seen = mutableSetOf<Int>()
             val noRank = drawer(roleNone)
@@ -92,8 +97,17 @@ class SlotConditionsTest {
                         .entryId
                         .toInt()
             }
-            assertTrue(seen.any { it in 4..7 })
+            assertTrue(seen.any { it in 4..6 })
             assertTrue(seen.any { it >= 8 })
+            val followed =
+                (1..60).map {
+                    drawer(roleHigh)
+                        .drawAll(slots, mapOf("counter" to false))
+                        .last()
+                        .entryId
+                        .toInt()
+                }
+            assertTrue(followed.all { it in 7..10 })
         }
 
     @Test

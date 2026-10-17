@@ -5,6 +5,7 @@ import io.github.qnicoud.dmgym.app.FakeHistoryRepository
 import io.github.qnicoud.dmgym.core.exercise.DemoExercise
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
+import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
 import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.DrawRecord
 import io.github.qnicoud.dmgym.core.history.RubricRecord
@@ -94,6 +95,23 @@ class SessionDetailViewModelTest {
                 assertEquals(2, detail.selfRating)
                 assertTrue(detail.isGem)
                 assertFalse(detail.unfinished)
+            }
+        }
+
+    @Test
+    fun `the answer played first is shown from the grid and kept out of the rubric lines`() =
+        runTest {
+            val decision = DecisionPoint.definition
+            val registry = ExerciseRegistry(listOf(decision))
+            store(
+                record = record(exercise = decision.id),
+                answers = listOf(AnswerRecord("answer_1", 0, "fuir"), AnswerRecord("answer_2", 0, "négocier")),
+                rubric = listOf(RubricRecord("playable", true), RubricRecord("first_pick:answer_2", true)),
+            )
+            SessionDetailViewModel(7, repo, registry).uiState.test {
+                val detail = expectMostRecentItem().detail!!
+                assertEquals("négocier", detail.firstPick)
+                assertEquals(1, detail.rubric.size)
             }
         }
 

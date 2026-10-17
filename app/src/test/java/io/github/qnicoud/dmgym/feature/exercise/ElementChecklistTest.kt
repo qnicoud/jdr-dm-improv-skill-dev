@@ -57,7 +57,7 @@ class ElementChecklistTest {
             Draw(category, 0, "story_elements", "e$index", "élément $category", check)
         }
 
-    private fun show() {
+    private fun show(readOnly: Boolean = false) {
         compose.setContent {
             DmGymTheme {
                 DetectionDrawCard(
@@ -67,6 +67,7 @@ class ElementChecklistTest {
                     showReroll = true,
                     onReroll = {},
                     onCheckToggled = { toggled += it },
+                    readOnly = readOnly,
                 )
             }
         }
@@ -79,6 +80,18 @@ class ElementChecklistTest {
             .fetchSemanticsNode()
             .config
             .getOrNull(SemanticsProperties.StateDescription)
+
+    @Test
+    fun `read only shows the elements without checkbox, count or toggle`() {
+        show(readOnly = true)
+        categories.forEach {
+            compose.onNodeWithText("élément $it").assertIsDisplayed()
+            assertEquals(null, stateOf(it))
+        }
+        compose.onNodeWithTag(ExerciseTags.CHECKLIST_COUNT, useUnmergedTree = true).assertDoesNotExist()
+        compose.onNodeWithTag(ExerciseTags.check(DrawKey("place", 0))).performClick()
+        assertTrue(toggled.isEmpty())
+    }
 
     @Test
     fun `starts unfolded with the five elements and the count`() {

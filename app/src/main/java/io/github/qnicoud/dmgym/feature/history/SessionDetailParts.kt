@@ -223,6 +223,20 @@ fun RubricSection(rubric: List<RubricLine>) {
     }
 }
 
+/** Réponse choisie dans le bilan « Laquelle aurais-tu jouée en premier ? », en lecture seule. */
+@Composable
+fun FirstPickSection(text: String?) {
+    if (text == null) return
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.testTag(DetailTags.FIRST_PICK)) {
+        Text(
+            stringResource(R.string.detail_first_pick_title),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.semantics { heading() },
+        )
+        Text(text)
+    }
+}
+
 @Composable
 fun RedoButton(
     onClick: () -> Unit,

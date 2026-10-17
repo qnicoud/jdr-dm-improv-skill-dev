@@ -20,7 +20,8 @@ internal class DetectionCoordinator(
         val detector = detector ?: return
         val current = session()
         val draws = current.draws.filter { it.slotKey in spec.slotKeys }
-        dispatch(ExerciseAction.AutoDetected(detector.detect(draws, current.textOf(AnswerKey(spec.field)))))
+        val text = current.textOf(AnswerKey(spec.field))
+        dispatch(ExerciseAction.AutoDetected(detector.detect(draws, text), detector.occurrences(draws, text)))
     }
 
     /** Charge les mots-clés de [draws] ; à faire avant que l'écran n'affiche le champ, pour un surlignage immédiat. */

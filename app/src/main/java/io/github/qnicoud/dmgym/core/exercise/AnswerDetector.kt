@@ -15,6 +15,12 @@ fun interface AnswerDetector {
         text: String,
     ): Map<DrawKey, Boolean>
 
+    /** Nombre d'occurrences par tirage évalué ; vide si le détecteur ne les compte pas (alors 1 si détecté). */
+    fun occurrences(
+        draws: List<Draw>,
+        text: String,
+    ): Map<DrawKey, Int> = emptyMap()
+
     /** Plages (bornes incluses) du [text] à surligner, fusionnées et triées. Synchrone : appelé à chaque rendu. */
     fun highlights(
         draws: List<Draw>,

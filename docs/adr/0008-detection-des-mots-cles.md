@@ -40,3 +40,12 @@ Deux exercices doivent repérer dans un texte libre en français des éléments 
 ## Complément (2026-10-16, décision D44)
 
 Les répliques (`story_elements`, catégorie réplique) gardent leurs `keywords` en suites de mots. Après la première mesure du corpus doré (lot L8), on ajoute des variantes aux entrées dont le rappel est insuffisant, plutôt que d'assouplir l'algorithme.
+
+## Complément (2026-10-17, recette rc1, critères 1.5 et 1.12, amende D13)
+
+Le cochage manuel fait toujours foi, **sauf** après un décochage : une **nouvelle occurrence** du mot le recoche automatiquement. Une nouvelle occurrence est un nombre d'occurrences détectées supérieur à celui du moment du décochage.
+
+- `ElementCheck` mémorise le nombre d'occurrences du dernier recalcul (`occurrences`) et celui du décochage (`manualAt`). Ces deux valeurs ne sont pas enregistrées : après une reprise de séance, `manualAt` est inconnu et prend le compte du premier recalcul.
+- Décocher puis continuer à taper sans nouvelle occurrence laisse la case décochée. Effacer du texte ne recoche jamais : le compte baisse, il ne dépasse pas la référence.
+- Un recochage supprime l'état manuel (`manual = null`) ; la case suit de nouveau la détection.
+- Le cochage manuel n'existe que pendant l'exercice : l'écran Prêt affiche les mots et éléments en lecture seule.

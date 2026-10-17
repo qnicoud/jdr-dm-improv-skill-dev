@@ -1,5 +1,7 @@
 package io.github.qnicoud.dmgym.core.exercise.definitions
 
+import io.github.qnicoud.dmgym.core.exercise.Draw
+import io.github.qnicoud.dmgym.core.exercise.DrawContext
 import io.github.qnicoud.dmgym.core.exercise.EventPlan
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
@@ -7,8 +9,8 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.core.exercise.FieldLayout
 import io.github.qnicoud.dmgym.core.exercise.SlotDrawer
 import io.github.qnicoud.dmgym.core.exercise.TimerPolicy
-import io.github.qnicoud.dmgym.core.exercise.contrastBand
 import io.github.qnicoud.dmgym.core.exercise.defaultDuration
+import io.github.qnicoud.dmgym.core.exercise.statusCards
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.tables.TableId
 import io.github.qnicoud.dmgym.core.timer.TimerEngine
@@ -96,10 +98,34 @@ class GuidedDefinitionsTest {
                         mapOf(StatusNumbers.OPTION_COUNTER to true),
                     )
                 val role = roles.getValue(draws.first().entryId)
-                val band = checkNotNull(contrastBand(role.tags)) { "role ${role.id} has no rank tag" }
+                val band = statusCards(role.tags, counter = true)
                 assertTrue(draws.last().text.toInt() in band, "${role.tags} -> ${draws.last().text}")
             }
         }
+
+    @Test
+    fun `every real role has a rank tag and its card follows it by default`() =
+        runTest {
+            val roles = RealTables.file(TableId.NpcRoles).entries
+            assertEquals(34, roles.size)
+            val ranges = mapOf("rank:high" to 7..10, "rank:low" to 1..4)
+            roles.forEach { role ->
+                val rank = role.tags.filter { it.startsWith("rank:") }
+                assertEquals(1, rank.size, "role ${role.id}")
+                val cards =
+                    (0 until 30).map { seed ->
+                        val draw =
+                            drawer(seed).draw(
+                                StatusNumbers.definition.slots.last(),
+                                context = DrawContext(listOf(roleDraw(role.id)), emptyMap()),
+                            )
+                        draw.single().text.toInt()
+                    }
+                assertTrue(cards.all { it in ranges.getValue(rank.single()) }, "${role.id} -> $cards")
+            }
+        }
+
+    private fun roleDraw(id: String) = Draw(StatusNumbers.ROLE_SLOT, 0, TableId.NpcRoles.fileName, id, id)
 
     @Test
     fun `the status shift happens once between 40 and 60 percent of the time`() {

@@ -102,12 +102,97 @@ class ExerciseReducerTest {
                 ExerciseAction.Drawn(listOf(DemoExercise.draw(position = 0), DemoExercise.draw(position = 1))),
             )
         val detected = reduce(drawn, ExerciseAction.AutoDetected(mapOf(DrawKey(DemoExercise.SLOT, 0) to true)))
-        assertEquals(ElementCheck(true), detected.draws[0].check)
+        assertEquals(ElementCheck(true, occurrences = 1), detected.draws[0].check)
         assertNull(detected.draws[1].check)
         val overridden = reduce(detected, ExerciseAction.CheckToggled(DrawKey(DemoExercise.SLOT, 0)))
-        assertEquals(ElementCheck(true, manual = false), overridden.draws[0].check)
+        assertEquals(false, overridden.draws[0].check!!.manual)
         val redetected = reduce(overridden, ExerciseAction.AutoDetected(mapOf(DrawKey(DemoExercise.SLOT, 0) to false)))
-        assertEquals(ElementCheck(false, manual = false), redetected.draws[0].check)
+        assertEquals(false, redetected.draws[0].check!!.manual)
+        assertFalse(redetected.draws[0].check!!.checked)
+    }
+
+    private val first = DrawKey(DemoExercise.SLOT, 0)
+
+    private fun uncheckedAfter(occurrences: Int): ExerciseSession {
+        val drawn = reduce(ready, ExerciseAction.Drawn(listOf(DemoExercise.draw())))
+        val detected = reduce(drawn, ExerciseAction.AutoDetected(mapOf(first to true), mapOf(first to occurrences)))
+        return reduce(detected, ExerciseAction.CheckToggled(first))
+    }
+
+    private fun ExerciseSession.seen(occurrences: Int) =
+        reduce(this, ExerciseAction.AutoDetected(mapOf(first to (occurrences > 0)), mapOf(first to occurrences)))
+
+    @Test
+    fun `an unchecked word stays unchecked while no new occurrence appears`() {
+        val unchecked = uncheckedAfter(2)
+        assertFalse(
+            unchecked
+                .seen(2)
+                .draws[0]
+                .check!!
+                .checked,
+        )
+    }
+
+    @Test
+    fun `a new occurrence checks the word again`() {
+        val rechecked = uncheckedAfter(1).seen(2)
+        assertTrue(rechecked.draws[0].check!!.checked)
+        assertNull(rechecked.draws[0].check!!.manual)
+    }
+
+    @Test
+    fun `erasing text does not check the word again`() {
+        val unchecked = uncheckedAfter(2)
+        assertFalse(
+            unchecked
+                .seen(1)
+                .draws[0]
+                .check!!
+                .checked,
+        )
+        assertFalse(
+            unchecked
+                .seen(1)
+                .seen(2)
+                .draws[0]
+                .check!!
+                .checked,
+        )
+        assertTrue(
+            unchecked
+                .seen(1)
+                .seen(3)
+                .draws[0]
+                .check!!
+                .checked,
+        )
+    }
+
+    @Test
+    fun `an unchecked word restored without its count adopts the next count`() {
+        val restored =
+            reduce(
+                ready,
+                ExerciseAction.Drawn(
+                    listOf(DemoExercise.draw().copy(check = ElementCheck(auto = true, manual = false))),
+                ),
+            )
+        assertFalse(
+            restored
+                .seen(3)
+                .draws[0]
+                .check!!
+                .checked,
+        )
+        assertTrue(
+            restored
+                .seen(3)
+                .seen(4)
+                .draws[0]
+                .check!!
+                .checked,
+        )
     }
 
     @Test

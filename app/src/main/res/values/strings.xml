@@ -359,6 +359,9 @@
   <string name="connect_story_rubric_planned">La connexion semblait-elle prévue ?</string>
   <string name="connect_story_rubric_unexpected">Ai-je relié un élément inattendu ?</string>
 
+  <!-- R1a : recette rc1, Decision Point -->
+  <string name="detail_first_pick_title">Réponse jouée en premier</string>
+
   <!-- Réglages (S11) et À propos (S12) -->
   <string name="settings_section_end_signal">Fin du minuteur</string>
   <string name="settings_vibration">Vibration de fin</string>
@@ -432,4 +435,7 @@
   <string name="timer_ready_edit">Régler la durée</string>
   <string name="pinned_summary_expand">Afficher le tirage</string>
   <string name="pinned_summary_collapse">Replier le tirage</string>
+
+  <!-- Lot R1c : recette du cadre de l’app -->
+  <string name="stats_gems_empty">Pas encore de bijou. Garde une réponse comme bijou pour la retrouver ici.</string>
 </resources>

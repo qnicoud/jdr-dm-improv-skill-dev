@@ -62,6 +62,7 @@ internal fun ReadyDraw(
             showReroll = showReroll,
             onReroll = { actions.onReroll(null) },
             onCheckToggled = actions.onCheckToggled,
+            readOnly = state.session.phase == Phase.Ready,
         )
     } else {
         PlainDraw(state, actions)
@@ -110,6 +111,8 @@ fun DetectionDrawCard(
     onReroll: () -> Unit,
     onCheckToggled: (DrawKey) -> Unit,
     modifier: Modifier = Modifier,
+    /** Écran Prêt : éléments affichés sans case, le cochage n'existe que pendant l'exercice. */
+    readOnly: Boolean = false,
 ) {
     val items = remember(definition, draws) { checklistItems(definition, draws) }
     var fold by rememberSaveable(stateSaver = PanelFold.Saver) { mutableStateOf(PanelFold()) }
@@ -127,6 +130,7 @@ fun DetectionDrawCard(
         onReroll = onReroll,
         onCheckToggled = onCheckToggled,
         modifier = modifier,
+        readOnly = readOnly,
     )
 }
 
@@ -142,6 +146,7 @@ fun ElementChecklist(
     onReroll: () -> Unit,
     onCheckToggled: (DrawKey) -> Unit,
     modifier: Modifier = Modifier,
+    readOnly: Boolean = false,
 ) {
     Card(
         modifier = modifier.fillMaxWidth().testTag(ExerciseTags.DRAW_CARD),
@@ -150,12 +155,12 @@ fun ElementChecklist(
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = if (expanded) 16.dp else 4.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = if (expanded || readOnly) 16.dp else 4.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            ProgressHeader(items, collapsible, expanded, onExpandedChange)
-            if (expanded) {
-                items.forEach { ItemRow(it, onCheckToggled) }
+            if (!readOnly) ProgressHeader(items, collapsible, expanded, onExpandedChange)
+            if (expanded || readOnly) {
+                items.forEach { ItemRow(it, onCheckToggled, readOnly) }
                 if (showReroll) RerollRow(rerollCount, onReroll)
             }
         }
@@ -205,13 +210,14 @@ private fun ProgressHeader(
 private fun ItemRow(
     item: ChecklistItem,
     onCheckToggled: (DrawKey) -> Unit,
+    readOnly: Boolean,
 ) {
     val rowModifier =
         Modifier
             .fillMaxWidth()
             .heightIn(min = 48.dp)
             .testTag(ExerciseTags.check(item.key))
-    if (!item.checkable) {
+    if (!item.checkable || readOnly) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = rowModifier.semantics(mergeDescendants = true) {},
