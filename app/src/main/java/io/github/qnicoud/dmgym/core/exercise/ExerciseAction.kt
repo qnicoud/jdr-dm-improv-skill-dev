@@ -1,0 +1,58 @@
+package io.github.qnicoud.dmgym.core.exercise
+
+/** Intentions appliquées par [reduce]. Le tirage est fait hors du réducteur, qui reste déterministe. */
+sealed interface ExerciseAction {
+    data class Drawn(
+        val draws: List<Draw>,
+    ) : ExerciseAction
+
+    /** Relance du slot [slotKey], ou de tous les slots si `null`. Les réponses sont conservées. */
+    data class Rerolled(
+        val slotKey: String?,
+        val draws: List<Draw>,
+    ) : ExerciseAction
+
+    data class Started(
+        val sessionId: Long,
+    ) : ExerciseAction
+
+    data class AnswerChanged(
+        val key: AnswerKey,
+        val text: String,
+    ) : ExerciseAction
+
+    data class FlagToggled(
+        val key: AnswerKey,
+    ) : ExerciseAction
+
+    data class AutoDetected(
+        val detected: Map<DrawKey, Boolean>,
+    ) : ExerciseAction
+
+    data class CheckToggled(
+        val key: DrawKey,
+    ) : ExerciseAction
+
+    /** Question suivante ; [lastIndex] est l'indice de la dernière question. */
+    data class NextQuestion(
+        val lastIndex: Int,
+    ) : ExerciseAction
+
+    data class OptionChanged(
+        val key: String,
+        val value: Boolean,
+    ) : ExerciseAction
+
+    data class EventFired(
+        val eventId: String,
+        val draws: List<Draw>,
+    ) : ExerciseAction
+
+    data object Finished : ExerciseAction
+
+    data class Assessed(
+        val rating: Int?,
+        val isGem: Boolean,
+        val rubric: Map<String, Boolean>,
+    ) : ExerciseAction
+}
