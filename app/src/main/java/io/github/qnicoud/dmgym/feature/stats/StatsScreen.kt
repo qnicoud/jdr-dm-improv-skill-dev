@@ -45,7 +45,6 @@ object StatsTags {
     const val EMPTY = "stats_empty"
     const val EMPTY_ACTION = "stats_empty_action"
     const val GEMS = "stats_gems"
-    const val GEMS_EMPTY = "stats_gems_empty"
     const val GEMS_LINK = "stats_gems_link"
     const val TIME = "stats_time"
 

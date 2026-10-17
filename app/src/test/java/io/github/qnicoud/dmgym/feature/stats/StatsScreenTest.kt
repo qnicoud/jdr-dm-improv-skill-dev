@@ -195,17 +195,15 @@ class StatsScreenTest {
     }
 
     @Test
-    fun `time under one hour is shown in minutes and zero gems and time are hidden`() {
+    fun `time under one hour is shown in minutes`() {
         show(normal.copy(totalSeconds = 25 * 60L, gems = 0))
         compose.onNodeWithTag(StatsTags.TIME).assertTextEquals("25 min d’écriture")
-        compose.onNodeWithTag(StatsTags.GEMS).assertDoesNotExist()
-        compose.onNodeWithTag(StatsTags.GEMS_LINK).assertDoesNotExist()
     }
 
     @Test
-    fun `without any gem a neutral hint replaces the gems link`() {
+    fun `without any gem the counter stays at zero, with no link and no hint`() {
         show(normal.copy(gems = 0))
-        compose.onNodeWithTag(StatsTags.GEMS_EMPTY).performScrollTo().assertIsDisplayed()
+        compose.onNodeWithTag(StatsTags.GEMS).performScrollTo().assertTextEquals("0 bijou")
         compose.onNodeWithTag(StatsTags.GEMS_LINK).assertDoesNotExist()
     }
 
