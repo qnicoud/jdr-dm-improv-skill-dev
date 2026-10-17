@@ -33,7 +33,17 @@
 - **Recette rc1** (2026-10-17, saisie dans l'artefact, collection `recette`) : 96 OK / 4 KO, verdict « corrections nécessaires » → `docs/qa/recette-rc1-resultats.md`. Corrigé et fusionné en 3 lots revus : R1a (recochage sur nouvelle occurrence, écran Prêt en lecture seule, statut selon le rang, choix « jouée en premier » de Decision Point), R1b (feuille de durée sur l'écran Prêt, zone épinglée compacte en paysage, découpage d'`ExerciseScreen`), R1c (lien bijoux, engrenage sur les 3 onglets, coche d'export, saisie EFFACER stable, splash aux couleurs de la palette et du mode, 1 s minimum). Les 11 critères concernés et le verdict sont remis « à tester » dans l'artefact.
 - Dette notée : `ExerciseViewModel.kt` à 420 lignes (à découper) ; 3 points LOW de la revue R1a (libellé d'export en dur, cas limite ADR 0008, clé `first_pick` orpheline) ; épinglage SHA des actions CI.
 - Recette rc1 close (2026-10-18) : 100/100 OK après deux derniers ajustements (icônes de catégorie de Connect the Story ; compteur de bijoux à 0 sans lien). Tag local `v1.0.0-rc1` posé sur `main` (non poussé).
-- **Prochaine action** : l'utilisateur signe la release avec sa propre clé (`docs/qa/release.md`), puis décide du push (branche + tag) vers GitHub. Ensuite : v1.1 (« Échec qui avance », « Règle des 3 indices », « Oui, et… », rappels optionnels), puis LLM optionnel (D51, nouvel ADR). Dette : `ExerciseViewModel.kt` 420 lignes, 3 LOW de la revue R1a, épinglage SHA de la CI.
+- `main` et le tag `v1.0.0-rc1` poussés sur GitHub (2026-10-18, accord de l'utilisateur). APK signé par l'utilisateur (`*.apk`, `*.idsig` désormais ignorés).
+
+## v1.1 — périmètre (lancé le 2026-10-18)
+
+1. **Exercices** (recherche B, `docs/research/02-pedagogie-exercices.md` §84-86) : « Échec qui avance » (4 min, 3 complications de types différents + préférée), « Règle des 3 indices » (5 min, 3 indices objet/PNJ/lieu pour une conclusion), « Oui, et… » (5 offres de joueurs, réponse « oui, et » + ajout ; option « bloquer d'abord »). Nouvelles tables JSON (≥ 30 entrées).
+2. **Rappels** optionnels, désactivés par défaut (D19) : notification locale, permission `POST_NOTIFICATIONS` → ADR amendant l'ADR 0010.
+3. **Import des sessions** : réimporter un export (mêmes données, sans doublon) — nécessaire pour passer de la version de développement à l'APK signé sans perdre l'historique. Format d'export à rendre réimportable (JSON versionné) en plus du texte lisible.
+4. **Gestion de la langue** (demande de l'utilisateur) : langues cibles, réglage de langue dans l'app (sélecteur par app d'Android 13+), traduction des textes (`strings.xml`), **contenu des tables par langue**, **détection des mots-clés par langue** (normalisation, corpus doré par langue), formats de date/nombre, ordre de bascule. À trancher : quelles langues, et si la v1.1 livre l'architecture seule ou aussi une traduction.
+5. Dette : découper `ExerciseViewModel.kt` (420 lignes) ; 3 LOW de la revue R1a ; épinglage SHA de la CI.
+
+- **En cours** : `architecte` (ADR v1.1 + découpage en lots) ∥ `ux-designer` (parcours v1.1, réglages, import, langue) → décisions D54+ dans l'artefact → `redacteur-contenu` (nouvelles tables) et lots `dev-android`.
 
 ## Décisions (issues de la phase 0) — TRANCHÉES le 2026-10-16
 
