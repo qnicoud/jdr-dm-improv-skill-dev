@@ -142,42 +142,6 @@ private fun FixedFields(
 }
 
 @Composable
-private fun SequentialField(
-    layout: FieldLayout.Sequential,
-    session: ExerciseSession,
-    handlers: FieldHandlers,
-    firstFieldFocus: FocusRequester,
-) {
-    val questions = session.drawsOf(layout.questionsSlot)
-    val index = session.currentQuestion.coerceIn(0, (questions.size - 1).coerceAtLeast(0))
-    Text(
-        stringResource(R.string.question_progress, index + 1, questions.size.coerceAtLeast(1)),
-        style = MaterialTheme.typography.labelLarge,
-    )
-    questions.getOrNull(index)?.let { Text(it.text, style = MaterialTheme.typography.titleLarge) }
-    Field(layout.field, AnswerKey(layout.field.key, index), null, session, handlers, firstFieldFocus)
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-        if (index > 0) {
-            TextButton(
-                onClick = handlers.onPreviousQuestion,
-                modifier = Modifier.heightIn(min = 48.dp).testTag(QuestionTags.PREVIOUS),
-            ) { Text(stringResource(R.string.question_previous)) }
-        }
-        if (index < questions.size - 1) {
-            FilledTonalButton(
-                onClick = handlers.onNextQuestion,
-                modifier = Modifier.heightIn(min = 48.dp).testTag(ExerciseTags.NEXT_QUESTION),
-            ) { Text(stringResource(R.string.question_next)) }
-        } else {
-            Button(
-                onClick = handlers.onFinish,
-                modifier = Modifier.heightIn(min = 48.dp).testTag(QuestionTags.LAST_FINISH),
-            ) { Text(stringResource(R.string.exercise_finish)) }
-        }
-    }
-}
-
-@Composable
 private fun Groups(
     layout: FieldLayout.RepeatableGroup,
     session: ExerciseSession,
@@ -211,15 +175,8 @@ private fun Groups(
     shown(layout.after).forEach { spec -> Field(spec, AnswerKey(spec.key), null, session, handlers, null) }
 }
 
-/** Identifiants de test propres à la navigation entre questions. */
-object QuestionTags {
-    const val PREVIOUS = "exercise_previous_question"
-    const val LAST_FINISH = "exercise_last_question_finish"
-    const val SOFT_COUNTER = "exercise_soft_counter"
-}
-
 @Composable
-private fun Field(
+internal fun Field(
     spec: FieldSpec,
     key: AnswerKey,
     position: Pair<Int, Int>?,

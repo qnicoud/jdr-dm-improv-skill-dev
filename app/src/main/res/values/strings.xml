@@ -203,6 +203,10 @@
   <string name="shift_banner">Bascule : %1$s</string>
 
   <!-- Core Image Threading (L10) -->
+  <string name="question_numbered">%1$d/%2$d — %3$s</string>
+  <string name="questions_show_all">Voir toutes les questions</string>
+  <string name="questions_hide_all">Masquer la liste des questions</string>
+  <string name="questions_list_title">Toutes les questions</string>
   <string name="core_image_instructions">Une image centrale est tirée. Réponds aux questions une à la fois : chaque réponse relie l’image au reste de ton monde.</string>
   <string name="core_image_answer_label">Ta réponse</string>
   <string name="core_image_answer_hint">Quelques phrases suffisent</string>
@@ -213,7 +217,9 @@
   <string name="status_instructions">Joue le PNJ à voix haute, comme à ta table. Montre son statut par le comportement uniquement, jamais en le disant.</string>
   <string name="status_reminder">Le statut n’est pas le rang social : c’est la façon dont le personnage s’attend à être traité.\nStatut haut : contrôle la conversation, regard direct, suppose la coopération.\nStatut bas : hésite, se coupe, évite le regard.</string>
   <string name="status_option_counter">Contre-stéréotype : statut opposé au rang du rôle</string>
+  <string name="status_option_counter_help">Ton PNJ prend un statut à l’opposé de ce que son rôle laisse attendre : un prince humble, un serviteur qui domine. Casse le cliché.</string>
   <string name="status_option_shift">Bascule en cours de scène</string>
+  <string name="status_option_shift_help">À mi-scène, un événement change la situation : ton PNJ doit changer de statut sans prévenir. Entraîne ta souplesse.</string>
   <string name="status_scene_done">Scène terminée</string>
   <string name="status_notes_label">Notes (facultatif)</string>
   <string name="status_notes_hint">Ce que tu as remarqué, ce que tu referais</string>

@@ -275,7 +275,8 @@ private fun DrawArea(
         }
 
         LoadStatus.Ready -> {
-            ReadyDraw(state, actions)
+            ReadyDraw(state.withoutQuestionDraws(), actions)
+            if (state.session.phase == Phase.Ready) ReadyQuestions(state)
         }
     }
 }
