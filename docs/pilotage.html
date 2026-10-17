@@ -111,6 +111,29 @@ details.note textarea { width: 100%; box-sizing: border-box; margin-top: 6px; mi
 .logo-card img { display: block; width: 100%; height: auto; background: #FBF4E8; }
 .logo-card figcaption { display: grid; gap: 4px; padding: 10px 12px; font-size: .9rem; }
 .logo-card a { color: var(--accent); }
+.rc-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.rc-stat { display: grid; justify-items: center; min-width: 56px; }
+.rc-stat strong { font-size: 1.6rem; font-family: var(--f-display); }
+.rc-stat span { font-size: .8rem; color: var(--muted); }
+.rc-stat.ko strong { color: var(--warn); }
+.rc-summary .meter { flex: 1 1 160px; }
+.rc-sec { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.rc-sec > summary { cursor: pointer; padding: 12px 14px; font-weight: 600; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; min-height: 48px; box-sizing: border-box; }
+.rc-sec > summary .muted { font-weight: 400; font-size: .85rem; }
+.rc-list { list-style: none; margin: 0; padding: 0 14px 12px; display: grid; gap: 10px; }
+.rc-item { display: grid; grid-template-columns: 3.2em 1fr; gap: 4px 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.rc-item[data-st="ok"] .rc-num { color: var(--ok); }
+.rc-item[data-st="ko"] .rc-num { color: var(--warn); }
+.rc-num { font-family: var(--f-mono); font-size: .85rem; padding-top: 2px; }
+.rc-body { display: grid; gap: 6px; min-width: 0; }
+.rc-exp { font-size: .85rem; color: var(--muted); }
+.rc-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rc-seg { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.rc-seg .btn { min-height: 44px; min-width: 64px; }
+.rc-seg .btn[aria-pressed="true"][data-v="ok"], .rc-verdict .btn[aria-pressed="true"][data-verdict="ready"] { background: var(--ok-soft); border-color: var(--ok); color: var(--ink); }
+.rc-seg .btn[aria-pressed="true"][data-v="ko"], .rc-verdict .btn[aria-pressed="true"][data-verdict="fix"] { background: var(--warn-soft); border-color: var(--warn); color: var(--ink); }
+.rc-note { flex: 1 1 200px; min-height: 44px; box-sizing: border-box; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font: inherit; }
+.rc-verdict { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .empty { border: 1px dashed var(--line); border-radius: 8px; padding: 22px; text-align: center; color: var(--muted); }
 table.risks { width: 100%; border-collapse: collapse; font-size: .92rem; }
 table.risks td, table.risks th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
@@ -135,14 +158,14 @@ footer { font-size: .85rem; color: var(--muted); }
       <div class="phase" data-s="done"><span class="eyebrow">Phase 0</span><b>Recherche</b><small>Terminée le 16/10/2026</small></div>
       <div class="phase" data-s="done"><span class="eyebrow">Phase 1</span><b>Cadrage et décisions</b><small>Terminée le 16/10/2026</small></div>
       <div class="phase" data-s="done"><span class="eyebrow">Phase 2</span><b>Conception</b><small>Terminée : ADR, UX, 10 maquettes</small></div>
-      <div class="phase" data-s="now"><span class="eyebrow">Phase 3</span><b>Réalisation</b><small>En cours : 7 exercices jouables, retours de test</small></div>
+      <div class="phase" data-s="now"><span class="eyebrow">Phase 3</span><b>Réalisation</b><small>En cours : recette de la 1.0.0-rc1</small></div>
     </div>
     <div class="tally">
       <strong id="count">0 / 53</strong><span class="muted">décisions tranchées</span>
       <div class="meter" role="progressbar" aria-label="Décisions tranchées" aria-valuemin="0" aria-valuemax="24" aria-valuenow="0" id="meter"><i></i></div>
     </div>
     <nav class="toc" aria-label="Sections">
-      <a href="#decisions">Décisions</a><a href="#corrections">Corrections de la SPEC</a><a href="#recherches">Recherches</a><a href="#conception">Conception</a><a href="#maquettes">Maquettes</a><a href="#logo">Logo</a><a href="#risques">Risques</a>
+      <a href="#recette">Recette rc1</a><a href="#decisions">Décisions</a><a href="#corrections">Corrections de la SPEC</a><a href="#recherches">Recherches</a><a href="#conception">Conception</a><a href="#maquettes">Maquettes</a><a href="#logo">Logo</a><a href="#risques">Risques</a>
     </nav>
   </header>
 
@@ -164,6 +187,31 @@ footer { font-size: .85rem; color: var(--muted); }
     </div>
     <div id="groups" style="display:grid;gap:32px"></div>
   </main>
+
+  <section id="recette" class="group" style="display:grid;gap:14px">
+    <div class="group-head"><h2>Recette 1.0.0-rc1</h2><span class="muted">100 critères · à dérouler sur le Galaxy Z Flip3</span></div>
+    <p class="muted" style="margin:0">Pour chaque critère, touche OK ou KO et ajoute une remarque si besoin : tout est enregistré au fil de l'eau et je le relis pour les correctifs. Teste « Tout effacer » et le premier lancement <b>uniquement</b> sur la variante <span class="mono">.release</span> ; ne désinstalle jamais l'app habituelle. Détails des modes de sonnerie : <span class="mono">docs/qa/l3-signal-fin.md</span>.</p>
+    <div class="rc-summary" aria-live="polite">
+      <div class="rc-stat"><strong id="rc-ok">0</strong><span>OK</span></div>
+      <div class="rc-stat ko"><strong id="rc-ko">0</strong><span>KO</span></div>
+      <div class="rc-stat"><strong id="rc-todo">100</strong><span>à tester</span></div>
+      <div class="meter" role="progressbar" aria-label="Critères testés" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="rc-meter"><i></i></div>
+    </div>
+    <div class="filters" role="group" aria-label="Filtrer les critères">
+      <button class="btn" data-rcfilter="all" aria-pressed="true">Tous</button>
+      <button class="btn" data-rcfilter="todo" aria-pressed="false">À tester</button>
+      <button class="btn" data-rcfilter="ko" aria-pressed="false">KO seulement</button>
+    </div>
+    <div id="rc-sections" style="display:grid;gap:12px"></div>
+    <div class="panel rc-verdict">
+      <span class="eyebrow">Verdict</span>
+      <div class="rc-seg" role="group" aria-label="Verdict de la recette">
+        <button type="button" class="btn" data-verdict="ready" aria-pressed="false">Prêt pour la publication</button>
+        <button type="button" class="btn" data-verdict="fix" aria-pressed="false">Corrections nécessaires</button>
+      </div>
+      <span class="saved" id="saved-verdict"></span>
+    </div>
+  </section>
 
   <section id="corrections" class="group">
     <div class="group-head"><h2>Corrections à reporter dans la SPEC</h2><span class="muted">sans choix à faire</span></div>
@@ -704,6 +752,109 @@ document.getElementById("confirm-yes").addEventListener("click", async () => {
   for (const d of DECISIONS.filter(x => stateOf(x) === "open")) choose(d.id, recKey(d));
 });
 
+
+// ---- Recette rc1 : un document par critère dans la collection "recette" ----
+const RECETTE = [{"n": "1", "title": "Les 7 exercices (prêt, en cours, bilan)", "items": [{"id": "r1_1", "num": "1.1", "t": "Accueil : 7 cartes avec nom, discipline d'origine, durée ; One-Page marqué « Préparation »", "e": ""}, {"id": "r1_2", "num": "1.2", "t": "Crazy Eights : problème tiré, 8 champs numérotés, indicateur x/8, 8 min par défaut", "e": ""}, {"id": "r1_3", "num": "1.3", "t": "Crazy Eights : rappel de rythme (1 impulsion par minute) si activé dans les Réglages", "e": ""}, {"id": "r1_4", "num": "1.4", "t": "Constraint Box : lieu + 3 mots sensoriels, 5 min, mots surlignés et soulignés quand ils apparaissent (accents, casse, pluriel)", "e": ""}, {"id": "r1_5", "num": "1.5", "t": "Constraint Box : cochage manuel d'un mot fait foi (décocher un mot détecté reste décoché en continuant à écrire)", "e": ""}, {"id": "r1_6", "num": "1.6", "t": "Core Image : image centrale, questions numérotées une à la fois, « Précédente/Suivante », liste complète consultable, 10 min", "e": ""}, {"id": "r1_7", "num": "1.7", "t": "Core Image : le champ de saisie reste visible clavier ouvert", "e": ""}, {"id": "r1_8", "num": "1.8", "t": "Status Numbers : carte 1-10 + rôle PNJ, rappel « statut ≠ rang » repliable, options contre-stéréotype et bascule (explication claire)", "e": ""}, {"id": "r1_9", "num": "1.9", "t": "Status Numbers : bascule à mi-parcours annoncée, « Scène terminée », notes facultatives", "e": ""}, {"id": "r1_10", "num": "1.10", "t": "Decision Point : 30 s, 3 réponses, case « jamais fait », mode situation (tirage) et mode vidéo (« Pause faite »)", "e": ""}, {"id": "r1_11", "num": "1.11", "t": "Decision Point : bilan « Laquelle aurais-tu jouée en premier ? » sans jugement", "e": ""}, {"id": "r1_12", "num": "1.12", "t": "Connect the Story : 5 éléments (lieu, objet, trait, détail sensoriel, réplique) pré-cochés pendant la frappe, cochage manuel prioritaire", "e": ""}, {"id": "r1_13", "num": "1.13", "t": "Connect the Story : liste repliée = pas d'énumération, champ de saisie pleine hauteur sur le Flip3", "e": ""}, {"id": "r1_14", "num": "1.14", "t": "One-Page : situation tirée (mode sans campagne) ou libre, formulaire PNJ / motivation / liens (5 PNJ max), sans minuteur par défaut", "e": ""}, {"id": "r1_15", "num": "1.15", "t": "« Relancer le tirage » : nouveau tirage différent du précédent, compteur de relances", "e": ""}, {"id": "r1_16", "num": "1.16", "t": "Durée réglable sur l'écran Prêt et option « sans minuteur » sur chaque exercice", "e": ""}]}, {"n": "2", "title": "Minuteur : les 6 états", "items": [{"id": "r2_1", "num": "2.1", "t": "Idle (prêt) : durée affichée, rien ne tourne", "e": ""}, {"id": "r2_2", "num": "2.2", "t": "Running : décompte, barre à bouts arrondis, écran maintenu allumé", "e": ""}, {"id": "r2_3", "num": "2.3", "t": "Dernière minute : icône + libellé + motif rayé (pas la couleur seule)", "e": ""}, {"id": "r2_4", "num": "2.4", "t": "Paused : texte « En pause » + icône, saisie toujours possible", "e": ""}, {"id": "r2_5", "num": "2.5", "t": "Overtime (temps additionnel) : aucun dialogue, saisie possible après la fin, libellé neutre (pas « échec »)", "e": ""}, {"id": "r2_6", "num": "2.6", "t": "Untimed (sans minuteur) : puce « Sans minuteur », temps réel enregistré, « Lancer un minuteur » possible", "e": ""}, {"id": "r2_7", "num": "2.7", "t": "Pause puis reprise : le temps n'avance pas pendant la pause", "e": ""}, {"id": "r2_8", "num": "2.8", "t": "Pause pendant le temps additionnel", "e": ""}, {"id": "r2_9", "num": "2.9", "t": "Arrière-plan 30 s puis retour : minuteur juste (horodatage)", "e": ""}, {"id": "r2_10", "num": "2.10", "t": "Arrière-plan jusqu'après l'échéance : retour en temps additionnel, pas de signal tardif", "e": ""}, {"id": "r2_11", "num": "2.11", "t": "Écran verrouillé puis déverrouillé en cours d'exercice", "e": ""}]}, {"n": "3", "title": "Signal de fin (matrice complète : l3-signal-fin.md)", "items": [{"id": "r3_1", "num": "3.1", "t": "Sonnerie, son + vibration", "e": "bip + 2 impulsions"}, {"id": "r3_2", "num": "3.2", "t": "Sonnerie, son seul", "e": "bip seul"}, {"id": "r3_3", "num": "3.3", "t": "Sonnerie, vibration seule", "e": "2 impulsions"}, {"id": "r3_4", "num": "3.4", "t": "Sonnerie, ni son ni vibration", "e": "rien"}, {"id": "r3_5", "num": "3.5", "t": "Vibreur, son + vibration", "e": "pas de bip, vibration"}, {"id": "r3_6", "num": "3.6", "t": "Silencieux", "e": "pas de bip, noter la vibration"}, {"id": "r3_7", "num": "3.7", "t": "Ne pas déranger", "e": "pas de bip, noter la vibration"}, {"id": "r3_8", "num": "3.8", "t": "Force Douce / Normale / Forte + « Essayer »", "e": "trois forces distinctes"}, {"id": "r3_9", "num": "3.9", "t": "Pendant une vidéo ou de la musique", "e": "bip superposé, média non coupé"}, {"id": "r3_10", "num": "3.10", "t": "Signal joué une seule fois par exercice", "e": ""}]}, {"n": "4", "title": "Sauvegarde, reprise, rotation, mort du processus", "items": [{"id": "r4_1", "num": "4.1", "t": "Sauvegarde automatique : écrire, quitter brutalement (balayer l'app), rouvrir : carte « Reprendre » avec extrait et temps", "e": ""}, {"id": "r4_2", "num": "4.2", "t": "Reprendre : retrouve texte, tirage, case cochées ; si le temps est passé, reprise en temps additionnel", "e": ""}, {"id": "r4_3", "num": "4.3", "t": "Retour système en cours d'exercice : brouillon enregistré, snackbar, aucune confirmation", "e": ""}, {"id": "r4_4", "num": "4.4", "t": "Rotation (Flip3 ouvert / replié) sur chaque écran : texte, minuteur, cases, défilement conservés", "e": ""}, {"id": "r4_5", "num": "4.5", "t": "Option développeur « Ne pas conserver les activités » : quitter l'app en plein exercice, revenir : état restauré, pas de crash", "e": ""}, {"id": "r4_6", "num": "4.6", "t": "Idem sur Historique filtré, Détail, Séance du jour, Réglages", "e": ""}, {"id": "r4_7", "num": "4.7", "t": "Fermer/replier le Flip3 en cours d'exercice : aucune perte", "e": ""}]}, {"n": "5", "title": "Historique et détail de session", "items": [{"id": "r5_1", "num": "5.1", "t": "Liste groupée par jour (Aujourd'hui, Hier, date), extrait, bijou, niveau", "e": ""}, {"id": "r5_2", "num": "5.2", "t": "Filtre par exercice et filtre « Bijoux » ; état et défilement conservés en changeant d'onglet", "e": ""}, {"id": "r5_3", "num": "5.3", "t": "État vide encourageant (aucune session)", "e": ""}, {"id": "r5_4", "num": "5.4", "t": "Détail : tirage (mots utilisés en texte), réponses, durées (active + additionnelle), grille", "e": ""}, {"id": "r5_5", "num": "5.5", "t": "Détail : changer le niveau (3 niveaux), marquer/démarquer un bijou", "e": ""}, {"id": "r5_6", "num": "5.6", "t": "Détail : partager le texte, « Refaire avec un nouveau tirage »", "e": ""}, {"id": "r5_7", "num": "5.7", "t": "Détail : supprimer avec confirmation, annulation possible", "e": ""}, {"id": "r5_8", "num": "5.8", "t": "Bilan facultatif après « Terminer » : 3 niveaux, bijou, jamais obligatoire", "e": ""}]}, {"n": "6", "title": "Séance du jour et S07", "items": [{"id": "r6_1", "num": "6.1", "t": "Carte sur l'accueil : 3 exercices, durée totale, One-Page absent par défaut", "e": ""}, {"id": "r6_2", "num": "6.2", "t": "Aperçu : « Remplacer » ouvre la feuille, le choix est mémorisé pour la journée", "e": ""}, {"id": "r6_3", "num": "6.3", "t": "Même séance si on quitte et revient le même jour ; nouvelle séance le lendemain", "e": ""}, {"id": "r6_4", "num": "6.4", "t": "« Commencer » enchaîne : fil « Séance du jour · 1 sur 3 », « Passer cet exercice », « Exercice suivant »", "e": ""}, {"id": "r6_5", "num": "6.5", "t": "Retour en cours de séance : retour à l'aperçu avec Fait / En cours / À faire", "e": ""}, {"id": "r6_6", "num": "6.6", "t": "S07 Fin de séance : récap, niveaux, bijoux, compteur de sessions, série ; « Retour à l'accueil », « Refaire un exercice »", "e": ""}]}, {"n": "7", "title": "Progrès et série", "items": [{"id": "r7_1", "num": "7.1", "t": "Nombre de sessions affiché en premier et en grand", "e": ""}, {"id": "r7_2", "num": "7.2", "t": "Série de jours avec jour de grâce, sans remise à zéro punitive ; jours récents (disque / pointillé / vide + lettre)", "e": ""}, {"id": "r7_3", "num": "7.3", "t": "Sessions par exercice, liens « Voir mes bijoux » et par exercice vers l'Historique filtré", "e": ""}, {"id": "r7_4", "num": "7.4", "t": "Passage de minuit : une session à 23 h 59 puis une à 00 h 01 comptent pour deux jours", "e": ""}, {"id": "r7_5", "num": "7.5", "t": "Changement de fuseau horaire (Réglages Android) : pas de doublon ni de trou incohérent", "e": ""}, {"id": "r7_6", "num": "7.6", "t": "État vide (0 session)", "e": ""}]}, {"n": "8", "title": "Réglages et À propos", "items": [{"id": "r8_1", "num": "8.1", "t": "Durée par exercice : − / + dans les bornes, « sans minuteur » par exercice", "e": ""}, {"id": "r8_2", "num": "8.2", "t": "Thème : Parchemin (défaut), Couleurs du téléphone (Android 12+), palettes ; clair / sombre / système", "e": ""}, {"id": "r8_3", "num": "8.3", "t": "Vibration, son, force, « Essayer », rappel de rythme, inclure One-Page dans la séance", "e": ""}, {"id": "r8_4", "num": "8.4", "t": "Réduire les animations (suit le système ou forcé)", "e": ""}, {"id": "r8_5", "num": "8.5", "t": "Exporter mes sessions : fichier texte partagé, contenu lisible", "e": ""}, {"id": "r8_6", "num": "8.6", "t": "Tout effacer : confirmation, historique vide ensuite, réglages conservés (tester sur la variante .release uniquement)", "e": ""}, {"id": "r8_7", "num": "8.7", "t": "À propos : version 1.0.0-rc1, licences Alegreya, Atkinson Hyperlegible Next, bip", "e": ""}]}, {"n": "9", "title": "Écran de démarrage et premier lancement", "items": [{"id": "r9_1", "num": "9.1", "t": "Écran de démarrage (icône d20 sablier sur brique), pas de flash blanc, sans clignotement", "e": ""}, {"id": "r9_2", "num": "9.2", "t": "Icône adaptative correcte sur le lanceur (formes rondes et carrées)", "e": ""}, {"id": "r9_3", "num": "9.3", "t": "Premier lancement (variante .release neuve) : accueil avec « 0 session », ligne « Tout reste sur ton téléphone »", "e": ""}, {"id": "r9_4", "num": "9.4", "t": "Aucune permission demandée à l'exécution", "e": ""}]}, {"n": "10", "title": "Hors ligne", "items": [{"id": "r10_1", "num": "10.1", "t": "Mode avion (Wi-Fi et données coupés) : parcourir les 7 exercices, enregistrer, historique, export", "e": ""}, {"id": "r10_2", "num": "10.2", "t": "Paramètres Android > Applications > DM Gym > Autorisations : aucune autorisation listée", "e": ""}]}, {"n": "11", "title": "Version de publication .release", "items": [{"id": "r11_1", "num": "11.1", "t": "S'installe à côté de l'app réelle sans l'écraser", "e": ""}, {"id": "r11_2", "num": "11.2", "t": "Aucun crash (adb logcat -d -b crash) : SerializationException, ClassNotFound, NoSuchMethod", "e": ""}, {"id": "r11_3", "num": "11.3", "t": "Les 7 exercices s'ouvrent, tirent, enregistrent (tables JSON chargées après minification)", "e": ""}, {"id": "r11_4", "num": "11.4", "t": "Navigation et restauration (routes sérialisées) après « Ne pas conserver les activités »", "e": ""}, {"id": "r11_5", "num": "11.5", "t": "Historique (Room) et réglages (DataStore) persistent après fermeture et redémarrage du téléphone", "e": ""}, {"id": "r11_6", "num": "11.6", "t": "Taille de l'APK et temps de démarrage à froid raisonnables", "e": ""}]}, {"n": "12", "title": "Accessibilité : TalkBack", "items": [{"id": "r12_1", "num": "12.1", "t": "Accueil : chaque carte lue en un élément (nom, discipline, durée) ; titres navigables par en-têtes", "e": ""}, {"id": "r12_2", "num": "12.2", "t": "Chaque bouton a un libellé (Retour, Réglages, Plus d'actions, − / + des durées)", "e": ""}, {"id": "r12_3", "num": "12.3", "t": "Minuteur : un seul élément, pas d'annonce seconde par seconde ; jalons début, mi-parcours, dernière minute, fin", "e": ""}, {"id": "r12_4", "num": "12.4", "t": "Champs : « Idée 3 sur 8 » ; le focus reste dans le champ ; le surlignage n'est pas lu", "e": ""}, {"id": "r12_5", "num": "12.5", "t": "Cases, boutons radio, interrupteurs : type et état annoncés", "e": ""}, {"id": "r12_6", "num": "12.6", "t": "Ordre de focus : barre du haut, minuteur, consigne, champs, bouton ; « Terminer » atteignable en 2-3 balayages", "e": ""}, {"id": "r12_7", "num": "12.7", "t": "Après relance ou changement de question : annonce unique, focus sur le nouvel élément", "e": ""}, {"id": "r12_8", "num": "12.8", "t": "Progrès : équivalent textuel des graphiques (« Crazy Eights : 12 sessions »)", "e": ""}, {"id": "r12_9", "num": "12.9", "t": "Détail de session, Séance du jour, S07 : lecture cohérente, états (Fait / À faire) annoncés", "e": ""}, {"id": "r12_10", "num": "12.10", "t": "Aucun dialogue bloquant en fin de temps ; fin annoncée « Temps écoulé. Tu peux continuer à écrire. »", "e": ""}, {"id": "r12_11", "num": "12.11", "t": "Clavier physique / commutateur : Tab, Entrée, Échap", "e": ""}]}, {"n": "13", "title": "Accessibilité : police 200 % et affichage", "items": [{"id": "r13_1", "num": "13.1", "t": "Taille de police maximale (Réglages Android) : aucun texte coupé sur les 10 écrans principaux", "e": ""}, {"id": "r13_2", "num": "13.2", "t": "Exercice à 200 % avec clavier ouvert, écran replié : minuteur et « Terminer » visibles", "e": ""}, {"id": "r13_3", "num": "13.3", "t": "Zoom d'affichage maximal", "e": ""}, {"id": "r13_4", "num": "13.4", "t": "Thème sombre : contraste lisible partout", "e": ""}, {"id": "r13_5", "num": "13.5", "t": "Aucune information portée par la couleur seule (mots utilisés, élément relié, niveau, série, bijou)", "e": ""}, {"id": "r13_6", "num": "13.6", "t": "Animations réduites système : pas de retournement de carte ni de transitions", "e": ""}]}];
+const rcItems = RECETTE.flatMap(s => s.items);
+const rcById = Object.fromEntries(rcItems.map(i => [i.id, i]));
+const rcState = {};   // id -> { status: "ok"|"ko"|null, note }
+let rcFilter = "all";
+function rcStatus(id) { return (rcState[id] || {}).status || null; }
+function rcRender() {
+  const root = document.getElementById("rc-sections");
+  RECETTE.forEach(sec => {
+    const list = el("ol", { class: "rc-list" });
+    sec.items.forEach(it => {
+      const seg = el("div", { class: "rc-seg", role: "group", "aria-label": "Résultat du critère " + it.num });
+      [["ok", "OK"], ["ko", "KO"]].forEach(([v, label]) => {
+        const b = el("button", { type: "button", class: "btn", "data-v": v, "aria-pressed": "false", text: label });
+        b.addEventListener("click", () => rcSet(it.id, rcStatus(it.id) === v ? null : v));
+        seg.append(b);
+      });
+      const note = el("input", { type: "text", class: "rc-note", id: "rcn-" + it.id, placeholder: "Remarque", "aria-label": "Remarque sur le critère " + it.num });
+      note.addEventListener("change", () => rcNote(it.id, note.value));
+      const body = el("div", { class: "rc-body" }, el("span", { text: it.t }));
+      if (it.e) body.append(el("span", { class: "rc-exp", text: "Attendu : " + it.e }));
+      body.append(el("div", { class: "rc-row" }, seg, note, el("span", { class: "saved", id: "saved-" + it.id })));
+      list.append(el("li", { class: "rc-item", id: "rc-" + it.id, "data-st": "" }, el("span", { class: "rc-num", text: it.num }), body));
+    });
+    const det = el("details", { class: "rc-sec", "data-sec": sec.n },
+      el("summary", {}, el("span", { text: sec.n + ". " + sec.title }), el("span", { class: "muted", id: "rcs-" + sec.n })), list);
+    root.append(det);
+  });
+}
+function rcRefresh() {
+  let ok = 0, ko = 0;
+  rcItems.forEach(it => {
+    const st = rcStatus(it.id);
+    if (st === "ok") ok++; else if (st === "ko") ko++;
+    const li = document.getElementById("rc-" + it.id);
+    li.dataset.st = st || "";
+    li.querySelectorAll(".rc-seg .btn").forEach(b => { b.setAttribute("aria-pressed", String(b.dataset.v === st)); b.disabled = !writable; });
+    const n = document.getElementById("rcn-" + it.id);
+    if (document.activeElement !== n) n.value = (rcState[it.id] || {}).note || "";
+    n.disabled = !writable;
+    li.hidden = (rcFilter === "todo" && st) || (rcFilter === "ko" && st !== "ko");
+  });
+  RECETTE.forEach(sec => {
+    const done = sec.items.filter(i => rcStatus(i.id)).length;
+    const kos = sec.items.filter(i => rcStatus(i.id) === "ko").length;
+    document.getElementById("rcs-" + sec.n).textContent = done + " / " + sec.items.length + (kos ? " · " + kos + " KO" : "");
+    const det = document.querySelector('[data-sec="' + sec.n + '"]');
+    det.hidden = sec.items.every(i => document.getElementById("rc-" + i.id).hidden);
+    if (rcFilter !== "all" && !det.hidden) det.open = true;
+  });
+  document.getElementById("rc-ok").textContent = ok;
+  document.getElementById("rc-ko").textContent = ko;
+  document.getElementById("rc-todo").textContent = rcItems.length - ok - ko;
+  const m = document.getElementById("rc-meter");
+  m.setAttribute("aria-valuenow", String(ok + ko));
+  m.firstElementChild.style.width = (100 * (ok + ko) / rcItems.length) + "%";
+  const v = (rcState.verdict || {}).status || null;
+  document.querySelectorAll("[data-verdict]").forEach(b => { b.setAttribute("aria-pressed", String(b.dataset.verdict === v)); b.disabled = !writable; });
+}
+async function rcWrite(id, body) {
+  if (!db) return;
+  try { await enqueue("recette/" + id, () => db.doc("recette/" + id).set(body)); flash(id, "Enregistré"); }
+  catch (e) { flash(id, "Échec de l'enregistrement, réessaie."); }
+}
+function rcSet(id, status) {
+  if (!writable) return;
+  const prev = rcState[id] || {};
+  rcState[id] = { ...prev, status };
+  rcRefresh();
+  rcWrite(id, { status, note: prev.note || "", updatedAt: new Date().toISOString() });
+}
+function rcNote(id, text) {
+  if (!writable) return;
+  const prev = rcState[id] || {};
+  if ((prev.note || "") === text) return;
+  rcState[id] = { ...prev, note: text };
+  rcWrite(id, { status: prev.status || null, note: text, updatedAt: new Date().toISOString() });
+}
+document.querySelectorAll("[data-rcfilter]").forEach(b => b.addEventListener("click", () => {
+  rcFilter = b.dataset.rcfilter;
+  document.querySelectorAll("[data-rcfilter]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  rcRefresh();
+}));
+document.querySelectorAll("[data-verdict]").forEach(b => b.addEventListener("click", () => {
+  const cur = (rcState.verdict || {}).status || null;
+  rcSet("verdict", cur === b.dataset.verdict ? null : b.dataset.verdict);
+}));
+function rcSubscribe() {
+  db.collection("recette").onSnapshot(snap => {
+    snap.docs.forEach(doc => {
+      if (!rcById[doc.id] && doc.id !== "verdict") return;
+      const v = doc.data() || {};
+      rcState[doc.id] = { status: v.status || null, note: v.note || "" };
+    });
+    snap.docChanges().forEach(ch => { if (ch.type === "removed") delete rcState[ch.doc.id]; });
+    rcRefresh();
+  }, () => rcRefresh());
+}
+rcRender();
+rcRefresh();
+
 renderAll();
 refreshAll();
 
@@ -725,6 +876,8 @@ refreshAll();
     snap.docChanges().forEach(ch => { if (ch.type === "removed") delete state[ch.doc.id]; });
     refreshAll();
   }, () => { showReadOnly(); writable = false; refreshAll(); });
+  rcSubscribe();
   refreshAll();
+  rcRefresh();
 })();
 </script>
