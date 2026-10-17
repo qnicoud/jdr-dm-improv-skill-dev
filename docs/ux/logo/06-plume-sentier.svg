@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 900 320" width="900" height="320" role="img" aria-label="DM Gym - plume qui trace un sentier jusqu'a un point dore">
+  <title>DM Gym - 06 Plume et sentier</title>
+  <defs>
+    <clipPath id="ci"><circle cx="54" cy="54" r="54"/></clipPath>
+    <clipPath id="sq"><rect width="108" height="108" rx="24"/></clipPath>
+    <g id="bg"><rect width="108" height="108" fill="#F0E6D6"/></g>
+    <g id="fg">
+      <path d="M38 80C48 86 52 76 62 80S75 80 80 72" fill="none" stroke="#3F5565" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 6"/>
+      <circle cx="80" cy="72" r="4.5" fill="#F2C94C" stroke="#6B5000" stroke-width="1.5"/>
+      <path d="M74 28C58 30 44 42 38 76C60 66 73 50 74 28Z" fill="#8A2E1C"/>
+      <path d="M72 31L40 72" stroke="#F0E6D6" stroke-width="1.6" stroke-linecap="round"/>
+    </g>
+    <g id="mono">
+      <path d="M38 80C48 86 52 76 62 80S75 80 80 72" fill="none" stroke="#112430" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="1 6"/>
+      <circle cx="80" cy="72" r="4.5" fill="#112430"/>
+      <path d="M74 28C58 30 44 42 38 76C60 66 73 50 74 28Z" fill="#112430"/>
+      <path d="M72 31L40 72" stroke="#D9E6F0" stroke-width="1.6" stroke-linecap="round"/>
+    </g>
+    <g id="icon" clip-path="url(#ci)"><use xlink:href="#bg"/><use xlink:href="#fg"/></g>
+    <g id="iconsq" clip-path="url(#sq)"><use xlink:href="#bg"/><use xlink:href="#fg"/></g>
+    <g id="monotile"><circle cx="54" cy="54" r="54" fill="#D9E6F0"/><use xlink:href="#mono"/></g>
+  </defs>
+  <rect width="900" height="320" fill="#FBF5EA"/>
+  <g font-family="Alegreya, Georgia, serif" font-size="12" fill="#4F433A">
+    <g transform="translate(24,24) scale(2)"><use xlink:href="#icon"/></g>
+    <text x="24" y="262">Icone adaptative (masque rond)</text>
+    <g transform="translate(270,24)"><use xlink:href="#monotile"/></g>
+    <text x="270" y="152">Monochrome (Android 13)</text>
+    <g transform="translate(410,24) scale(0.4444)"><use xlink:href="#icon"/></g>
+    <g transform="translate(470,24) scale(0.4444)"><use xlink:href="#monotile"/></g>
+    <text x="410" y="86">48 px</text>
+    <g transform="translate(270,176) scale(0.8889)"><use xlink:href="#iconsq"/></g>
+    <text x="392" y="250" font-size="80" font-weight="800" fill="#8A2E1C" textLength="330" lengthAdjust="spacingAndGlyphs">DM Gym</text>
+    <text x="394" y="284" font-size="18" fill="#4F433A">la salle de sport du MJ</text>
+  </g>
+</svg>

@@ -210,7 +210,11 @@ fun EndNote(
         textStyle = MaterialTheme.typography.bodyLarge,
         label = { spec.label?.let { Text(stringResource(it)) } },
         placeholder = { spec.hint?.let { Text(stringResource(it)) } },
-        lineLimits = TextFieldLineLimits.MultiLine(minHeightInLines = spec.minLines, maxHeightInLines = NOTE_MAX_LINES),
+        lineLimits =
+            TextFieldLineLimits.MultiLine(
+                minHeightInLines = spec.minLines,
+                maxHeightInLines = maxOf(NOTE_MAX_LINES, spec.minLines),
+            ),
     )
 }
 

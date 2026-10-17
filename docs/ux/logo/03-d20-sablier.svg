@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 900 320" width="900" height="320" role="img" aria-label="DM Gym - d20 dont la face est un sablier">
+  <title>DM Gym - 03 d20 sablier</title>
+  <defs>
+    <clipPath id="ci"><circle cx="54" cy="54" r="54"/></clipPath>
+    <clipPath id="sq"><rect width="108" height="108" rx="24"/></clipPath>
+    <g id="bg"><rect width="108" height="108" fill="#8A2E1C"/></g>
+    <g id="fg">
+      <path d="M54 22L81.7 38V70L54 86L26.3 70V38Z" fill="#FBF5EA"/>
+      <path d="M54 22V37M26.3 38L41 37M81.7 38L67 37M26.3 70L41 71M81.7 70L67 71M54 86V71" stroke="#8A2E1C" stroke-width="1.6" fill="none"/>
+      <rect x="41" y="36" width="26" height="3.5" fill="#8A2E1C"/>
+      <rect x="41" y="68.5" width="26" height="3.5" fill="#8A2E1C"/>
+      <path d="M43 39.5H65L54 54L65 68.5H43L54 54Z" fill="#8A2E1C"/>
+      <path d="M54 61L59.5 68.5H48.5Z" fill="#F2C94C"/>
+      <path d="M53.2 54h1.6v7h-1.6Z" fill="#F2C94C"/>
+    </g>
+    <g id="mono">
+      <path d="M54 22L81.7 38V70L54 86L26.3 70V38Z" fill="#112430"/>
+      <path d="M54 22V37M26.3 38L41 37M81.7 38L67 37M26.3 70L41 71M81.7 70L67 71M54 86V71" stroke="#D9E6F0" stroke-width="1.6" fill="none"/>
+      <path d="M43 39.5H65L54 54L65 68.5H43L54 54Z" fill="#D9E6F0"/>
+      <path d="M54 61L59.5 68.5H48.5Z" fill="#112430"/>
+    </g>
+    <g id="icon" clip-path="url(#ci)"><use xlink:href="#bg"/><use xlink:href="#fg"/></g>
+    <g id="iconsq" clip-path="url(#sq)"><use xlink:href="#bg"/><use xlink:href="#fg"/></g>
+    <g id="monotile"><circle cx="54" cy="54" r="54" fill="#D9E6F0"/><use xlink:href="#mono"/></g>
+  </defs>
+  <rect width="900" height="320" fill="#FBF5EA"/>
+  <g font-family="Alegreya, Georgia, serif" font-size="12" fill="#4F433A">
+    <g transform="translate(24,24) scale(2)"><use xlink:href="#icon"/></g>
+    <text x="24" y="262">Icone adaptative (masque rond)</text>
+    <g transform="translate(270,24)"><use xlink:href="#monotile"/></g>
+    <text x="270" y="152">Monochrome (Android 13)</text>
+    <g transform="translate(410,24) scale(0.4444)"><use xlink:href="#icon"/></g>
+    <g transform="translate(470,24) scale(0.4444)"><use xlink:href="#monotile"/></g>
+    <text x="410" y="86">48 px</text>
+    <g transform="translate(270,176) scale(0.8889)"><use xlink:href="#iconsq"/></g>
+    <text x="392" y="250" font-size="80" font-weight="800" fill="#8A2E1C" textLength="330" lengthAdjust="spacingAndGlyphs">DM Gym</text>
+    <text x="394" y="284" font-size="18" fill="#4F433A">la salle de sport du MJ</text>
+  </g>
+</svg>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 900 320" width="900" height="320" role="img" aria-label="DM Gym - entree de caverne eclairee, nuages a la base">
+  <title>DM Gym - 02 Caverne et nuages</title>
+  <defs>
+    <clipPath id="ci"><circle cx="54" cy="54" r="54"/></clipPath>
+    <clipPath id="sq"><rect width="108" height="108" rx="24"/></clipPath>
+    <g id="bg"><rect width="108" height="108" fill="#3F5565"/></g>
+    <g id="fg">
+      <path d="M22 84C22 50 36 30 54 30C72 30 86 50 86 84Z" fill="#4F433A"/>
+      <path d="M41 84V62a13 13 0 0 1 26 0V84Z" fill="#1B1612"/>
+      <circle cx="54" cy="70" r="10" fill="#F2C94C" opacity="0.28"/>
+      <path d="M54 58C59 65 61 69 61 72a7 7 0 0 1-14 0C47 69 49 65 54 58Z" fill="#F2C94C"/>
+      <path d="M54 66C56 69 57 71 57 73a3 3 0 0 1-6 0C51 71 52 69 54 66Z" fill="#FFE08A"/>
+      <g fill="#FBF5EA">
+        <circle cx="27" cy="80" r="7"/><circle cx="39" cy="78" r="9"/><circle cx="54" cy="82" r="8"/>
+        <circle cx="69" cy="78" r="9"/><circle cx="81" cy="80" r="7"/>
+        <rect x="27" y="80" width="54" height="6" rx="3"/>
+      </g>
+    </g>
+    <g id="mono">
+      <path d="M22 84C22 50 36 30 54 30C72 30 86 50 86 84Z" fill="#112430"/>
+      <path d="M41 84V62a13 13 0 0 1 26 0V84Z" fill="#D9E6F0"/>
+      <path d="M54 58C59 65 61 69 61 72a7 7 0 0 1-14 0C47 69 49 65 54 58Z" fill="#112430"/>
+      <g fill="#112430" stroke="#D9E6F0" stroke-width="1.5">
+        <circle cx="27" cy="80" r="7"/><circle cx="39" cy="78" r="9"/><circle cx="54" cy="82" r="8"/>
+        <circle cx="69" cy="78" r="9"/><circle cx="81" cy="80" r="7"/>
+        <rect x="27" y="80" width="54" height="6" rx="3" stroke="none"/>
+      </g>
+    </g>
+    <g id="icon" clip-path="url(#ci)"><use xlink:href="#bg"/><use xlink:href="#fg"/></g>
+    <g id="iconsq" clip-path="url(#sq)"><use xlink:href="#bg"/><use xlink:href="#fg"/></g>
+    <g id="monotile"><circle cx="54" cy="54" r="54" fill="#D9E6F0"/><use xlink:href="#mono"/></g>
+  </defs>
+  <rect width="900" height="320" fill="#FBF5EA"/>
+  <g font-family="Alegreya, Georgia, serif" font-size="12" fill="#4F433A">
+    <g transform="translate(24,24) scale(2)"><use xlink:href="#icon"/></g>
+    <text x="24" y="262">Icone adaptative (masque rond)</text>
+    <g transform="translate(270,24)"><use xlink:href="#monotile"/></g>
+    <text x="270" y="152">Monochrome (Android 13)</text>
+    <g transform="translate(410,24) scale(0.4444)"><use xlink:href="#icon"/></g>
+    <g transform="translate(470,24) scale(0.4444)"><use xlink:href="#monotile"/></g>
+    <text x="410" y="86">48 px</text>
+    <g transform="translate(270,176) scale(0.8889)"><use xlink:href="#iconsq"/></g>
+    <text x="392" y="250" font-size="80" font-weight="800" fill="#8A2E1C" textLength="330" lengthAdjust="spacingAndGlyphs">DM Gym</text>
+    <text x="394" y="284" font-size="18" fill="#4F433A">la salle de sport du MJ</text>
+  </g>
+</svg>

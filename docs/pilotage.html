@@ -106,6 +106,11 @@ details.note textarea { width: 100%; box-sizing: border-box; margin-top: 6px; mi
 .mk-bar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: .85rem; }
 .mk-bar a { color: var(--accent); }
 #mk-view { display: block; width: 100%; height: 900px; max-height: 85vh; border: 0; background: #E6DFD2; }
+.logos { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.logo-card { margin: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); display: grid; }
+.logo-card img { display: block; width: 100%; height: auto; background: #FBF4E8; }
+.logo-card figcaption { display: grid; gap: 4px; padding: 10px 12px; font-size: .9rem; }
+.logo-card a { color: var(--accent); }
 .empty { border: 1px dashed var(--line); border-radius: 8px; padding: 22px; text-align: center; color: var(--muted); }
 table.risks { width: 100%; border-collapse: collapse; font-size: .92rem; }
 table.risks td, table.risks th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
@@ -130,14 +135,14 @@ footer { font-size: .85rem; color: var(--muted); }
       <div class="phase" data-s="done"><span class="eyebrow">Phase 0</span><b>Recherche</b><small>Terminée le 16/10/2026</small></div>
       <div class="phase" data-s="done"><span class="eyebrow">Phase 1</span><b>Cadrage et décisions</b><small>Terminée le 16/10/2026</small></div>
       <div class="phase" data-s="done"><span class="eyebrow">Phase 2</span><b>Conception</b><small>Terminée : ADR, UX, 10 maquettes</small></div>
-      <div class="phase" data-s="now"><span class="eyebrow">Phase 3</span><b>Réalisation</b><small>En cours : build de test vert, contenu écrit</small></div>
+      <div class="phase" data-s="now"><span class="eyebrow">Phase 3</span><b>Réalisation</b><small>En cours : 7 exercices jouables, retours de test</small></div>
     </div>
     <div class="tally">
-      <strong id="count">0 / 48</strong><span class="muted">décisions tranchées</span>
+      <strong id="count">0 / 53</strong><span class="muted">décisions tranchées</span>
       <div class="meter" role="progressbar" aria-label="Décisions tranchées" aria-valuemin="0" aria-valuemax="24" aria-valuenow="0" id="meter"><i></i></div>
     </div>
     <nav class="toc" aria-label="Sections">
-      <a href="#decisions">Décisions</a><a href="#corrections">Corrections de la SPEC</a><a href="#recherches">Recherches</a><a href="#conception">Conception</a><a href="#maquettes">Maquettes</a><a href="#risques">Risques</a>
+      <a href="#decisions">Décisions</a><a href="#corrections">Corrections de la SPEC</a><a href="#recherches">Recherches</a><a href="#conception">Conception</a><a href="#maquettes">Maquettes</a><a href="#logo">Logo</a><a href="#risques">Risques</a>
     </nav>
   </header>
 
@@ -268,6 +273,12 @@ footer { font-size: .85rem; color: var(--muted); }
     </div>
   </section>
 
+  <section id="logo" class="group" style="display:grid;gap:12px">
+    <div class="group-head"><h2>Logo</h2><span class="muted">6 propositions · à trancher en D49 et D50</span></div>
+    <p class="muted" style="margin:0">Chaque planche montre l'icône adaptative Android, sa version monochrome (icônes thématiques d'Android 13), le rendu à 48 px et le logo complet. Le texte sera vectorisé à la livraison.</p>
+    <div class="logos"><figure class="logo-card"><img src="logo/01-tour-donjon.svg" alt="Proposition 1 : Tour de donjon" loading="lazy"><figcaption><b>1. Tour de donjon</b><span class="muted">Ton idée : une tour dans les nuages.</span><a href="logo/01-tour-donjon.svg" target="_blank" rel="noopener">Ouvrir la planche ↗</a></figcaption></figure><figure class="logo-card"><img src="logo/02-caverne-nuages.svg" alt="Proposition 2 : Caverne et nuages" loading="lazy"><figcaption><b>2. Caverne et nuages</b><span class="muted">Ton idée : une entrée de caverne éclairée, des nuages à la base.</span><a href="logo/02-caverne-nuages.svg" target="_blank" rel="noopener">Ouvrir la planche ↗</a></figcaption></figure><figure class="logo-card"><img src="logo/03-d20-sablier.svg" alt="Proposition 3 : d20 sablier" loading="lazy"><figcaption><b>3. d20 sablier</b><span class="muted">Recommandé : le hasard (d20) et le chrono (sablier), les deux piliers de l'app. Le plus lisible à 48 px.</span><a href="logo/03-d20-sablier.svg" target="_blank" rel="noopener">Ouvrir la planche ↗</a></figcaption></figure><figure class="logo-card"><img src="logo/04-halteres-des.svg" alt="Proposition 4 : Haltère de dés" loading="lazy"><figcaption><b>4. Haltère de dés</b><span class="muted">La « salle de sport du MJ » au premier degré : un haltère dont les poids sont des dés.</span><a href="logo/04-halteres-des.svg" target="_blank" rel="noopener">Ouvrir la planche ↗</a></figcaption></figure><figure class="logo-card"><img src="logo/05-ecran-flamme.svg" alt="Proposition 5 : Écran et flamme" loading="lazy"><figcaption><b>5. Écran et flamme</b><span class="muted">L'écran du MJ surmonté d'une flamme : préparer, improviser.</span><a href="logo/05-ecran-flamme.svg" target="_blank" rel="noopener">Ouvrir la planche ↗</a></figcaption></figure><figure class="logo-card"><img src="logo/06-plume-sentier.svg" alt="Proposition 6 : Plume et sentier" loading="lazy"><figcaption><b>6. Plume et sentier</b><span class="muted">Une plume trace un chemin : l'écriture sous contrainte.</span><a href="logo/06-plume-sentier.svg" target="_blank" rel="noopener">Ouvrir la planche ↗</a></figcaption></figure></div>
+  </section>
+
   <section id="risques" class="group">
     <div class="group-head"><h2>Risques</h2></div>
     <div class="panel" style="overflow-x:auto">
@@ -308,6 +319,7 @@ const GROUPS = [
   { key: "p2tech", title: "Phase 2 · Technique", desc: "Questions soulevées par l'architecte" },
   { key: "p2ux", title: "Phase 2 · UX", desc: "Questions soulevées par l'UX designer, à trancher avant les maquettes" },
   { key: "p3", title: "Retours des maquettes, du contenu et du build", desc: "Questions soulevées par le maquettiste, le rédacteur et le développeur" },
+  { key: "p4", title: "Retours de test et suite", desc: "Logo, et tes idées pour après la v1" },
 ];
 const L = (t, u) => ({ t, u });
 const DECISIONS = [
@@ -508,6 +520,27 @@ const DECISIONS = [
     ctx: "Déplié, il occupe environ 56 % de l'écran avant l'ouverture du clavier. Replié, il respecte la limite.",
     opts: [["except", "Exception documentée : déplié seulement à la demande", true], ["scroll", "Défilement interne dans le panneau"]],
     src: [L("Maquette 06 Connect the Story", "mockups/06-connect-the-story.html")] },
+
+  { id: "D49", g: "p4", from: "UX", q: "Quel concept de logo ?",
+    ctx: "Six propositions dans la section Logo ci-dessous. L'UX recommande le d20 sablier (hasard + chrono, le plus lisible en petit) ; repli : la tour de donjon. Tu peux aussi demander un mélange en note.",
+    opts: [["d20", "3 · d20 sablier", true], ["tour", "1 · Tour de donjon"], ["caverne", "2 · Caverne et nuages"], ["autre", "Autre (4, 5, 6 ou mélange : préciser en note)"]],
+    src: [L("Section Logo ci-dessous", ""), L("docs/ux/logo/propositions.md", "")] },
+  { id: "D50", g: "p4", from: "UX", q: "Fond de l'icône de l'app ?",
+    ctx: "La brique ressort mieux sur un écran d'accueil chargé ; le cuir sombre est plus discret.",
+    opts: [["brique", "Brique (#8A2E1C)", true], ["cuir", "Cuir sombre (#1B1612)"]],
+    src: [L("design-system.md", "")] },
+  { id: "D51", g: "p4", from: "toi", q: "Connexion à un LLM (exercices interactifs, nouvelles situations) ?",
+    ctx: "La SPEC exclut l'IA et impose le 100 % hors ligne. Un modèle local sur le téléphone garde le hors ligne mais pèse lourd (plusieurs Go) et demande un appareil récent. Un service distant (ChatGPT, Claude, Mistral) exige la permission réseau et une clé d'API fournie par l'utilisateur. Recommandation : après la v1, en option désactivée par défaut, avec la clé de l'utilisateur ; l'app reste pleinement utilisable sans.",
+    opts: [["v2opt", "Après la v1, optionnel, service distant avec ta clé + modèle local possible", true], ["local", "Après la v1, modèle local uniquement (reste hors ligne)"], ["no", "Non, l'app reste sans IA"]],
+    src: [L("SPEC.md, hors périmètre v1", ""), L("ADR 0010 (hors ligne)", "")] },
+  { id: "D52", g: "p4", from: "toi", q: "Saisie vocale (speech to text) ?",
+    ctx: "Le clavier Android propose déjà la dictée (bouton micro) sans rien changer à l'app. Un bouton micro intégré demande la permission RECORD_AUDIO ; la reconnaissance peut se faire sur l'appareil (Android 13+). Utile pour Status Numbers (exercice oral).",
+    opts: [["kbd", "v1 : s'appuyer sur la dictée du clavier ; bouton intégré plus tard", true], ["v11", "Bouton micro intégré en v1.1 (reconnaissance sur l'appareil)"], ["no", "Non"]],
+    src: [L("SpeechRecognizer", "https://developer.android.com/reference/android/speech/SpeechRecognizer")] },
+  { id: "D53", g: "p4", from: "toi", q: "Couleur du thème ?",
+    ctx: "Material You (Android 12+) reprend les couleurs du fond d'écran ; un sélecteur permet de choisir parmi quelques palettes Material conformes. Les deux sont simples. Le thème « parchemin » reste l'identité par défaut.",
+    opts: [["both", "Réglage : Parchemin (défaut) / couleurs du téléphone / 3-4 palettes, en v1", true], ["dynamic", "Seulement « couleurs du téléphone » en option, en v1"], ["later", "Plus tard"]],
+    src: [L("Material dynamic color", "https://m3.material.io/styles/color/dynamic/user-generated-source")] },
 ];
 
 const byId = Object.fromEntries(DECISIONS.map(d => [d.id, d]));
