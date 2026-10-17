@@ -125,7 +125,7 @@ class RoomHistoryRepositoryTest {
     fun detailReturnsSessionWithChildren() =
         runTest {
             val id = create(session())
-            val manual = DrawRecord("s", 1, null, "7", "sept", true, false)
+            val manual = DrawRecord("s", 1, null, "7", "sept", true, false, "taste")
             repo.upsertDraws(id, listOf(manual, DrawRecord("s", 0, "t", "e", "x")))
 
             val detail = stored(id)

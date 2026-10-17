@@ -22,6 +22,10 @@ data class Exercise(
 @Serializable
 data object Daily : Route
 
+/** Fin de la séance du jour (S07), après le dernier exercice. */
+@Serializable
+data object DailyDone : Route
+
 /** Historique (S08) ; [filter] est le filtre initial (liens de l'écran Progrès). */
 @Serializable
 data class History(

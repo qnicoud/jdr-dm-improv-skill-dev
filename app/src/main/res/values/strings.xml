@@ -251,6 +251,32 @@
   <string name="one_page_rubric_fits">Tout tient-il en une page ?</string>
   <string name="one_page_rubric_tomorrow">Puis-je jouer ça demain ?</string>
 
+  <!-- L12b : enchaînement de la séance du jour et fin de séance (S07) -->
+  <string name="exercise_daily_step">Séance du jour · %1$d sur %2$d</string>
+  <string name="end_next_exercise">Exercice suivant (%1$d sur %2$d)</string>
+  <string name="end_finish_daily">Terminer la séance</string>
+  <string name="daily_done_title">Séance terminée</string>
+  <string name="daily_done_all">Bien joué : ton imagination est échauffée pour ta prochaine partie.</string>
+  <string name="daily_done_partial">Chaque exercice compte. Tu reprendras quand tu voudras.</string>
+  <string name="daily_done_not_done">Pas cette fois</string>
+  <string name="daily_done_home">Retour à l’accueil</string>
+  <string name="daily_done_redo">Refaire un exercice</string>
+
+  <!-- L12b : Decision Point Drill (départ après la pause de la vidéo, bilan) -->
+  <string name="decision_point_pause_done">Pause faite : lancer %1$s</string>
+  <string name="decision_point_end_prompt">Laquelle aurais-tu jouée en premier ?</string>
+  <string name="decision_point_end_hint">Tu peux cocher ici une réponse que tu ne ferais jamais.</string>
+
+  <!-- L12b : questions de Core Image Threading -->
+  <string name="question_skip">Passer cette question</string>
+
+  <!-- L12b : sens des mots imposés (Constraint Box) -->
+  <string name="sense_sight">Vue</string>
+  <string name="sense_hearing">Ouïe</string>
+  <string name="sense_smell">Odorat</string>
+  <string name="sense_touch">Toucher</string>
+  <string name="sense_taste">Goût</string>
+
   <!-- Historique et détail de session (L9 : S08, S09, carte Reprendre) -->
   <string name="history_filters_label">Filtrer par exercice</string>
   <string name="history_filter_all">Tous</string>

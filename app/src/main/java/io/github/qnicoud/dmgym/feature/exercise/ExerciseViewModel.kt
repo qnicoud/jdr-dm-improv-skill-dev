@@ -24,6 +24,7 @@ import io.github.qnicoud.dmgym.core.exercise.timerSnapshotOf
 import io.github.qnicoud.dmgym.core.exercise.timerUi
 import io.github.qnicoud.dmgym.core.exercise.toExerciseSession
 import io.github.qnicoud.dmgym.core.exercise.toLongs
+import io.github.qnicoud.dmgym.core.exercise.withCategories
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.settings.VibrationStrength
 import io.github.qnicoud.dmgym.core.tables.NotEnoughEntriesException
@@ -81,6 +82,7 @@ class ExerciseViewModel(
             ::dispatch,
             options = { definition.resolveOptions(model.value.session.options) },
             firedEvents = { model.value.session.firedEvents },
+            draws = { model.value.session.draws },
         )
     private val restorer = SessionRestorer(definition, deps, handle, launch, engine)
     private val drawing = DrawCoordinator(definition, drawer, channel, ::dispatch) { model.value.session }
@@ -322,9 +324,11 @@ class ExerciseViewModel(
         }
     }
 
-    private fun restore(detail: SessionDetail) {
+    private suspend fun restore(detail: SessionDetail) {
         recorder.adopt(detail.session)
-        val restored = restorer.restored(detail)
+        val base = restorer.restored(detail)
+        val draws = base.session.draws.withCategories(deps.tables)
+        val restored = base.copy(session = base.session.copy(draws = draws))
         val timer = restored.timer
         val now = deps.monotonicClock.now()
         model.value = restored

@@ -9,6 +9,7 @@ import io.github.qnicoud.dmgym.core.exercise.FieldSpec
 import io.github.qnicoud.dmgym.core.exercise.OptionCondition
 import io.github.qnicoud.dmgym.core.exercise.ProgressRule
 import io.github.qnicoud.dmgym.core.exercise.RubricQuestion
+import io.github.qnicoud.dmgym.core.exercise.StartVariant
 import io.github.qnicoud.dmgym.core.exercise.TableSlot
 import io.github.qnicoud.dmgym.core.exercise.TimerPolicy
 import io.github.qnicoud.dmgym.core.tables.TableId
@@ -59,5 +60,9 @@ object DecisionPoint {
                 ),
             progress = ProgressRule.FilledFields,
             options = listOf(ExerciseOption(OPTION_SITUATION, R.string.decision_point_option_situation)),
+            startVariant =
+                StartVariant(R.string.decision_point_pause_done, OptionCondition(OPTION_SITUATION, expected = false)),
+            endPrompt = R.string.decision_point_end_prompt,
+            endFlagHint = R.string.decision_point_end_hint,
         )
 }

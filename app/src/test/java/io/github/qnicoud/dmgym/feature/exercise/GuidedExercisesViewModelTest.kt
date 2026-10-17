@@ -1,9 +1,11 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.lifecycle.SavedStateHandle
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.core.exercise.contrastBand
+import io.github.qnicoud.dmgym.core.exercise.definitions.ConstraintBox
 import io.github.qnicoud.dmgym.core.exercise.definitions.CoreImage
 import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
 import io.github.qnicoud.dmgym.core.exercise.definitions.OnePage
@@ -101,6 +103,47 @@ class GuidedExercisesViewModelTest : ExerciseViewModelTestBase() {
             assertTrue(at in 72_000L..109_000L, "fired at $at")
             assertEquals(setOf(StatusNumbers.SHIFT_EVENT), vm.session().firedEvents)
             assertEquals(1, vm.session().drawsOf(StatusNumbers.SHIFT_SLOT).size)
+        }
+
+    @Test
+    fun `the shift goes against the status of the drawn card`() =
+        runTest {
+            val shifts = RealTables.file(TableId.StatusShifts).entries.associateBy { it.id }
+            repeat(12) {
+                val vm = vm(StatusNumbers.definition)
+                collect(vm)
+                vm.onOptionChanged(StatusNumbers.OPTION_SHIFT, true)
+                vm.onStart()
+                runCurrent()
+                repeat(120) { pass(1_000) }
+                val card =
+                    vm
+                        .session()
+                        .drawsOf(StatusNumbers.CARD_SLOT)
+                        .single()
+                        .text
+                        .toInt()
+                val shift = vm.session().drawsOf(StatusNumbers.SHIFT_SLOT).single()
+                val tags = shifts.getValue(shift.entryId).tags
+                if (card >= 8) assertTrue("shift:down" in tags, "card $card, tags $tags")
+                if (card <= 3) assertTrue("shift:up" in tags, "card $card, tags $tags")
+            }
+        }
+
+    @Test
+    fun `a resumed session saved before categories existed gets its senses back from the table`() =
+        runTest {
+            val first = started(ConstraintBox.definition)
+            first.onStop()
+            runCurrent()
+            val saved = history.sessions.getValue(1)
+            history.sessions[1] = saved.copy(draws = saved.draws.map { it.copy(category = null) })
+            handle = SavedStateHandle()
+            val resumed = vm(ConstraintBox.definition, ExerciseLaunch(resumeSessionId = 1, seed = 9))
+            collect(resumed)
+            val words = resumed.session().drawsOf(ConstraintBox.WORDS)
+            assertEquals(3, words.size)
+            assertTrue(words.all { it.category != null })
         }
 
     @Test

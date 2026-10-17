@@ -50,4 +50,13 @@ class ChecklistItemsTest {
     fun `keys follow slot and position`() {
         assertEquals(DrawKey(ConstraintBox.WORDS, 1), items[2].key)
     }
+
+    @Test
+    fun `the category of a draw is kept on its line`() {
+        val withSense = smell.copy(category = "smell")
+        assertEquals(
+            listOf(null, "smell"),
+            checklistItems(ConstraintBox.definition, listOf(place, withSense)).map { it.category },
+        )
+    }
 }

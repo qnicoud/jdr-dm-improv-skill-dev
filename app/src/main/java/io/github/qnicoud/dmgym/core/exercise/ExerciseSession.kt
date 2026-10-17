@@ -25,7 +25,10 @@ data class ElementCheck(
     val checked: Boolean get() = manual ?: auto
 }
 
-/** Un élément tiré. [position] est son rang dans son [slotKey]. */
+/**
+ * Un élément tiré. [position] est son rang dans son [slotKey]. [category] est la catégorie de l'entrée de la table
+ * (le sens pour `sensory_words`), `null` si l'entrée n'en a pas ou pour une carte.
+ */
 data class Draw(
     val slotKey: String,
     val position: Int,
@@ -33,6 +36,7 @@ data class Draw(
     val entryId: String,
     val text: String,
     val check: ElementCheck? = null,
+    val category: String? = null,
 )
 
 /** Identifie un tirage dans la session. */

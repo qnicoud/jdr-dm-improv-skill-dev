@@ -108,6 +108,34 @@ class AppNavigatorTest {
     }
 
     @Test
+    fun `the next daily exercise replaces the current one, so back returns to the daily screen`() {
+        navigator.openDaily()
+        navigator.openExercise(crazy, fromDaily = true)
+        navigator.openNextDailyExercise(ExerciseId.CONSTRAINT_BOX)
+        assertEquals(listOf<NavKey>(Home, Daily, Exercise(ExerciseId.CONSTRAINT_BOX, fromDaily = true)), stack.toList())
+        assertTrue(navigator.back())
+        assertEquals(Daily, stack.last())
+    }
+
+    @Test
+    fun `finishing the daily session replaces the last exercise with the summary`() {
+        navigator.openDaily()
+        navigator.openExercise(crazy, fromDaily = true)
+        navigator.finishDailySession()
+        assertEquals(listOf<NavKey>(Home, Daily, DailyDone), stack.toList())
+        assertNull(navigator.currentTab())
+    }
+
+    @Test
+    fun `going home from the summary drops the daily screens`() {
+        navigator.openDaily()
+        navigator.openExercise(crazy, fromDaily = true)
+        navigator.finishDailySession()
+        navigator.selectTab(Home)
+        assertEquals(listOf<NavKey>(Home), stack.toList())
+    }
+
+    @Test
     fun `opening a session detail pushes it above the history`() {
         navigator.selectTab(History())
         navigator.openSessionDetail(7)
