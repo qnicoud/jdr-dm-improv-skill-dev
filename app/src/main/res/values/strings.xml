@@ -437,4 +437,10 @@
   <string name="pinned_summary_collapse">Replier le tirage</string>
 
   <!-- Lot R1c : recette du cadre de l’app -->
+
+  <!-- Lot V0 : mots fixes du fichier d’export -->
+  <string name="export_played_first">Jouée en premier</string>
+  <string name="export_rubric">Grille</string>
+  <string name="export_yes">oui</string>
+  <string name="export_no">non</string>
 </resources>

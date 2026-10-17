@@ -32,6 +32,15 @@ class FirstPickTest {
     }
 
     @Test
+    fun `a pick whose field is empty or missing is pruned`() {
+        val rubric = mapOf("playable" to true, "first_pick:answer_2" to true)
+        val full = mapOf(AnswerKey("answer_2") to Answer("texte"))
+        assertEquals(rubric, FirstPick.pruned(rubric, full))
+        assertEquals(mapOf("playable" to true), FirstPick.pruned(rubric, mapOf(AnswerKey("answer_2") to Answer(" "))))
+        assertEquals(mapOf("playable" to true), FirstPick.pruned(rubric, emptyMap()))
+    }
+
+    @Test
     fun `decision point offers its three answers as the choice`() {
         assertEquals(DecisionPoint.FIELD_KEYS, DecisionPoint.definition.firstPickFields())
         assertTrue(DecisionPoint.definition.rubric.none { FirstPick.isKey(it.key) })

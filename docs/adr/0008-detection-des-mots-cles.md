@@ -47,6 +47,7 @@ Le cochage manuel fait toujours foi, **sauf** après un décochage : une **nouve
 
 - `ElementCheck` mémorise le nombre d'occurrences du dernier recalcul (`occurrences`) et celui du décochage (`manualAt`). Ces deux valeurs ne sont pas enregistrées : après une reprise de séance, `manualAt` est inconnu et prend le compte du premier recalcul.
 - Décocher puis continuer à taper sans nouvelle occurrence laisse la case décochée. Effacer du texte ne recoche jamais : le compte baisse, il ne dépasse pas la référence.
+- Cas limite (revue R1a, assumé) : si le texte est vidé puis retapé jusqu'au nombre d'occurrences mémorisé au décochage (`manualAt`), le mot n'est pas recoché. C'est cohérent avec la règle « strictement plus d'occurrences qu'au décochage ». Un test de réducteur le fige.
 - Un recochage supprime l'état manuel (`manual = null`) ; la case suit de nouveau la détection.
 - Le cochage manuel n'existe que pendant l'exercice : l'écran Prêt affiche les mots et éléments en lecture seule.
 
