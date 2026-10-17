@@ -14,6 +14,7 @@ import io.github.qnicoud.dmgym.core.exercise.timerUi
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.time.MonotonicClock
+import io.github.qnicoud.dmgym.core.timer.DurationBounds
 import io.github.qnicoud.dmgym.core.timer.TimerEngine
 import io.github.qnicoud.dmgym.core.timer.TimerState
 import kotlinx.coroutines.delay
@@ -48,7 +49,32 @@ internal fun ExerciseModel.toUiState(definition: ExerciseDefinition): ExerciseUi
         progress = progressOf(definition, session),
         save = save,
         groupCount = maxOf(extraGroups + 1, answeredGroups),
+        timerSetting = timerSettingOf(definition),
     )
+}
+
+/** Réglage proposé sur l'écran Prêt, tant que le minuteur n'est pas lancé. */
+private fun ExerciseModel.timerSettingOf(definition: ExerciseDefinition): TimerSetting? {
+    val idle = timer as? TimerState.Idle ?: return null
+    val bounds = durationBoundsOf(definition) ?: return null
+    if (session.phase != Phase.Ready) return null
+    return TimerSetting(
+        seconds = idle.durationMs.toSeconds(),
+        minSeconds = bounds.min.inWholeSeconds.toInt(),
+        maxSeconds = bounds.max.inWholeSeconds.toInt(),
+        untimed = untimed,
+    )
+}
+
+private fun Long.toSeconds(): Int = (this / MS_PER_SECOND).toInt()
+
+private const val MS_PER_SECOND = 1_000L
+
+/** Bornes de la durée réglable ; `null` pour un exercice sans minuteur (aucun réglage). */
+internal fun durationBoundsOf(definition: ExerciseDefinition): DurationBounds? {
+    if (definition.timer is TimerPolicy.None) return null
+    val default = definition.timer.defaultDuration ?: ExerciseId.DEFAULT_DURATIONS[definition.id] ?: return null
+    return DurationBounds.of(default)
 }
 
 /** Écran maintenu allumé en décompte, en temps additionnel et au chronomètre, pas en pause (ADR 0006). */

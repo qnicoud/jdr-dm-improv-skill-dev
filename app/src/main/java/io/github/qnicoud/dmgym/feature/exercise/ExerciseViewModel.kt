@@ -26,9 +26,11 @@ import io.github.qnicoud.dmgym.core.exercise.toExerciseSession
 import io.github.qnicoud.dmgym.core.exercise.toLongs
 import io.github.qnicoud.dmgym.core.exercise.withCategories
 import io.github.qnicoud.dmgym.core.history.SessionDetail
+import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.settings.VibrationStrength
 import io.github.qnicoud.dmgym.core.tables.NotEnoughEntriesException
 import io.github.qnicoud.dmgym.core.tables.TableLoadException
+import io.github.qnicoud.dmgym.core.timer.DurationBounds
 import io.github.qnicoud.dmgym.core.timer.TickResult
 import io.github.qnicoud.dmgym.core.timer.TimerEngine
 import io.github.qnicoud.dmgym.core.timer.TimerEvent
@@ -53,6 +55,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * ViewModel générique des exercices (ADR 0012). Il enchaîne tirage, minuteur, sauvegarde automatique et
@@ -163,6 +167,32 @@ class ExerciseViewModel(
         ) {
             viewModelScope.launch { if (drawing.redrawForOption(key)) detection.prepare() }
         }
+    }
+
+    /** Écran Prêt : allonge d'un pas la durée de cet exercice (bornes de `DurationBounds`). */
+    fun onDurationIncreased() = stepDuration { bounds, current -> bounds.increase(current) }
+
+    /** Écran Prêt : raccourcit d'un pas la durée de cet exercice. */
+    fun onDurationDecreased() = stepDuration { bounds, current -> bounds.decrease(current) }
+
+    private fun stepDuration(move: (DurationBounds, Duration) -> Duration) {
+        val idle = model.value.timer as? TimerState.Idle ?: return
+        val bounds = durationBoundsOf(definition) ?: return
+        if (model.value.session.phase != Phase.Ready) return
+        val duration = move(bounds, idle.durationMs.milliseconds)
+        model.update { it.copy(timer = TimerState.Idle(duration.inWholeMilliseconds)) }
+        changeSettings { it.copy(durations = it.durations + (definition.id to duration)) }
+    }
+
+    /** Écran Prêt : « sans minuteur » pour cet exercice, appliqué tout de suite et enregistré dans les Réglages. */
+    fun onUntimedChanged(untimed: Boolean) {
+        if (durationBoundsOf(definition) == null || model.value.session.phase != Phase.Ready) return
+        model.update { it.copy(untimed = untimed) }
+        changeSettings { it.copy(untimed = if (untimed) it.untimed + definition.id else it.untimed - definition.id) }
+    }
+
+    private fun changeSettings(transform: (Settings) -> Settings) {
+        viewModelScope.launch { deps.settings.update(transform) }
     }
 
     fun onNextQuestion() = moveQuestion { ExerciseAction.NextQuestion(it.lastIndex) }

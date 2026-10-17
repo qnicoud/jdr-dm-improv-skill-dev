@@ -21,6 +21,16 @@ data class ExerciseUiState(
     val groupCount: Int = 1,
     /** Écran maintenu allumé tant que le chrono tourne (ADR 0006). */
     val keepScreenOn: Boolean = false,
+    /** Réglage de durée de l'écran Prêt ; `null` hors de cet écran ou si l'exercice n'a pas de durée réglable. */
+    val timerSetting: TimerSetting? = null,
+)
+
+/** Durée réglable de l'exercice et mode « sans minuteur », avec les bornes de [io.github.qnicoud.dmgym.core.timer.DurationBounds]. */
+data class TimerSetting(
+    val seconds: Int,
+    val minSeconds: Int,
+    val maxSeconds: Int,
+    val untimed: Boolean,
 )
 
 /** Événements ponctuels, consommés par l'écran pendant l'état `STARTED`. */
