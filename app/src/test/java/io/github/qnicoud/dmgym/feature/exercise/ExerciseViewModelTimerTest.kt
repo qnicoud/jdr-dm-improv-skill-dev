@@ -57,6 +57,7 @@ class ExerciseViewModelTimerTest : ExerciseViewModelTestBase() {
                 assertEquals(1, announces.count { it.value == ExerciseEvent.Announce(Milestone.TimeUp) })
             }
             assertEquals(1, endSignal.played.size)
+            assertTrue(endSignal.played.single().soundEnabled && endSignal.played.single().vibrationEnabled)
             val ui = vm.uiState.value
             assertEquals(TimerKind.Overtime, vm.timerState.value.kind)
             assertTrue(ui.keepScreenOn)
