@@ -9,7 +9,13 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import kotlin.math.pow
 
-/** Contraste WCAG 2.x calculé sur les jeux de couleurs réels (design-system §2.4). */
+/**
+ * Contraste WCAG 2.x calculé sur les jeux de couleurs réels (design-system §2.4), pour chaque palette statique
+ * (Parchemin, Forêt, Nuit, Brume), en clair et en sombre.
+ *
+ * La palette `DYNAMIC` n'est pas testée : ses couleurs sont générées par le système (Material You, API 31+),
+ * conformes aux règles de contraste Material, et dépendent du fond d'écran, donc inaccessibles en JVM.
+ */
 class ContrastTest {
     private fun channel(c: Float): Double = if (c <= 0.03928f) c / 12.92 else ((c + 0.055) / 1.055).pow(2.4)
 
@@ -43,6 +49,20 @@ class ContrastTest {
             "onSurfaceVariant/surfaceContainerLow" to (s.onSurfaceVariant to s.surfaceContainerLow),
             "onSurfaceVariant/surfaceContainer" to (s.onSurfaceVariant to s.surfaceContainer),
             "inverseOnSurface/inverseSurface" to (s.inverseOnSurface to s.inverseSurface),
+            "onSurface/surfaceContainerLowest" to (s.onSurface to s.surfaceContainerLowest),
+            "onSurface/surfaceContainer" to (s.onSurface to s.surfaceContainer),
+            "onSurface/surfaceContainerHigh" to (s.onSurface to s.surfaceContainerHigh),
+            "onSurface/surfaceDim" to (s.onSurface to s.surfaceDim),
+            "onSurface/surfaceBright" to (s.onSurface to s.surfaceBright),
+            "onSurfaceVariant/surfaceContainerHigh" to (s.onSurfaceVariant to s.surfaceContainerHigh),
+            "onSurfaceVariant/surfaceContainerHighest" to (s.onSurfaceVariant to s.surfaceContainerHighest),
+            "onSecondaryContainer/surfaceContainer" to (s.onSecondaryContainer to s.surfaceContainer),
+            "onSecondaryContainer/surface" to (s.onSecondaryContainer to s.surface),
+            "onPrimaryContainer/surface" to (s.onPrimaryContainer to s.surface),
+            "onTertiaryContainer/surface" to (s.onTertiaryContainer to s.surface),
+            "secondary/surface" to (s.secondary to s.surface),
+            "tertiary/surface" to (s.tertiary to s.surface),
+            "inversePrimary/inverseSurface" to (s.inversePrimary to s.inverseSurface),
             "primary/surface" to (s.primary to s.surface),
             "error/surface" to (s.error to s.surface),
         )
