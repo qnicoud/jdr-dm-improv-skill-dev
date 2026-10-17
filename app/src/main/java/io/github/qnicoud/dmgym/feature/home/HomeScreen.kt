@@ -17,6 +17,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
@@ -34,6 +37,7 @@ import io.github.qnicoud.dmgym.feature.daily.DailyCard
 import io.github.qnicoud.dmgym.feature.daily.DailyViewModel
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
+import java.time.Clock
 
 object HomeTags {
     const val WELCOME = "home_welcome"
@@ -50,12 +54,16 @@ fun HomeRoute(
     onExerciseClick: (ExerciseId) -> Unit,
     onDailyClick: () -> Unit,
     onSettingsClick: () -> Unit,
+    onResumeClick: (ResumeUi) -> Unit,
+    clock: Clock,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val daily by dailyViewModel.uiState.collectAsStateWithLifecycle()
+    var now by remember { mutableLongStateOf(clock.millis()) }
     LifecycleResumeEffect(dailyViewModel) {
         dailyViewModel.refreshToday()
+        now = clock.millis()
         onPauseOrDispose {}
     }
     HomeScreen(
@@ -63,13 +71,14 @@ fun HomeRoute(
         onExerciseClick = onExerciseClick,
         onSettingsClick = onSettingsClick,
         modifier = modifier,
+        resumeSlot = state.resume?.let { resume -> { ResumeCard(resume, now, onResume = { onResumeClick(resume) }) } },
         dailySlot = if (daily.isLoading) null else ({ DailyCard(daily, onDailyClick) }),
     )
 }
 
 /**
- * Accueil (S02). Les emplacements [resumeSlot] (carte « Reprendre ») et [dailySlot] (« Séance du jour »)
- * sont réservés : la carte « Reprendre » arrive avec le lot L9, [DailyCard] est branchée par [HomeRoute].
+ * Accueil (S02). Les emplacements [resumeSlot] (carte « Reprendre », [ResumeCard]) et [dailySlot] (« Séance du
+ * jour », [DailyCard]) sont branchés par [HomeRoute].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
