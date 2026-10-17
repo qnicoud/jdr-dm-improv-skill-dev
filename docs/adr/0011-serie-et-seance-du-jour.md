@@ -69,3 +69,8 @@ fun plan(today: Long, stats: PracticeStats, catalog: List<ExerciseId>, options: 
 - **Pourquoi** : Status Numbers se joue à l'oral et ses notes sont facultatives. Une scène terminée sans notes est une vraie pratique et doit compter. Le contenu ne reste exigé que pour une session abandonnée, où il distingue un brouillon d'une session ouverte par erreur.
 - L'historique (`observeHistory`) suivait déjà cette règle.
 - Le niveau et le bijou se modifient par des écritures ciblées (`updateRating`, `updateGem`) qui n'avancent pas la dernière activité : évaluer une session inachevée ne la rend pas « en cours ».
+
+## Complément (2026-10-18, v1.1)
+
+- Le premier plan calculé dans la journée est enregistré dans DataStore (`daily_plan`) et réutilisé jusqu'au lendemain. Une mise à jour qui agrandit le catalogue ne change donc pas la séance déjà proposée (ADR 0017 §4).
+- Les sessions importées (ADR 0015) gardent leur `localEpochDay`. La série et les compteurs, calculés à la lecture, les intègrent sans traitement particulier.

@@ -49,3 +49,11 @@ Le cochage manuel fait toujours foi, **sauf** après un décochage : une **nouve
 - Décocher puis continuer à taper sans nouvelle occurrence laisse la case décochée. Effacer du texte ne recoche jamais : le compte baisse, il ne dépasse pas la référence.
 - Un recochage supprime l'état manuel (`manual = null`) ; la case suit de nouveau la détection.
 - Le cochage manuel n'existe que pendant l'exercice : l'écran Prêt affiche les mots et éléments en lecture seule.
+
+## Complément (2026-10-18, v1.1) : détection par langue
+
+Voir l'ADR 0016 §4 :
+- les cibles viennent des tables de la **langue de la session** ;
+- un `DetectionProfile` par langue (`IdentityStemmer` pour `fr` et `en`) ;
+- un corpus doré par langue (`src/test/resources/detection/<lang>/corpus.json`), avec les mêmes seuils ;
+- une langue n'est livrée que si son corpus est vert.

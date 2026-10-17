@@ -106,3 +106,10 @@ Le statut tiré de Status Numbers suit désormais le rang social du rôle, lu da
 | aucune | 1-10 | 1-10 |
 
 Les 34 rôles de `npc_roles.json` portent déjà exactement une étiquette : 17 `rank:high` et 17 `rank:low`. Aucun `rank:mid` n'existe dans la table, la plage est prête si le rédacteur en ajoute. La table n'est pas modifiée. Le rappel « statut ≠ rang » reste affiché.
+
+## Complément (2026-10-18, v1.1)
+
+- **Tables par langue** (ADR 0016 §2) :
+  - arborescence `assets/tables/<lang>/<table>.json`, où `locale` doit égaler le dossier ;
+  - `id`, `category`, `tags` et `difficulty` identiques d'une langue à l'autre (test de parité).
+- **Quatre nouvelles tables** (ADR 0017 §3) : `failure_situations`, `complication_types`, `clue_conclusions`, `player_offers`. `complication_types` est une table de vocabulaire, avec un minimum propre de 6 à 8 entrées et des ids pris dans un vocabulaire fermé.

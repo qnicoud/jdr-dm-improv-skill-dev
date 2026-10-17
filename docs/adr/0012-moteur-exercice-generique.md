@@ -41,3 +41,14 @@ Le **cœur du moteur est pur** (`core/exercise`) : `ExerciseSession` (état immu
 - Un nouvel exercice « tirage + N champs + minuteur » demande une définition (environ 50 lignes), une table JSON, des chaînes et un test de définition. Pas de nouvel écran ni de migration Room, puisque les réponses sont stockées par `fieldKey` (voir `docs/architecture.md` §4).
 - Les points d'extension sont fermés (types scellés). Un besoin nouveau, comme un schéma de relations en v2, demandera un nouveau type de `FieldLayout` et un ADR.
 - Le réducteur concentre la logique : il est testé exhaustivement (tirage, relance, saisie, cases, fin, reprise).
+
+## Complément (2026-10-18, v1.1)
+
+Ajouts facultatifs et rétrocompatibles pour les exercices de la v1.1 (ADR 0017) :
+- `FieldSpec.icon` et `FieldSpec.prefix` ;
+- `Fixed.boundSlot` et `Fixed.hintByCode` ;
+- `Sequential.fields`, `Sequential.itemLabel` et `Sequential.revealProgressively` ;
+- `RubricQuestion.visibleWhen` ;
+- `ExerciseDefinition.endChoiceLabel`.
+
+Le catalogue (`ExerciseId.ALL`, durées par défaut, échauffements) est dérivé du registre.

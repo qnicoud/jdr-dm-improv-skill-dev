@@ -53,3 +53,10 @@ interface SettingsRepository {
 ## Complément (2026-10-17, décision D53)
 
 Nouveau réglage `themePalette` : `PARCHMENT` (défaut) / `DYNAMIC` (Material You, API 31+ ; masqué ou replié sur `PARCHMENT` en dessous) / quelques palettes Material conformes. Lu par le thème Compose ; contrastes vérifiés par `ContrastTest` pour chaque palette statique.
+
+## Complément (2026-10-18, v1.1)
+
+- Rappels (ADR 0014) : `reminder_enabled`, `reminder_minute_of_day`, `reminder_days` et `reminder_resumed_epoch_day`.
+- Séance du jour : `daily_plan` (ADR 0017 §4).
+- La langue n'est **pas** stockée dans DataStore : sur Android 13+, le système conserve le choix de langue par app (ADR 0016).
+- La clé `crazy_eights_minute_haptic` garde son nom ; seul son libellé change (« Vibration de rythme »).

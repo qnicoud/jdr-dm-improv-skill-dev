@@ -34,3 +34,15 @@ Une dépendance transitive peut ajouter `INTERNET` ou `ACCESS_NETWORK_STATE` au 
 
 - La v1 reste sans permission réseau ni audio. La saisie vocale passe par la dictée du clavier (aucune permission pour l'app).
 - Le LLM optionnel prévu après la v1 demandera `INTERNET` : il fera l'objet d'un nouvel ADR qui amende celui-ci (liste blanche de `verifyPermissions`, option désactivée par défaut, clé fournie par l'utilisateur et stockée chiffrée).
+
+## Complément (2026-10-18, v1.1) : rappels
+
+L'ADR 0014 ajoute à la liste blanche `android.permission.POST_NOTIFICATIONS` (permission d'exécution, demandée seulement à l'activation du rappel) et `android.permission.RECEIVE_BOOT_COMPLETED` (réarmement après un redémarrage).
+
+Restent interdites, entre autres :
+- les permissions réseau ;
+- `SCHEDULE_EXACT_ALARM` et `USE_EXACT_ALARM` ;
+- `WAKE_LOCK` et `FOREGROUND_SERVICE` ;
+- `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`.
+
+WorkManager est écarté parce qu'il ajouterait `ACCESS_NETWORK_STATE`. L'import de sessions (ADR 0015) passe par le sélecteur système et ne demande aucune permission.

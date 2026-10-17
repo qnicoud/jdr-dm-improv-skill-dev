@@ -44,3 +44,8 @@ Des utilisateurs, à commencer par le premier testeur, ont déjà des sessions r
 - est couvert par un test de migration (`RoomMigrationTest`) : une base construite depuis le schéma précédent, remplie de données, est ouverte à la version courante et toutes les données doivent être conservées.
 
 Premier cas : la version 2 ajoute `session_draws.category` (nullable ; `null` pour les tirages existants).
+
+## Complément (2026-10-18, v1.1)
+
+- Schéma v3 : `sessions.contentLocale` (nullable, `null` = `"fr"`), `AutoMigration(2 → 3)`, test 1 → 2 → 3 (ADR 0016).
+- Toute nouvelle donnée de session doit aussi entrer dans le format de sauvegarde réimportable : nouvelle `formatVersion`, nouveau DTO, nouveaux fichiers témoins (ADR 0015).
