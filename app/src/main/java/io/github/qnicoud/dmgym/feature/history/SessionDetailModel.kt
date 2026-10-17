@@ -102,5 +102,6 @@ private fun ExerciseDefinition.fieldSpecs() =
         is FieldLayout.Fixed -> l.fields
         is FieldLayout.Single -> listOf(l.field)
         is FieldLayout.Sequential -> listOf(l.field)
-        is FieldLayout.RepeatableGroup -> l.fields
-    }
+        is FieldLayout.RepeatableGroup -> l.before + l.fields + l.after
+        is FieldLayout.None -> emptyList()
+    } + listOfNotNull(endNote)

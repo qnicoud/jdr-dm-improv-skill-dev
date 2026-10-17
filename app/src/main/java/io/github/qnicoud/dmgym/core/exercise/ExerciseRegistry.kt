@@ -2,7 +2,11 @@ package io.github.qnicoud.dmgym.core.exercise
 
 import io.github.qnicoud.dmgym.core.exercise.definitions.ConnectStory
 import io.github.qnicoud.dmgym.core.exercise.definitions.ConstraintBox
+import io.github.qnicoud.dmgym.core.exercise.definitions.CoreImage
 import io.github.qnicoud.dmgym.core.exercise.definitions.CrazyEights
+import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
+import io.github.qnicoud.dmgym.core.exercise.definitions.OnePage
+import io.github.qnicoud.dmgym.core.exercise.definitions.StatusNumbers
 
 /**
  * Catalogue des définitions d'exercice (ADR 0012). Les définitions des 7 exercices s'y ajoutent aux lots L8
@@ -31,6 +35,11 @@ class ExerciseRegistry(
                     CrazyEights.definition,
                     ConstraintBox.definition,
                     ConnectStory.definition,
+                    // L10 : exercices 3, 4, 5 et 7
+                    CoreImage.definition,
+                    StatusNumbers.definition,
+                    DecisionPoint.definition,
+                    OnePage.definition,
                 ),
             )
     }

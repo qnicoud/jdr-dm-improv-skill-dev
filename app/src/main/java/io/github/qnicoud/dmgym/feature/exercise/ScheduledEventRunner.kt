@@ -24,6 +24,7 @@ internal class ScheduledEventRunner(
     private val scope: CoroutineScope,
     private val out: Channel<ExerciseEvent>,
     private val dispatch: (ExerciseAction) -> Unit,
+    private val options: () -> Map<String, Boolean>,
     private val firedEvents: () -> Set<String>,
 ) {
     private var plan = EventPlan(engine, emptyList(), null, random)
@@ -56,13 +57,17 @@ internal class ScheduledEventRunner(
 
     private fun fire(due: DueEvent) {
         val event = due.event
+        if (event.requiresOption?.let { options()[it] != true } == true) return
         when (val timing = event.timing) {
             is TimedEvent.Periodic -> if (!due.stale) out.trySend(ExerciseEvent.Reminder(event.id, timing.haptic))
-            is TimedEvent.Once -> if (event.id !in firedEvents()) fireOnce(event)
+            is TimedEvent.Once -> if (event.id !in firedEvents()) fireOnce(event, due.stale)
         }
     }
 
-    private fun fireOnce(event: ScheduledEvent) {
+    private fun fireOnce(
+        event: ScheduledEvent,
+        stale: Boolean,
+    ) {
         scope.launch {
             val draws =
                 try {
@@ -73,6 +78,7 @@ internal class ScheduledEventRunner(
                     emptyList()
                 }
             dispatch(ExerciseAction.EventFired(event.id, draws))
+            if (!stale) draws.firstOrNull()?.let { out.trySend(ExerciseEvent.Shift(it.text)) }
         }
     }
 }

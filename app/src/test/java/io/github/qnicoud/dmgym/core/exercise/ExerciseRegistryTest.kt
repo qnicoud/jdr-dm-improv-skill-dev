@@ -3,6 +3,7 @@ package io.github.qnicoud.dmgym.core.exercise
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ExerciseRegistryTest {
@@ -19,8 +20,8 @@ class ExerciseRegistryTest {
     }
 
     @Test
-    fun `the shipped registry has the L8 exercises, each under its own id`() {
-        listOf(ExerciseId.CRAZY_EIGHTS, ExerciseId.CONSTRAINT_BOX, ExerciseId.CONNECT_STORY).forEach {
+    fun `the shipped registry has the 7 exercises, each under its own id`() {
+        ExerciseId.ALL.forEach {
             assertEquals(it, ExerciseRegistry.Default[it]?.id)
         }
     }

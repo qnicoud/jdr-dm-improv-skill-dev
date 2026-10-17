@@ -18,6 +18,8 @@ object RealTables {
 
     val repository = TableRepository(source)
 
+    fun file(id: TableId): TableFile = TableFile.decode(TestTables.assetFile(id).readText())
+
     fun drawer(seed: Int) = SlotDrawer(repository, Random(seed))
 
     suspend fun entry(

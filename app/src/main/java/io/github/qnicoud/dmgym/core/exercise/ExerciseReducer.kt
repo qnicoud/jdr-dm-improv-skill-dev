@@ -25,6 +25,10 @@ fun reduce(
             if (state.phase == Phase.Ended) state else changeAnswer(state, action)
         }
 
+        is ExerciseAction.NoteChanged -> {
+            changeAnswer(state, ExerciseAction.AnswerChanged(action.key, action.text))
+        }
+
         is ExerciseAction.FlagToggled -> {
             toggleFlag(state, action.key)
         }
@@ -39,6 +43,10 @@ fun reduce(
 
         is ExerciseAction.NextQuestion -> {
             state.copy(currentQuestion = (state.currentQuestion + 1).coerceIn(0, maxOf(0, action.lastIndex)))
+        }
+
+        ExerciseAction.PreviousQuestion -> {
+            state.copy(currentQuestion = (state.currentQuestion - 1).coerceAtLeast(0))
         }
 
         is ExerciseAction.OptionChanged -> {
@@ -65,10 +73,7 @@ fun reduce(
 private fun reroll(
     state: ExerciseSession,
     action: ExerciseAction.Rerolled,
-): ExerciseSession {
-    val draws = if (action.slotKey == null) action.draws else replaceSlots(state.draws, action.draws)
-    return state.copy(draws = draws, rerollCount = state.rerollCount + 1)
-}
+): ExerciseSession = state.copy(draws = replaceSlots(state.draws, action.draws), rerollCount = state.rerollCount + 1)
 
 private fun start(
     state: ExerciseSession,

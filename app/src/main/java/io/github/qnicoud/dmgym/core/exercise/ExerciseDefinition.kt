@@ -33,10 +33,33 @@ val TimerPolicy.defaultDuration: Duration?
             TimerPolicy.None -> null
         }
 
+/** Condition sur une option de l'exercice : un tirage ou un champ n'existe que si elle est remplie. */
+data class OptionCondition(
+    val option: String,
+    val expected: Boolean = true,
+) {
+    /** Une option absente de [options] prend sa valeur dans [defaults] (celle de la définition), sinon `false`. */
+    fun holds(
+        options: Map<String, Boolean>,
+        defaults: Map<String, Boolean> = emptyMap(),
+    ): Boolean = (options[option] ?: defaults[option] ?: false) == expected
+}
+
 /** Un tirage de l'écran « Prêt » (ADR 0012). */
 sealed interface DrawSlot {
     val key: String
+
+    /** Le slot n'est tiré (et affiché) que si la condition est remplie ; `null` : toujours. */
+    val onlyIf: OptionCondition?
 }
+
+/** Vrai si le tirage du slot change quand l'option [option] change (mode, contre-stéréotype). */
+fun DrawSlot.dependsOn(option: String): Boolean =
+    onlyIf?.option == option || (this is CardSlot && contrast?.option == option)
+
+/** Les slots tirés pour les [options] données. */
+fun List<DrawSlot>.activeFor(options: Map<String, Boolean>): List<DrawSlot> =
+    filter { it.onlyIf?.holds(options) ?: true }
 
 /** Tirage de [count] entrées d'une table, sans remise. */
 data class TableSlot(
@@ -46,6 +69,9 @@ data class TableSlot(
     val category: String? = null,
     val distinctBy: DistinctBy = DistinctBy.Id,
     val difficulty: IntRange = 1..3,
+    /** Si non vide, la i-ème entrée vient de la catégorie `i % taille` (questions « dans l'ordre des catégories »). */
+    val categoryCycle: List<String> = emptyList(),
+    override val onlyIf: OptionCondition? = null,
     /** Libellé affiché devant chaque tirage du slot (par ex. « Lieu »), s'il y en a un. */
     val label: StringResId? = null,
 ) : DrawSlot {
@@ -54,10 +80,18 @@ data class TableSlot(
     }
 }
 
+/** La carte est choisie à l'opposé du rang (`rank:*`) du rôle tiré dans [roleSlot], quand [option] est active (D45). */
+data class RankContrast(
+    val roleSlot: String,
+    val option: String,
+)
+
 /** Carte numérotée (Status Numbers). */
 data class CardSlot(
     override val key: String,
     val range: IntRange = 1..10,
+    val contrast: RankContrast? = null,
+    override val onlyIf: OptionCondition? = null,
 ) : DrawSlot {
     init {
         require(!range.isEmpty()) { "range must not be empty" }
@@ -69,6 +103,7 @@ data class ChoiceSlot(
     override val key: String,
     val choices: List<String>,
     val default: String = choices.first(),
+    override val onlyIf: OptionCondition? = null,
 ) : DrawSlot {
     init {
         require(default in choices) { "default must be one of the choices" }
@@ -83,6 +118,10 @@ data class FieldSpec(
     val minLines: Int = 1,
     /** Libellé de la case à cocher de la réponse (« Je ne ferais jamais ça »), si l'exercice en a une. */
     val flagLabel: StringResId? = null,
+    /** Le champ n'est affiché que si la condition est remplie. */
+    val visibleWhen: OptionCondition? = null,
+    /** Plafond conseillé de caractères : compteur souple, jamais bloquant. */
+    val softLimit: Int? = null,
 )
 
 /** Disposition de la saisie (ADR 0012). */
@@ -101,9 +140,23 @@ sealed interface FieldLayout {
         val field: FieldSpec,
     ) : FieldLayout
 
+    /**
+     * Pas de saisie pendant le jeu (Status Numbers) : un grand bouton [finishLabel] termine la scène ; les notes
+     * éventuelles sont saisies dans le bilan ([ExerciseDefinition.endNote]).
+     */
+    data class None(
+        val finishLabel: StringResId,
+    ) : FieldLayout
+
+    /** [before] et [after] encadrent les groupes (contexte, « si les PJ ne font rien ») ; ils portent le groupe 0. */
     data class RepeatableGroup(
         val fields: List<FieldSpec>,
         val max: Int,
+        val before: List<FieldSpec> = emptyList(),
+        val after: List<FieldSpec> = emptyList(),
+        /** Titre d'un groupe (reçoit son numéro) et libellé du bouton d'ajout ; sinon les libellés génériques. */
+        val title: StringResId? = null,
+        val addLabel: StringResId? = null,
     ) : FieldLayout {
         init {
             require(max >= 1) { "max must be >= 1" }
@@ -146,6 +199,8 @@ data class ScheduledEvent(
     val id: String,
     val timing: TimedEvent,
     val draw: TableSlot? = null,
+    /** L'événement n'a lieu que si cette option est active (option « bascule »). */
+    val requiresOption: String? = null,
 )
 
 /** Description déclarative d'un exercice (ADR 0012). */
@@ -166,6 +221,8 @@ data class ExerciseDefinition(
     val warmUp: Boolean = true,
     /** Vrai si l'exercice accepte « Écrire mon propre sujet » quand la table est illisible (DÉCISION 12). */
     val acceptsFreeSubject: Boolean = false,
+    /** Notes facultatives saisies dans le bilan (Status Numbers). */
+    val endNote: FieldSpec? = null,
     /** Vrai si le panneau des éléments tirés se replie quand le clavier s'ouvre (Connect the Story, D48). */
     val collapsiblePanel: Boolean = false,
 ) {
@@ -174,6 +231,10 @@ data class ExerciseDefinition(
         require(slots.map { it.key }.distinct().size == slots.size) { "slot keys must be unique" }
     }
 
+    /** Valeur des options de la session, complétée par les valeurs par défaut de celles qui manquent. */
+    fun resolveOptions(stored: Map<String, Boolean>): Map<String, Boolean> =
+        options.associate { it.key to it.default } + stored
+
     /** Clés des champs de saisie, dans l'ordre. */
     val fieldKeys: List<String>
         get() =
@@ -181,7 +242,8 @@ data class ExerciseDefinition(
                 is FieldLayout.Fixed -> layout.fields.map { it.key }
                 is FieldLayout.Single -> listOf(layout.field.key)
                 is FieldLayout.Sequential -> listOf(layout.field.key)
-                is FieldLayout.RepeatableGroup -> layout.fields.map { it.key }
+                is FieldLayout.RepeatableGroup -> (layout.before + layout.fields + layout.after).map { it.key }
+                is FieldLayout.None -> emptyList()
             }
 
     private companion object {

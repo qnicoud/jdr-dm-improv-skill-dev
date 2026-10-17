@@ -39,6 +39,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
+import io.github.qnicoud.dmgym.core.exercise.CardSlot
 import io.github.qnicoud.dmgym.core.exercise.Draw
 import io.github.qnicoud.dmgym.core.exercise.DrawKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
@@ -65,15 +66,35 @@ internal fun ReadyDraw(
             onCheckToggled = actions.onCheckToggled,
         )
     } else {
-        DrawCard(
-            draws = draws,
-            rerollCount = state.session.rerollCount,
-            showReroll = showReroll,
-            showChecks = false,
-            onReroll = { actions.onReroll(null) },
-            onCheckToggled = actions.onCheckToggled,
-        )
+        PlainDraw(state, actions)
     }
+}
+
+/**
+ * Tirage sans détection : la carte de statut en grand (Status Numbers), la bascule en bandeau, et rien du tout
+ * quand aucun slot n'est tiré (mode vidéo de Decision Point, One-Page avec campagne).
+ */
+@Composable
+private fun PlainDraw(
+    state: ExerciseUiState,
+    actions: ExerciseActions,
+) {
+    val slots = state.definition.slots
+    val slotKeys = slots.map { it.key }.toSet()
+    val shown = state.session.draws.filter { it.slotKey in slotKeys }
+    state.session.draws
+        .filter { it.slotKey !in slotKeys }
+        .forEach { ShiftBanner(it) }
+    if (shown.isEmpty()) return
+    DrawCard(
+        draws = shown,
+        rerollCount = state.session.rerollCount,
+        showReroll = state.session.phase != Phase.Ended,
+        showChecks = false,
+        onReroll = { actions.onReroll(null) },
+        onCheckToggled = actions.onCheckToggled,
+        cardSlots = slots.filterIsInstance<CardSlot>().map { it.key }.toSet(),
+    )
 }
 
 /**

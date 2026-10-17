@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -32,6 +33,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
+import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseSession
 import io.github.qnicoud.dmgym.ui.icons.ExerciseIcons
@@ -40,6 +42,8 @@ import io.github.qnicoud.dmgym.ui.icons.ExerciseIcons
 class AssessActions(
     val onAssess: (rating: Int?, isGem: Boolean, rubric: Map<String, Boolean>) -> Unit,
     val onDone: () -> Unit,
+    /** Zone de texte des notes de fin ; sans effet pour les exercices sans [ExerciseDefinition.endNote]. */
+    val fieldState: (AnswerKey) -> TextFieldState = { TextFieldState() },
 )
 
 /** Bilan S06 : récap neutre, niveau en 3 paliers, grille repliée, bijou, sorties « Terminé » et « Passer ». */
@@ -69,6 +73,7 @@ fun EndPanel(
         LevelPicker(session.selfRating) { actions.onAssess(it, session.isGem, session.rubric) }
         RubricGrid(definition, session) { actions.onAssess(session.selfRating, session.isGem, it) }
         GemToggle(session.isGem) { actions.onAssess(session.selfRating, it, session.rubric) }
+        definition.endNote?.let { EndNote(it, actions.fieldState(AnswerKey(it.key))) }
         Button(
             onClick = actions.onDone,
             modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag(ExerciseTags.DONE),

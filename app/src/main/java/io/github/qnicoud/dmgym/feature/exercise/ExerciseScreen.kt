@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
+import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,8 +49,10 @@ import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.app.AppContainer
 import io.github.qnicoud.dmgym.app.navigation.Exercise
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
+import io.github.qnicoud.dmgym.core.exercise.CardSlot
 import io.github.qnicoud.dmgym.core.exercise.DrawKey
 import io.github.qnicoud.dmgym.core.exercise.FREE_SUBJECT_KEY
+import io.github.qnicoud.dmgym.core.exercise.FieldLayout
 import io.github.qnicoud.dmgym.core.exercise.Milestone
 import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.core.exercise.TimerKind
@@ -107,6 +110,7 @@ class ExerciseActions(
     val onCheckToggled: (DrawKey) -> Unit,
     val fields: FieldHandlers,
     val assess: AssessActions,
+    val onOptionChanged: (String, Boolean) -> Unit = { _, _ -> },
 )
 
 /** Point d'entrée avec état : branche le ViewModel, les événements ponctuels, l'écran allumé et la sortie. */
@@ -144,49 +148,15 @@ fun ExerciseRoute(
                         viewModel::onFlagToggled,
                         viewModel::onNextQuestion,
                         viewModel::onAddGroup,
+                        viewModel::onPreviousQuestion,
+                        viewModel::onFinish,
                         viewModel::highlights,
                     ),
-                assess = AssessActions(viewModel::onAssess) { leave() },
+                assess = AssessActions(viewModel::onAssess, { leave() }, viewModel::fieldState),
+                onOptionChanged = viewModel::onOptionChanged,
             )
         }
     ExerciseContent(state, { timer.value }, actions, modifier, snackbarHost)
-}
-
-@Composable
-private fun EventsEffect(
-    viewModel: ExerciseViewModel,
-    snackbarHost: SnackbarHostState,
-) {
-    val view = LocalView.current
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val texts =
-        mapOf(
-            Milestone.Started to stringResource(R.string.announce_started),
-            Milestone.Halfway to stringResource(R.string.announce_halfway),
-            Milestone.LastMinute to stringResource(R.string.announce_last_minute),
-            Milestone.TimeUp to stringResource(R.string.announce_time_up),
-        )
-    val resources = LocalResources.current
-    LaunchedEffect(viewModel, lifecycle) {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.events.collect { event ->
-                when (event) {
-                    is ExerciseEvent.Announce -> {
-                        @Suppress("DEPRECATION")
-                        view.announceForAccessibility(texts.getValue(event.milestone))
-                    }
-
-                    is ExerciseEvent.Snackbar -> {
-                        snackbarHost.showSnackbar(resources.getString(event.textRes))
-                    }
-
-                    is ExerciseEvent.Reminder -> {
-                        if (event.haptic && viewModel.hapticReminders.value) view.performTick()
-                    }
-                }
-            }
-        }
-    }
 }
 
 /** Contenu sans état de l'écran : prêt, en cours (y compris en temps additionnel) ou bilan. */
@@ -217,6 +187,10 @@ fun ExerciseContent(
         bottomBar = {
             if (phase == Phase.Ready && state.load != LoadStatus.Loading) {
                 StartButton(actions.onStart, Modifier.imePadding().padding(16.dp))
+            }
+            val layout = state.definition.layout
+            if (phase == Phase.Active && layout is FieldLayout.None) {
+                SceneDoneButton(stringResource(layout.finishLabel), actions.onFinish, Modifier.padding(16.dp))
             }
         },
     ) { padding ->
@@ -278,7 +252,9 @@ private fun ReadyBody(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(stringResource(state.definition.instructions), style = MaterialTheme.typography.bodyLarge)
+        OptionsPanel(state.definition.options, state.session.options, actions.onOptionChanged)
         DrawArea(state, actions)
+        ReminderCard(state.definition)
         LiveTimerBar(timer, canPause = false, onPause = actions.onPause, onResume = actions.onResume)
     }
 }
@@ -328,6 +304,7 @@ private fun ColumnScope.ActiveBody(
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        ReminderCard(state.definition)
         FieldList(state.definition, state.session, state.progress, state.groupCount, actions.fields, focus)
     }
 }

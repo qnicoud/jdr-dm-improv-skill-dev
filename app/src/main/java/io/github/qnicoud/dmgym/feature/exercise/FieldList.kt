@@ -10,11 +10,14 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -42,6 +45,8 @@ class FieldHandlers(
     val onFlagToggled: (AnswerKey) -> Unit,
     val onNextQuestion: () -> Unit,
     val onAddGroup: () -> Unit,
+    val onPreviousQuestion: () -> Unit = {},
+    val onFinish: () -> Unit = {},
     /** Plages à surligner dans le champ surveillé par la détection ; `null` pour un exercice sans détection. */
     val highlights: ((String) -> List<IntRange>)? = null,
 )
@@ -50,13 +55,14 @@ class FieldHandlers(
 @Composable
 fun FieldList(
     definition: ExerciseDefinition,
-    session: ExerciseSession,
+    stored: ExerciseSession,
     progress: Progress?,
     groupCount: Int,
     handlers: FieldHandlers,
     firstFieldFocus: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
+    val session = stored.copy(options = definition.resolveOptions(stored.options))
     val highlight = rememberHighlight(definition.detection?.field, session.draws, handlers.highlights)
     CompositionLocalProvider(LocalFieldHighlight provides highlight) {
         FieldColumn(definition, session, progress, groupCount, handlers, firstFieldFocus, modifier)
@@ -93,6 +99,10 @@ private fun FieldColumn(
 
             is FieldLayout.Sequential -> {
                 SequentialField(layout, session, handlers, firstFieldFocus)
+            }
+
+            is FieldLayout.None -> {
+                Unit
             }
 
             is FieldLayout.RepeatableGroup -> {
@@ -146,12 +156,23 @@ private fun SequentialField(
     )
     questions.getOrNull(index)?.let { Text(it.text, style = MaterialTheme.typography.titleLarge) }
     Field(layout.field, AnswerKey(layout.field.key, index), null, session, handlers, firstFieldFocus)
-    if (index < questions.size - 1) {
-        OutlinedButton(
-            onClick = handlers.onNextQuestion,
-            modifier = Modifier.heightIn(min = 48.dp).testTag(ExerciseTags.NEXT_QUESTION),
-        ) {
-            Text(stringResource(R.string.question_next))
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        if (index > 0) {
+            TextButton(
+                onClick = handlers.onPreviousQuestion,
+                modifier = Modifier.heightIn(min = 48.dp).testTag(QuestionTags.PREVIOUS),
+            ) { Text(stringResource(R.string.question_previous)) }
+        }
+        if (index < questions.size - 1) {
+            FilledTonalButton(
+                onClick = handlers.onNextQuestion,
+                modifier = Modifier.heightIn(min = 48.dp).testTag(ExerciseTags.NEXT_QUESTION),
+            ) { Text(stringResource(R.string.question_next)) }
+        } else {
+            Button(
+                onClick = handlers.onFinish,
+                modifier = Modifier.heightIn(min = 48.dp).testTag(QuestionTags.LAST_FINISH),
+            ) { Text(stringResource(R.string.exercise_finish)) }
         }
     }
 }
@@ -164,23 +185,19 @@ private fun Groups(
     handlers: FieldHandlers,
     firstFieldFocus: FocusRequester,
 ) {
+    val shown = { specs: List<FieldSpec> -> specs.filter { it.visibleWhen?.holds(session.options) ?: true } }
+    val before = shown(layout.before)
+    before.forEachIndexed { i, spec ->
+        Field(spec, AnswerKey(spec.key), null, session, handlers, if (i == 0) firstFieldFocus else null)
+    }
     repeat(groupCount) { group ->
-        Text(stringResource(R.string.group_title, group + 1), style = MaterialTheme.typography.titleMedium)
+        Text(
+            stringResource(layout.title ?: R.string.group_title, group + 1),
+            style = MaterialTheme.typography.titleMedium,
+        )
         layout.fields.forEachIndexed { index, spec ->
-            Field(
-                spec,
-                AnswerKey(spec.key, group),
-                null,
-                session,
-                handlers,
-                if (group == 0 &&
-                    index == 0
-                ) {
-                    firstFieldFocus
-                } else {
-                    null
-                },
-            )
+            val focus = if (group == 0 && index == 0 && before.isEmpty()) firstFieldFocus else null
+            Field(spec, AnswerKey(spec.key, group), null, session, handlers, focus)
         }
     }
     if (groupCount < layout.max) {
@@ -188,9 +205,17 @@ private fun Groups(
             onClick = handlers.onAddGroup,
             modifier = Modifier.heightIn(min = 48.dp).testTag(ExerciseTags.ADD_GROUP),
         ) {
-            Text(stringResource(R.string.group_add))
+            Text(stringResource(layout.addLabel ?: R.string.group_add))
         }
     }
+    shown(layout.after).forEach { spec -> Field(spec, AnswerKey(spec.key), null, session, handlers, null) }
+}
+
+/** Identifiants de test propres à la navigation entre questions. */
+object QuestionTags {
+    const val PREVIOUS = "exercise_previous_question"
+    const val LAST_FINISH = "exercise_last_question_finish"
+    const val SOFT_COUNTER = "exercise_soft_counter"
 }
 
 @Composable
@@ -218,12 +243,25 @@ private fun Field(
         label = { Text(label) },
         placeholder = { Text(stringResource(spec.hint ?: R.string.field_default_hint)) },
         lineLimits = TextFieldLineLimits.MultiLine(minHeightInLines = spec.minLines, maxHeightInLines = MAX_LINES),
+        supportingText = spec.softLimit?.let { limit -> { SoftCounter(state.text.length, limit) } },
         keyboardOptions = KeyboardOptions(imeAction = imeActionOf(position)),
         outputTransformation = LocalFieldHighlight.current(spec.key),
     )
     spec.flagLabel?.let { flag ->
         FlagRow(stringResource(flag), session.answers[key]?.flagged == true) { handlers.onFlagToggled(key) }
     }
+}
+
+/** Compteur souple : il informe, il ne bloque jamais la saisie. */
+@Composable
+private fun SoftCounter(
+    length: Int,
+    limit: Int,
+) {
+    Text(
+        stringResource(R.string.field_soft_counter, length, limit),
+        modifier = Modifier.testTag(QuestionTags.SOFT_COUNTER),
+    )
 }
 
 /** Suivant d'un champ numéroté au suivant ; Terminé au dernier ferme le clavier sans finir l'exercice. */
