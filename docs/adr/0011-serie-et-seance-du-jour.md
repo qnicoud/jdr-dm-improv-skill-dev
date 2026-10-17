@@ -62,3 +62,10 @@ fun plan(today: Long, stats: PracticeStats, catalog: List<ExerciseId>, options: 
 - **Session comptée** : une session avec contenu, qu'elle soit `COMPLETED` ou inachevée (`IN_PROGRESS` sans activité depuis plus de 24 h, comparaison stricte). La session en cours active est exclue. Cette définition vaut pour les jours pratiqués (D35), le nombre de sessions et les comptages par exercice. Elle remplace la règle « statut `COMPLETED` » de la section « Session comptée ».
 - **Délai de 24 h** : il se compte depuis la dernière activité (`lastActivityAtEpochMillis`, mis à jour par `saveSnapshot` et `updateSession`), pas depuis le début (D36). La purge supprime les sessions en cours vides au-delà de ce délai ; une session avec contenu n'est jamais supprimée.
 - Le passage de minuit local et le changement de fuseau relèvent du lot L11.
+
+## Complément (lot L9) : règle de comptage révisée
+
+- **Session comptée** : une session `COMPLETED`, ou une session inachevée (`IN_PROGRESS` sans activité depuis plus de 24 h) **avec contenu**. La session en cours active ne compte toujours pas. Cette règle remplace celle du complément L6 pour les jours pratiqués, le nombre de sessions et les comptages par exercice.
+- **Pourquoi** : Status Numbers se joue à l'oral et ses notes sont facultatives. Une scène terminée sans notes est une vraie pratique et doit compter. Le contenu ne reste exigé que pour une session abandonnée, où il distingue un brouillon d'une session ouverte par erreur.
+- L'historique (`observeHistory`) suivait déjà cette règle.
+- Le niveau et le bijou se modifient par des écritures ciblées (`updateRating`, `updateGem`) qui n'avancent pas la dernière activité : évaluer une session inachevée ne la rend pas « en cours ».
