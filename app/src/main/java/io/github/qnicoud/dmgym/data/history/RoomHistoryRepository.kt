@@ -24,12 +24,14 @@ import java.time.Duration
  * @param clock horloge injectée, sans valeur par défaut : l'application passe l'horloge système.
  * @param ticks signal qui recalcule le seuil des 24 h (au moins une émission, puis périodique) ;
  *   voir [periodicTicks]. Injectable pour piloter le temps dans les tests.
+ * @param checkpoint appelé après « Tout effacer » pour tronquer le WAL (voir `truncateWal`).
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class RoomHistoryRepository(
     private val dao: SessionDao,
     private val clock: Clock,
     ticks: Flow<Unit>,
+    private val checkpoint: suspend () -> Unit = {},
 ) : HistoryRepository,
     SessionArchive {
     private val staleThresholds: Flow<Long> = ticks.map { staleBefore() }.distinctUntilChanged()
@@ -80,7 +82,10 @@ class RoomHistoryRepository(
 
     override suspend fun readAll(): List<SessionDetail> = dao.readAll().map { it.toDetail() }
 
-    override suspend fun deleteAll() = dao.deleteAll()
+    override suspend fun deleteAll() {
+        dao.deleteAll()
+        checkpoint()
+    }
 
     override suspend fun upsertDraws(
         sessionId: Long,

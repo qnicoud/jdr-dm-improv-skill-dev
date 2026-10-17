@@ -10,6 +10,7 @@ import io.github.qnicoud.dmgym.core.history.RubricRecord
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.core.history.SessionStatus
 import io.github.qnicoud.dmgym.data.history.db.DmGymDatabase
+import io.github.qnicoud.dmgym.data.history.db.truncateWal
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -27,6 +28,7 @@ import java.time.ZoneOffset
 class RoomSessionArchiveTest {
     private lateinit var database: DmGymDatabase
     private lateinit var repo: RoomHistoryRepository
+    private var checkpoints = 0
 
     @Before
     fun setUp() {
@@ -38,6 +40,7 @@ class RoomSessionArchiveTest {
                 database.sessionDao(),
                 Clock.fixed(Instant.parse("2026-10-17T08:00:00Z"), ZoneOffset.UTC),
                 ticks,
+                checkpoint = { checkpoints++ },
             )
     }
 
@@ -87,5 +90,26 @@ class RoomSessionArchiveTest {
             repo.deleteAll()
 
             assertTrue(repo.readAll().isEmpty())
+        }
+
+    @Test
+    fun `deleteAll checkpoints the WAL after the delete`() =
+        runTest {
+            add(SessionStatus.COMPLETED, startedAt = 1_000)
+
+            repo.deleteAll()
+
+            assertEquals(1, checkpoints)
+        }
+
+    @Test
+    fun `truncateWal leaves the database usable`() =
+        runTest {
+            add(SessionStatus.COMPLETED, startedAt = 1_000)
+
+            database.truncateWal()
+            add(SessionStatus.COMPLETED, startedAt = 2_000)
+
+            assertEquals(2, repo.readAll().size)
         }
 }
