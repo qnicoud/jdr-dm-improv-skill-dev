@@ -141,7 +141,7 @@ private fun DurationChip(durationSeconds: Int?) {
 }
 
 @Composable
-private fun durationLabel(durationSeconds: Int?): String =
+internal fun durationLabel(durationSeconds: Int?): String =
     when {
         durationSeconds == null -> {
             stringResource(R.string.duration_none)
@@ -157,7 +157,7 @@ private fun durationLabel(durationSeconds: Int?): String =
     }
 
 @Composable
-private fun spokenDuration(durationSeconds: Int?): String =
+internal fun spokenDuration(durationSeconds: Int?): String =
     when {
         durationSeconds == null -> {
             stringResource(R.string.duration_none)
