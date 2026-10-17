@@ -109,7 +109,7 @@ class HistoryNavigationTest {
         launch(Home, History(), SessionDetail(7))
         compose.onNodeWithTag(DetailTags.level(3)).performScrollTo().performClick()
         compose.waitForIdle()
-        assertEquals(3, repo.updated.single().selfRating)
+        assertEquals(listOf(7L to 3), repo.ratings)
     }
 
     @Test

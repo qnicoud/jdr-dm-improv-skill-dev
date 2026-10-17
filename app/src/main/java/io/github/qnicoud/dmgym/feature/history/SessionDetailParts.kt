@@ -125,7 +125,7 @@ private fun AnswerBlock(
     }
 }
 
-/** Niveau (3 paliers, une touche pour choisir, une seconde pour retirer) et bijou : verrouillés si [editable] est faux. */
+/** Niveau (3 paliers, une touche pour choisir, une seconde pour retirer) et bijou, modifiables à tout moment. */
 @Composable
 fun EvaluationSection(
     detail: SessionDetailUi,
@@ -139,7 +139,7 @@ fun EvaluationSection(
             modifier = Modifier.semantics { heading() },
         )
         Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Level.entries.forEach { LevelRow(it, detail.selfRating == it.value, detail.editable, onLevelSelected) }
+            Level.entries.forEach { LevelRow(it, detail.selfRating == it.value, onLevelSelected) }
         }
         if (detail.selfRating == null) {
             Text(
@@ -149,7 +149,7 @@ fun EvaluationSection(
                 modifier = Modifier.testTag(DetailTags.NO_RATING),
             )
         }
-        GemChip(detail.isGem, detail.editable, onGemToggled)
+        GemChip(detail.isGem, onGemToggled)
     }
 }
 
@@ -157,7 +157,6 @@ fun EvaluationSection(
 private fun LevelRow(
     level: Level,
     selected: Boolean,
-    enabled: Boolean,
     onSelect: (Int) -> Unit,
 ) {
     val name = stringResource(level.labelRes)
@@ -170,7 +169,6 @@ private fun LevelRow(
                 .testTag(DetailTags.level(level.value))
                 .selectable(
                     selected = selected,
-                    enabled = enabled,
                     role = Role.RadioButton,
                     onClick = { onSelect(level.value) },
                 ).semantics { contentDescription = description },
@@ -196,14 +194,12 @@ private fun LevelRow(
 @Composable
 private fun GemChip(
     isGem: Boolean,
-    enabled: Boolean,
     onToggle: () -> Unit,
 ) {
     val label = stringResource(if (isGem) R.string.gem_kept else R.string.gem_keep)
     FilterChip(
         selected = isGem,
         onClick = onToggle,
-        enabled = enabled,
         label = { Text(label) },
         leadingIcon = { Icon(ExerciseIcons.Diamond, contentDescription = null) },
         modifier = Modifier.heightIn(min = 48.dp).testTag(DetailTags.GEM).semantics { stateDescription = label },

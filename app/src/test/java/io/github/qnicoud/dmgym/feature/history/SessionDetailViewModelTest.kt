@@ -93,7 +93,6 @@ class SessionDetailViewModelTest {
                 assertEquals(42, detail.overtimeSec)
                 assertEquals(2, detail.selfRating)
                 assertTrue(detail.isGem)
-                assertTrue(detail.editable)
                 assertFalse(detail.unfinished)
             }
         }
@@ -185,7 +184,7 @@ class SessionDetailViewModelTest {
                 vm.onLevelSelected(3)
                 assertNull(expectMostRecentItem().detail!!.selfRating)
             }
-            assertEquals(listOf(3, null), repo.updated.map { it.selfRating })
+            assertEquals(listOf(7L to 3, 7L to null), repo.ratings)
         }
 
     @Test
@@ -198,23 +197,54 @@ class SessionDetailViewModelTest {
                 vm.onGemToggled()
                 assertTrue(expectMostRecentItem().detail!!.isGem)
             }
-            assertEquals(record(rating = 2, gem = true), repo.updated.single())
+            assertEquals(listOf(7L to true), repo.gems)
+            assertTrue(repo.ratings.isEmpty())
         }
 
     @Test
-    fun `an unfinished session cannot be evaluated`() =
+    fun `an unfinished session can be evaluated too`() =
         runTest {
             store(record(status = SessionStatus.IN_PROGRESS))
             val vm = viewModel()
             vm.uiState.test {
-                val detail = expectMostRecentItem().detail!!
-                assertTrue(detail.unfinished)
-                assertFalse(detail.editable)
+                assertTrue(expectMostRecentItem().detail!!.unfinished)
                 vm.onLevelSelected(2)
+                assertEquals(2, expectMostRecentItem().detail!!.selfRating)
                 vm.onGemToggled()
-                expectNoEvents()
+                assertTrue(expectMostRecentItem().detail!!.isGem)
             }
-            assertTrue(repo.updated.isEmpty())
+            assertEquals(listOf(7L to 2), repo.ratings)
+        }
+
+    @Test
+    fun `a failed write is announced as a save failure`() =
+        runTest {
+            store()
+            repo.failOnUpdate = true
+            val vm = viewModel()
+            vm.uiState.test {
+                expectMostRecentItem()
+                vm.onLevelSelected(2)
+            }
+            vm.events.test { assertEquals(DetailEvent.SaveFailed, awaitItem()) }
+        }
+
+    @Test
+    fun `a failed deletion is announced as a delete failure and the page stays`() =
+        runTest {
+            store()
+            repo.failOnDelete = true
+            val vm = viewModel()
+            vm.uiState.test {
+                expectMostRecentItem()
+                vm.onDeleteRequested()
+                expectMostRecentItem()
+                vm.onDeleteConfirmed()
+                val state = expectMostRecentItem()
+                assertFalse(state.deleted)
+                assertFalse(state.isMissing)
+            }
+            vm.events.test { assertEquals(DetailEvent.DeleteFailed, awaitItem()) }
         }
 
     @Test

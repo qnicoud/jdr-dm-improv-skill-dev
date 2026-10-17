@@ -48,13 +48,7 @@ data class SessionDetailUi(
     val isGem: Boolean,
     /** Texte à envoyer à la feuille de partage ; `null` s'il n'y a rien à partager. */
     val shareText: String?,
-) {
-    /**
-     * Une session inachevée ne s'évalue pas : l'écriture de l'évaluation avance la dernière activité,
-     * ce qui la ferait repasser pour une session en cours.
-     */
-    val editable: Boolean get() = !unfinished
-}
+)
 
 internal fun SessionDetail.toUi(definition: ExerciseDefinition?): SessionDetailUi {
     val answers = answers.toLines(definition)

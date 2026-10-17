@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
@@ -143,11 +143,11 @@ class SessionDetailScreenTest {
     }
 
     @Test
-    fun `an unfinished session is flagged and its evaluation is locked`() {
+    fun `an unfinished session is flagged and its evaluation stays editable`() {
         show(SessionDetailUiState(isLoading = false, detail = detail.copy(unfinished = true)))
         compose.onNodeWithTag(DetailTags.UNFINISHED).assertIsDisplayed()
-        compose.onNodeWithTag(DetailTags.level(1)).performScrollTo().assertIsNotEnabled()
-        compose.onNodeWithTag(DetailTags.GEM).performScrollTo().assertIsNotEnabled()
+        compose.onNodeWithTag(DetailTags.level(1)).performScrollTo().assertIsEnabled()
+        compose.onNodeWithTag(DetailTags.GEM).performScrollTo().assertIsEnabled()
     }
 
     @Test

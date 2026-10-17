@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -48,6 +49,7 @@ import io.github.qnicoud.dmgym.ui.components.nameRes
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 import io.github.qnicoud.dmgym.ui.icons.HistoryIcons
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
+import kotlinx.coroutines.launch
 
 object DetailTags {
     const val HEADER = "detail_header"
@@ -95,16 +97,30 @@ fun SessionDetailRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
-    val failed = stringResource(R.string.detail_save_failed)
+    val scope = rememberCoroutineScope()
+    val saveFailed = stringResource(R.string.detail_save_failed)
+    val deleteFailed = stringResource(R.string.detail_delete_failed)
+    val shareFailed = stringResource(R.string.detail_share_failed)
     val chooser = stringResource(R.string.detail_share_chooser)
-    LaunchedEffect(viewModel) { viewModel.events.collect { snackbar.showSnackbar(failed) } }
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect {
+            snackbar.showSnackbar(
+                when (it) {
+                    DetailEvent.SaveFailed -> saveFailed
+                    DetailEvent.DeleteFailed -> deleteFailed
+                },
+            )
+        }
+    }
     LaunchedEffect(state.deleted) { if (state.deleted) onBack() }
     SessionDetailScreen(
         state = state,
         actions =
             DetailActions(
                 onBack = onBack,
-                onShare = { context.shareText(it, chooser) },
+                onShare = { text ->
+                    if (!context.shareText(text, chooser)) scope.launch { snackbar.showSnackbar(shareFailed) }
+                },
                 onLevelSelected = viewModel::onLevelSelected,
                 onGemToggled = viewModel::onGemToggled,
                 onRedo = onRedo,

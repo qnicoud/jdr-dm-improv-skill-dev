@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.history
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
@@ -63,8 +64,11 @@ data class HistoryUiState(
 class HistoryViewModel(
     history: HistoryRepository,
     private val clock: Clock,
-    initialFilter: HistoryFilter = HistoryFilter.All,
+    routeFilter: HistoryFilter = HistoryFilter.All,
+    private val handle: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
+    /** Le filtre choisi à l'écran l'emporte sur celui de la route, y compris après la mort du processus. */
+    private val initialFilter = handle.get<String>(KEY_FILTER)?.let(::decodeFilter) ?: routeFilter
     private val filter = MutableStateFlow(initialFilter)
 
     val uiState: StateFlow<HistoryUiState> =
@@ -88,12 +92,30 @@ class HistoryViewModel(
 
     fun onFilterSelected(selected: HistoryFilter) {
         filter.value = selected
+        handle[KEY_FILTER] = encodeFilter(selected)
     }
 
     fun onClearFilter() = onFilterSelected(HistoryFilter.All)
 
     private companion object {
         const val STOP_TIMEOUT_MS = 5_000L
+        const val KEY_FILTER = "filter"
+        const val GEMS = "gems"
+        const val EXERCISE_PREFIX = "exercise:"
+
+        fun encodeFilter(filter: HistoryFilter): String =
+            when {
+                filter.gemsOnly -> GEMS
+                filter.exerciseId != null -> EXERCISE_PREFIX + filter.exerciseId.value
+                else -> ""
+            }
+
+        fun decodeFilter(raw: String): HistoryFilter =
+            when {
+                raw == GEMS -> HistoryFilter.Gems
+                raw.startsWith(EXERCISE_PREFIX) -> HistoryFilter.exercise(ExerciseId(raw.removePrefix(EXERCISE_PREFIX)))
+                else -> HistoryFilter.All
+            }
     }
 }
 

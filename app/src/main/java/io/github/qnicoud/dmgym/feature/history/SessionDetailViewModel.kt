@@ -7,8 +7,6 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionNotFoundException
-import io.github.qnicoud.dmgym.core.history.SessionRecord
-import io.github.qnicoud.dmgym.core.history.SessionStatus
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +34,7 @@ data class SessionDetailUiState(
 }
 
 /** Échec d'une écriture : l'écran l'annonce dans une barre d'information. */
-enum class DetailEvent { SaveFailed, }
+enum class DetailEvent { SaveFailed, DeleteFailed }
 
 /** ViewModel du détail d'une session (S09). Le texte est en lecture seule (D40) ; seuls le niveau et le bijou changent. */
 class SessionDetailViewModel(
@@ -66,9 +64,15 @@ class SessionDetailViewModel(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), SessionDetailUiState())
 
     /** Touche sur un niveau : le choisit, ou le retire s'il était déjà choisi (parcours §4.5). */
-    fun onLevelSelected(level: Int) = edit { it.copy(selfRating = level.takeIf { l -> l != it.selfRating }) }
+    fun onLevelSelected(level: Int) {
+        val current = latest?.session ?: return
+        write { history.updateRating(sessionId, level.takeIf { it != current.selfRating }) }
+    }
 
-    fun onGemToggled() = edit { it.copy(isGem = !it.isGem) }
+    fun onGemToggled() {
+        val current = latest?.session ?: return
+        write { history.updateGem(sessionId, !current.isGem) }
+    }
 
     fun onDeleteRequested() = flags.update { it.copy(confirmingDelete = true) }
 
@@ -84,16 +88,16 @@ class SessionDetailViewModel(
                 throw e
             } catch (_: Exception) {
                 flags.value = Flags()
-                channel.trySend(DetailEvent.SaveFailed)
+                channel.trySend(DetailEvent.DeleteFailed)
             }
         }
     }
 
-    private fun edit(change: (SessionRecord) -> SessionRecord) {
-        val session = latest?.session?.takeIf { it.status == SessionStatus.COMPLETED } ?: return
+    /** Écriture ciblée (niveau, bijou) : elle n'avance pas la dernière activité, une session inachevée le reste. */
+    private fun write(action: suspend () -> Unit) {
         viewModelScope.launch {
             try {
-                history.updateSession(change(session))
+                action()
             } catch (e: CancellationException) {
                 throw e
             } catch (_: SessionNotFoundException) {

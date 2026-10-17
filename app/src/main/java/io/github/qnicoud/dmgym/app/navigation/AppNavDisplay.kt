@@ -6,6 +6,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
@@ -84,7 +85,15 @@ private fun appEntryProvider(
         }
         entry<History> { route ->
             HistoryRoute(
-                viewModel = viewModel { HistoryViewModel(container.historyRepository, container.clock, route.filter) },
+                viewModel =
+                    viewModel {
+                        HistoryViewModel(
+                            container.historyRepository,
+                            container.clock,
+                            route.filter,
+                            createSavedStateHandle(),
+                        )
+                    },
                 onOpenSession = navigator::openSessionDetail,
                 onChooseExercise = { navigator.selectTab(Home) },
             )

@@ -48,8 +48,11 @@ class FakeHistoryRepository(
 ) : HistoryRepository {
     /** Filtres demandés à `observeHistory`, dans l'ordre. */
     val historyCalls = mutableListOf<Pair<String?, Boolean>>()
-    val updated = mutableListOf<SessionRecord>()
+    val ratings = mutableListOf<Pair<Long, Int?>>()
+    val gems = mutableListOf<Pair<Long, Boolean>>()
     val deleted = mutableListOf<Long>()
+    var failOnUpdate = false
+    var failOnDelete = false
 
     /** Fenêtres demandées à `countSessionsByExercise`, dans l'ordre. */
     val countCalls = mutableListOf<Pair<Long, Long>>()
@@ -58,9 +61,32 @@ class FakeHistoryRepository(
 
     override suspend fun createSession(session: SessionRecord): Long = unused()
 
-    override suspend fun updateSession(session: SessionRecord) {
-        updated += session
-        details.value = details.value.mapValues { (id, d) -> if (id == session.id) d.copy(session = session) else d }
+    override suspend fun updateSession(session: SessionRecord) = unused()
+
+    override suspend fun updateRating(
+        sessionId: Long,
+        rating: Int?,
+    ) {
+        check(!failOnUpdate) { "disk full" }
+        ratings += sessionId to rating
+        patch(sessionId) { it.copy(selfRating = rating) }
+    }
+
+    override suspend fun updateGem(
+        sessionId: Long,
+        isGem: Boolean,
+    ) {
+        check(!failOnUpdate) { "disk full" }
+        gems += sessionId to isGem
+        patch(sessionId) { it.copy(isGem = isGem) }
+    }
+
+    private fun patch(
+        id: Long,
+        change: (SessionRecord) -> SessionRecord,
+    ) {
+        details.value =
+            details.value.mapValues { (key, d) -> if (key == id) d.copy(session = change(d.session)) else d }
     }
 
     override fun observeResumable(): Flow<SessionDetail?> = resumable
@@ -75,6 +101,7 @@ class FakeHistoryRepository(
     ) = unused()
 
     override suspend fun deleteSession(id: Long) {
+        check(!failOnDelete) { "disk full" }
         deleted += id
         details.value = details.value - id
     }

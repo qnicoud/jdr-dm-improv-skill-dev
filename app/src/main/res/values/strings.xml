@@ -211,9 +211,11 @@
   <string name="detail_delete_body">Le tirage et le texte seront effacés. Cette action est définitive.</string>
   <string name="detail_delete_cancel">Annuler</string>
   <string name="detail_save_failed">Impossible d’enregistrer la modification.</string>
+  <string name="detail_delete_failed">Impossible de supprimer la session.</string>
+  <string name="detail_share_failed">Aucune application ne peut recevoir ce texte.</string>
   <string name="detail_not_found">Cette session n’existe plus.</string>
   <string name="detail_duration_overtime">%1$s + %2$s</string>
-  <string name="detail_unfinished_note">Session inachevée : le texte s’arrête là où tu t’es arrêté. Son évaluation ne peut plus être modifiée.</string>
+  <string name="detail_unfinished_note">Session inachevée : le texte s’arrête là où tu t’es arrêté.</string>
   <string name="detail_draw_title">Tirage</string>
   <string name="detail_word_used">utilisé</string>
   <string name="detail_word_unused">non utilisé</string>

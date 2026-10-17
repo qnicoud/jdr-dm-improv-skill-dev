@@ -54,6 +54,16 @@ class RecordingHistoryRepository : HistoryRepository {
 
     override suspend fun updateSession(session: SessionRecord) = unused()
 
+    override suspend fun updateRating(
+        sessionId: Long,
+        rating: Int?,
+    ) = unused()
+
+    override suspend fun updateGem(
+        sessionId: Long,
+        isGem: Boolean,
+    ) = unused()
+
     override fun observeResumable(): Flow<SessionDetail?> = flowOf(null)
 
     override fun observePreviews(): Flow<Map<Long, String>> = flowOf(emptyMap())

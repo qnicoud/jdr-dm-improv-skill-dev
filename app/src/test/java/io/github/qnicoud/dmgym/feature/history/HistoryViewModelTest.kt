@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.history
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import io.github.qnicoud.dmgym.app.FakeHistoryRepository
 import io.github.qnicoud.dmgym.app.MutableClock
@@ -43,7 +44,10 @@ class HistoryViewModelTest {
             },
         )
 
-    private fun viewModel(filter: HistoryFilter = HistoryFilter.All) = HistoryViewModel(repo, clock, filter)
+    private fun viewModel(
+        filter: HistoryFilter = HistoryFilter.All,
+        handle: SavedStateHandle = SavedStateHandle(),
+    ) = HistoryViewModel(repo, clock, filter, handle)
 
     private fun session(
         id: Long,
@@ -196,6 +200,30 @@ class HistoryViewModelTest {
                         .sessions
                         .map { it.id },
                 )
+            }
+        }
+
+    @Test
+    fun `the selected filter survives a recreation of the view model`() =
+        runTest {
+            val handle = SavedStateHandle()
+            viewModel(handle = handle).onFilterSelected(HistoryFilter.exercise(ExerciseId.ONE_PAGE))
+            viewModel(handle = handle).uiState.test {
+                assertEquals(HistoryFilter.exercise(ExerciseId.ONE_PAGE), expectMostRecentItem().filter)
+            }
+            viewModel(handle = handle).apply { onFilterSelected(HistoryFilter.Gems) }
+            viewModel(HistoryFilter.All, handle).uiState.test {
+                assertEquals(HistoryFilter.Gems, expectMostRecentItem().filter)
+            }
+        }
+
+    @Test
+    fun `clearing the filter is remembered too`() =
+        runTest {
+            val handle = SavedStateHandle()
+            viewModel(HistoryFilter.Gems, handle).onClearFilter()
+            viewModel(HistoryFilter.Gems, handle).uiState.test {
+                assertEquals(HistoryFilter.All, expectMostRecentItem().filter)
             }
         }
 
