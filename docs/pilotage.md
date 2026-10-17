@@ -43,7 +43,9 @@
 4. **Gestion de la langue** (demande de l'utilisateur) : langues cibles, réglage de langue dans l'app (sélecteur par app d'Android 13+), traduction des textes (`strings.xml`), **contenu des tables par langue**, **détection des mots-clés par langue** (normalisation, corpus doré par langue), formats de date/nombre, ordre de bascule. À trancher : quelles langues, et si la v1.1 livre l'architecture seule ou aussi une traduction.
 5. Dette : découper `ExerciseViewModel.kt` (420 lignes) ; 3 LOW de la revue R1a ; épinglage SHA de la CI.
 
-- **En cours** : `architecte` (ADR v1.1 + découpage en lots) ∥ `ux-designer` (parcours v1.1, réglages, import, langue) → décisions D54+ dans l'artefact → `redacteur-contenu` (nouvelles tables) et lots `dev-android`.
+- Conception v1.1 faite : `docs/ux/parcours-v1.1.md`, `docs/ux/brief-maquettes-v1.1.md`, ADR 0014 (rappels), 0015 (sauvegarde/import), 0016 (langues), 0017 (moteur v1.1), `architecture.md` §16 (lots V0 dette, V1 moteur, C1 tables FR, V2a/b/c exercices, V3 rappels, V4 sauvegarde/import, V5 langues + Room v3, V6 release ; anglais E1–E4 optionnels). Vagues : (V0, V3, V4, C1) → (V1, V5) → V2 → V6.
+- **Décisions ouvertes D54–D70** dans l'artefact (langue, sélecteur — désaccord UX/architecte —, complications, Oui et…, rappels, export/import, passage à l'APK signé, séance du jour, sauvegarde des réglages).
+- **Prochaine action** : relire D54–D70 via `ArtifactData`, reporter dans les ADR/UX, puis lancer la vague 1 (V0, V3, V4, C1) en parallèle.
 
 ## Décisions (issues de la phase 0) — TRANCHÉES le 2026-10-16
 

@@ -162,7 +162,7 @@ footer { font-size: .85rem; color: var(--muted); }
       <div class="phase" data-s="now"><span class="eyebrow">v1.1</span><b>Évolutions</b><small>En cours : 3 exercices, rappels, import des sessions, gestion de la langue</small></div>
     </div>
     <div class="tally">
-      <strong id="count">0 / 53</strong><span class="muted">décisions tranchées</span>
+      <strong id="count">0 / 70</strong><span class="muted">décisions tranchées</span>
       <div class="meter" role="progressbar" aria-label="Décisions tranchées" aria-valuemin="0" aria-valuemax="24" aria-valuenow="0" id="meter"><i></i></div>
     </div>
     <nav class="toc" aria-label="Sections">
@@ -369,6 +369,7 @@ const GROUPS = [
   { key: "p2ux", title: "Phase 2 · UX", desc: "Questions soulevées par l'UX designer, à trancher avant les maquettes" },
   { key: "p3", title: "Retours des maquettes, du contenu et du build", desc: "Questions soulevées par le maquettiste, le rédacteur et le développeur" },
   { key: "p4", title: "Retours de test et suite", desc: "Logo, et tes idées pour après la v1" },
+  { key: "v11", title: "v1.1 · Évolutions", desc: "Langue, nouveaux exercices, rappels, sauvegarde et import (UX + architecte)" },
 ];
 const L = (t, u) => ({ t, u });
 const DECISIONS = [
@@ -590,6 +591,75 @@ const DECISIONS = [
     ctx: "Material You (Android 12+) reprend les couleurs du fond d'écran ; un sélecteur permet de choisir parmi quelques palettes Material conformes. Les deux sont simples. Le thème « parchemin » reste l'identité par défaut.",
     opts: [["both", "Réglage : Parchemin (défaut) / couleurs du téléphone / 3-4 palettes, en v1", true], ["dynamic", "Seulement « couleurs du téléphone » en option, en v1"], ["later", "Plus tard"]],
     src: [L("Material dynamic color", "https://m3.material.io/styles/color/dynamic/user-generated-source")] },
+
+  { id: "D54", g: "v11", from: "UX · architecte", q: "Gestion de la langue : que livre la v1.1 ?",
+    ctx: "Une langue complète = interface + tables de tirage + détection des mots-clés (corpus de test par langue). L'anglais est la seule 2e langue crédible, utile surtout si l'app est publiée ; il faudrait une relecture par un anglophone et 4 à 5 lots de plus. L'architecture multilingue (tables par langue, langue enregistrée avec chaque session, migration Room v3) est prévue dans tous les cas.",
+    opts: [["arch", "Architecture prête, français seul, sélecteur masqué ; anglais plus tard (v1.2 si publication)", true], ["en", "Architecture + anglais complet dès la v1.1"], ["ui", "Interface anglaise seule (tirages en français)"]],
+    src: [L("docs/ux/parcours-v1.1.md", ""), L("ADR 0016", "")] },
+  { id: "D55", g: "v11", from: "UX ≠ architecte", q: "Sélecteur de langue (quand il sera visible)",
+    ctx: "Désaccord : l'UX veut le même réglage sur toutes les versions d'Android (bibliothèque AppCompat, avec le sélecteur système d'Android 13 synchronisé). L'architecte préfère l'API native d'Android 13 (LocaleManager), plus simple, sans réglage dans l'app en dessous d'Android 13. Ton téléphone est sous Android 15.",
+    opts: [["appcompat", "Réglage dans l'app sur toutes les versions (AppCompat), synchronisé avec le système", true], ["native", "API native Android 13+ seulement (renvoi vers le réglage système)"]],
+    src: [L("docs/ux/parcours-v1.1.md", ""), L("ADR 0016", "")] },
+  { id: "D56", g: "v11", from: "UX · architecte", q: "Échec qui avance : les 3 types de complication",
+    ctx: "Types possibles : coût, temps, information, relation, position, ressource… Tirés et imposés, ils garantissent la contrainte (3 types différents) ; l'architecte propose de les mettre dans une petite table (6 à 8 entrées) plutôt qu'en dur dans le code.",
+    opts: [["table", "Tirés et imposés, depuis une table de 6-8 types", true], ["chosen", "Choisis par l'utilisateur après saisie"], ["free", "Libres"]],
+    src: [L("docs/ux/parcours-v1.1.md", ""), L("ADR 0017", "")] },
+  { id: "D57", g: "v11", from: "UX", q: "Oui, et… : quand découvre-t-on les offres des joueurs ?",
+    ctx: "Révélées une à une pendant l'exercice : l'effet de surprise fait partie de l'entraînement (pas de relance avant de commencer).",
+    opts: [["onebyone", "Une à une, surprise", true], ["upfront", "Les 5 visibles dès l'écran de lancement, avec relance"]],
+    src: [L("docs/ux/parcours-v1.1.md", "")] },
+  { id: "D58", g: "v11", from: "UX · architecte", q: "Oui, et… : rythme d'une offre par minute",
+    ctx: "Minuteur global de 5 min. Un repère visuel (et la vibration de rythme si elle est activée) marque chaque minute ; on passe à l'offre suivante soi-même pour ne jamais couper une phrase.",
+    opts: [["manual", "Repère par minute, passage manuel", true], ["auto", "Passage automatique toutes les 60 s"]],
+    src: [L("docs/ux/parcours-v1.1.md", ""), L("ADR 0017", "")] },
+  { id: "D59", g: "v11", from: "UX", q: "Rappels : jours et heure par défaut à l'activation",
+    ctx: "3 jours par semaine est un rythme tenable, cohérent avec un jour de grâce par semaine. Toujours modifiable.",
+    opts: [["lmv", "Lundi, mercredi, vendredi vers 18 h 30", true], ["daily", "Tous les jours vers 18 h 30"], ["none", "Aucun jour présélectionné"]],
+    src: [L("docs/ux/parcours-v1.1.md", "")] },
+  { id: "D60", g: "v11", from: "UX · architecte", q: "Rappels : notification silencieuse ou sonore ?",
+    ctx: "Attention : l'importance du canal de notification ne peut plus être changée par l'app une fois créé (seulement par toi dans les réglages Android).",
+    opts: [["low", "Silencieuse (importance basse)", true], ["default", "Avec son (importance par défaut)"]],
+    src: [L("docs/ux/parcours-v1.1.md", ""), L("ADR 0014", "")] },
+  { id: "D61", g: "v11", from: "architecte", q: "Rappels : mécanisme de planification",
+    ctx: "AlarmManager inexact (« vers 18 h 30 ») ne demande ni alarme exacte ni accès réseau ; WorkManager ajouterait la permission ACCESS_NETWORK_STATE, contraire au 100 % hors ligne. Samsung peut retarder un rappel de quelques minutes.",
+    opts: [["alarm", "AlarmManager inexact + reprogrammation au redémarrage", true], ["work", "WorkManager"]],
+    src: [L("ADR 0014", ""), L("ADR 0010", "")] },
+  { id: "D62", g: "v11", from: "UX", q: "Rappels : pause automatique après 14 jours sans session ?",
+    ctx: "Un rappel ignoré qui insiste va contre l'esprit « sans culpabilisation ». L'état « en pause » serait visible dans les Réglages, et une nouvelle session le réactive.",
+    opts: [["yes", "Oui, pause après 14 jours sans session", true], ["no", "Non"]],
+    src: [L("docs/ux/parcours-v1.1.md", "")] },
+  { id: "D63", g: "v11", from: "UX", q: "Rappels : citer la série dans la notification ?",
+    ctx: "Par ex. « 5 jours de suite ». Ne jamais la citer garantit la cohérence avec le jour de grâce et évite la pression.",
+    opts: [["never", "Jamais", true], ["positive", "Oui, en variante positive"]],
+    src: [L("docs/ux/parcours-v1.1.md", "")] },
+  { id: "D64", g: "v11", from: "UX", q: "Export : présentation dans les Réglages",
+    ctx: "Deux usages différents : lire ses textes (export texte actuel) et sauvegarder pour réimporter (nouveau fichier JSON).",
+    opts: [["two", "Deux lignes : « Exporter pour lire » et « Sauvegarder mes sessions »", true], ["one", "Une ligne avec choix du format"]],
+    src: [L("docs/ux/parcours-v1.1.md", ""), L("ADR 0015", "")] },
+  { id: "D65", g: "v11", from: "architecte", q: "Import : comment reconnaître une session déjà présente ?",
+    ctx: "La clé (exercice + instant de début) suffit et évite une migration ; une colonne d'identifiant unique est plus robuste mais demande une migration.",
+    opts: [["key", "Clé exercice + instant de début", true], ["uid", "Nouvelle colonne d'identifiant unique"]],
+    src: [L("ADR 0015", "")] },
+  { id: "D66", g: "v11", from: "UX", q: "Import : conflit (même session, contenu différent)",
+    ctx: "« Rien n'est remplacé » est une promesse simple et sûre.",
+    opts: [["keep", "La session déjà présente gagne", true], ["newest", "La plus récente gagne"]],
+    src: [L("docs/ux/parcours-v1.1.md", ""), L("ADR 0015", "")] },
+  { id: "D67", g: "v11", from: "UX", q: "Import : pouvoir l'annuler ?",
+    ctx: "Un bouton « Annuler l'import » sur l'écran de résultat, valable tant que l'écran est ouvert, évite de supprimer des dizaines de sessions une à une.",
+    opts: [["undo", "Oui, bouton sur l'écran de résultat", true], ["no", "Non"]],
+    src: [L("docs/ux/parcours-v1.1.md", "")] },
+  { id: "D68", g: "v11", from: "UX · architecte", q: "Passage à l'APK signé sans perdre ton historique",
+    ctx: "La rc1 n'exporte qu'un texte lisible, non réimportable. Procédure proposée : installer la v1.1 (version de développement) par-dessus ta version actuelle, faire « Sauvegarder mes sessions », puis désinstaller et installer l'APK signé, et importer.",
+    opts: [["procedure", "Cette procédure (pas d'import du texte lisible)", true], ["parse", "Savoir aussi importer le texte lisible de la rc1"]],
+    src: [L("docs/ux/parcours-v1.1.md", ""), L("ADR 0015", "")] },
+  { id: "D69", g: "v11", from: "UX", q: "Séance du jour le jour de la mise à jour",
+    ctx: "Les 3 nouveaux exercices entrent dans le tirage de la séance du jour. Ne pas changer une séance déjà proposée sous tes yeux.",
+    opts: [["freeze", "Figer la séance déjà proposée jusqu'au lendemain", true], ["recompute", "La recalculer avec les nouveaux exercices"]],
+    src: [L("docs/ux/parcours-v1.1.md", ""), L("ADR 0011", "")] },
+  { id: "D70", g: "v11", from: "UX", q: "La sauvegarde inclut-elle les réglages ?",
+    ctx: "Durées, thème, rappel… Pour la v1.1 : sessions seulement, dit clairement dans l'interface.",
+    opts: [["sessions", "Sessions seulement", true], ["all", "Sessions et réglages"]],
+    src: [L("docs/ux/parcours-v1.1.md", ""), L("ADR 0015", "")] },
 ];
 
 const byId = Object.fromEntries(DECISIONS.map(d => [d.id, d]));
