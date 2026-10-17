@@ -129,11 +129,6 @@ private fun DayShape(mark: DayMark) {
                             ),
                     )
                 }
-                Text(
-                    "g",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
             }
         }
 
