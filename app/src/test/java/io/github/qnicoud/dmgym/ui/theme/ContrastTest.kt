@@ -2,6 +2,9 @@ package io.github.qnicoud.dmgym.ui.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
+import io.github.qnicoud.dmgym.core.settings.ThemePalette
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import kotlin.math.pow
@@ -54,18 +57,44 @@ class ContrastTest {
         }
     }
 
-    @Test
-    fun `light scheme text pairs reach AA`() = assertScheme("clair", LightColors)
+    /** Chaque palette statique, en clair et en sombre (la palette dynamique dépend du téléphone). */
+    private val staticSchemes: List<Pair<String, ColorScheme>> =
+        ThemePalette.entries.filter { it != ThemePalette.DYNAMIC }.flatMap { palette ->
+            listOf(
+                "${palette.name} clair" to staticColorScheme(palette, dark = false),
+                "${palette.name} sombre" to staticColorScheme(palette, dark = true),
+            )
+        }
 
     @Test
-    fun `dark scheme text pairs reach AA`() = assertScheme("sombre", DarkColors)
+    fun `parchment keeps the original schemes`() {
+        assertSame(LightColors, staticColorScheme(ThemePalette.PARCHMENT, dark = false))
+        assertSame(DarkColors, staticColorScheme(ThemePalette.PARCHMENT, dark = true))
+    }
 
     @Test
-    fun `outlines reach 3 to 1 on surfaces in both modes`() {
-        listOf("clair" to LightColors, "sombre" to DarkColors).forEach { (name, s) ->
+    fun `there are at least three Material palettes besides parchment`() {
+        assertTrue(ThemePalette.entries.count { it != ThemePalette.DYNAMIC && it != ThemePalette.PARCHMENT } >= 3)
+    }
+
+    @Test
+    fun `every static palette reaches AA on text pairs in both modes`() {
+        staticSchemes.forEach { (name, scheme) -> assertScheme(name, scheme) }
+    }
+
+    @Test
+    fun `outlines reach 3 to 1 on surfaces in every static palette`() {
+        staticSchemes.forEach { (name, s) ->
             listOf(s.surface, s.surfaceContainer).forEach {
                 assertTrue(ratio(s.outline, it) >= 3.0, "$name outline/$it")
             }
+        }
+    }
+
+    @Test
+    fun `light and dark variants of a palette differ`() {
+        ThemePalette.entries.filter { it != ThemePalette.DYNAMIC }.forEach {
+            assertNotEquals(staticColorScheme(it, dark = false).surface, staticColorScheme(it, dark = true).surface)
         }
     }
 }
