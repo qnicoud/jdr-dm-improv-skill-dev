@@ -93,3 +93,16 @@ Le chargement à l'exécution lit `assets.open(path).bufferedReader().use { it.r
 ## Complément (2026-10-16, décision D45)
 
 Option « contre-stéréotype » de Status Numbers : le statut tiré est choisi à l'opposé de l'étiquette `rank:*` du rôle (rang haut → statut bas, et inversement). Aucun champ ni tag supplémentaire dans le schéma.
+
+## Complément (2026-10-17, recette rc1, critère 1.8)
+
+Le statut tiré de Status Numbers suit désormais le rang social du rôle, lu dans son étiquette `rank:*` (`statusCards` dans `core/exercise/StatusBands.kt`) :
+
+| Étiquette | Par défaut | Contre-stéréotype (D45) |
+|---|---|---|
+| `rank:high` | 7-10 | 1-3 |
+| `rank:mid` | 4-7 | 1-3 ou 8-10 |
+| `rank:low` | 1-4 | 8-10 |
+| aucune | 1-10 | 1-10 |
+
+Les 34 rôles de `npc_roles.json` portent déjà exactement une étiquette : 17 `rank:high` et 17 `rank:low`. Aucun `rank:mid` n'existe dans la table, la plage est prête si le rédacteur en ajoute. La table n'est pas modifiée. Le rappel « statut ≠ rang » reste affiché.
