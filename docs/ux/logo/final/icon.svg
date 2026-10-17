@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="512" height="512" role="img" aria-label="DM Gym">
+<rect width="108" height="108" rx="24" fill="#8A2E1C"/>
+<path d="M54 22L81.7 38V70L54 86L26.3 70V38Z" fill="#FBF5EA"/>
+<path d="M54 22V37M26.3 38L41 37M81.7 38L67 37M26.3 70L41 71M81.7 70L67 71M54 86V71" stroke="#8A2E1C" stroke-width="1.6" fill="none"/>
+<path d="M41 36H67V39.5H41ZM41 68.5H67V72H41ZM43 39.5H65L54 54L65 68.5H43L54 54Z" fill="#8A2E1C"/>
+<path d="M54 61L59.5 68.5H48.5ZM53.2 54H54.8V61H53.2Z" fill="#F2C94C"/>
+</svg>
