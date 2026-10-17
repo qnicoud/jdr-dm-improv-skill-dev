@@ -6,7 +6,11 @@ sealed interface ExerciseAction {
         val draws: List<Draw>,
     ) : ExerciseAction
 
-    /** Relance du slot [slotKey], ou de tous les slots si `null`. Les réponses sont conservées. */
+    /**
+     * Relance : les slots présents dans [draws] sont remplacés à leur place, les autres tirages (par exemple la
+     * bascule) sont conservés. [slotKey] indique le slot visé (`null` : tous) et sert d'information ; les réponses
+     * sont conservées.
+     */
     data class Rerolled(
         val slotKey: String?,
         val draws: List<Draw>,

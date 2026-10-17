@@ -50,13 +50,14 @@ class FieldHandlers(
 @Composable
 fun FieldList(
     definition: ExerciseDefinition,
-    session: ExerciseSession,
+    stored: ExerciseSession,
     progress: Progress?,
     groupCount: Int,
     handlers: FieldHandlers,
     firstFieldFocus: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
+    val session = stored.copy(options = definition.resolveOptions(stored.options))
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         progress?.let { ProgressLine(it) }
         when (val layout = definition.layout) {

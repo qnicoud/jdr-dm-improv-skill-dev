@@ -38,7 +38,11 @@ data class OptionCondition(
     val option: String,
     val expected: Boolean = true,
 ) {
-    fun holds(options: Map<String, Boolean>): Boolean = (options[option] ?: false) == expected
+    /** Une option absente de [options] prend sa valeur dans [defaults] (celle de la définition), sinon `false`. */
+    fun holds(
+        options: Map<String, Boolean>,
+        defaults: Map<String, Boolean> = emptyMap(),
+    ): Boolean = (options[option] ?: defaults[option] ?: false) == expected
 }
 
 /** Un tirage de l'écran « Prêt » (ADR 0012). */
@@ -222,6 +226,10 @@ data class ExerciseDefinition(
         require(rubric.size in RUBRIC_SIZE) { "rubric must have 2 or 3 questions" }
         require(slots.map { it.key }.distinct().size == slots.size) { "slot keys must be unique" }
     }
+
+    /** Valeur des options de la session, complétée par les valeurs par défaut de celles qui manquent. */
+    fun resolveOptions(stored: Map<String, Boolean>): Map<String, Boolean> =
+        options.associate { it.key to it.default } + stored
 
     /** Clés des champs de saisie, dans l'ordre. */
     val fieldKeys: List<String>

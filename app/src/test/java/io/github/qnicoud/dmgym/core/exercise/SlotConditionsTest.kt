@@ -134,4 +134,20 @@ class SlotConditionsTest {
             )
             assertEquals(6, draws.map { it.entryId }.distinct().size)
         }
+
+    @Test
+    fun `a missing option falls back to the default of the definition`() {
+        val condition = OptionCondition("on")
+        assertEquals(false, condition.holds(emptyMap()))
+        assertEquals(true, condition.holds(emptyMap(), mapOf("on" to true)))
+        assertEquals(false, condition.holds(mapOf("on" to false), mapOf("on" to true)))
+        val def =
+            DemoExercise.definition.copy(
+                options = listOf(ExerciseOption("on", 1, default = true)),
+                slots = listOf(TableSlot("s", TableId.Places, onlyIf = condition)),
+            )
+        assertEquals(mapOf("on" to true), def.resolveOptions(emptyMap()))
+        assertEquals(mapOf("on" to false), def.resolveOptions(mapOf("on" to false)))
+        assertEquals(listOf("s"), def.slots.activeFor(def.resolveOptions(emptyMap())).map { it.key })
+    }
 }

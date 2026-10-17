@@ -78,14 +78,14 @@ class ExerciseViewModel(
             viewModelScope,
             channel,
             ::dispatch,
-            options = { model.value.session.options },
+            options = { definition.resolveOptions(model.value.session.options) },
             firedEvents = { model.value.session.firedEvents },
         )
+    private val restorer = SessionRestorer(definition, deps, handle, launch, engine)
     private val drawing = DrawCoordinator(definition, drawer, channel, ::dispatch) { model.value.session }
     private val fields = FieldStates(viewModelScope, { model.value.session.textOf(it) }, ::onAnswerChanged)
-    private var reached: Set<Milestone> = emptySet()
     private var starting = false
-    private var signalDelivered = handle.get<Boolean>(KEY_SIGNAL) ?: false
+    private val announcer = TimerAnnouncer(engine, deps, handle, viewModelScope, channel)
 
     /** Événements ponctuels (annonces, rappels). */
     val events: Flow<ExerciseEvent> = channel.receiveAsFlow()
@@ -154,7 +154,7 @@ class ExerciseViewModel(
     private fun moveQuestion(action: (List<Draw>) -> ExerciseAction) {
         val layout = definition.layout as? FieldLayout.Sequential ?: return
         dispatch(action(model.value.session.drawsOf(layout.questionsSlot)))
-        handle[KEY_QUESTION] = model.value.session.currentQuestion
+        handle[HandleKeys.QUESTION] = model.value.session.currentQuestion
     }
 
     fun onAddGroup() {
@@ -190,7 +190,7 @@ class ExerciseViewModel(
         viewModelScope.launch {
             val planned = (m.timer as? TimerState.Idle)?.durationMs?.takeUnless { m.untimed }
             val id = createSession(planned) ?: return@launch
-            handle[KEY_SESSION] = id
+            handle[HandleKeys.SESSION] = id
             val timer = if (planned == null) engine.startUntimed(now) else engine.start(planned, now)
             scheduled.reset(planned, startElapsedMs = 0)
             updateTimer(timer)
@@ -258,9 +258,9 @@ class ExerciseViewModel(
         if (m.session.phase != Phase.Active) return
         val result = engine.tick(m.timer, now)
         if (result.state != m.timer) updateTimer(result.state)
-        handleExpired(result.expired)
+        announcer.onExpired(result.expired)
         scheduled.onTick(result.state, now)
-        announceMilestones(result.state, now)
+        announcer.announce(result.state, now)
     }
 
     private fun changeTimer(transform: (TimerState) -> TickResult) {
@@ -268,32 +268,13 @@ class ExerciseViewModel(
         if (m.session.phase != Phase.Active || (m.timer is TimerState.Idle)) return
         val result = transform(m.timer)
         updateTimer(result.state)
-        handleExpired(result.expired)
+        announcer.onExpired(result.expired)
     }
 
     private fun updateTimer(state: TimerState) {
         model.update { it.copy(timer = state) }
         val snapshot = engine.snapshot(state, deps.wallClock.millis(), deps.monotonicClock.now())
-        handle[KEY_TIMER] = snapshot.toLongs()
-    }
-
-    private fun handleExpired(expired: TimerEvent.Expired?) {
-        if (expired == null || !expired.fresh || signalDelivered) return
-        signalDelivered = true
-        handle[KEY_SIGNAL] = true
-        viewModelScope.launch { deps.endSignal.play(deps.settings.settings.first()) }
-        channel.trySend(ExerciseEvent.Announce(Milestone.TimeUp))
-    }
-
-    private fun announceMilestones(
-        state: TimerState,
-        now: Long,
-    ) {
-        val ui = timerUi(state, engine, now, untimedReady = false)
-        val durationMs = state.durationMs() ?: return
-        val fresh = milestonesReached(ui, durationMs) - reached
-        reached = reached + fresh
-        fresh.forEach { channel.trySend(ExerciseEvent.Announce(it)) }
+        handle[HandleKeys.TIMER] = snapshot.toLongs()
     }
 
     // endregion
@@ -301,54 +282,34 @@ class ExerciseViewModel(
     // region chargement et reprise
 
     private suspend fun initialise() {
-        val settings = deps.settings.settings.first()
-        val (durationMs, untimed) = timerConfig(definition, settings)
-        val defaults = definition.options.associate { it.key to it.default }
-        model.update {
-            it.copy(
-                session = it.session.copy(options = defaults),
-                timer = TimerState.Idle(durationMs),
-                untimed = untimed,
-            )
-        }
-        val resumeId = handle.get<Long>(KEY_SESSION) ?: launch.resumeSessionId
-        val detail = resumeId?.let { withContext(deps.ioDispatcher) { deps.history.observeDetail(it).first() } }
-        if (detail != null && detail.session.exerciseId == definition.id.value) restore(detail) else drawFirst()
+        val start = restorer.start()
+        model.update { start.model }
+        val detail = start.detail
+        if (detail == null) drawFirst() else restore(detail)
     }
 
     private suspend fun drawFirst() {
-        try {
-            val first = drawer.drawAll(definition.slots, model.value.session.options)
-            model.update { it.copy(session = reduce(it.session, ExerciseAction.Drawn(first)), loading = false) }
-        } catch (_: NotEnoughEntriesException) {
-            model.update { it.copy(loading = false, drawFailed = true) }
-        } catch (_: TableLoadException) {
-            model.update { it.copy(loading = false, drawFailed = true) }
+        val first = drawing.first()
+        model.update {
+            if (first ==
+                null
+            ) {
+                it.copy(loading = false, drawFailed = true)
+            } else {
+                it.copy(session = reduce(it.session, first), loading = false)
+            }
         }
     }
 
     private fun restore(detail: SessionDetail) {
-        val session = detail.toExerciseSession()
         recorder.adopt(detail.session)
-        val wall = deps.wallClock.millis()
+        val restored = restorer.restored(detail)
+        val timer = restored.timer
         val now = deps.monotonicClock.now()
-        val snapshot = timerSnapshotOf(handle.get<LongArray>(KEY_TIMER))
-        val timer = snapshot?.let { engine.restore(it, wall, now) } ?: pausedTimerFor(detail.session)
-        val untimed = timer is TimerState.Untimed || timer is TimerState.UntimedPaused
-        val extra = (session.answers.keys.maxOfOrNull { it.groupIndex } ?: 0)
-        val question = handle.get<Int>(KEY_QUESTION) ?: 0
-        model.value =
-            ExerciseModel(
-                session.copy(currentQuestion = question),
-                timer,
-                untimed,
-                loading = false,
-                extraGroups = extra,
-            )
-        handle[KEY_SESSION] = detail.session.id
-        signalDelivered = signalDelivered || timer is TimerState.Overtime || timer is TimerState.OvertimePaused
+        model.value = restored
+        handle[HandleKeys.SESSION] = detail.session.id
         scheduled.reset(timer.durationMs(), engine.elapsedMs(timer, now))
-        reached = timer.durationMs()?.let { milestonesReached(timerUi(timer, engine, now, false), it) }.orEmpty()
+        announcer.resumeAt(timer, now)
         updateTimer(timer)
     }
 
@@ -387,10 +348,6 @@ class ExerciseViewModel(
 
     private companion object {
         const val KEY_SEED = "seed"
-        const val KEY_SESSION = "session_id"
-        const val KEY_TIMER = "timer"
-        const val KEY_SIGNAL = "signal_delivered"
-        const val KEY_QUESTION = "question"
         const val TICK_MS = 250L
         const val STOP_TIMEOUT_MS = 5_000L
         const val AUTOSAVE_DEBOUNCE_MS = 1_000L
