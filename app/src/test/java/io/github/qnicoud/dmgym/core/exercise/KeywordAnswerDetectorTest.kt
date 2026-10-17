@@ -75,4 +75,22 @@ class KeywordAnswerDetectorTest {
             detector.prepare(listOf(card))
             assertEquals(emptyMap<DrawKey, Boolean>(), detector.detect(listOf(card), "7"))
         }
+
+    @Test
+    fun `a table that cannot be read is reported to the failure callback`() =
+        runTest {
+            val failures = mutableListOf<TableLoadException>()
+            val failing =
+                KeywordAnswerDetector(
+                    TableRepository(
+                        object : TableSource {
+                            override suspend fun load(id: TableId) =
+                                throw TableLoadException(id, IllegalStateException())
+                        },
+                    ),
+                    onFailure = { failures += it },
+                )
+            failing.prepare(listOf(dusty))
+            assertEquals(listOf(TableId.SensoryWords), failures.map { it.id })
+        }
 }

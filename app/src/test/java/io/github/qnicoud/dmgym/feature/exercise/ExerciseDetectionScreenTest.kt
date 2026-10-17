@@ -53,27 +53,37 @@ class ExerciseDetectionScreenTest {
             detection = DetectionSpec(listOf(slot), DemoExercise.FIELD_A),
         )
 
-    private fun launch(): ExerciseViewModel {
+    private val history = RecordingHistoryRepository()
+    private val handle = SavedStateHandle()
+
+    private fun viewModel(): ExerciseViewModel {
         val tables = DemoExercise.tables()
-        val vm =
-            ExerciseViewModel(
-                definition = definition,
-                deps =
-                    ExerciseDependencies(
-                        tables,
-                        RecordingHistoryRepository(),
-                        FakeSettingsRepository(Settings()),
-                        FakeEndSignal(),
-                        FakeMonotonicClock(1_000_000),
-                        MutableClock(),
-                        Dispatchers.Unconfined,
-                        KeywordAnswerDetector(tables),
-                    ),
-                handle = SavedStateHandle(),
-                launch = ExerciseLaunch(seed = 3),
-            )
+        return ExerciseViewModel(
+            definition = definition,
+            deps =
+                ExerciseDependencies(
+                    tables,
+                    history,
+                    FakeSettingsRepository(Settings()),
+                    FakeEndSignal(),
+                    FakeMonotonicClock(1_000_000),
+                    MutableClock(),
+                    Dispatchers.Unconfined,
+                    KeywordAnswerDetector(tables),
+                ),
+            handle = handle,
+            launch = ExerciseLaunch(seed = 3),
+        )
+    }
+
+    private fun show(vm: ExerciseViewModel) {
         compose.setContent { DmGymTheme { ExerciseRoute(vm, onBack = {}) } }
         compose.waitForIdle()
+    }
+
+    private fun launch(): ExerciseViewModel {
+        val vm = viewModel()
+        show(vm)
         compose.onNodeWithTag(ExerciseTags.START).performClick()
         compose.waitForIdle()
         return vm
@@ -144,5 +154,17 @@ class ExerciseDetectionScreenTest {
                 .check
                 ?.manual,
         )
+    }
+
+    @Test
+    fun `a resumed session is highlighted right away, before any keystroke`() {
+        val first = viewModel()
+        first.onStart()
+        first.onAnswerChanged(DemoExercise.keyA, "Une mine abandonnée")
+        first.onStop()
+        show(viewModel())
+        val spans = shownText().spanStyles
+        assertEquals(1, spans.size)
+        assertEquals(4, spans.single().start)
     }
 }

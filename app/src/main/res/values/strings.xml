@@ -197,7 +197,6 @@
   <string name="checklist_auto_badge">auto</string>
   <string name="checklist_linked">%1$d sur %2$d reliés</string>
   <string name="checklist_used_count">%1$d sur %2$d utilisés</string>
-  <string name="checklist_item_description">%1$s : %2$s</string>
   <string name="checklist_expand">Déplier les éléments</string>
   <string name="checklist_collapse">Replier les éléments</string>
 

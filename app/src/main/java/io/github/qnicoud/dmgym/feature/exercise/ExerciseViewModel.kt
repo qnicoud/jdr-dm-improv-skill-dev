@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
+import io.github.qnicoud.dmgym.core.exercise.Draw
 import io.github.qnicoud.dmgym.core.exercise.DrawKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseAction
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
@@ -130,20 +131,26 @@ class ExerciseViewModel(
         dispatch(ExerciseAction.AutoDetected(detector.detect(draws, session.textOf(AnswerKey(spec.field)))))
     }
 
-    /** Charge les mots-clés des tirages courants puis recalcule les cases. À rappeler après chaque tirage. */
-    private suspend fun prepareDetection() {
+    /** Charge les mots-clés de [draws] ; à faire avant que l'écran n'affiche le champ, pour un surlignage immédiat. */
+    private suspend fun loadKeywords(draws: List<Draw>) {
         val spec = definition.detection ?: return
-        val detector = deps.detector ?: return
-        detector.prepare(
-            model.value.session.draws
-                .filter { it.slotKey in spec.slotKeys },
-        )
+        deps.detector?.prepare(draws.filter { it.slotKey in spec.slotKeys })
+    }
+
+    private fun redetectIfTyped() {
+        val spec = definition.detection ?: return
         if (model.value.session
                 .textOf(AnswerKey(spec.field))
                 .isNotBlank()
         ) {
             redetect()
         }
+    }
+
+    /** Après une relance : charge les mots-clés des nouveaux tirages puis recalcule les cases. */
+    private suspend fun prepareDetection() {
+        loadKeywords(model.value.session.draws)
+        redetectIfTyped()
     }
 
     /** Plages du [text] à surligner (champ surveillé) ; synchrone, appelé à chaque rendu du champ. */
@@ -342,8 +349,9 @@ class ExerciseViewModel(
         val resumeId = handle.get<Long>(KEY_SESSION) ?: launch.resumeSessionId
         val detail = resumeId?.let { withContext(deps.ioDispatcher) { deps.history.observeDetail(it).first() } }
         if (detail != null && detail.session.exerciseId == definition.id.value) {
+            loadKeywords(detail.toExerciseSession().draws)
             restore(detail)
-            prepareDetection()
+            redetectIfTyped()
         } else {
             drawFirst()
         }
@@ -352,8 +360,8 @@ class ExerciseViewModel(
     private suspend fun drawFirst() {
         try {
             val draws = drawer.drawAll(definition.slots)
+            loadKeywords(draws)
             model.update { it.copy(session = reduce(it.session, ExerciseAction.Drawn(draws)), loading = false) }
-            prepareDetection()
         } catch (_: NotEnoughEntriesException) {
             model.update { it.copy(loading = false, drawFailed = true) }
         } catch (_: TableLoadException) {

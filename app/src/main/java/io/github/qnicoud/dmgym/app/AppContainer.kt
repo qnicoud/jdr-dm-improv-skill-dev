@@ -1,6 +1,7 @@
 package io.github.qnicoud.dmgym.app
 
 import android.app.Application
+import android.util.Log
 import androidx.room3.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
@@ -85,11 +86,15 @@ class DefaultAppContainer(
             endSignal = AndroidEndSignal(application),
             monotonicClock = SystemMonotonicClock(),
             wallClock = Clock.systemDefaultZone(),
-            detector = KeywordAnswerDetector(tableRepository),
+            detector =
+                KeywordAnswerDetector(tableRepository) {
+                    Log.w(TAG, "Detection disabled: ${it.message}", it)
+                },
         )
     }
 
     private companion object {
+        const val TAG = "DmGym"
         const val DATABASE_NAME = "dmgym.db"
     }
 }

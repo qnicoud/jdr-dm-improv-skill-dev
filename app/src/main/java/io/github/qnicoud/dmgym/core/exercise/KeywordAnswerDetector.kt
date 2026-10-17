@@ -14,6 +14,8 @@ import io.github.qnicoud.dmgym.core.tables.TableRepository
 class KeywordAnswerDetector(
     private val tables: TableRepository,
     private val engine: KeywordDetector = KeywordDetector(),
+    /** Appelé quand une table est illisible : la détection reste muette, le cochage manuel continue de marcher. */
+    private val onFailure: (TableLoadException) -> Unit = {},
 ) : AnswerDetector {
     private val lock = Any()
     private val targets = mutableMapOf<String, DetectionTarget>()
@@ -31,7 +33,8 @@ class KeywordAnswerDetector(
         val file =
             try {
                 tables.table(id)
-            } catch (_: TableLoadException) {
+            } catch (e: TableLoadException) {
+                onFailure(e)
                 return
             }
         synchronized(lock) {

@@ -25,7 +25,7 @@ internal class HighlightTransformation(
 
     override fun TextFieldBuffer.transformOutput() {
         val text = asCharSequence().toString()
-        forText(text).forEach { addStyle(style, it.first, it.last + 1) }
+        spanBounds(forText(text), length).forEach { (start, end) -> addStyle(style, start, end) }
     }
 
     private fun forText(text: String): List<IntRange> {
@@ -36,6 +36,15 @@ internal class HighlightTransformation(
         return lastRanges
     }
 }
+
+/** Bornes (fin exclue) des plages, ramenées dans le texte ; une plage vide après ajustement est écartée. */
+internal fun spanBounds(
+    ranges: List<IntRange>,
+    length: Int,
+): List<Pair<Int, Int>> =
+    ranges
+        .map { it.first.coerceIn(0, length) to (it.last + 1).coerceIn(0, length) }
+        .filter { (start, end) -> start < end }
 
 /** Fournit à chaque champ sa transformation de surlignage (ou `null`), sans alourdir les signatures. */
 internal val LocalFieldHighlight = compositionLocalOf<(String) -> OutputTransformation?> { { null } }
