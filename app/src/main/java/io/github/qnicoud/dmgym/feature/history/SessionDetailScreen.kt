@@ -62,6 +62,7 @@ object DetailTags {
     const val DELETE_CANCEL = "detail_delete_cancel"
     const val DRAW_CARD = "detail_draw_card"
     const val GEM = "detail_gem"
+    const val FIRST_PICK = "detail_first_pick"
     const val NO_RATING = "detail_no_rating"
     const val UNFINISHED = "detail_unfinished"
     const val REDO = "detail_redo"
@@ -230,6 +231,7 @@ private fun DetailBody(
         AnswersSection(detail.answers)
         EvaluationSection(detail, actions.onLevelSelected, actions.onGemToggled)
         RubricSection(detail.rubric)
+        FirstPickSection(detail.firstPick)
         RedoButton({ actions.onRedo(detail.exerciseId) })
     }
 }
@@ -323,6 +325,7 @@ private fun SessionDetailPreview() {
                             draws = listOf(DrawLine("tiède", true), DrawLine("moisi", false)),
                             answers = listOf(AnswerLine(null, 1, null, "Le bois du comptoir est tiède.", false, null)),
                             rubric = emptyList(),
+                            firstPick = null,
                             selfRating = 2,
                             isGem = true,
                             shareText = "Le bois du comptoir est tiède.",

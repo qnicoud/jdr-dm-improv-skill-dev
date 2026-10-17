@@ -156,6 +156,20 @@ class SessionExportFormatterTest {
     }
 
     @Test
+    fun `the answer played first is exported as a sentence, not as a raw grid key`() {
+        val text =
+            formatWithRegistry(
+                detail(
+                    session(1, exercise = "decision_point"),
+                    answers = listOf(AnswerRecord("answer_2", 0, "négocier")),
+                    rubric = listOf(RubricRecord("first_pick:answer_2", true)),
+                ),
+            )
+        assertTrue(text.contains("Jouée en premier : négocier"))
+        assertTrue(!text.contains("first_pick"))
+    }
+
+    @Test
     fun `an unknown key falls back on the raw key`() {
         val text = formatWithRegistry(detail(session(1), answers = listOf(AnswerRecord("mystery_field", 0, "x"))))
         assertTrue(text.contains("mystery_field : x"))

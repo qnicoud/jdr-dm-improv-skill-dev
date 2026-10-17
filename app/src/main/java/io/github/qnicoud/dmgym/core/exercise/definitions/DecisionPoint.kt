@@ -64,5 +64,6 @@ object DecisionPoint {
                 StartVariant(R.string.decision_point_pause_done, OptionCondition(OPTION_SITUATION, expected = false)),
             endPrompt = R.string.decision_point_end_prompt,
             endFlagHint = R.string.decision_point_end_hint,
+            endChoice = true,
         )
 }

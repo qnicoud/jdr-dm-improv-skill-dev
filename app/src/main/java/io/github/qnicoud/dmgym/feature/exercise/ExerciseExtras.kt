@@ -54,6 +54,8 @@ object ExerciseExtraTags {
 
     fun option(key: String) = "exercise_option_$key"
 
+    fun firstPick(fieldKey: String) = "exercise_first_pick_$fieldKey"
+
     fun optionHelp(key: String) = "exercise_option_help_$key"
 }
 

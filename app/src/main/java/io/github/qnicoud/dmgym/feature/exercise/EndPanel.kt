@@ -14,6 +14,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -37,6 +38,8 @@ import io.github.qnicoud.dmgym.core.daily.DailyStep
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseSession
+import io.github.qnicoud.dmgym.core.exercise.FirstPick
+import io.github.qnicoud.dmgym.core.exercise.firstPickFields
 import io.github.qnicoud.dmgym.ui.icons.ExerciseIcons
 
 /** Actions du bilan : toutes facultatives, rien n'est bloquant (parcours §4.5). */
@@ -77,6 +80,7 @@ fun EndPanel(
         )
         Text(stringResource(R.string.end_recap, shortDuration(elapsedMs)), style = MaterialTheme.typography.bodyLarge)
         EndPrompts(definition, session)
+        FirstPickChoice(definition, session) { actions.onAssess(session.selfRating, session.isGem, it) }
         LevelPicker(session.selfRating) { actions.onAssess(it, session.isGem, session.rubric) }
         RubricGrid(definition, session) { actions.onAssess(session.selfRating, session.isGem, it) }
         GemToggle(session.isGem) { actions.onAssess(session.selfRating, it, session.rubric) }
@@ -144,6 +148,46 @@ private fun EndPrompts(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.testTag(ExerciseTags.END_HINT),
         )
+    }
+}
+
+/**
+ * Choix facultatif de la réponse jouée en premier : un bouton radio par réponse écrite. Toucher la réponse
+ * choisie annule le choix. Enregistré dans la grille ([FirstPick]).
+ */
+@Composable
+private fun FirstPickChoice(
+    definition: ExerciseDefinition,
+    session: ExerciseSession,
+    onChange: (Map<String, Boolean>) -> Unit,
+) {
+    val options =
+        definition
+            .firstPickFields()
+            .map { it to session.textOf(AnswerKey(it)) }
+            .filter { it.second.isNotBlank() }
+    if (options.isEmpty()) return
+    val chosen = FirstPick.chosen(session.rubric)
+    Column(modifier = Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        options.forEach { (fieldKey, text) ->
+            val selected = chosen == fieldKey
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp)
+                        .testTag(ExerciseExtraTags.firstPick(fieldKey))
+                        .selectable(
+                            selected = selected,
+                            role = Role.RadioButton,
+                            onClick = { onChange(FirstPick.with(session.rubric, if (selected) null else fieldKey)) },
+                        ),
+            ) {
+                RadioButton(selected = selected, onClick = null)
+                Text(text, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(start = 12.dp))
+            }
+        }
     }
 }
 

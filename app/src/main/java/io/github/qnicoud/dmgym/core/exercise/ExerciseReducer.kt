@@ -34,7 +34,7 @@ fun reduce(
         }
 
         is ExerciseAction.AutoDetected -> {
-            autoDetect(state, action.detected)
+            autoDetect(state, action)
         }
 
         is ExerciseAction.CheckToggled -> {
@@ -103,14 +103,32 @@ private fun toggleFlag(
 
 private fun autoDetect(
     state: ExerciseSession,
-    detected: Map<DrawKey, Boolean>,
+    action: ExerciseAction.AutoDetected,
 ): ExerciseSession {
     val draws =
         state.draws.map { draw ->
-            val auto = detected[DrawKey(draw.slotKey, draw.position)] ?: return@map draw
-            draw.copy(check = ElementCheck(auto = auto, manual = draw.check?.manual))
+            val key = DrawKey(draw.slotKey, draw.position)
+            val auto = action.detected[key] ?: return@map draw
+            draw.copy(check = recheck(draw.check, auto, action.occurrences[key] ?: if (auto) 1 else 0))
         }
     return if (draws == state.draws) state else state.copy(draws = draws)
+}
+
+/** Le cochage manuel fait foi, sauf un décochage suivi d'une nouvelle occurrence du mot. */
+private fun recheck(
+    previous: ElementCheck?,
+    auto: Boolean,
+    count: Int,
+): ElementCheck {
+    val manual = previous?.manual
+    val reference = previous?.manualAt ?: count
+    val released = manual == false && count > reference
+    return ElementCheck(
+        auto = auto,
+        manual = if (released) null else manual,
+        occurrences = count,
+        manualAt = if (manual == null || released) null else reference,
+    )
 }
 
 private fun toggleCheck(
@@ -124,7 +142,7 @@ private fun toggleCheck(
                     draw
                 } else {
                     val check = draw.check ?: ElementCheck(auto = false)
-                    draw.copy(check = check.copy(manual = !check.checked))
+                    draw.copy(check = check.copy(manual = !check.checked, manualAt = check.occurrences))
                 }
             },
     )

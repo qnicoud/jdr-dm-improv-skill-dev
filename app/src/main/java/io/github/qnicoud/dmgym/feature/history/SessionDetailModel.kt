@@ -3,6 +3,7 @@ package io.github.qnicoud.dmgym.feature.history
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.FieldLayout
+import io.github.qnicoud.dmgym.core.exercise.FirstPick
 import io.github.qnicoud.dmgym.core.exercise.StringResId
 import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.DrawRecord
@@ -48,6 +49,8 @@ data class SessionDetailUi(
     val isGem: Boolean,
     /** Texte à envoyer à la feuille de partage ; `null` s'il n'y a rien à partager. */
     val shareText: String?,
+    /** Texte de la réponse choisie dans le bilan « jouée en premier » (Decision Point), ou `null`. */
+    val firstPick: String? = null,
 )
 
 internal fun SessionDetail.toUi(definition: ExerciseDefinition?): SessionDetailUi {
@@ -63,6 +66,7 @@ internal fun SessionDetail.toUi(definition: ExerciseDefinition?): SessionDetailU
         draws = draws.map { it.toLine() },
         answers = answers,
         rubric = rubricLines(definition),
+        firstPick = firstPickText(),
         selfRating = session.selfRating,
         isGem = session.isGem,
         shareText = answers.joinToString("\n\n") { it.text }.takeIf { it.isNotBlank() },
@@ -96,6 +100,11 @@ private fun SessionDetail.rubricLines(definition: ExerciseDefinition?): List<Rub
         ?.mapNotNull { question ->
             rubric.firstOrNull { it.questionKey == question.key }?.let { RubricLine(question.text, it.value) }
         }.orEmpty()
+
+private fun SessionDetail.firstPickText(): String? {
+    val field = FirstPick.chosen(rubric.associate { it.questionKey to it.value }) ?: return null
+    return answers.firstOrNull { it.fieldKey == field }?.text?.takeIf { it.isNotBlank() }
+}
 
 private fun ExerciseDefinition.fieldSpecs() =
     when (val l = layout) {

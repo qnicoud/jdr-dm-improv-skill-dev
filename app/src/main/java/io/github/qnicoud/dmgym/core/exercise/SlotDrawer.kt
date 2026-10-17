@@ -128,19 +128,19 @@ class SlotDrawer(
         exclude: Set<String>,
         context: DrawContext,
     ): Draw {
-        val band = contrastBandOf(slot, context)
+        val band = rankCards(slot, context)
         val values = slot.range.filter { band == null || it in band }.ifEmpty { slot.range.toList() }
         val fresh = values.filter { it.toString() !in exclude }.ifEmpty { values }
         val value = fresh[random.nextInt(fresh.size)].toString()
         return Draw(slot.key, 0, null, value, value)
     }
 
-    /** Bande de cartes imposée par le contre-stéréotype, ou `null` si l'option est inactive ou le rôle sans rang. */
-    private suspend fun contrastBandOf(
+    /** Cartes permises par le rang du rôle (inverse si l'option est active), ou `null` sans rôle tiré. */
+    private suspend fun rankCards(
         slot: CardSlot,
         context: DrawContext,
-    ): IntRange? {
-        val contrast = slot.contrast?.takeIf { context.options[it.option] == true } ?: return null
+    ): List<Int>? {
+        val contrast = slot.contrast ?: return null
         val role = context.draws.firstOrNull { it.slotKey == contrast.roleSlot } ?: return null
         val table = TableId.entries.firstOrNull { it.fileName == role.tableId } ?: return null
         val tags =
@@ -150,6 +150,6 @@ class SlotDrawer(
                 .firstOrNull { it.id == role.entryId }
                 ?.tags
                 .orEmpty()
-        return contrastBand(tags)
+        return statusCards(tags, counter = context.options[contrast.option] == true)
     }
 }
