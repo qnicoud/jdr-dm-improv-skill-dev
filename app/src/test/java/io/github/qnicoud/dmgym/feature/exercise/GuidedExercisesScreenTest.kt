@@ -1,13 +1,17 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.unit.Density
 import androidx.lifecycle.SavedStateHandle
 import io.github.qnicoud.dmgym.app.FakeSettingsRepository
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
@@ -42,6 +46,7 @@ class GuidedExercisesScreenTest {
     private fun launch(
         definition: ExerciseDefinition,
         dark: Boolean = false,
+        fontScale: Float = 1f,
     ): ExerciseViewModel {
         val vm =
             ExerciseViewModel(
@@ -59,7 +64,12 @@ class GuidedExercisesScreenTest {
                 handle = SavedStateHandle(),
                 launch = ExerciseLaunch(seed = 11),
             )
-        compose.setContent { DmGymTheme(darkTheme = dark) { ExerciseRoute(vm, onBack = {}) } }
+        compose.setContent {
+            val density = LocalDensity.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale)) {
+                DmGymTheme(darkTheme = dark) { ExerciseRoute(vm, onBack = {}) }
+            }
+        }
         compose.waitForIdle()
         return vm
     }
@@ -149,5 +159,25 @@ class GuidedExercisesScreenTest {
         compose.onNodeWithTag(ExerciseTags.DRAW_CARD).assertIsDisplayed()
         tap(ExerciseTags.START)
         compose.onAllNodesWithTag(ExerciseTags.field(AnswerKey(OnePage.CONTEXT_FIELD))).assertCountEquals(0)
+    }
+
+    @Test
+    fun `the status card is read as a single label that the draw card does not override`() {
+        launch(StatusNumbers.definition)
+        compose
+            .onAllNodes(
+                hasContentDescription("Statut ", substring = true) and
+                    hasContentDescription(" sur 10 · ", substring = true),
+            ).assertCountEquals(1)
+    }
+
+    @Test
+    fun `the status card and the shift banner fit at 200 percent font`() {
+        val vm = launch(StatusNumbers.definition, fontScale = 2f)
+        compose.onNodeWithTag(ExerciseExtraTags.STATUS_CARD).assertIsDisplayed()
+        tap(ExerciseTags.START)
+        compose.onNodeWithTag(ExerciseExtraTags.STATUS_CARD).assertIsDisplayed()
+        assertEquals(Phase.Active, vm.uiState.value.session.phase)
+        compose.onNodeWithTag(ExerciseExtraTags.SCENE_DONE).assertIsDisplayed()
     }
 }

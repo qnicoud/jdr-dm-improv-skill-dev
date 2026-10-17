@@ -47,8 +47,7 @@ internal fun EventsEffect(
                     }
 
                     is ExerciseEvent.Shift -> {
-                        @Suppress("DEPRECATION")
-                        view.announceForAccessibility(resources.getString(R.string.shift_banner, event.text))
+                        // L'annonce vient de la région polie du bandeau : une seule lecture.
                         view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                     }
                 }

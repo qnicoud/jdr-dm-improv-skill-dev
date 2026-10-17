@@ -45,7 +45,8 @@ fun DrawCard(
     /** Slots affichés comme une carte de statut en grand (Status Numbers). */
     cardSlots: Set<String> = emptySet(),
 ) {
-    val spoken = stringResource(R.string.draw_description, draws.joinToString(", ") { it.text })
+    val (cards, others) = draws.partition { it.slotKey in cardSlots }
+    val spoken = stringResource(R.string.draw_description, others.joinToString(", ") { it.text })
     Card(
         modifier = modifier.fillMaxWidth().testTag(ExerciseTags.DRAW_CARD),
         shape = MaterialTheme.shapes.large,
@@ -53,9 +54,11 @@ fun DrawCard(
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Column(modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = spoken }) {
-                draws.forEach {
-                    if (it.slotKey in cardSlots) StatusCardLine(it) else DrawLine(it, showChecks, onCheckToggled)
+            // La carte de statut porte son propre libellé : elle reste hors de la description fusionnée du tirage.
+            cards.forEach { StatusCardLine(it) }
+            if (others.isNotEmpty()) {
+                Column(modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = spoken }) {
+                    others.forEach { DrawLine(it, showChecks, onCheckToggled) }
                 }
             }
             if (showReroll) RerollRow(rerollCount, onReroll)
