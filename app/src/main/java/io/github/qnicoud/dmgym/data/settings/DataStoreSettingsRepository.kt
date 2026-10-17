@@ -11,7 +11,11 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
+import io.github.qnicoud.dmgym.core.daily.decodeReplacements
+import io.github.qnicoud.dmgym.core.daily.encodeReplacements
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
@@ -55,6 +59,8 @@ class DataStoreSettingsRepository(
             durations = readDurations(values),
             untimed = readUntimed(values),
             dailyIncludeOnePage = values.bool(DAILY_ONE_PAGE, default = false),
+            dailyEpochDay = values[DAILY_EPOCH_DAY] as? Long,
+            dailyReplacements = decodeReplacements(values[DAILY_REPLACEMENTS] as? String),
             crazyEightsMinuteHaptic = values.bool(CRAZY_MINUTE_HAPTIC, default = false),
         )
     }
@@ -92,8 +98,25 @@ class DataStoreSettingsRepository(
         prefs[booleanPreferencesKey(VIBRATION)] = settings.vibrationEnabled
         prefs[booleanPreferencesKey(DAILY_ONE_PAGE)] = settings.dailyIncludeOnePage
         prefs[booleanPreferencesKey(CRAZY_MINUTE_HAPTIC)] = settings.crazyEightsMinuteHaptic
+        writeDaily(prefs, settings)
         writeDurations(prefs, settings.durations)
         writeUntimed(prefs, settings.untimed)
+    }
+
+    private fun writeDaily(
+        prefs: MutablePreferences,
+        settings: Settings,
+    ) {
+        val epochDayKey = longPreferencesKey(DAILY_EPOCH_DAY)
+        val replacementsKey = stringPreferencesKey(DAILY_REPLACEMENTS)
+        val day = settings.dailyEpochDay
+        if (day != null && settings.dailyReplacements.isNotEmpty()) {
+            prefs[epochDayKey] = day
+            prefs[replacementsKey] = encodeReplacements(settings.dailyReplacements)
+        } else {
+            prefs.remove(epochDayKey)
+            prefs.remove(replacementsKey)
+        }
     }
 
     private fun writeDurations(
@@ -138,6 +161,8 @@ class DataStoreSettingsRepository(
         private const val SOUND = "sound_enabled"
         private const val VIBRATION = "vibration_enabled"
         private const val DAILY_ONE_PAGE = "daily_include_one_page"
+        private const val DAILY_EPOCH_DAY = "daily_epoch_day"
+        private const val DAILY_REPLACEMENTS = "daily_replacements"
         private const val CRAZY_MINUTE_HAPTIC = "crazy_eights_minute_haptic"
         private const val DURATION_PREFIX = "duration_s."
         private const val UNTIMED_PREFIX = "untimed."

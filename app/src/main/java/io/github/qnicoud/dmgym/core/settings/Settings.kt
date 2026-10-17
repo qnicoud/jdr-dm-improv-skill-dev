@@ -10,6 +10,10 @@ data class Settings(
     val durations: Map<ExerciseId, Duration> = emptyMap(),
     val untimed: Set<ExerciseId> = emptySet(),
     val dailyIncludeOnePage: Boolean = false,
+    /** Jour (`localEpochDay`) auquel se rapportent [dailyReplacements] ; `null` si aucun remplacement. */
+    val dailyEpochDay: Long? = null,
+    /** Remplacements de la séance du jour : position (0..2) vers exercice (ADR 0013). */
+    val dailyReplacements: Map<Int, ExerciseId> = emptyMap(),
     /** Vibration chaque minute pour Crazy Eights (désactivée par défaut, décision UX 14). */
     val crazyEightsMinuteHaptic: Boolean = false,
 )
