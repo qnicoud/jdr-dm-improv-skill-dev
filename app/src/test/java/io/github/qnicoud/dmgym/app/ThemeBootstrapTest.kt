@@ -35,10 +35,10 @@ class ThemeBootstrapTest {
     fun `is not ready until the first settings are read`() {
         val source = MutableSharedFlow<Settings>()
         val bootstrap = ThemeBootstrap(SourceRepository(source), scope)
-        assertNull(bootstrap.palette.value)
+        assertNull(bootstrap.appearance.value?.palette)
         assertFalse(bootstrap.isReady)
         runBlocking { source.emit(Settings(themePalette = ThemePalette.FOREST)) }
-        assertEquals(ThemePalette.FOREST, bootstrap.palette.value)
+        assertEquals(ThemePalette.FOREST, bootstrap.appearance.value?.palette)
         assertTrue(bootstrap.isReady)
     }
 
@@ -50,13 +50,13 @@ class ThemeBootstrapTest {
             source.emit(Settings(themePalette = ThemePalette.FOREST))
             source.emit(Settings(themePalette = ThemePalette.MIST))
         }
-        assertEquals(ThemePalette.MIST, bootstrap.palette.value)
+        assertEquals(ThemePalette.MIST, bootstrap.appearance.value?.palette)
     }
 
     @Test
     fun `a failing read falls back to parchment instead of blocking the splash screen`() {
         val bootstrap = ThemeBootstrap(SourceRepository(flow { error("disk") }), scope)
-        assertEquals(ThemePalette.PARCHMENT, bootstrap.palette.value)
+        assertEquals(ThemePalette.PARCHMENT, bootstrap.appearance.value?.palette)
         assertTrue(bootstrap.isReady)
     }
 
@@ -74,7 +74,7 @@ class ThemeBootstrapTest {
             Appearance(ThemePalette.NIGHT, ThemeMode.DARK, reduceAnimations = true),
             bootstrap.appearance.value,
         )
-        assertEquals(ThemePalette.NIGHT, bootstrap.palette.value)
+        assertEquals(ThemePalette.NIGHT, bootstrap.appearance.value?.palette)
     }
 
     @Test

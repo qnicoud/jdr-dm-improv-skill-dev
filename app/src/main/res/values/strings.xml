@@ -383,7 +383,8 @@
   <string name="settings_erase">Tout effacer</string>
   <string name="settings_erase_hint">Supprime toutes tes sessions de ce téléphone.</string>
   <string name="settings_erase_confirm_title">Effacer toutes tes sessions ?</string>
-  <string name="settings_erase_confirm_text">Toutes les sessions, avec leurs réponses, seront supprimées de ce téléphone. Tes réglages sont conservés. Cette action est définitive.</string>
+  <string name="settings_erase_confirm_text">Toutes les sessions, avec leurs réponses, seront supprimées de ce téléphone. Tes réglages sont conservés. Cette action est définitive. Tape %1$s pour confirmer.</string>
+  <string name="settings_erase_input_label">Mot de confirmation</string>
   <string name="settings_erase_confirm">Oui, tout effacer</string>
   <string name="settings_erase_cancel">Annuler</string>
   <string name="settings_data_exported">Export terminé.</string>

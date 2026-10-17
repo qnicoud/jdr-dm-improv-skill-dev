@@ -34,10 +34,5 @@ class ThemeBootstrap(
             .distinctUntilChanged()
             .stateIn(scope, SharingStarted.Eagerly, null)
 
-    val palette: StateFlow<ThemePalette?> =
-        appearance
-            .map { it?.palette }
-            .stateIn(scope, SharingStarted.Eagerly, null)
-
     val isReady: Boolean get() = appearance.value != null
 }

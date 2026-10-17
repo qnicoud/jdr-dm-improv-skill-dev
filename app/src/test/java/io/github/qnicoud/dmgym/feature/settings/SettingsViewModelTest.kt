@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -32,9 +33,18 @@ class SettingsViewModelTest {
     private val repo = FakeSettingsRepository()
     private val endSignal = FakeEndSignal()
     private val archive = FakeSessionArchive()
-    private val clock = Clock.fixed(Instant.parse("2026-10-17T08:00:00Z"), ZoneOffset.UTC)
+    private var clockMillis = Instant.parse("2026-10-17T08:00:00Z").toEpochMilli()
+    private val clock =
+        object : Clock() {
+            override fun getZone() = ZoneOffset.UTC
 
-    private fun viewModel(sdkInt: Int = 34) = SettingsViewModel(repo, sdkInt, endSignal, archive, clock)
+            override fun withZone(zone: java.time.ZoneId?) = this
+
+            override fun instant(): Instant = Instant.ofEpochMilli(clockMillis)
+        }
+
+    private fun viewModel(sdkInt: Int = 34) =
+        SettingsViewModel(repo, sdkInt, endSignal, archive, clock, UnconfinedTestDispatcher())
 
     private fun SettingsViewModel.row(id: ExerciseId) = uiState.value.durations.first { it.id == id }
 
@@ -209,13 +219,38 @@ class SettingsViewModelTest {
         }
 
     @Test
-    fun `confirming erases everything and reports it`() =
+    fun `confirming without the word does nothing`() =
         runTest {
             val vm = viewModel()
             vm.requestErase()
             vm.confirmErase()
+            vm.setEraseInput("efface")
+            vm.confirmErase()
+            assertEquals(0, archive.deleteCalls)
+            assertTrue(vm.uiState.value.data.confirmingErase)
+        }
+
+    @Test
+    fun `the word is accepted whatever the case and the surrounding spaces`() =
+        runTest {
+            val vm = viewModel()
+            vm.requestErase()
+            vm.setEraseInput("  Effacer ")
+            assertTrue(vm.uiState.value.data.canErase)
+            vm.confirmErase()
             assertEquals(1, archive.deleteCalls)
-            assertEquals(DataUiState(confirmingErase = false, message = DataMessage.ERASED), vm.uiState.value.data)
+            assertEquals(DataUiState(message = DataMessage.ERASED), vm.uiState.value.data)
+        }
+
+    @Test
+    fun `cancelling forgets the typed word`() =
+        runTest {
+            val vm = viewModel()
+            vm.requestErase()
+            vm.setEraseInput("EFFACER")
+            vm.cancelErase()
+            vm.requestErase()
+            assertEquals("", vm.uiState.value.data.eraseInput)
         }
 
     @Test
@@ -225,9 +260,35 @@ class SettingsViewModelTest {
             val vm = viewModel()
             vm.setThemeMode(ThemeMode.DARK)
             vm.requestErase()
+            vm.setEraseInput("EFFACER")
             vm.confirmErase()
             assertEquals(DataMessage.ERASE_FAILED, vm.uiState.value.data.message)
             assertEquals(ThemeMode.DARK, repo.state.value.themeMode)
+        }
+
+    @Test
+    fun `the result message disappears after a while and with the next action`() =
+        runTest {
+            val vm = viewModel()
+            vm.export(ExportLabels()) { }
+            assertEquals(DataMessage.EXPORTED, vm.uiState.value.data.message)
+            advanceTimeBy(SettingsViewModel.MESSAGE_MILLIS + 1)
+            assertNull(vm.uiState.value.data.message)
+            vm.export(ExportLabels()) { }
+            vm.requestErase()
+            assertNull(vm.uiState.value.data.message)
+        }
+
+    @Test
+    fun `trying the vibration twice within half a second plays it once`() =
+        runTest {
+            val vm = viewModel()
+            vm.tryVibration()
+            vm.tryVibration()
+            assertEquals(1, endSignal.previews.size)
+            clockMillis += SettingsViewModel.TRY_DEBOUNCE_MILLIS
+            vm.tryVibration()
+            assertEquals(2, endSignal.previews.size)
         }
 
     @Test
@@ -235,7 +296,7 @@ class SettingsViewModelTest {
         runTest {
             archive.sessions = listOf(completedSession())
             var written = ""
-            viewModel().export(mapOf("crazy_eights" to "Crazy Eights")) { written = it }
+            viewModel().export(ExportLabels(exercises = mapOf("crazy_eights" to "Crazy Eights"))) { written = it }
             assertTrue(written.contains("Crazy Eights"))
             assertTrue(written.contains("2026-10-17"))
         }
@@ -244,10 +305,10 @@ class SettingsViewModelTest {
     fun `a failing export is reported without touching the data`() =
         runTest {
             val vm = viewModel()
-            vm.export(emptyMap()) { throw IOException("full") }
+            vm.export(ExportLabels()) { throw IOException("full") }
             assertEquals(DataMessage.EXPORT_FAILED, vm.uiState.value.data.message)
             assertEquals(0, archive.deleteCalls)
-            vm.export(emptyMap()) { }
+            vm.export(ExportLabels()) { }
             assertEquals(DataMessage.EXPORTED, vm.uiState.value.data.message)
         }
 }

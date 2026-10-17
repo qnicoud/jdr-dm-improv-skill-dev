@@ -1,5 +1,7 @@
 package io.github.qnicoud.dmgym.feature.settings
 
+import io.github.qnicoud.dmgym.R
+import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.DrawRecord
 import io.github.qnicoud.dmgym.core.history.RubricRecord
@@ -44,7 +46,7 @@ class SessionExportFormatterTest {
     ) = SessionDetail(session, draws, answers, rubric)
 
     private fun format(vararg details: SessionDetail) =
-        SessionExportFormatter(names).format(details.toList(), exportedAt)
+        SessionExportFormatter(ExportLabels(exercises = names)).format(details.toList(), exportedAt)
 
     @Test
     fun `an empty archive still gives a readable file`() {
@@ -106,5 +108,56 @@ class SessionExportFormatterTest {
         val text = format(detail(odd))
         assertTrue(text.contains("mystery"))
         assertEquals(1, Regex("""=== """).findAll(text).count())
+    }
+
+    private val registryLabels = ExportLabels.from(ExerciseRegistry.Default) { "str$it" }
+
+    private fun formatWithRegistry(vararg details: SessionDetail) =
+        SessionExportFormatter(registryLabels).format(details.toList(), exportedAt)
+
+    @Test
+    fun `a Connect the Story export uses the labels of the definition, not the raw keys`() {
+        val text =
+            formatWithRegistry(
+                detail(
+                    session(1, exercise = "connect_story"),
+                    draws = listOf(DrawRecord("place", 0, "story_elements", "e1", "Une crypte")),
+                    answers = listOf(AnswerRecord("scene", 0, "Il pleuvait.")),
+                    rubric = listOf(RubricRecord("connection_felt_planned", true)),
+                ),
+            )
+        assertTrue(text.contains("str${R.string.exercise_connect_story}"))
+        assertTrue(text.contains("str${R.string.connect_story_place} : Une crypte"))
+        assertTrue(text.contains("str${R.string.connect_story_field_label} : Il pleuvait."))
+        assertTrue(text.contains("str${R.string.connect_story_rubric_planned} : oui"))
+        assertFalse(text.contains("connection_felt_planned"))
+        assertFalse(text.contains("scene :"))
+    }
+
+    @Test
+    fun `a One-Page export labels the fields and numbers the characters`() {
+        val text =
+            formatWithRegistry(
+                detail(
+                    session(1, exercise = "one_page"),
+                    answers =
+                        listOf(
+                            AnswerRecord("npc_name", 0, "Brenna"),
+                            AnswerRecord("npc_name", 1, "Odo"),
+                            AnswerRecord("if_pcs_idle", 0, "Le pont brûle."),
+                        ),
+                    rubric = listOf(RubricRecord("fits", false)),
+                ),
+            )
+        assertTrue(text.contains("str${R.string.one_page_name_label} : Brenna"))
+        assertTrue(text.contains("str${R.string.one_page_name_label} (2) : Odo"))
+        assertTrue(text.contains("str${R.string.one_page_inaction_label} : Le pont brûle."))
+        assertTrue(text.contains("str${R.string.one_page_rubric_fits} : non"))
+    }
+
+    @Test
+    fun `an unknown key falls back on the raw key`() {
+        val text = formatWithRegistry(detail(session(1), answers = listOf(AnswerRecord("mystery_field", 0, "x"))))
+        assertTrue(text.contains("mystery_field : x"))
     }
 }

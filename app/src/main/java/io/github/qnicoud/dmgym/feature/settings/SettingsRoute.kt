@@ -4,14 +4,15 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.qnicoud.dmgym.R
-import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.platform.writeText
-import io.github.qnicoud.dmgym.ui.components.nameRes
 
 /**
  * Écran Réglages relié à son ViewModel. L'export passe par le sélecteur de fichiers du système
@@ -26,10 +27,11 @@ fun SettingsRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val resolver = LocalContext.current.contentResolver
-    val names = ExerciseId.ALL.associate { it.value to stringResource(it.nameRes) }
+    val resources = LocalResources.current
+    val labels = remember(resources) { ExportLabels.from(ExerciseRegistry.Default, resources::getString) }
     val picker =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) { uri ->
-            if (uri != null) viewModel.export(names) { resolver.writeText(uri, it) }
+            if (uri != null) viewModel.export(labels) { resolver.writeText(uri, it) }
         }
     val fileName = stringResource(R.string.settings_export_file_name)
     val actions =
@@ -49,6 +51,7 @@ fun SettingsRoute(
             onRequestErase = viewModel::requestErase,
             onCancelErase = viewModel::cancelErase,
             onConfirmErase = viewModel::confirmErase,
+            onEraseInput = viewModel::setEraseInput,
             onDecrease = viewModel::decrease,
             onIncrease = viewModel::increase,
             onUntimed = viewModel::setUntimed,

@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.settings
 
+import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionStatus
 import java.time.DateTimeException
@@ -13,11 +14,11 @@ private const val SECONDS_PER_MINUTE = 60
 
 /**
  * Texte lisible de l'export des sessions (S11, Données). Le contenu du fichier est un document, pas de l'interface :
- * il est en français et ne passe pas par `strings.xml`. [exerciseNames] : nom affiché par identifiant d'exercice.
+ * il est en français et ne passe pas par `strings.xml`. [labels] : libellés lisibles, repli sur les clés brutes.
  * Les sessions en cours sans réponse écrite sont omises (rien à exporter).
  */
 class SessionExportFormatter(
-    private val exerciseNames: Map<String, String>,
+    private val labels: ExportLabels,
 ) {
     fun format(
         details: List<SessionDetail>,
@@ -38,16 +39,32 @@ class SessionExportFormatter(
     private fun StringBuilder.appendSession(detail: SessionDetail) {
         val session = detail.session
         appendLine()
-        appendLine("=== ${exerciseNames[session.exerciseId] ?: session.exerciseId} ===")
+        appendLine("=== ${labels.exercise(session.exerciseId)} ===")
         appendLine("Début : ${localStart(session.startedAtEpochMillis, session.zoneId)}")
         val status = if (session.status == SessionStatus.COMPLETED) "terminée" else "inachevée"
         appendLine("Statut : $status")
         appendLine("Durée active : ${duration(session.activeDurationSec)} (dépassement ${session.overtimeSec} s)")
         session.selfRating?.let { appendLine("Auto-évaluation : $it") }
         if (session.isGem) appendLine("Bijou : oui")
-        appendSection("Tirages", detail.draws.map { "${it.slotKey} : ${it.textSnapshot}" })
-        appendSection("Réponses", detail.answers.filter { it.text.isNotBlank() }.map { "${it.fieldKey} : ${it.text}" })
-        appendSection("Grille", detail.rubric.map { "${it.questionKey} : ${if (it.value) "oui" else "non"}" })
+        val exercise = session.exerciseId
+        appendSection("Tirages", detail.draws.map { "${labels.slot(exercise, it.slotKey)} : ${it.textSnapshot}" })
+        appendSection(
+            "Réponses",
+            detail.answers.filter { it.text.isNotBlank() }.map { "${answerLabel(exercise, it)} : ${it.text}" },
+        )
+        appendSection(
+            "Grille",
+            detail.rubric.map { "${labels.question(exercise, it.questionKey)} : ${if (it.value) "oui" else "non"}" },
+        )
+    }
+
+    /** Le premier groupe (PNJ n°1) garde le libellé seul ; les suivants sont numérotés. */
+    private fun answerLabel(
+        exercise: String,
+        answer: AnswerRecord,
+    ): String {
+        val label = labels.field(exercise, answer.fieldKey)
+        return if (answer.groupIndex > 0) "$label (${answer.groupIndex + 1})" else label
     }
 
     private fun StringBuilder.appendSection(

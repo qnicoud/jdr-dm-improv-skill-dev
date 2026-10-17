@@ -2,6 +2,7 @@ package io.github.qnicoud.dmgym.feature.settings
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,11 +13,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -149,7 +155,7 @@ internal fun DataSection(
         modifier = Modifier.testTag(SettingsTags.EXPORT),
     )
     if (state.confirmingErase) {
-        EraseConfirmation(actions)
+        EraseConfirmation(state, actions)
     } else {
         ActionRow(
             label = stringResource(R.string.settings_erase),
@@ -192,9 +198,17 @@ private fun ActionRow(
     }
 }
 
-/** Confirmation d'effacement dans la page ; « Annuler » passe avant l'action destructive. */
+/**
+ * Confirmation d'effacement dans la page (parcours §4.8) : on tape le mot pour activer le bouton destructif.
+ * Le focus va sur la consigne à l'apparition, donc TalkBack la lit en premier ; « Annuler » précède l'action.
+ */
 @Composable
-private fun EraseConfirmation(actions: SettingsActions) {
+private fun EraseConfirmation(
+    state: DataUiState,
+    actions: SettingsActions,
+) {
+    val promptFocus = remember { FocusRequester() }
+    LaunchedEffect(Unit) { promptFocus.requestFocus() }
     Surface(
         color = MaterialTheme.colorScheme.errorContainer,
         contentColor = MaterialTheme.colorScheme.onErrorContainer,
@@ -203,7 +217,18 @@ private fun EraseConfirmation(actions: SettingsActions) {
     ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.settings_erase_confirm_title), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.settings_erase_confirm_text), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = stringResource(R.string.settings_erase_confirm_text, DataUiState.ERASE_WORD),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.focusRequester(promptFocus).focusable().testTag(SettingsTags.ERASE_PROMPT),
+            )
+            OutlinedTextField(
+                value = state.eraseInput,
+                onValueChange = actions.onEraseInput,
+                label = { Text(stringResource(R.string.settings_erase_input_label)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth().testTag(SettingsTags.ERASE_INPUT),
+            )
             TextButton(
                 onClick = actions.onCancelErase,
                 modifier = Modifier.heightIn(min = MinButtonHeight).testTag(SettingsTags.ERASE_CANCEL),
@@ -213,6 +238,7 @@ private fun EraseConfirmation(actions: SettingsActions) {
             }
             Button(
                 onClick = actions.onConfirmErase,
+                enabled = state.canErase,
                 modifier = Modifier.heightIn(min = MinButtonHeight).testTag(SettingsTags.ERASE_CONFIRM),
                 colors =
                     ButtonDefaults.buttonColors(

@@ -9,8 +9,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import io.github.qnicoud.dmgym.app.Appearance
@@ -30,10 +36,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             val appearance = bootstrap.appearance.collectAsStateWithLifecycle().value ?: Appearance()
             val dark = appearance.mode.isDark(isSystemInDarkTheme())
-            val reduceMotion = appearance.reduceAnimations.resolve(LocalContext.current.systemAnimationsDisabled())
+            val reduceMotion = appearance.reduceAnimations.resolve(rememberSystemReducedMotion())
             SystemBarsFollowTheme(dark)
             DmGymApp(container, palette = appearance.palette, darkTheme = dark, reduceMotion = reduceMotion)
         }
+    }
+
+    /** Réglage d'animations du système, relu quand l'app revient au premier plan. */
+    @Composable
+    private fun rememberSystemReducedMotion(): Boolean {
+        val context = LocalContext.current
+        var reduced by remember { mutableStateOf(context.systemAnimationsDisabled()) }
+        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { reduced = context.systemAnimationsDisabled() }
+        return reduced
     }
 
     /** Les icônes des barres système suivent le thème choisi, pas seulement celui du téléphone. */

@@ -12,6 +12,10 @@ import io.github.qnicoud.dmgym.core.settings.VibrationStrength
 import io.github.qnicoud.dmgym.core.signal.EndSignal
 import io.github.qnicoud.dmgym.core.timer.DurationBounds
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +23,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Clock
 import kotlin.time.Duration
 
@@ -40,8 +45,17 @@ enum class DataMessage { EXPORTED, EXPORT_FAILED, ERASED, ERASE_FAILED }
 /** État de la section Données : la confirmation d'effacement est dans la page (pas de dialogue). */
 data class DataUiState(
     val confirmingErase: Boolean = false,
+    /** Ce que l'utilisateur a tapé pour confirmer ; le mot attendu est [ERASE_WORD]. */
+    val eraseInput: String = "",
     val message: DataMessage? = null,
-)
+) {
+    /** Le mot est accepté sans tenir compte de la casse ni des espaces autour. */
+    val canErase: Boolean get() = eraseInput.trim().equals(ERASE_WORD, ignoreCase = true)
+
+    companion object {
+        const val ERASE_WORD = "EFFACER"
+    }
+}
 
 /** État de l'écran Réglages (S11). [palette] est la palette réellement appliquée (repli sur Parchemin avant l'API 31). */
 data class SettingsUiState(
@@ -68,7 +82,10 @@ class SettingsViewModel(
     private val endSignal: EndSignal,
     private val archive: SessionArchive,
     private val clock: Clock = Clock.systemUTC(),
+    private val computation: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
+    private var lastTryMillis: Long? = null
+    private var messageJob: Job? = null
     private val palettes = ThemePalette.available(sdkInt)
     private val data = MutableStateFlow(DataUiState())
 
@@ -81,7 +98,12 @@ class SettingsViewModel(
     fun setVibrationStrength(strength: VibrationStrength) = change { it.copy(vibrationStrength = strength) }
 
     /** Bouton « Essayer » : joue la vibration à la force choisie, même si l'interrupteur est coupé. */
-    fun tryVibration() = endSignal.previewVibration(uiState.value.vibrationStrength)
+    fun tryVibration() {
+        val now = clock.millis()
+        if (lastTryMillis?.let { now - it < TRY_DEBOUNCE_MILLIS } == true) return
+        lastTryMillis = now
+        endSignal.previewVibration(uiState.value.vibrationStrength)
+    }
 
     fun setThemeMode(mode: ThemeMode) = change { it.copy(themeMode = mode) }
 
@@ -109,30 +131,54 @@ class SettingsViewModel(
 
     fun decrease(id: ExerciseId) = step(id) { bounds, current -> bounds.decrease(current) }
 
-    fun requestErase() = data.update { DataUiState(confirmingErase = true) }
+    fun requestErase() = showData(DataUiState(confirmingErase = true))
 
-    fun cancelErase() = data.update { DataUiState() }
+    fun cancelErase() = showData(DataUiState())
 
+    fun setEraseInput(text: String) = data.update { it.copy(eraseInput = text) }
+
+    /** Sans effet tant que le mot de confirmation n'est pas tapé. */
     fun confirmErase() {
+        if (!data.value.canErase) return
         viewModelScope.launch {
             val outcome = if (attempt { archive.deleteAll() }) DataMessage.ERASED else DataMessage.ERASE_FAILED
-            data.value = DataUiState(message = outcome)
+            showData(DataUiState(message = outcome))
+            scheduleMessageClear(outcome)
         }
     }
 
-    /** Écrit l'export via [write] (fichier choisi par l'utilisateur) ; [exerciseNames] : nom par identifiant. */
+    /** Écrit l'export via [write] (fichier choisi par l'utilisateur), avec les libellés [labels]. */
     fun export(
-        exerciseNames: Map<String, String>,
+        labels: ExportLabels,
         write: suspend (String) -> Unit,
     ) {
+        showData(DataUiState())
         viewModelScope.launch {
             val done =
                 attempt {
                     val details = archive.readAll()
-                    write(SessionExportFormatter(exerciseNames).format(details, clock.instant()))
+                    val text =
+                        withContext(computation) { SessionExportFormatter(labels).format(details, clock.instant()) }
+                    write(text)
                 }
-            data.value = DataUiState(message = if (done) DataMessage.EXPORTED else DataMessage.EXPORT_FAILED)
+            val outcome = if (done) DataMessage.EXPORTED else DataMessage.EXPORT_FAILED
+            showData(DataUiState(message = outcome))
+            scheduleMessageClear(outcome)
         }
+    }
+
+    private fun showData(state: DataUiState) {
+        messageJob?.cancel()
+        data.value = state
+    }
+
+    /** Le message s'efface après un moment, sauf si une autre action l'a déjà remplacé. */
+    private fun scheduleMessageClear(shown: DataMessage) {
+        messageJob =
+            viewModelScope.launch {
+                delay(MESSAGE_MILLIS)
+                data.update { if (it.message == shown) it.copy(message = null) else it }
+            }
     }
 
     private suspend fun attempt(block: suspend () -> Unit): Boolean =
@@ -193,5 +239,13 @@ class SettingsViewModel(
             maxSeconds = bounds.max.inWholeSeconds.toInt(),
             untimed = id in current.untimed,
         )
+    }
+
+    companion object {
+        /** Durée d'affichage du résultat d'une action de la section Données. */
+        const val MESSAGE_MILLIS = 6_000L
+
+        /** Deux appuis sur « Essayer » plus proches que cela ne rejouent pas la vibration. */
+        const val TRY_DEBOUNCE_MILLIS = 500L
     }
 }

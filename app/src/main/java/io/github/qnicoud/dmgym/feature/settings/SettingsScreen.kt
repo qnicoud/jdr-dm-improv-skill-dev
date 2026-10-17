@@ -50,6 +50,8 @@ object SettingsTags {
     const val ERASE = "settings_erase"
     const val ERASE_CONFIRM = "settings_erase_confirm"
     const val ERASE_CANCEL = "settings_erase_cancel"
+    const val ERASE_PROMPT = "settings_erase_prompt"
+    const val ERASE_INPUT = "settings_erase_input"
     const val DATA_MESSAGE = "settings_data_message"
 
     fun strength(strength: VibrationStrength) = "settings_strength_${strength.name}"
@@ -84,6 +86,7 @@ data class SettingsActions(
     val onRequestErase: () -> Unit = {},
     val onCancelErase: () -> Unit = {},
     val onConfirmErase: () -> Unit = {},
+    val onEraseInput: (String) -> Unit = {},
     val onDecrease: (ExerciseId) -> Unit = {},
     val onIncrease: (ExerciseId) -> Unit = {},
     val onUntimed: (ExerciseId, Boolean) -> Unit = { _, _ -> },
