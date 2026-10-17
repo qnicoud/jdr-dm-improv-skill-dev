@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 900 320" width="900" height="320" role="img" aria-label="DM Gym - ecran de meneur de jeu surmonte d'une flamme">
+  <title>DM Gym - 05 Ecran de MJ et flamme</title>
+  <defs>
+    <clipPath id="ci"><circle cx="54" cy="54" r="54"/></clipPath>
+    <clipPath id="sq"><rect width="108" height="108" rx="24"/></clipPath>
+    <g id="bg"><rect width="108" height="108" fill="#2A211C"/></g>
+    <g id="fg">
+      <path d="M54 20C61 28 64 33 64 39a10 10 0 0 1-20 0C44 33 47 28 54 20Z" fill="#F2C94C"/>
+      <path d="M54 30C57 34 58 37 58 39a4 4 0 0 1-8 0C50 37 51 34 54 30Z" fill="#FFE08A"/>
+      <path d="M24 46L42 42V82L24 78Z" fill="#7A2A18"/>
+      <path d="M84 46L66 42V82L84 78Z" fill="#7A2A18"/>
+      <rect x="42" y="40" width="24" height="42" fill="#8A2E1C"/>
+      <rect x="42" y="40" width="24" height="3.5" fill="#F2C94C"/>
+      <path d="M54 54L59 61L54 68L49 61Z" fill="#F2C94C"/>
+      <path d="M24 46L42 42M84 46L66 42" stroke="#F2C94C" stroke-width="2.5" fill="none"/>
+    </g>
+    <g id="mono">
+      <path d="M54 20C61 28 64 33 64 39a10 10 0 0 1-20 0C44 33 47 28 54 20Z" fill="#112430"/>
+      <path d="M24 46L42 42V82L24 78Z M84 46L66 42V82L84 78Z M42 40H66V82H42Z" fill="#112430"/>
+      <path d="M42 42V82M66 42V82" stroke="#D9E6F0" stroke-width="1.6"/>
+      <path d="M54 54L59 61L54 68L49 61Z" fill="#D9E6F0"/>
+    </g>
+    <g id="icon" clip-path="url(#ci)"><use xlink:href="#bg"/><use xlink:href="#fg"/></g>
+    <g id="iconsq" clip-path="url(#sq)"><use xlink:href="#bg"/><use xlink:href="#fg"/></g>
+    <g id="monotile"><circle cx="54" cy="54" r="54" fill="#D9E6F0"/><use xlink:href="#mono"/></g>
+  </defs>
+  <rect width="900" height="320" fill="#FBF5EA"/>
+  <g font-family="Alegreya, Georgia, serif" font-size="12" fill="#4F433A">
+    <g transform="translate(24,24) scale(2)"><use xlink:href="#icon"/></g>
+    <text x="24" y="262">Icone adaptative (masque rond)</text>
+    <g transform="translate(270,24)"><use xlink:href="#monotile"/></g>
+    <text x="270" y="152">Monochrome (Android 13)</text>
+    <g transform="translate(410,24) scale(0.4444)"><use xlink:href="#icon"/></g>
+    <g transform="translate(470,24) scale(0.4444)"><use xlink:href="#monotile"/></g>
+    <text x="410" y="86">48 px</text>
+    <g transform="translate(270,176) scale(0.8889)"><use xlink:href="#iconsq"/></g>
+    <text x="392" y="250" font-size="80" font-weight="800" fill="#8A2E1C" textLength="330" lengthAdjust="spacingAndGlyphs">DM Gym</text>
+    <text x="394" y="284" font-size="18" fill="#4F433A">la salle de sport du MJ</text>
+  </g>
+</svg>
