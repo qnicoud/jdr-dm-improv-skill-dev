@@ -21,6 +21,12 @@ sealed interface ExerciseAction {
         val text: String,
     ) : ExerciseAction
 
+    /** Notes de fin de séance : acceptées aussi une fois l'exercice terminé. */
+    data class NoteChanged(
+        val key: AnswerKey,
+        val text: String,
+    ) : ExerciseAction
+
     data class FlagToggled(
         val key: AnswerKey,
     ) : ExerciseAction
@@ -32,6 +38,8 @@ sealed interface ExerciseAction {
     data class CheckToggled(
         val key: DrawKey,
     ) : ExerciseAction
+
+    data object PreviousQuestion : ExerciseAction
 
     /** Question suivante ; [lastIndex] est l'indice de la dernière question. */
     data class NextQuestion(
