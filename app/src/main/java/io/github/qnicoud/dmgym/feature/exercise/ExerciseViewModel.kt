@@ -83,6 +83,7 @@ class ExerciseViewModel(
         )
     private val restorer = SessionRestorer(definition, deps, handle, launch, engine)
     private val drawing = DrawCoordinator(definition, drawer, channel, ::dispatch) { model.value.session }
+    private val detection = DetectionCoordinator(definition, deps.detector, ::dispatch) { model.value.session }
     private val fields = FieldStates(viewModelScope, { model.value.session.textOf(it) }, ::onAnswerChanged)
     private var starting = false
     private val announcer = TimerAnnouncer(engine, deps, handle, viewModelScope, channel)
@@ -129,50 +130,11 @@ class ExerciseViewModel(
     ) {
         val isNote = key.fieldKey == definition.endNote?.key
         dispatch(if (isNote) ExerciseAction.NoteChanged(key, text) else ExerciseAction.AnswerChanged(key, text))
-        if (key.fieldKey == definition.detection?.field) redetect()
-    }
-
-    /** Recalcule les cases « utilisé » ; le cochage manuel n'est jamais touché (réducteur, ADR 0008). */
-    private fun redetect() {
-        val spec = definition.detection ?: return
-        val detector = deps.detector ?: return
-        val session = model.value.session
-        val draws = session.draws.filter { it.slotKey in spec.slotKeys }
-        dispatch(ExerciseAction.AutoDetected(detector.detect(draws, session.textOf(AnswerKey(spec.field)))))
-    }
-
-    /** Charge les mots-clés de [draws] ; à faire avant que l'écran n'affiche le champ, pour un surlignage immédiat. */
-    private suspend fun loadKeywords(draws: List<Draw>) {
-        val spec = definition.detection ?: return
-        deps.detector?.prepare(draws.filter { it.slotKey in spec.slotKeys })
-    }
-
-    private fun redetectIfTyped() {
-        val spec = definition.detection ?: return
-        if (model.value.session
-                .textOf(AnswerKey(spec.field))
-                .isNotBlank()
-        ) {
-            redetect()
-        }
-    }
-
-    /** Après une relance : charge les mots-clés des nouveaux tirages puis recalcule les cases. */
-    private suspend fun prepareDetection() {
-        loadKeywords(model.value.session.draws)
-        redetectIfTyped()
+        if (key.fieldKey == definition.detection?.field) detection.redetect()
     }
 
     /** Plages du [text] à surligner (champ surveillé) ; synchrone, appelé à chaque rendu du champ. */
-    fun highlights(text: String): List<IntRange> {
-        val spec = definition.detection ?: return emptyList()
-        val detector = deps.detector ?: return emptyList()
-        return detector.highlights(
-            model.value.session.draws
-                .filter { it.slotKey in spec.slotKeys },
-            text,
-        )
-    }
+    fun highlights(text: String): List<IntRange> = detection.highlights(text)
 
     fun onFlagToggled(key: AnswerKey) = dispatch(ExerciseAction.FlagToggled(key))
 
@@ -184,7 +146,11 @@ class ExerciseViewModel(
         value: Boolean,
     ) {
         dispatch(ExerciseAction.OptionChanged(key, value))
-        if (model.value.session.phase == Phase.Ready) viewModelScope.launch { drawing.redrawForOption(key) }
+        if (model.value.session.phase ==
+            Phase.Ready
+        ) {
+            viewModelScope.launch { if (drawing.redrawForOption(key)) detection.prepare() }
+        }
     }
 
     fun onNextQuestion() = moveQuestion { ExerciseAction.NextQuestion(it.lastIndex) }
@@ -211,7 +177,7 @@ class ExerciseViewModel(
     /** Relance un slot (ou tous) ; le chrono et le texte sont conservés, et un échec garde les tirages actuels. */
     fun onReroll(slotKey: String? = null) {
         if (model.value.session.phase == Phase.Ended) return
-        viewModelScope.launch { if (drawing.reroll(slotKey)) prepareDetection() }
+        viewModelScope.launch { if (drawing.reroll(slotKey)) detection.prepare() }
     }
 
     /** « Réessayer » de la carte d'erreur. */
@@ -328,15 +294,15 @@ class ExerciseViewModel(
         if (detail == null) {
             drawFirst()
         } else {
-            loadKeywords(detail.toExerciseSession().draws)
+            detection.loadKeywords(detail.toExerciseSession().draws)
             restore(detail)
-            redetectIfTyped()
+            detection.redetectIfTyped()
         }
     }
 
     private suspend fun drawFirst() {
         val first = drawing.first()
-        if (first != null) loadKeywords(first.draws)
+        if (first != null) detection.loadKeywords(first.draws)
         model.update {
             if (first == null) {
                 it.copy(loading = false, drawFailed = true)
