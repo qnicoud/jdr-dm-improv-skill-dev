@@ -57,9 +57,11 @@ abstract class ExerciseViewModelTestBase {
     @AfterEach
     fun tearDown() = Dispatchers.resetMain()
 
+    protected open fun tables() = DemoExercise.tables(source)
+
     protected fun deps() =
         ExerciseDependencies(
-            DemoExercise.tables(source),
+            tables(),
             history,
             settings,
             endSignal,

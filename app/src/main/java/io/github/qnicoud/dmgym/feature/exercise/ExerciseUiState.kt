@@ -36,6 +36,11 @@ sealed interface ExerciseEvent {
         val haptic: Boolean,
     ) : ExerciseEvent
 
+    /** Un événement unique a eu lieu (bascule de Status Numbers) : annonce et vibration courte. */
+    data class Shift(
+        val text: String,
+    ) : ExerciseEvent
+
     /** Message bref (snackbar) : l'action n'a pas abouti, rien n'est perdu. */
     data class Snackbar(
         @StringRes val textRes: Int,

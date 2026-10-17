@@ -42,6 +42,8 @@ fun DrawCard(
     onReroll: () -> Unit,
     onCheckToggled: (DrawKey) -> Unit,
     modifier: Modifier = Modifier,
+    /** Slots affichés comme une carte de statut en grand (Status Numbers). */
+    cardSlots: Set<String> = emptySet(),
 ) {
     val spoken = stringResource(R.string.draw_description, draws.joinToString(", ") { it.text })
     Card(
@@ -52,7 +54,9 @@ fun DrawCard(
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = spoken }) {
-                draws.forEach { DrawLine(it, showChecks, onCheckToggled) }
+                draws.forEach {
+                    if (it.slotKey in cardSlots) StatusCardLine(it) else DrawLine(it, showChecks, onCheckToggled)
+                }
             }
             if (showReroll) RerollRow(rerollCount, onReroll)
         }

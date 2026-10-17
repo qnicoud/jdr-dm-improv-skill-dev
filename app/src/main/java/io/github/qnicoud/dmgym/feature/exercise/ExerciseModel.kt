@@ -3,6 +3,7 @@ package io.github.qnicoud.dmgym.feature.exercise
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.ExerciseSession
+import io.github.qnicoud.dmgym.core.exercise.FieldLayout
 import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.core.exercise.TimerPolicy
 import io.github.qnicoud.dmgym.core.exercise.TimerUi
@@ -12,8 +13,12 @@ import io.github.qnicoud.dmgym.core.exercise.progressOf
 import io.github.qnicoud.dmgym.core.exercise.timerUi
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.core.settings.Settings
+import io.github.qnicoud.dmgym.core.time.MonotonicClock
 import io.github.qnicoud.dmgym.core.timer.TimerEngine
 import io.github.qnicoud.dmgym.core.timer.TimerState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlin.time.Duration.Companion.minutes
 
 /** État interne du ViewModel, projeté en [ExerciseUiState] à chaque tic. */
@@ -74,3 +79,19 @@ internal fun timerConfig(
 /** Minuteur en pause reconstruit depuis l'enregistrement quand aucun instantané n'a survécu. */
 internal fun pausedTimerFor(record: SessionRecord): TimerState =
     pausedTimerFrom(record.plannedDurationSec, record.activeDurationSec)
+
+/** Un exercice sans saisie (Status Numbers) terminé est une vraie session, même sans notes. */
+internal fun ExerciseDefinition.isPlayedWithoutText(session: ExerciseSession): Boolean =
+    layout is FieldLayout.None && session.phase == Phase.Ended
+
+/** Instants lus sur l'horloge monotone toutes les [periodMs] ms, tant que le flux est collecté. */
+internal fun ticksOf(
+    clock: MonotonicClock,
+    periodMs: Long,
+): Flow<Long> =
+    flow {
+        while (true) {
+            emit(clock.now())
+            delay(periodMs)
+        }
+    }
