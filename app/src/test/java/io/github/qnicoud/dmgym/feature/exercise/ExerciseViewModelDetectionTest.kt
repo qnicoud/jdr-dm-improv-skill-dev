@@ -49,7 +49,7 @@ class ExerciseViewModelDetectionTest : ExerciseViewModelTestBase() {
             val vm = startedDetecting()
             vm.type("Une mine abandonnée")
             runCurrent()
-            assertEquals(ElementCheck(auto = true), vm.check())
+            assertEquals(ElementCheck(auto = true, occurrences = 1), vm.check())
             assertTrue(vm.check()!!.checked)
         }
 
@@ -68,10 +68,20 @@ class ExerciseViewModelDetectionTest : ExerciseViewModelTestBase() {
             val vm = startedDetecting()
             vm.type("Une mine")
             vm.onCheckToggled(key)
-            assertEquals(ElementCheck(auto = true, manual = false), vm.check())
-            vm.type("Une mine, encore une mine")
+            assertEquals(false, vm.check()!!.manual)
+            vm.type("Une mine, encore")
             assertFalse(vm.check()!!.checked)
             assertTrue(vm.check()!!.auto)
+        }
+
+    @Test
+    fun `a new occurrence of an unchecked word checks it again`() =
+        runTest {
+            val vm = startedDetecting()
+            vm.type("Une mine")
+            vm.onCheckToggled(key)
+            vm.type("Une mine, puis une autre mine")
+            assertTrue(vm.check()!!.checked)
         }
 
     @Test
@@ -81,7 +91,8 @@ class ExerciseViewModelDetectionTest : ExerciseViewModelTestBase() {
             vm.type("Rien du tout")
             vm.onCheckToggled(key)
             vm.type("Toujours rien")
-            assertEquals(ElementCheck(auto = false, manual = true), vm.check())
+            assertEquals(true, vm.check()!!.manual)
+            assertFalse(vm.check()!!.auto)
             assertTrue(vm.check()!!.checked)
         }
 
