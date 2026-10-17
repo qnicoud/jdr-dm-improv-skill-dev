@@ -13,7 +13,9 @@ import io.github.qnicoud.dmgym.core.daily.replacementsFor
 import io.github.qnicoud.dmgym.core.daily.withReplacement
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.settings.Settings
+import io.github.qnicoud.dmgym.core.settings.ThemeMode
 import io.github.qnicoud.dmgym.core.settings.ThemePalette
+import io.github.qnicoud.dmgym.core.settings.VibrationStrength
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -141,6 +144,38 @@ class DataStoreSettingsRepositoryTest {
 
             store.edit { it[intPreferencesKey("theme_palette")] = 3 }
             assertEquals(ThemePalette.PARCHMENT, repository().settings.first().themePalette)
+        }
+
+    @Test
+    fun `vibration strength, theme mode and reduced animations default then round trip`() =
+        runBlocking {
+            val defaults = repository().settings.first()
+            assertEquals(VibrationStrength.NORMAL, defaults.vibrationStrength)
+            assertEquals(ThemeMode.SYSTEM, defaults.themeMode)
+            assertNull(defaults.reduceAnimations)
+
+            repository().update {
+                it.copy(vibrationStrength = VibrationStrength.SOFT, themeMode = ThemeMode.DARK, reduceAnimations = true)
+            }
+            val read = repository().settings.first()
+            assertEquals(VibrationStrength.SOFT, read.vibrationStrength)
+            assertEquals(ThemeMode.DARK, read.themeMode)
+            assertEquals(true, read.reduceAnimations)
+
+            repository().update { it.copy(reduceAnimations = null) }
+            assertNull(repository().settings.first().reduceAnimations)
+        }
+
+    @Test
+    fun `foreign vibration strength and theme mode values fall back to their defaults`() =
+        runBlocking {
+            store.edit {
+                it[stringPreferencesKey("vibration_strength")] = "LOUD"
+                it[intPreferencesKey("theme_mode")] = 2
+            }
+            val read = repository().settings.first()
+            assertEquals(VibrationStrength.NORMAL, read.vibrationStrength)
+            assertEquals(ThemeMode.SYSTEM, read.themeMode)
         }
 
     @Test

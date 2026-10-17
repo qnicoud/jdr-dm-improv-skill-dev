@@ -2,6 +2,7 @@ package io.github.qnicoud.dmgym.app
 
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
+import io.github.qnicoud.dmgym.core.settings.ThemeMode
 import io.github.qnicoud.dmgym.core.settings.ThemePalette
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,5 +58,28 @@ class ThemeBootstrapTest {
         val bootstrap = ThemeBootstrap(SourceRepository(flow { error("disk") }), scope)
         assertEquals(ThemePalette.PARCHMENT, bootstrap.palette.value)
         assertTrue(bootstrap.isReady)
+    }
+
+    @Test
+    fun `exposes the theme mode and the animation choice with the palette`() {
+        val source = MutableSharedFlow<Settings>()
+        val bootstrap = ThemeBootstrap(SourceRepository(source), scope)
+        assertNull(bootstrap.appearance.value)
+        runBlocking {
+            source.emit(
+                Settings(themePalette = ThemePalette.NIGHT, themeMode = ThemeMode.DARK, reduceAnimations = true),
+            )
+        }
+        assertEquals(
+            Appearance(ThemePalette.NIGHT, ThemeMode.DARK, reduceAnimations = true),
+            bootstrap.appearance.value,
+        )
+        assertEquals(ThemePalette.NIGHT, bootstrap.palette.value)
+    }
+
+    @Test
+    fun `a failing read gives the default appearance`() {
+        val bootstrap = ThemeBootstrap(SourceRepository(flow { error("disk") }), scope)
+        assertEquals(Appearance(), bootstrap.appearance.value)
     }
 }

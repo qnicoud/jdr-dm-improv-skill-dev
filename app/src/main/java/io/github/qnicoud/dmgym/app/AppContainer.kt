@@ -8,7 +8,9 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.core.exercise.KeywordAnswerDetector
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
+import io.github.qnicoud.dmgym.core.history.SessionArchive
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
+import io.github.qnicoud.dmgym.core.signal.EndSignal
 import io.github.qnicoud.dmgym.core.tables.TableRepository
 import io.github.qnicoud.dmgym.core.time.SystemZoneClock
 import io.github.qnicoud.dmgym.data.history.RoomHistoryRepository
@@ -34,6 +36,12 @@ import java.time.Duration
 interface AppContainer {
     val settingsRepository: SettingsRepository
     val historyRepository: HistoryRepository
+
+    /** Export et effacement total des sessions (S11, Données). */
+    val sessionArchive: SessionArchive
+
+    /** Signal de fin partagé : l'écran Réglages s'en sert pour le bouton « Essayer ». */
+    val endSignal: EndSignal
     val exerciseCatalog: ExerciseCatalog
     val exerciseRegistry: ExerciseRegistry
     val exerciseDependencies: ExerciseDependencies
@@ -66,9 +74,15 @@ class DefaultAppContainer(
             .build()
     }
 
-    override val historyRepository: HistoryRepository by lazy {
+    private val roomHistory: RoomHistoryRepository by lazy {
         RoomHistoryRepository(database.sessionDao(), clock, periodicTicks(Duration.ofMinutes(1)))
     }
+
+    override val historyRepository: HistoryRepository get() = roomHistory
+
+    override val sessionArchive: SessionArchive get() = roomHistory
+
+    override val endSignal: EndSignal by lazy { AndroidEndSignal(application) }
 
     override val exerciseCatalog: ExerciseCatalog by lazy { SettingsExerciseCatalog(settingsRepository) }
 
@@ -83,7 +97,7 @@ class DefaultAppContainer(
             tables = tableRepository,
             history = historyRepository,
             settings = settingsRepository,
-            endSignal = AndroidEndSignal(application),
+            endSignal = endSignal,
             monotonicClock = SystemMonotonicClock(),
             wallClock = Clock.systemDefaultZone(),
             detector =

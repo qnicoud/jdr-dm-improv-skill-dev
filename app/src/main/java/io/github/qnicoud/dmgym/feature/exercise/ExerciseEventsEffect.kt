@@ -12,7 +12,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.Milestone
-import io.github.qnicoud.dmgym.platform.performTick
 
 /** Événements ponctuels du ViewModel : annonces TalkBack, messages brefs et bascule (annonce et vibration). */
 @Composable
@@ -44,7 +43,7 @@ internal fun EventsEffect(
                     }
 
                     is ExerciseEvent.Reminder -> {
-                        if (event.haptic && viewModel.hapticReminders.value) view.performTick()
+                        if (event.haptic && viewModel.hapticReminders.value) viewModel.playReminderTick()
                     }
 
                     is ExerciseEvent.Shift -> {

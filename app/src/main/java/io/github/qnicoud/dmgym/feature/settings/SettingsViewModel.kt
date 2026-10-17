@@ -3,15 +3,23 @@ package io.github.qnicoud.dmgym.feature.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.core.history.SessionArchive
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
+import io.github.qnicoud.dmgym.core.settings.ThemeMode
 import io.github.qnicoud.dmgym.core.settings.ThemePalette
+import io.github.qnicoud.dmgym.core.settings.VibrationStrength
+import io.github.qnicoud.dmgym.core.signal.EndSignal
 import io.github.qnicoud.dmgym.core.timer.DurationBounds
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Clock
 import kotlin.time.Duration
 
 /** Durée réglable d'un exercice. [untimed] : « Sans minuteur » ; [seconds] reste la durée à retrouver en le décochant. */
@@ -26,31 +34,58 @@ data class DurationRow(
     val canIncrease: Boolean get() = seconds < maxSeconds
 }
 
+/** Résultat de la dernière action de la section Données, lu à voix haute par TalkBack. */
+enum class DataMessage { EXPORTED, EXPORT_FAILED, ERASED, ERASE_FAILED }
+
+/** État de la section Données : la confirmation d'effacement est dans la page (pas de dialogue). */
+data class DataUiState(
+    val confirmingErase: Boolean = false,
+    val message: DataMessage? = null,
+)
+
 /** État de l'écran Réglages (S11). [palette] est la palette réellement appliquée (repli sur Parchemin avant l'API 31). */
 data class SettingsUiState(
     val isLoading: Boolean = true,
     val durations: List<DurationRow> = emptyList(),
     val vibration: Boolean = true,
+    val canVibrate: Boolean = true,
+    val vibrationStrength: VibrationStrength = VibrationStrength.NORMAL,
     val sound: Boolean = true,
     val crazyMinuteHaptic: Boolean = false,
     val dailyIncludeOnePage: Boolean = false,
     val palette: ThemePalette = ThemePalette.PARCHMENT,
     val palettes: List<ThemePalette> = listOf(ThemePalette.PARCHMENT),
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    /** `null` : suit le système. */
+    val reduceAnimations: Boolean? = null,
+    val data: DataUiState = DataUiState(),
 )
 
 /** Réglages (ADR 0013) : chaque changement s'écrit aussitôt dans le dépôt, sans bouton « Enregistrer ». */
 class SettingsViewModel(
     private val settings: SettingsRepository,
     sdkInt: Int,
+    private val endSignal: EndSignal,
+    private val archive: SessionArchive,
+    private val clock: Clock = Clock.systemUTC(),
 ) : ViewModel() {
     private val palettes = ThemePalette.available(sdkInt)
+    private val data = MutableStateFlow(DataUiState())
 
     val uiState: StateFlow<SettingsUiState> =
-        settings.settings
-            .map { toUiState(it, sdkInt) }
+        combine(settings.settings, data) { current, dataState -> toUiState(current, sdkInt, dataState) }
             .stateIn(viewModelScope, SharingStarted.Eagerly, SettingsUiState())
 
     fun setVibration(enabled: Boolean) = change { it.copy(vibrationEnabled = enabled) }
+
+    fun setVibrationStrength(strength: VibrationStrength) = change { it.copy(vibrationStrength = strength) }
+
+    /** Bouton « Essayer » : joue la vibration à la force choisie, même si l'interrupteur est coupé. */
+    fun tryVibration() = endSignal.previewVibration(uiState.value.vibrationStrength)
+
+    fun setThemeMode(mode: ThemeMode) = change { it.copy(themeMode = mode) }
+
+    fun setReduceAnimations(reduce: Boolean?) = change { it.copy(reduceAnimations = reduce) }
 
     fun setSound(enabled: Boolean) = change { it.copy(soundEnabled = enabled) }
 
@@ -74,6 +109,42 @@ class SettingsViewModel(
 
     fun decrease(id: ExerciseId) = step(id) { bounds, current -> bounds.decrease(current) }
 
+    fun requestErase() = data.update { DataUiState(confirmingErase = true) }
+
+    fun cancelErase() = data.update { DataUiState() }
+
+    fun confirmErase() {
+        viewModelScope.launch {
+            val outcome = if (attempt { archive.deleteAll() }) DataMessage.ERASED else DataMessage.ERASE_FAILED
+            data.value = DataUiState(message = outcome)
+        }
+    }
+
+    /** Écrit l'export via [write] (fichier choisi par l'utilisateur) ; [exerciseNames] : nom par identifiant. */
+    fun export(
+        exerciseNames: Map<String, String>,
+        write: suspend (String) -> Unit,
+    ) {
+        viewModelScope.launch {
+            val done =
+                attempt {
+                    val details = archive.readAll()
+                    write(SessionExportFormatter(exerciseNames).format(details, clock.instant()))
+                }
+            data.value = DataUiState(message = if (done) DataMessage.EXPORTED else DataMessage.EXPORT_FAILED)
+        }
+    }
+
+    private suspend fun attempt(block: suspend () -> Unit): Boolean =
+        try {
+            block()
+            true
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            false
+        }
+
     private fun step(
         id: ExerciseId,
         move: (DurationBounds, Duration) -> Duration,
@@ -92,15 +163,21 @@ class SettingsViewModel(
     private fun toUiState(
         current: Settings,
         sdkInt: Int,
+        dataState: DataUiState,
     ) = SettingsUiState(
         isLoading = false,
         durations = ExerciseId.ALL.map { durationRow(it, current) },
         vibration = current.vibrationEnabled,
+        canVibrate = endSignal.canVibrate,
+        vibrationStrength = current.vibrationStrength,
         sound = current.soundEnabled,
         crazyMinuteHaptic = current.crazyEightsMinuteHaptic,
         dailyIncludeOnePage = current.dailyIncludeOnePage,
         palette = current.themePalette.effective(sdkInt),
         palettes = palettes,
+        themeMode = current.themeMode,
+        reduceAnimations = current.reduceAnimations,
+        data = dataState,
     )
 
     private fun durationRow(

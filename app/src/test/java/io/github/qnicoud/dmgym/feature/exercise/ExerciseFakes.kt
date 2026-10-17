@@ -9,6 +9,7 @@ import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionNotFoundException
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.core.settings.Settings
+import io.github.qnicoud.dmgym.core.settings.VibrationStrength
 import io.github.qnicoud.dmgym.core.signal.EndSignal
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -107,6 +108,8 @@ class FakeEndSignal : EndSignal {
     var prepared = false
     var released = false
     val played = mutableListOf<Settings>()
+    val previews = mutableListOf<VibrationStrength>()
+    val ticks = mutableListOf<VibrationStrength>()
 
     override fun prepare() {
         prepared = true
@@ -118,6 +121,14 @@ class FakeEndSignal : EndSignal {
 
     override fun release() {
         released = true
+    }
+
+    override fun previewVibration(strength: VibrationStrength) {
+        previews += strength
+    }
+
+    override fun tick(strength: VibrationStrength) {
+        ticks += strength
     }
 }
 

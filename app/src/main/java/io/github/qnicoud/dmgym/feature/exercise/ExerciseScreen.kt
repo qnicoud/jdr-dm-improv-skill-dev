@@ -58,7 +58,6 @@ import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.core.exercise.TimerKind
 import io.github.qnicoud.dmgym.core.exercise.TimerUi
 import io.github.qnicoud.dmgym.platform.KeepScreenOn
-import io.github.qnicoud.dmgym.platform.performTick
 import io.github.qnicoud.dmgym.ui.components.PlaceholderScreen
 import io.github.qnicoud.dmgym.ui.components.nameRes
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
