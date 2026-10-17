@@ -233,6 +233,7 @@ class AccessibilityAuditTest {
                 onClearFilter = {},
                 onOpenSession = {},
                 onChooseExercise = {},
+                onSettingsClick = {},
             )
         }
         audit("historique")
@@ -286,7 +287,7 @@ class AccessibilityAuditTest {
                 gems = 9,
                 totalSeconds = 5 * 3_600L + 12 * 60,
             )
-        show { StatsScreen(state, onChooseExercise = {}, onShowGems = {}, onShowExercise = {}) }
+        show { StatsScreen(state, onChooseExercise = {}, onShowGems = {}, onShowExercise = {}, onSettingsClick = {}) }
         audit("progrès")
     }
 

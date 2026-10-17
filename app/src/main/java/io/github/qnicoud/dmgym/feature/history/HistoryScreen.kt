@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.ui.components.SettingsAction
 import io.github.qnicoud.dmgym.ui.components.nameRes
 import io.github.qnicoud.dmgym.ui.icons.ExerciseIcons
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
@@ -60,6 +61,7 @@ fun HistoryRoute(
     viewModel: HistoryViewModel,
     onOpenSession: (Long) -> Unit,
     onChooseExercise: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -69,6 +71,7 @@ fun HistoryRoute(
         onClearFilter = viewModel::onClearFilter,
         onOpenSession = onOpenSession,
         onChooseExercise = onChooseExercise,
+        onSettingsClick = onSettingsClick,
         modifier = modifier,
     )
 }
@@ -82,12 +85,16 @@ fun HistoryScreen(
     onClearFilter: () -> Unit,
     onOpenSession: (Long) -> Unit,
     onChooseExercise: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.history_title), Modifier.semantics { heading() }) })
+            TopAppBar(
+                title = { Text(stringResource(R.string.history_title), Modifier.semantics { heading() }) },
+                actions = { SettingsAction(onSettingsClick) },
+            )
         },
     ) { padding ->
         Column(Modifier.padding(top = padding.calculateTopPadding())) {
@@ -258,6 +265,7 @@ private fun HistoryScreenPreview() {
             onClearFilter = {},
             onOpenSession = {},
             onChooseExercise = {},
+            onSettingsClick = {},
         )
     }
 }
@@ -266,6 +274,6 @@ private fun HistoryScreenPreview() {
 @Composable
 private fun HistoryEmptyPreview() {
     DmGymTheme {
-        HistoryScreen(HistoryUiState(isLoading = false), {}, {}, {}, {})
+        HistoryScreen(HistoryUiState(isLoading = false), {}, {}, {}, {}, {})
     }
 }
