@@ -1,6 +1,9 @@
 package io.github.qnicoud.dmgym.app.navigation
 
 import android.os.Build
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -31,6 +34,7 @@ import io.github.qnicoud.dmgym.feature.settings.SettingsRoute
 import io.github.qnicoud.dmgym.feature.settings.SettingsViewModel
 import io.github.qnicoud.dmgym.feature.stats.StatsRoute
 import io.github.qnicoud.dmgym.feature.stats.StatsViewModel
+import io.github.qnicoud.dmgym.ui.theme.LocalReduceMotion
 
 /**
  * Affiche la pile de retour (ADR 0003). Chaque entrée a son `ViewModelStore` et son état sauvegardé ;
@@ -48,17 +52,33 @@ fun AppNavDisplay(
         modifier = modifier,
         bottomBar = { currentTab?.let { AppNavigationBar(it, navigator::selectTab) } },
     ) { padding ->
-        NavDisplay(
-            backStack = navigator.backStack,
-            modifier = Modifier.padding(padding).consumeWindowInsets(padding),
-            onBack = { navigator.back() },
-            entryDecorators =
-                listOf(
-                    rememberSaveableStateHolderNavEntryDecorator(),
-                    rememberViewModelStoreNavEntryDecorator(),
-                ),
-            entryProvider = provider,
-        )
+        val decorators =
+            listOf(
+                rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
+                rememberViewModelStoreNavEntryDecorator<NavKey>(),
+            )
+        val content = Modifier.padding(padding).consumeWindowInsets(padding)
+        if (LocalReduceMotion.current) {
+            val instant = { ContentTransform(EnterTransition.None, ExitTransition.None) }
+            NavDisplay(
+                backStack = navigator.backStack,
+                modifier = content,
+                onBack = { navigator.back() },
+                entryDecorators = decorators,
+                transitionSpec = { instant() },
+                popTransitionSpec = { instant() },
+                predictivePopTransitionSpec = { instant() },
+                entryProvider = provider,
+            )
+        } else {
+            NavDisplay(
+                backStack = navigator.backStack,
+                modifier = content,
+                onBack = { navigator.back() },
+                entryDecorators = decorators,
+                entryProvider = provider,
+            )
+        }
     }
 }
 
@@ -121,7 +141,15 @@ private fun appEntryProvider(
         }
         entry<Settings> {
             SettingsRoute(
-                viewModel = viewModel { SettingsViewModel(container.settingsRepository, Build.VERSION.SDK_INT) },
+                viewModel =
+                    viewModel {
+                        SettingsViewModel(
+                            container.settingsRepository,
+                            Build.VERSION.SDK_INT,
+                            container.endSignal,
+                            container.sessionArchive,
+                        )
+                    },
                 onBack = { navigator.back() },
                 onOpenAbout = navigator::openAbout,
             )

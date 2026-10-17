@@ -58,6 +58,15 @@ abstract class SessionDao {
     @Query("DELETE FROM sessions WHERE id = :id")
     abstract suspend fun deleteById(id: Long)
 
+    /** Toutes les sessions, y compris celles en cours (export). */
+    @Transaction
+    @Query("SELECT * FROM sessions ORDER BY startedAtEpochMillis, id")
+    abstract suspend fun readAll(): List<SessionWithChildren>
+
+    /** Les tirages, réponses et grilles partent avec leur session (clé étrangère en cascade). */
+    @Query("DELETE FROM sessions")
+    abstract suspend fun deleteAll()
+
     @Upsert
     abstract suspend fun upsertDraws(draws: List<DrawEntity>)
 

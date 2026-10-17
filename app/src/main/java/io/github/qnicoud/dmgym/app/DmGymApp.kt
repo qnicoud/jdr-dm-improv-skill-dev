@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.app
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -12,17 +13,19 @@ import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 
 /**
  * Racine de l'UI : thème + navigation. La pile est sauvegardée sur rotation et mort du processus.
- * [palette] vient des réglages, lus en direct par [ThemeBootstrap] (D53).
+ * [palette], [darkTheme] et [reduceMotion] viennent des réglages, lus en direct par [ThemeBootstrap] (D53).
  */
 @Composable
 fun DmGymApp(
     container: AppContainer,
     modifier: Modifier = Modifier,
     palette: ThemePalette = ThemePalette.PARCHMENT,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    reduceMotion: Boolean = false,
 ) {
     val backStack = rememberNavBackStack(Home)
     val navigator = remember(backStack) { AppNavigator(backStack) }
-    DmGymTheme(palette = palette) {
+    DmGymTheme(darkTheme = darkTheme, palette = palette, reduceMotion = reduceMotion) {
         AppNavDisplay(navigator = navigator, container = container, modifier = modifier)
     }
 }

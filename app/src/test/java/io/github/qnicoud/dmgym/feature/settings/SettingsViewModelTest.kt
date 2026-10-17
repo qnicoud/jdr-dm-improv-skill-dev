@@ -2,11 +2,15 @@ package io.github.qnicoud.dmgym.feature.settings
 
 import io.github.qnicoud.dmgym.app.FakeSettingsRepository
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.core.settings.ThemeMode
 import io.github.qnicoud.dmgym.core.settings.ThemePalette
+import io.github.qnicoud.dmgym.core.settings.VibrationStrength
+import io.github.qnicoud.dmgym.feature.exercise.FakeEndSignal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -14,16 +18,33 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.IOException
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
     private val repo = FakeSettingsRepository()
+    private val endSignal = FakeEndSignal()
+    private val archive = FakeSessionArchive()
+    private var clockMillis = Instant.parse("2026-10-17T08:00:00Z").toEpochMilli()
+    private val clock =
+        object : Clock() {
+            override fun getZone() = ZoneOffset.UTC
 
-    private fun viewModel(sdkInt: Int = 34) = SettingsViewModel(repo, sdkInt)
+            override fun withZone(zone: java.time.ZoneId?) = this
+
+            override fun instant(): Instant = Instant.ofEpochMilli(clockMillis)
+        }
+
+    private fun viewModel(sdkInt: Int = 34) =
+        SettingsViewModel(repo, sdkInt, endSignal, archive, clock, UnconfinedTestDispatcher())
 
     private fun SettingsViewModel.row(id: ExerciseId) = uiState.value.durations.first { it.id == id }
 
@@ -144,5 +165,150 @@ class SettingsViewModelTest {
                 repo.state.value.durations
                     .isEmpty(),
             )
+        }
+
+    @Test
+    fun `vibration strength defaults to normal and is saved`() =
+        runTest {
+            val vm = viewModel()
+            assertEquals(VibrationStrength.NORMAL, vm.uiState.value.vibrationStrength)
+            vm.setVibrationStrength(VibrationStrength.SOFT)
+            assertEquals(VibrationStrength.SOFT, repo.state.value.vibrationStrength)
+            assertEquals(VibrationStrength.SOFT, vm.uiState.value.vibrationStrength)
+        }
+
+    @Test
+    fun `trying the vibration plays the chosen strength even when vibration is switched off`() =
+        runTest {
+            val vm = viewModel()
+            vm.setVibration(false)
+            vm.setVibrationStrength(VibrationStrength.STRONG)
+            vm.tryVibration()
+            assertEquals(listOf(VibrationStrength.STRONG), endSignal.previews)
+        }
+
+    @Test
+    fun `the state tells whether the phone can vibrate`() =
+        runTest {
+            assertTrue(viewModel().uiState.value.canVibrate)
+        }
+
+    @Test
+    fun `theme mode defaults to system and reduce animations follows the system`() =
+        runTest {
+            val vm = viewModel()
+            assertEquals(ThemeMode.SYSTEM, vm.uiState.value.themeMode)
+            assertNull(vm.uiState.value.reduceAnimations)
+            vm.setThemeMode(ThemeMode.DARK)
+            vm.setReduceAnimations(true)
+            assertEquals(ThemeMode.DARK, repo.state.value.themeMode)
+            assertEquals(true, vm.uiState.value.reduceAnimations)
+            vm.setReduceAnimations(null)
+            assertNull(repo.state.value.reduceAnimations)
+        }
+
+    @Test
+    fun `erasing needs a confirmation and can be cancelled`() =
+        runTest {
+            val vm = viewModel()
+            vm.requestErase()
+            assertTrue(vm.uiState.value.data.confirmingErase)
+            vm.cancelErase()
+            assertFalse(vm.uiState.value.data.confirmingErase)
+            assertEquals(0, archive.deleteCalls)
+        }
+
+    @Test
+    fun `confirming without the word does nothing`() =
+        runTest {
+            val vm = viewModel()
+            vm.requestErase()
+            vm.confirmErase()
+            vm.setEraseInput("efface")
+            vm.confirmErase()
+            assertEquals(0, archive.deleteCalls)
+            assertTrue(vm.uiState.value.data.confirmingErase)
+        }
+
+    @Test
+    fun `the word is accepted whatever the case and the surrounding spaces`() =
+        runTest {
+            val vm = viewModel()
+            vm.requestErase()
+            vm.setEraseInput("  Effacer ")
+            assertTrue(vm.uiState.value.data.canErase)
+            vm.confirmErase()
+            assertEquals(1, archive.deleteCalls)
+            assertEquals(DataUiState(message = DataMessage.ERASED), vm.uiState.value.data)
+        }
+
+    @Test
+    fun `cancelling forgets the typed word`() =
+        runTest {
+            val vm = viewModel()
+            vm.requestErase()
+            vm.setEraseInput("EFFACER")
+            vm.cancelErase()
+            vm.requestErase()
+            assertEquals("", vm.uiState.value.data.eraseInput)
+        }
+
+    @Test
+    fun `a failing erase is reported and keeps the settings`() =
+        runTest {
+            archive.failure = IOException("disk")
+            val vm = viewModel()
+            vm.setThemeMode(ThemeMode.DARK)
+            vm.requestErase()
+            vm.setEraseInput("EFFACER")
+            vm.confirmErase()
+            assertEquals(DataMessage.ERASE_FAILED, vm.uiState.value.data.message)
+            assertEquals(ThemeMode.DARK, repo.state.value.themeMode)
+        }
+
+    @Test
+    fun `the result message disappears after a while and with the next action`() =
+        runTest {
+            val vm = viewModel()
+            vm.export(ExportLabels()) { }
+            assertEquals(DataMessage.EXPORTED, vm.uiState.value.data.message)
+            advanceTimeBy(SettingsViewModel.MESSAGE_MILLIS + 1)
+            assertNull(vm.uiState.value.data.message)
+            vm.export(ExportLabels()) { }
+            vm.requestErase()
+            assertNull(vm.uiState.value.data.message)
+        }
+
+    @Test
+    fun `trying the vibration twice within half a second plays it once`() =
+        runTest {
+            val vm = viewModel()
+            vm.tryVibration()
+            vm.tryVibration()
+            assertEquals(1, endSignal.previews.size)
+            clockMillis += SettingsViewModel.TRY_DEBOUNCE_MILLIS
+            vm.tryVibration()
+            assertEquals(2, endSignal.previews.size)
+        }
+
+    @Test
+    fun `export writes the readable text through the chosen file`() =
+        runTest {
+            archive.sessions = listOf(completedSession())
+            var written = ""
+            viewModel().export(ExportLabels(exercises = mapOf("crazy_eights" to "Crazy Eights"))) { written = it }
+            assertTrue(written.contains("Crazy Eights"))
+            assertTrue(written.contains("2026-10-17"))
+        }
+
+    @Test
+    fun `a failing export is reported without touching the data`() =
+        runTest {
+            val vm = viewModel()
+            vm.export(ExportLabels()) { throw IOException("full") }
+            assertEquals(DataMessage.EXPORT_FAILED, vm.uiState.value.data.message)
+            assertEquals(0, archive.deleteCalls)
+            vm.export(ExportLabels()) { }
+            assertEquals(DataMessage.EXPORTED, vm.uiState.value.data.message)
         }
 }

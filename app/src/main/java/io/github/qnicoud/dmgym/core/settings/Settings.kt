@@ -18,4 +18,9 @@ data class Settings(
     val crazyEightsMinuteHaptic: Boolean = false,
     /** Palette du thème (D53) ; à résoudre avec [ThemePalette.effective] selon l'API. */
     val themePalette: ThemePalette = ThemePalette.PARCHMENT,
+    /** Force des vibrations de fin et de rythme ; s'ajoute à l'interrupteur [vibrationEnabled]. */
+    val vibrationStrength: VibrationStrength = VibrationStrength.NORMAL,
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    /** `null` : suit le réglage d'animations du système (voir [resolve]). */
+    val reduceAnimations: Boolean? = null,
 )

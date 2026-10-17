@@ -158,6 +158,36 @@ internal fun DurationItem(
     }
 }
 
+/** Ligne de choix exclusif : bouton radio, éventuel élément décoratif, libellé. Toute la ligne est cible (≥ 56 dp). */
+@Composable
+internal fun ChoiceRow(
+    label: String,
+    selected: Boolean,
+    onSelect: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    leading: (@Composable () -> Unit)? = null,
+) {
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .heightIn(min = MinRowHeight)
+                .selectable(selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onSelect)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioButton(selected = selected, onClick = null, enabled = enabled)
+        leading?.invoke()
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
 /** Ligne de thème : bouton radio, pastille de la couleur principale et nom. */
 @Composable
 internal fun PaletteRow(
@@ -166,20 +196,13 @@ internal fun PaletteRow(
     onSelect: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .heightIn(min = MinRowHeight)
-                .selectable(selected = selected, role = Role.RadioButton, onClick = onSelect)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        RadioButton(selected = selected, onClick = null)
-        Swatch(palette)
-        Text(stringResource(palette.labelRes), style = MaterialTheme.typography.bodyLarge)
-    }
+    ChoiceRow(
+        label = stringResource(palette.labelRes),
+        selected = selected,
+        onSelect = onSelect,
+        modifier = modifier,
+        leading = { Swatch(palette) },
+    )
 }
 
 /** Pastille décorative (le nom suffit à TalkBack) ; la palette dynamique, sans couleur fixe, montre un dégradé. */

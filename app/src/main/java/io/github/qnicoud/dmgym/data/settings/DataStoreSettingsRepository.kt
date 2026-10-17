@@ -19,7 +19,9 @@ import io.github.qnicoud.dmgym.core.daily.encodeReplacements
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
+import io.github.qnicoud.dmgym.core.settings.ThemeMode
 import io.github.qnicoud.dmgym.core.settings.ThemePalette
+import io.github.qnicoud.dmgym.core.settings.VibrationStrength
 import io.github.qnicoud.dmgym.core.timer.DurationBounds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -64,6 +66,9 @@ class DataStoreSettingsRepository(
             dailyReplacements = decodeReplacements(values[DAILY_REPLACEMENTS] as? String),
             crazyEightsMinuteHaptic = values.bool(CRAZY_MINUTE_HAPTIC, default = false),
             themePalette = ThemePalette.parse(values[THEME_PALETTE] as? String),
+            vibrationStrength = VibrationStrength.parse(values[VIBRATION_STRENGTH] as? String),
+            themeMode = ThemeMode.parse(values[THEME_MODE] as? String),
+            reduceAnimations = values[REDUCE_ANIMATIONS] as? Boolean,
         )
     }
 
@@ -101,9 +106,21 @@ class DataStoreSettingsRepository(
         prefs[booleanPreferencesKey(DAILY_ONE_PAGE)] = settings.dailyIncludeOnePage
         prefs[booleanPreferencesKey(CRAZY_MINUTE_HAPTIC)] = settings.crazyEightsMinuteHaptic
         prefs[stringPreferencesKey(THEME_PALETTE)] = settings.themePalette.name
+        prefs[stringPreferencesKey(VIBRATION_STRENGTH)] = settings.vibrationStrength.name
+        prefs[stringPreferencesKey(THEME_MODE)] = settings.themeMode.name
+        writeReduceAnimations(prefs, settings.reduceAnimations)
         writeDaily(prefs, settings)
         writeDurations(prefs, settings.durations)
         writeUntimed(prefs, settings.untimed)
+    }
+
+    /** `null` (suivre le système) = clé absente. */
+    private fun writeReduceAnimations(
+        prefs: MutablePreferences,
+        reduce: Boolean?,
+    ) {
+        val key = booleanPreferencesKey(REDUCE_ANIMATIONS)
+        if (reduce == null) prefs.remove(key) else prefs[key] = reduce
     }
 
     private fun writeDaily(
@@ -168,6 +185,9 @@ class DataStoreSettingsRepository(
         private const val DAILY_REPLACEMENTS = "daily_replacements"
         private const val CRAZY_MINUTE_HAPTIC = "crazy_eights_minute_haptic"
         private const val THEME_PALETTE = "theme_palette"
+        private const val VIBRATION_STRENGTH = "vibration_strength"
+        private const val THEME_MODE = "theme_mode"
+        private const val REDUCE_ANIMATIONS = "reduce_animations"
         private const val DURATION_PREFIX = "duration_s."
         private const val UNTIMED_PREFIX = "untimed."
         private const val FILE_NAME = "settings"
