@@ -4,6 +4,7 @@ import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -28,7 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalResources
@@ -59,44 +63,6 @@ import io.github.qnicoud.dmgym.core.exercise.TimerUi
 import io.github.qnicoud.dmgym.platform.KeepScreenOn
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 
-/** Identifiants de test des éléments de l'écran d'exercice. */
-object ExerciseTags {
-    const val TIMER = "exercise_timer"
-    const val PAUSE = "exercise_pause"
-    const val START = "exercise_start"
-    const val FINISH = "exercise_finish"
-    const val DRAW_CARD = "exercise_draw_card"
-    const val DRAW_ERROR = "exercise_draw_error"
-    const val REROLL = "exercise_reroll"
-    const val REROLL_COUNT = "exercise_reroll_count"
-    const val FREE_SUBJECT = "exercise_free_subject"
-    const val PROGRESS = "exercise_progress"
-    const val NEXT_QUESTION = "exercise_next_question"
-    const val ADD_GROUP = "exercise_add_group"
-    const val SAVE_STATUS = "exercise_save_status"
-    const val END_PANEL = "exercise_end_panel"
-    const val NEXT_EXERCISE = "exercise_next_exercise"
-    const val END_PROMPT = "exercise_end_prompt"
-    const val END_HINT = "exercise_end_hint"
-    const val DONE = "exercise_done"
-    const val SKIP = "exercise_skip"
-    const val RUBRIC_TOGGLE = "exercise_rubric_toggle"
-    const val GEM = "exercise_gem"
-    const val CHECKLIST_COUNT = "exercise_checklist_count"
-    const val CHECKLIST_TOGGLE = "exercise_checklist_toggle"
-
-    fun check(key: DrawKey) = "exercise_check_${key.slotKey}_${key.position}"
-
-    fun field(key: AnswerKey) = "exercise_field_${key.fieldKey}_${key.groupIndex}"
-
-    fun level(value: Int) = "exercise_level_$value"
-
-    fun rubric(
-        key: String,
-        value: Boolean,
-    ) = "exercise_rubric_${key}_${if (value) "yes" else "no"}"
-}
-
 /** Actions de l'écran, séparées du ViewModel pour garder le contenu sans état. */
 class ExerciseActions(
     val onLeave: () -> Unit,
@@ -110,6 +76,10 @@ class ExerciseActions(
     val fields: FieldHandlers,
     val assess: AssessActions,
     val onOptionChanged: (String, Boolean) -> Unit = { _, _ -> },
+    val onDurationDecrease: () -> Unit = {},
+    val onDurationIncrease: () -> Unit = {},
+    val onUntimedChanged: (Boolean) -> Unit = {},
+    val onDurationSheetClosed: () -> Unit = {},
 )
 
 /** Point d'entrée avec état : branche le ViewModel, les événements ponctuels, l'écran allumé et la sortie. */
@@ -162,6 +132,10 @@ fun ExerciseRoute(
                     ),
                 assess = AssessActions(viewModel::onAssess, { leave() }, viewModel::fieldState, onNext),
                 onOptionChanged = viewModel::onOptionChanged,
+                onDurationDecrease = viewModel::onDurationDecreased,
+                onDurationIncrease = viewModel::onDurationIncreased,
+                onUntimedChanged = viewModel::onUntimedChanged,
+                onDurationSheetClosed = viewModel::onDurationSheetClosed,
             )
         }
     ExerciseContent(state, { timer.value }, actions, modifier, snackbarHost, daily, dailyPending)
@@ -204,89 +178,16 @@ fun ExerciseContent(
             }
         },
     ) { padding ->
-        Column(modifier = Modifier.padding(padding).imePadding().fillMaxSize()) {
-            when (phase) {
-                Phase.Ready -> ReadyBody(state, timer, actions)
-                Phase.Active -> ActiveBody(state, timer, actions)
-                Phase.Ended -> EndBody(state, timer, actions, daily, dailyPending)
+        BoxWithConstraints(modifier = Modifier.padding(padding).imePadding().fillMaxSize()) {
+            // Paysage, ou fenêtre basse avec le clavier : la zone épinglée se réduit pour laisser la saisie visible.
+            val compact = isCompactHeight(maxHeight)
+            Column(modifier = Modifier.fillMaxSize()) {
+                when (phase) {
+                    Phase.Ready -> ReadyBody(state, timer, actions)
+                    Phase.Active -> ActiveBody(state, timer, actions, compact)
+                    Phase.Ended -> EndBody(state, timer, actions, daily, dailyPending)
+                }
             }
-        }
-    }
-}
-
-@Composable
-private fun ActiveBarActions(
-    state: ExerciseUiState,
-    timer: () -> TimerUi,
-    actions: ExerciseActions,
-) {
-    val label = stringResource(R.string.exercise_finish)
-    val overtime by remember { derivedStateOf { timer().kind == TimerKind.Overtime } }
-    Row(
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        SaveIndicator(state.save)
-        if (overtime) {
-            Button(onClick = actions.onFinish, modifier = Modifier.testTag(ExerciseTags.FINISH)) { Text(label) }
-        } else {
-            FilledTonalButton(
-                onClick = actions.onFinish,
-                modifier = Modifier.testTag(ExerciseTags.FINISH),
-            ) { Text(label) }
-        }
-        androidx.compose.foundation.layout
-            .Spacer(Modifier.padding(end = 4.dp))
-    }
-}
-
-@Composable
-private fun SaveIndicator(status: SaveStatus) {
-    val text =
-        when (status) {
-            SaveStatus.Idle -> return
-            SaveStatus.Saved -> stringResource(R.string.exercise_saved)
-            SaveStatus.Failed -> stringResource(R.string.exercise_save_failed)
-        }
-    Text(text, style = MaterialTheme.typography.labelMedium, modifier = Modifier.testTag(ExerciseTags.SAVE_STATUS))
-}
-
-@Composable
-private fun ReadyBody(
-    state: ExerciseUiState,
-    timer: () -> TimerUi,
-    actions: ExerciseActions,
-) {
-    Column(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text(stringResource(state.definition.instructions), style = MaterialTheme.typography.bodyLarge)
-        OptionsPanel(state.definition.options, state.session.options, actions.onOptionChanged)
-        DrawArea(state, actions)
-        ReminderCard(state.definition)
-        LiveTimerBar(timer, canPause = false, onPause = actions.onPause, onResume = actions.onResume)
-    }
-}
-
-@Composable
-private fun DrawArea(
-    state: ExerciseUiState,
-    actions: ExerciseActions,
-) {
-    when (state.load) {
-        LoadStatus.Loading -> {
-            DrawCardSkeleton()
-        }
-
-        LoadStatus.DrawFailed -> {
-            val free = actions.fields.fieldState(AnswerKey(FREE_SUBJECT_KEY))
-            DrawErrorCard(state.definition.acceptsFreeSubject, free, actions.onRetry)
-        }
-
-        LoadStatus.Ready -> {
-            ReadyDraw(state.withoutQuestionDraws(), actions)
-            if (state.session.phase == Phase.Ready) ReadyQuestions(state)
         }
     }
 }
@@ -296,15 +197,16 @@ private fun ColumnScope.ActiveBody(
     state: ExerciseUiState,
     timer: () -> TimerUi,
     actions: ExerciseActions,
+    compact: Boolean,
 ) {
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) { runCatching { focus.requestFocus() } }
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(if (compact) 2.dp else 8.dp),
     ) {
-        LiveTimerBar(timer, canPause = true, onPause = actions.onPause, onResume = actions.onResume)
-        DrawArea(state, actions)
+        LiveTimerBar(timer, canPause = true, onPause = actions.onPause, onResume = actions.onResume, compact = compact)
+        if (compact) CompactDrawArea(state, actions) else DrawArea(state, actions)
     }
     Column(
         modifier =
@@ -315,7 +217,7 @@ private fun ColumnScope.ActiveBody(
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        ReminderCard(state.definition)
+        ReminderCard(state.definition, startOpen = !compact)
         FieldList(state.definition, state.session, state.progress, state.groupCount, actions.fields, focus)
     }
 }

@@ -429,6 +429,13 @@
   <string name="about_ofl_note">Le texte intégral de la licence SIL Open Font 1.1 est publié sur openfontlicense.org.</string>
   <string name="about_beep">Bip de fin : son original synthétisé pour l’app, placé dans le domaine public (CC0 1.0).</string>
 
+  <!-- Lot R1b : durée réglable depuis l'écran Prêt, zone épinglée compacte en paysage -->
+  <string name="duration_sheet_title">Durée de %1$s</string>
+  <string name="duration_sheet_untimed">Sans minuteur</string>
+  <string name="timer_ready_edit">Régler la durée</string>
+  <string name="pinned_summary_expand">Afficher le tirage</string>
+  <string name="pinned_summary_collapse">Replier le tirage</string>
+
   <!-- Lot R1c : recette du cadre de l’app -->
   <string name="stats_gems_empty">Pas encore de bijou. Garde une réponse comme bijou pour la retrouver ici.</string>
 </resources>

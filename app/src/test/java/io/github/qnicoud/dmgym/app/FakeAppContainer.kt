@@ -31,7 +31,12 @@ class FakeSettingsRepository(
     val state = MutableStateFlow(initial)
     override val settings: Flow<Settings> = state
 
+    /** Nombre d'écritures reçues. */
+    var updates = 0
+        private set
+
     override suspend fun update(transform: (Settings) -> Settings) {
+        updates++
         state.value = transform(state.value)
     }
 }
