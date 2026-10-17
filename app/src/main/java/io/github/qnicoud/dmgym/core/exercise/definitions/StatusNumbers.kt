@@ -66,8 +66,16 @@ object StatusNumbers {
                 ),
             options =
                 listOf(
-                    ExerciseOption(OPTION_COUNTER, R.string.status_option_counter),
-                    ExerciseOption(OPTION_SHIFT, R.string.status_option_shift),
+                    ExerciseOption(
+                        OPTION_COUNTER,
+                        R.string.status_option_counter,
+                        help = R.string.status_option_counter_help,
+                    ),
+                    ExerciseOption(
+                        OPTION_SHIFT,
+                        R.string.status_option_shift,
+                        help = R.string.status_option_shift_help,
+                    ),
                 ),
             endNote =
                 FieldSpec(
