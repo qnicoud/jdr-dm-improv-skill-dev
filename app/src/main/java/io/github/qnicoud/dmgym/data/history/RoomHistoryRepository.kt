@@ -60,6 +60,20 @@ class RoomHistoryRepository(
         }
     }
 
+    override suspend fun updateRating(
+        sessionId: Long,
+        rating: Int?,
+    ) {
+        if (dao.updateRating(sessionId, rating) != 1) throw SessionNotFoundException(sessionId)
+    }
+
+    override suspend fun updateGem(
+        sessionId: Long,
+        isGem: Boolean,
+    ) {
+        if (dao.updateGem(sessionId, isGem) != 1) throw SessionNotFoundException(sessionId)
+    }
+
     override suspend fun deleteSession(id: Long) = dao.deleteById(id)
 
     override suspend fun upsertDraws(
@@ -91,7 +105,10 @@ class RoomHistoryRepository(
         staleThresholds.flatMapLatest { dao.observeResumable(it) }.map { it?.toDetail() }
 
     override fun observePreviews(): Flow<Map<Long, String>> =
-        dao.observePreviews().map { rows -> rows.associate { it.sessionId to it.text } }
+        staleThresholds
+            .flatMapLatest { dao.observePreviews(it) }
+            .map { rows -> rows.associate { it.sessionId to it.text } }
+            .distinctUntilChanged()
 
     override fun observePracticedDays(): Flow<List<Long>> =
         staleThresholds.flatMapLatest { dao.observePracticedDays(it) }

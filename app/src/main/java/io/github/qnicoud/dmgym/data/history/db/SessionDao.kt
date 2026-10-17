@@ -17,8 +17,8 @@ private const val NOT_BLANK_B = "trim(b.text, ' ' || char(9, 10, 13)) <> ''"
 /** Inachevée : en cours, sans activité depuis plus de 24 h (`:staleBefore`, comparaison stricte). */
 private const val IS_STALE = "status = 'IN_PROGRESS' AND lastActivityAtEpochMillis < :staleBefore"
 
-/** Session comptée : avec contenu, terminée ou inachevée ; la session en cours active est exclue. */
-private const val IS_COUNTED = "$HAS_CONTENT AND (status = 'COMPLETED' OR ($IS_STALE))"
+/** Session comptée : terminée, ou inachevée avec contenu ; la session en cours active est exclue. */
+private const val IS_COUNTED = "(status = 'COMPLETED' OR ($IS_STALE AND $HAS_CONTENT))"
 
 @Dao
 abstract class SessionDao {
@@ -41,6 +41,18 @@ abstract class SessionDao {
         isGem: Boolean,
         selfRating: Int?,
         now: Long,
+    ): Int
+
+    @Query("UPDATE sessions SET selfRating = :rating WHERE id = :id")
+    abstract suspend fun updateRating(
+        id: Long,
+        rating: Int?,
+    ): Int
+
+    @Query("UPDATE sessions SET isGem = :isGem WHERE id = :id")
+    abstract suspend fun updateGem(
+        id: Long,
+        isGem: Boolean,
     ): Int
 
     @Query("DELETE FROM sessions WHERE id = :id")
@@ -111,13 +123,17 @@ abstract class SessionDao {
     )
     abstract fun observeResumable(staleBefore: Long): Flow<SessionWithChildren?>
 
-    /** Première réponse non vide de chaque session (par groupe puis par champ), tronquée à 240 caractères. */
+    /**
+     * Première réponse non vide (par groupe puis par champ) des sessions de l'historique, sans espaces autour et
+     * tronquée à 240 caractères.
+     */
     @Query(
-        "SELECT sessionId, substr(text, 1, 240) AS text FROM session_answers AS a WHERE $NOT_BLANK_A " +
+        "SELECT sessionId, substr(trim(text, ' ' || char(9, 10, 13)), 1, 240) AS text FROM session_answers AS a " +
+            "WHERE $NOT_BLANK_A AND sessionId IN (SELECT id FROM sessions WHERE status = 'COMPLETED' OR ($IS_STALE)) " +
             "AND NOT EXISTS (SELECT 1 FROM session_answers AS b WHERE b.sessionId = a.sessionId AND $NOT_BLANK_B " +
             "AND (b.groupIndex < a.groupIndex OR (b.groupIndex = a.groupIndex AND b.fieldKey < a.fieldKey)))",
     )
-    abstract fun observePreviews(): Flow<List<PreviewRow>>
+    abstract fun observePreviews(staleBefore: Long): Flow<List<PreviewRow>>
 
     @Query("SELECT DISTINCT localEpochDay FROM sessions WHERE $IS_COUNTED ORDER BY localEpochDay")
     abstract fun observePracticedDays(staleBefore: Long): Flow<List<Long>>

@@ -121,6 +121,7 @@ class RoomHistoryResumeTest {
             val long = "x".repeat(500)
             val id =
                 create(
+                    status = SessionStatus.COMPLETED,
                     texts =
                         listOf(
                             AnswerRecord("a", 0, " "),
@@ -128,11 +129,70 @@ class RoomHistoryResumeTest {
                             AnswerRecord("c", 0, "autre"),
                         ),
                 )
-            val blank = create(texts = listOf(AnswerRecord("a", 0, "")))
+            val blank = create(status = SessionStatus.COMPLETED, texts = listOf(AnswerRecord("a", 0, "")))
 
             val previews = repo.observePreviews().first()
 
             assertEquals(240, previews.getValue(id).length)
             assertNull(previews[blank])
+        }
+
+    @Test
+    fun previewIsTrimmed() =
+        runTest {
+            val id = create(status = SessionStatus.COMPLETED, texts = listOf(AnswerRecord("a", 0, "  bonjour \n")))
+
+            assertEquals("bonjour", repo.observePreviews().first()[id])
+        }
+
+    @Test
+    fun previewsOnlyCoverSessionsOfTheList() =
+        runTest {
+            val done = create(status = SessionStatus.COMPLETED)
+            val unfinished = create(agoHours = 30)
+            val active = create(agoHours = 1)
+
+            val previews = repo.observePreviews().first()
+
+            assertEquals(setOf(done, unfinished), previews.keys)
+            assertNull(previews[active])
+        }
+
+    @Test
+    fun updateRatingAndGemDoNotTouchTheLastActivity() =
+        runTest {
+            val id = create(agoHours = 30)
+            val before = repo.observeDetail(id).first()!!.session
+
+            repo.updateRating(id, 3)
+            repo.updateGem(id, true)
+
+            val after = repo.observeDetail(id).first()!!.session
+            assertEquals(3, after.selfRating)
+            assertEquals(true, after.isGem)
+            assertEquals(before.lastActivityAtEpochMillis, after.lastActivityAtEpochMillis)
+            assertEquals(before.status, after.status)
+        }
+
+    @Test
+    fun updateRatingCanClearAndFailsOnAMissingSession() =
+        runTest {
+            val id = create(status = SessionStatus.COMPLETED)
+            repo.updateRating(id, 2)
+            repo.updateRating(id, null)
+            assertNull(
+                repo
+                    .observeDetail(id)
+                    .first()!!
+                    .session.selfRating,
+            )
+
+            var failed = false
+            try {
+                repo.updateGem(999, true)
+            } catch (_: io.github.qnicoud.dmgym.core.history.SessionNotFoundException) {
+                failed = true
+            }
+            assertEquals(true, failed)
         }
 }

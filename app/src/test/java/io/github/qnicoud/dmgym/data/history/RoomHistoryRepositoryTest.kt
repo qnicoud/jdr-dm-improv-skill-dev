@@ -331,7 +331,7 @@ class RoomHistoryRepositoryTest {
         }
 
     @Test
-    fun practicedDaysAreDistinctAndRequireTrimmedContent() =
+    fun practicedDaysAreDistinctAndCountCompletedWithoutNotes() =
         runTest {
             create(session(day = 10))
             create(session(day = 10))
@@ -343,11 +343,11 @@ class RoomHistoryRepositoryTest {
             repo.upsertDraws(drawsOnly, listOf(DrawRecord("s", 0, "t", "e", "x")))
             repo.upsertRubric(drawsOnly, listOf(RubricRecord("q", true)))
 
-            assertEquals(listOf(10L, 11L), repo.observePracticedDays().first())
+            assertEquals(listOf(10L, 11L, 12L, 13L, 15L), repo.observePracticedDays().first())
         }
 
     @Test
-    fun countsSessionsWithContentCompletedOrUnfinishedWithinRange() =
+    fun countsCompletedSessionsAndUnfinishedOnesWithContentWithinRange() =
         runTest {
             create(session("crazy8", day = 10))
             create(session("crazy8", day = 11))
@@ -357,9 +357,9 @@ class RoomHistoryRepositoryTest {
             create(session("onepage", day = 10), text = null)
             create(session("onepage", day = 10, status = SessionStatus.IN_PROGRESS, startedAgoMillis = 30 * hour))
 
-            assertEquals(5, repo.observeSessionCount().first())
+            assertEquals(6, repo.observeSessionCount().first())
             val counts = repo.countSessionsByExercise(10, 11).sortedBy { it.exerciseId }
-            assertEquals(listOf(ExerciseCountRecord("crazy8", 2), ExerciseCountRecord("onepage", 2)), counts)
+            assertEquals(listOf(ExerciseCountRecord("crazy8", 2), ExerciseCountRecord("onepage", 3)), counts)
         }
 
     @Test
