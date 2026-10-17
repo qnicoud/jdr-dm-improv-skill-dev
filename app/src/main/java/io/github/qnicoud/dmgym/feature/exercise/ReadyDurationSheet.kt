@@ -21,14 +21,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.feature.home.durationLabel
 import io.github.qnicoud.dmgym.feature.settings.SwitchRow
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
+
+private const val MS_PER_SECOND = 1_000L
 
 /** Identifiants de test de la feuille de réglage de la durée (écran Prêt). */
 object DurationSheetTags {
@@ -103,6 +108,12 @@ private fun DurationStepper(
     onDecrease: () -> Unit,
     onIncrease: () -> Unit,
 ) {
+    val spoken =
+        if (setting.untimed) {
+            stringResource(R.string.timer_untimed)
+        } else {
+            spokenDuration(setting.seconds * MS_PER_SECOND)
+        }
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.Center,
@@ -119,7 +130,14 @@ private fun DurationStepper(
             text = durationLabel(if (setting.untimed) null else setting.seconds),
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
-            modifier = Modifier.widthIn(min = 120.dp).testTag(DurationSheetTags.VALUE),
+            modifier =
+                Modifier
+                    .widthIn(min = 120.dp)
+                    .testTag(DurationSheetTags.VALUE)
+                    .semantics {
+                        stateDescription = spoken
+                        liveRegion = LiveRegionMode.Polite
+                    },
         )
         IconButton(
             onClick = onIncrease,

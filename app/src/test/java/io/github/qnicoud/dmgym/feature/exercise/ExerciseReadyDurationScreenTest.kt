@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
+import android.os.Looper
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
@@ -21,7 +22,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import java.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 /** Recette 1.16 : la durée se règle depuis l'écran Prêt, jamais pendant l'exercice. */
@@ -54,6 +57,11 @@ class ExerciseReadyDurationScreenTest {
         compose.waitForIdle()
     }
 
+    private fun passTime(ms: Long) {
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(ms))
+        compose.waitForIdle()
+    }
+
     @Test
     fun `tapping the duration opens the sheet, and the buttons change and save it`() {
         launch()
@@ -63,9 +71,14 @@ class ExerciseReadyDurationScreenTest {
         compose.onNodeWithTag(DurationSheetTags.VALUE).assertIsDisplayed()
         compose.onNodeWithTag(DurationSheetTags.INCREASE).performClick()
         compose.waitForIdle()
+        assertTrue(
+            settings.state.value.durations
+                .isEmpty(),
+        )
+        passTime(500)
         assertEquals(6.minutes, settings.state.value.durations[DemoExercise.id])
         compose.onNodeWithTag(DurationSheetTags.UNTIMED).performClick()
-        compose.waitForIdle()
+        passTime(500)
         assertTrue(DemoExercise.id in settings.state.value.untimed)
     }
 

@@ -22,6 +22,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
@@ -51,6 +53,7 @@ internal fun CompactDrawArea(
         return
     }
     var expanded by rememberSaveable { mutableStateOf(false) }
+    val spoken = stringResource(R.string.draw_description, summary)
     val action = stringResource(if (expanded) R.string.pinned_summary_collapse else R.string.pinned_summary_expand)
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -59,6 +62,7 @@ internal fun CompactDrawArea(
                 .fillMaxWidth()
                 .heightIn(min = 48.dp)
                 .clickable(onClickLabel = action, role = Role.Button) { expanded = !expanded }
+                .semantics { contentDescription = spoken }
                 .testTag(ExerciseTags.PINNED_SUMMARY),
     ) {
         Text(

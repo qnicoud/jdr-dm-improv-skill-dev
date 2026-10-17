@@ -109,7 +109,7 @@ fun ReminderCard(
     startOpen: Boolean = true,
 ) {
     val reminder = definition.reminder ?: return
-    var open by rememberSaveable { mutableStateOf(startOpen) }
+    var open by rememberSaveable(startOpen) { mutableStateOf(startOpen) }
     Card(
         modifier = modifier.fillMaxWidth().testTag(ExerciseExtraTags.REMINDER),
         shape = MaterialTheme.shapes.large,

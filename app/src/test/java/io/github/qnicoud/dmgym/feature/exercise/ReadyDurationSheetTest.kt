@@ -6,6 +6,9 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -97,5 +100,24 @@ class ReadyDurationSheetTest {
             compose.onNodeWithTag(DurationSheetTags.UNTIMED).assertIsDisplayed()
         }
         assertTrue(problems.joinToString("\n"), problems.isEmpty())
+    }
+
+    @Test
+    fun `the duration is spoken as a live state description`() {
+        show()
+        val node = compose.onNodeWithTag(DurationSheetTags.VALUE).fetchSemanticsNode().config
+        val state = node.getOrNull(SemanticsProperties.StateDescription).orEmpty()
+        assertTrue(state, state.contains("5"))
+        assertEquals(LiveRegionMode.Polite, node.getOrNull(SemanticsProperties.LiveRegion))
+        setting = setting.copy(seconds = 360)
+        compose.waitForIdle()
+        val changed =
+            compose
+                .onNodeWithTag(DurationSheetTags.VALUE)
+                .fetchSemanticsNode()
+                .config
+                .getOrNull(SemanticsProperties.StateDescription)
+                .orEmpty()
+        assertTrue(changed, changed.contains("6"))
     }
 }
