@@ -2,10 +2,10 @@ package io.github.qnicoud.dmgym.feature.exercise
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +18,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,7 +44,6 @@ import io.github.qnicoud.dmgym.core.exercise.DrawKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
-import io.github.qnicoud.dmgym.ui.icons.ExerciseIcons
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 
 /** Carte de tirage : avec cases « utilisé » quand l'exercice détecte des mots, simple sinon. */
@@ -151,13 +149,14 @@ fun ElementChecklist(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = if (expanded) 16.dp else 4.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             ProgressHeader(items, collapsible, expanded, onExpandedChange)
             if (expanded) {
                 items.forEach { ItemRow(it, onCheckToggled) }
                 if (showReroll) RerollRow(rerollCount, onReroll)
-            } else {
-                CompactChips(items, onCheckToggled)
             }
         }
     }
@@ -172,25 +171,32 @@ private fun ProgressHeader(
 ) {
     val (done, total) = items.progress()
     if (total == 0) return
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        val format = if (collapsible) R.string.checklist_linked else R.string.checklist_used_count
+    val format = if (collapsible) R.string.checklist_linked else R.string.checklist_used_count
+    val rowModifier =
+        if (collapsible) {
+            val action = stringResource(if (expanded) R.string.checklist_collapse else R.string.checklist_expand)
+            Modifier
+                .heightIn(min = 48.dp)
+                .clickable(onClickLabel = action, role = Role.Button) { onExpandedChange(!expanded) }
+                .testTag(ExerciseTags.CHECKLIST_TOGGLE)
+        } else {
+            Modifier
+        }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = rowModifier.fillMaxWidth(),
+    ) {
         Text(
             stringResource(format, done, total),
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.weight(1f).testTag(ExerciseTags.CHECKLIST_COUNT),
         )
         if (collapsible) {
-            val description = stringResource(if (expanded) R.string.checklist_collapse else R.string.checklist_expand)
-            IconButton(
-                onClick = { onExpandedChange(!expanded) },
-                modifier = Modifier.size(48.dp).testTag(ExerciseTags.CHECKLIST_TOGGLE),
-            ) {
-                Icon(
-                    DmIcons.Chevron,
-                    contentDescription = description,
-                    modifier = Modifier.rotate(if (expanded) COLLAPSE_ROTATION else EXPAND_ROTATION),
-                )
-            }
+            Icon(
+                DmIcons.Chevron,
+                contentDescription = null,
+                modifier = Modifier.rotate(if (expanded) COLLAPSE_ROTATION else EXPAND_ROTATION),
+            )
         }
     }
 }
@@ -243,39 +249,6 @@ private fun ItemTexts(item: ChecklistItem) {
         )
     }
     Text(item.text, style = MaterialTheme.typography.titleMedium)
-}
-
-/** Puces du mode compact : le libellé de l'élément et une coche quand il est utilisé. */
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun CompactChips(
-    items: List<ChecklistItem>,
-    onCheckToggled: (DrawKey) -> Unit,
-) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        items.filter { it.checkable }.forEach { item ->
-            val state = stateText(item)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier =
-                    Modifier
-                        .heightIn(min = 48.dp)
-                        .testTag(ExerciseTags.check(item.key))
-                        .toggleable(
-                            value = item.checked,
-                            role = Role.Checkbox,
-                            onValueChange = { onCheckToggled(item.key) },
-                        ).semantics { stateDescription = state },
-            ) {
-                if (item.checked) Icon(ExerciseIcons.Check, contentDescription = null, modifier = Modifier.size(18.dp))
-                Text(
-                    item.label?.let { stringResource(it) } ?: item.text,
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                )
-            }
-        }
-    }
 }
 
 @Composable
