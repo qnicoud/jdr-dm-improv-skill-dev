@@ -14,9 +14,15 @@ class ExerciseRegistryTest {
     }
 
     @Test
-    fun `unknown exercise gives null and the shipped registry is empty for now`() {
+    fun `unknown exercise gives null`() {
         assertNull(ExerciseRegistry(emptyList())[ExerciseId.CRAZY_EIGHTS])
-        assertEquals(emptyList<ExerciseDefinition>(), ExerciseRegistry.Default.all)
+    }
+
+    @Test
+    fun `the shipped registry has the L8 exercises, each under its own id`() {
+        listOf(ExerciseId.CRAZY_EIGHTS, ExerciseId.CONSTRAINT_BOX, ExerciseId.CONNECT_STORY).forEach {
+            assertEquals(it, ExerciseRegistry.Default[it]?.id)
+        }
     }
 
     @Test

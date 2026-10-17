@@ -5,6 +5,7 @@ import androidx.room3.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
+import io.github.qnicoud.dmgym.core.exercise.KeywordAnswerDetector
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import io.github.qnicoud.dmgym.core.tables.TableRepository
@@ -72,14 +73,19 @@ class DefaultAppContainer(
 
     override val exerciseRegistry: ExerciseRegistry = ExerciseRegistry.Default
 
+    private val tableRepository: TableRepository by lazy {
+        TableRepository(AssetTableSource(application.assets, Dispatchers.IO))
+    }
+
     override val exerciseDependencies: ExerciseDependencies by lazy {
         ExerciseDependencies(
-            tables = TableRepository(AssetTableSource(application.assets, Dispatchers.IO)),
+            tables = tableRepository,
             history = historyRepository,
             settings = settingsRepository,
             endSignal = AndroidEndSignal(application),
             monotonicClock = SystemMonotonicClock(),
             wallClock = Clock.systemDefaultZone(),
+            detector = KeywordAnswerDetector(tableRepository),
         )
     }
 
