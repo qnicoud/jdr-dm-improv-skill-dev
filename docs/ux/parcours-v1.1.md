@@ -320,7 +320,7 @@ L'écran S13 état A contient cette procédure dans un bloc pliable « Je change
 
 Exemples de libellés sont donnés dans les sections ci-dessus ; la liste exhaustive est à tirer de ce document par le développeur. Les textes d'aide et de rappel sont sans point d'exclamation.
 
-## 8. Décisions à trancher
+## 8. Décisions (tranchées le 2026-10-18 : toutes les recommandations retenues, D54–D70 dans l'artefact ; V11-2 → sélecteur in-app AppCompat)
 
 DÉCISION V11-1: Langue en v1.1 — (a) architecture seule, sélecteur masqué, (b) architecture + interface anglaise + tables anglaises complètes, (c) interface seule traduite — recommandation (a) : une langue à moitié livrée dégrade l'expérience ; (b) en v1.2 si la publication est confirmée.
 DÉCISION V11-2: Sélecteur de langue — (a) feuille in-app synchronisée avec le sélecteur système Android 13, (b) renvoi vers le sélecteur système sur 13+ et feuille in-app en dessous — recommandation (a) : même comportement sur toutes les versions.

@@ -69,7 +69,7 @@ Seul l'orchestrateur commite ; les agents ne commitent pas.
 - **Branches** : `main` reste stable et vert. Chaque lot de la phase 3 (§14 de `docs/architecture.md`) se fait sur sa branche `feat/lNN-slug` (ou `fix/…`, `docs/…`) ; fusion dans `main` en `--no-ff` après tests verts et revue `kotlin-reviewer`, pour qu'un lot entier se retire d'un seul revert du commit de fusion. Les petites mises à jour de docs/pilotage peuvent aller directement sur `main`.
 - **Commits de fusion** : uniquement la résolution des conflits. Les adaptations et corrections vont dans des commits séparés, avant ou après la fusion. Les agents ne font jamais de commit de fusion eux-mêmes : l'orchestrateur fusionne.
 - **Lots en parallèle** : chaque agent `dev-android` travaille dans son propre worktree (`isolation: "worktree"`) sur sa branche, jamais à plusieurs dans le même arbre.
-- **Accord** : l'utilisateur a autorisé (2026-10-16) les commits locaux par unité logique et les fusions dans `main` après vérification. **Push, réécriture d'historique (`rebase` de branches partagées, `reset --hard`, `push --force`) et suppression de branches non fusionnées : toujours demander.**
+- **Accord** : l'utilisateur a autorisé (2026-10-16) les commits locaux par unité logique et les fusions dans `main` après vérification. Le **push** de `main` et des tags vers `origin` est autorisé librement (accord du 2026-10-18). **Réécriture d'historique (`rebase` de branches partagées, `reset --hard`, `push --force`) et suppression de branches non fusionnées : toujours demander.**
 
 ## Arborescence cible
 

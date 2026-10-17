@@ -126,3 +126,7 @@ Le plan du jour est aujourd'hui recalculé à chaque affichage à partir de la d
   - `AllExercisesSmokeTest` étendu aux 10 exercices ;
   - `DailySessionPlanner` avec 10 exercices et plan figé ;
   - export lisible : libellé du choix tiré de la définition.
+
+## Décisions de l'utilisateur (2026-10-18)
+
+- D56 : types de complication tirés et imposés depuis une table de 6 à 8 types. D57 : offres de « Oui, et… » révélées une à une. D58 : repère par minute, passage manuel à l'offre suivante. D69 : la séance du jour déjà proposée le jour de la mise à jour reste figée jusqu'au lendemain.

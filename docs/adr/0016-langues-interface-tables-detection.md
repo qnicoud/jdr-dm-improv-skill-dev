@@ -101,3 +101,8 @@ Principe UX non négociable : **la langue est un seul commutateur**. L'interface
 - Le lot d'architecture (V5) touche les tables, la détection, l'historique (schéma v3), les formateurs et les réglages. Il doit passer **après** le découpage d'`ExerciseViewModel` (V0), et le lot fusionné en second, entre V5 et C1 (nouvelles tables), déplace celles-ci dans `tables/fr/`.
 - L'option B a un vrai coût de contenu : environ 750 entrées à réécrire avec leurs mots-clés, et un corpus de 500 cas. Elle demande aussi la relecture d'un anglophone : le texte créatif et les mots-clés en anglais ne peuvent pas être validés par l'utilisateur seul, ce qui est un risque de qualité.
 - Le brief du `redacteur-contenu` devra être étendu à l'anglais si B est retenue : son rôle actuel est limité au français.
+
+## Décisions de l'utilisateur (2026-10-18)
+
+- **D54** : la v1.1 livre l'architecture multilingue et le français seul ; le sélecteur reste masqué. Anglais complet plus tard (v1.2 si publication).
+- **D55** : **sélecteur dans l'app sur toutes les versions (AppCompat `setApplicationLocales`)**, synchronisé avec le sélecteur système d'Android 13+. Cela remplace la recommandation LocaleManager de cet ADR (choix de l'UX retenu par l'utilisateur).

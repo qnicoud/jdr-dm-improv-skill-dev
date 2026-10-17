@@ -102,3 +102,7 @@ Restent interdites, entre autres : `INTERNET`, `ACCESS_NETWORK_STATE`, `SCHEDULE
   - Compose : l'interrupteur et ses états (refusé, refus définitif, en pause), avec une doublure de `NotificationPermissionGate`.
   - `verifyPermissions` : nouvelle liste blanche, et refus de `SCHEDULE_EXACT_ALARM`.
   - Manuel (Z Flip3) : rappel réel, Doze forcé (`adb shell dumpsys deviceidle force-idle`), redémarrage, mise à jour par-dessus, changement de fuseau. Les résultats vont dans `docs/qa/`.
+
+## Décisions de l'utilisateur (2026-10-18)
+
+- D59 : lundi, mercredi, vendredi vers 18 h 30 par défaut. D60 : canal d'importance **basse** (silencieux). D61 : **AlarmManager inexact** + reprogrammation au redémarrage. D62 : pause automatique après 14 jours sans session. D63 : la notification ne cite jamais la série.

@@ -161,3 +161,7 @@ Elle est documentée dans `docs/qa/release.md` et dans l'écran S13. L'import du
   - Compose : les états A, B, C, C′, D et E de S13.
   - Manuel : aller-retour réel debug → APK signée sur le téléphone de l'utilisateur.
 - Revue `security-reviewer` obligatoire sur ce lot, puisque c'est la première entrée externe de l'app.
+
+## Décisions de l'utilisateur (2026-10-18)
+
+- D64 : deux lignes dans Réglages (« Exporter pour lire », « Sauvegarder mes sessions »). D65 : identité = (exercice, instant de début), sans migration. D66 : la session déjà présente gagne. D67 : bouton « Annuler l'import » sur l'écran de résultat. D68 : passage à l'APK signé = installer la v1.1 de développement par-dessus, sauvegarder, puis changer d'app et importer ; pas d'import du texte lisible. D70 : sauvegarde des sessions seulement, pas des réglages.
