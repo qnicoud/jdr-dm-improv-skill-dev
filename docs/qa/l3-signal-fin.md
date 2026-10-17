@@ -8,6 +8,13 @@ Cible : `platform/AndroidEndSignal` (ADR 0006, architecture §7). Appareil : Sam
 - [ ] Volume « sonneries » / « notifications » à mi-course au moins.
 - [ ] Pas d'écran de test de l'exercice avant L5 : utiliser l'écran de démonstration du lot L5, ou un point d'entrée de debug appelant `AndroidEndSignal.prepare()` puis `play(Settings())`.
 
+## Diagnostic « ni bip ni vibration » (test utilisateur, 17 oct.)
+
+- La chaîne expiration, `TimerAnnouncer`, `EndSignal.play()` est correcte (test JVM `the end signal is played once when the timer runs out`, réglages son et vibration actifs par défaut). Journaux sur le Z Flip3 : `play()` appelé une fois, SoundPool chargé, flux de lecture valide, vibration enregistrée par `vibrator_manager` (usage ALARM, 370 ms).
+- **Cause du bip muet** : `USAGE_ASSISTANCE_SONIFICATION` est routé par Samsung vers `STREAM_SYSTEM`, dont le volume était à 0 (haut-parleur). Correctif : `USAGE_MEDIA` (volume média, sans focus audio).
+- **Vibration** : l'effet atteignait bien le moteur, mais deux impulsions de 120 ms à amplitude par défaut sont presque imperceptibles sur ce moteur. Correctif : 2 x 250 ms à pleine amplitude (si contrôle d'amplitude).
+- Comportement attendu : mode sonnerie, bip au volume média et vibration ; vibreur, vibration seule ; silencieux, vibration seule (usage ALARM). Un volume média à 0 rend le bip muet (réglage utilisateur).
+
 ## Matrice (cocher le résultat observé)
 
 | # | Mode sonnerie | Son (réglage) | Vibration (réglage) | Attendu | Observé |
