@@ -28,7 +28,7 @@ jobs:
 
       # check = ktlintCheck, lintDebug, testDebugUnitTest (+ tests du build), koverVerify, verifyPermissions
       - name: Check and assemble
-        run: ./gradlew check assembleDebug
+        run: ./gradlew check assembleDebug assembleRelease
 
       - name: Upload test and lint reports
         if: failure()
