@@ -93,16 +93,16 @@ fun DetectionDrawCard(
     modifier: Modifier = Modifier,
 ) {
     val items = remember(definition, draws) { checklistItems(definition, draws) }
-    var expanded by rememberSaveable { mutableStateOf(true) }
+    var fold by rememberSaveable(stateSaver = PanelFold.Saver) { mutableStateOf(PanelFold()) }
     val imeVisible = WindowInsets.isImeVisible
     LaunchedEffect(imeVisible, definition.collapsiblePanel) {
-        if (imeVisible && definition.collapsiblePanel) expanded = false
+        if (imeVisible && definition.collapsiblePanel) fold = fold.onKeyboardShown()
     }
     ElementChecklist(
         items = items,
         collapsible = definition.collapsiblePanel,
-        expanded = expanded || !definition.collapsiblePanel,
-        onExpandedChange = { expanded = it },
+        expanded = fold.expanded || !definition.collapsiblePanel,
+        onExpandedChange = { fold = fold.toggled() },
         rerollCount = rerollCount,
         showReroll = showReroll,
         onReroll = onReroll,
