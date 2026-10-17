@@ -18,7 +18,7 @@ data class ChecklistItem(
     val checkable: Boolean,
     val checked: Boolean,
     val auto: Boolean,
-    /** Catégorie de l'entrée tirée (le sens d'un mot sensoriel), pour l'icône de la ligne. */
+    /** Catégorie de l'entrée tirée (sens d'un mot sensoriel, type d'élément d'histoire), pour l'icône de la ligne. */
     val category: String? = null,
 )
 

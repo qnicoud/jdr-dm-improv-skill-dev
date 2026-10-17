@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
+import io.github.qnicoud.dmgym.core.exercise.withRecordCategories
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionNotFoundException
+import io.github.qnicoud.dmgym.core.tables.TableRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +43,7 @@ class SessionDetailViewModel(
     private val sessionId: Long,
     private val history: HistoryRepository,
     registry: ExerciseRegistry,
+    private val tables: TableRepository,
 ) : ViewModel() {
     private data class Flags(
         val confirmingDelete: Boolean = false,
@@ -54,7 +57,8 @@ class SessionDetailViewModel(
     val events: Flow<DetailEvent> = channel.receiveAsFlow()
 
     val uiState: StateFlow<SessionDetailUiState> =
-        combine(history.observeDetail(sessionId).onEach { latest = it }, flags) { detail, current ->
+        combine(history.observeDetail(sessionId).onEach { latest = it }, flags) { stored, current ->
+            val detail = stored?.copy(draws = stored.draws.withRecordCategories(tables))
             SessionDetailUiState(
                 isLoading = false,
                 detail = detail?.toUi(registry[ExerciseId(detail.session.exerciseId)]),

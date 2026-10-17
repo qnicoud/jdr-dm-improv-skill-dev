@@ -30,6 +30,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
+import io.github.qnicoud.dmgym.ui.components.CategoryIcon
 import io.github.qnicoud.dmgym.ui.icons.ExerciseIcons
 import io.github.qnicoud.dmgym.ui.icons.HistoryIcons
 
@@ -70,6 +71,9 @@ private fun DrawRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        CategoryIcon.fromCategory(line.category)?.let {
+            Icon(it.icon, contentDescription = stringResource(it.label), modifier = Modifier.size(24.dp))
+        }
         Text(line.text, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
         line.used?.let { UsedMark(it) }
     }

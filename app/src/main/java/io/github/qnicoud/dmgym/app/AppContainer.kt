@@ -47,6 +47,9 @@ interface AppContainer {
     val exerciseRegistry: ExerciseRegistry
     val exerciseDependencies: ExerciseDependencies
 
+    /** Tables aléatoires embarquées. */
+    val tableRepository: TableRepository
+
     /** Horloge civile du téléphone : le jour (`localEpochDay`) bascule à minuit local (D16). */
     val clock: Clock
 }
@@ -94,7 +97,7 @@ class DefaultAppContainer(
 
     override val exerciseRegistry: ExerciseRegistry = ExerciseRegistry.Default
 
-    private val tableRepository: TableRepository by lazy {
+    override val tableRepository: TableRepository by lazy {
         TableRepository(AssetTableSource(application.assets, Dispatchers.IO))
     }
 

@@ -43,6 +43,7 @@ import io.github.qnicoud.dmgym.core.exercise.Draw
 import io.github.qnicoud.dmgym.core.exercise.DrawKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.Phase
+import io.github.qnicoud.dmgym.ui.components.CategoryIcon
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 
@@ -222,7 +223,7 @@ private fun ItemRow(
             verticalAlignment = Alignment.CenterVertically,
             modifier = rowModifier.semantics(mergeDescendants = true) {},
         ) {
-            SenseMark(item.category)
+            CategoryMark(item.category)
             Column { ItemTexts(item) }
         }
         return
@@ -238,7 +239,7 @@ private fun ItemRow(
                     onValueChange = { onCheckToggled(item.key) },
                 ).semantics { stateDescription = state },
     ) {
-        SenseMark(item.category)
+        CategoryMark(item.category)
         Column(modifier = Modifier.weight(1f)) { ItemTexts(item) }
         if (item.auto) {
             Text(
@@ -252,13 +253,13 @@ private fun ItemRow(
     }
 }
 
-/** Icône du sens, lue par TalkBack avec la ligne (« Vue, Mot imposé, brumeux »). Rien si la ligne n'a pas de sens. */
+/** Icône de la catégorie, lue par TalkBack avec la ligne (« Vue, Mot imposé, brumeux »). Rien sans catégorie connue. */
 @Composable
-private fun SenseMark(category: String?) {
-    val sense = Sense.fromCategory(category) ?: return
+private fun CategoryMark(category: String?) {
+    val mark = CategoryIcon.fromCategory(category) ?: return
     Icon(
-        sense.icon,
-        contentDescription = stringResource(sense.label),
+        mark.icon,
+        contentDescription = stringResource(mark.label),
         modifier = Modifier.padding(end = 12.dp).size(24.dp),
     )
 }

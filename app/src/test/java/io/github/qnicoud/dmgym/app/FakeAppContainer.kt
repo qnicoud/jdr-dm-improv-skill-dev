@@ -2,6 +2,7 @@ package io.github.qnicoud.dmgym.app
 
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
+import io.github.qnicoud.dmgym.core.exercise.definitions.RealTables
 import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.DrawRecord
 import io.github.qnicoud.dmgym.core.history.ExerciseCountRecord
@@ -13,6 +14,7 @@ import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import io.github.qnicoud.dmgym.core.signal.EndSignal
+import io.github.qnicoud.dmgym.core.tables.TableRepository
 import io.github.qnicoud.dmgym.feature.exercise.ExerciseDependencies
 import io.github.qnicoud.dmgym.feature.exercise.FakeEndSignal
 import io.github.qnicoud.dmgym.feature.home.ExerciseCatalog
@@ -164,6 +166,7 @@ class FakeAppContainer(
     override val exerciseRegistry: ExerciseRegistry = ExerciseRegistry(emptyList()),
     override val clock: Clock = Clock.fixed(Instant.parse("2026-10-16T10:00:00Z"), ZoneOffset.UTC),
 ) : AppContainer {
+    override val tableRepository: TableRepository = RealTables.repository
     override val exerciseCatalog: ExerciseCatalog = SettingsExerciseCatalog(settingsRepository)
     override val exerciseDependencies: ExerciseDependencies
         get() = error("not used by these tests")

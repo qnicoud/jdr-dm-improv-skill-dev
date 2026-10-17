@@ -157,7 +157,12 @@ private fun appEntryProvider(
             SessionDetailRoute(
                 viewModel =
                     viewModel {
-                        SessionDetailViewModel(route.sessionId, container.historyRepository, container.exerciseRegistry)
+                        SessionDetailViewModel(
+                            route.sessionId,
+                            container.historyRepository,
+                            container.exerciseRegistry,
+                            container.tableRepository,
+                        )
                     },
                 onBack = { navigator.back() },
                 onRedo = { navigator.openExercise(it) },
