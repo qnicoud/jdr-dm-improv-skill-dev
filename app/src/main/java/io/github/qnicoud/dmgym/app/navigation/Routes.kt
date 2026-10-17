@@ -39,6 +39,9 @@ data object Stats : Route
 @Serializable
 data object Settings : Route
 
+@Serializable
+data object About : Route
+
 /** Les trois onglets de la barre de navigation (D37). */
 val TopLevelRoutes: List<Route> = listOf(Home, History(), Stats)
 

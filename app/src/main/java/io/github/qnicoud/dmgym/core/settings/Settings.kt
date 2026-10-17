@@ -16,4 +16,6 @@ data class Settings(
     val dailyReplacements: Map<Int, ExerciseId> = emptyMap(),
     /** Vibration chaque minute pour Crazy Eights (désactivée par défaut, décision UX 14). */
     val crazyEightsMinuteHaptic: Boolean = false,
+    /** Palette du thème (D53) ; à résoudre avec [ThemePalette.effective] selon l'API. */
+    val themePalette: ThemePalette = ThemePalette.PARCHMENT,
 )

@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.app.navigation
 
+import android.os.Build
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -25,7 +26,9 @@ import io.github.qnicoud.dmgym.feature.history.SessionDetailRoute
 import io.github.qnicoud.dmgym.feature.history.SessionDetailViewModel
 import io.github.qnicoud.dmgym.feature.home.HomeRoute
 import io.github.qnicoud.dmgym.feature.home.HomeViewModel
-import io.github.qnicoud.dmgym.feature.settings.SettingsScreen
+import io.github.qnicoud.dmgym.feature.settings.AboutRoute
+import io.github.qnicoud.dmgym.feature.settings.SettingsRoute
+import io.github.qnicoud.dmgym.feature.settings.SettingsViewModel
 import io.github.qnicoud.dmgym.feature.stats.StatsRoute
 import io.github.qnicoud.dmgym.feature.stats.StatsViewModel
 
@@ -116,7 +119,14 @@ private fun appEntryProvider(
                 onShowExercise = { navigator.openHistory(HistoryFilter.exercise(it)) },
             )
         }
-        entry<Settings> { SettingsScreen(onBack = { navigator.back() }) }
+        entry<Settings> {
+            SettingsRoute(
+                viewModel = viewModel { SettingsViewModel(container.settingsRepository, Build.VERSION.SDK_INT) },
+                onBack = { navigator.back() },
+                onOpenAbout = navigator::openAbout,
+            )
+        }
+        entry<About> { AboutRoute(onBack = { navigator.back() }) }
     }
 
 private fun AppContainer.dailyViewModel() =
