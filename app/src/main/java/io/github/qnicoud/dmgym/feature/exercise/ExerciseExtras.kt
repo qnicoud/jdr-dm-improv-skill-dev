@@ -106,9 +106,10 @@ fun OptionsPanel(
 fun ReminderCard(
     definition: ExerciseDefinition,
     modifier: Modifier = Modifier,
+    startOpen: Boolean = true,
 ) {
     val reminder = definition.reminder ?: return
-    var open by rememberSaveable { mutableStateOf(true) }
+    var open by rememberSaveable { mutableStateOf(startOpen) }
     Card(
         modifier = modifier.fillMaxWidth().testTag(ExerciseExtraTags.REMINDER),
         shape = MaterialTheme.shapes.large,

@@ -4,6 +4,7 @@ import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -28,7 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalResources
@@ -59,6 +63,9 @@ import io.github.qnicoud.dmgym.core.exercise.TimerUi
 import io.github.qnicoud.dmgym.platform.KeepScreenOn
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 
+/** Sous cette hauteur de corps d'écran (paysage, clavier ouvert), la zone épinglée passe en version compacte. */
+private val COMPACT_HEIGHT = 360.dp
+
 /** Identifiants de test des éléments de l'écran d'exercice. */
 object ExerciseTags {
     const val TIMER = "exercise_timer"
@@ -84,6 +91,8 @@ object ExerciseTags {
     const val GEM = "exercise_gem"
     const val CHECKLIST_COUNT = "exercise_checklist_count"
     const val CHECKLIST_TOGGLE = "exercise_checklist_toggle"
+    const val PINNED_SUMMARY = "exercise_pinned_summary"
+    const val PINNED_DETAILS = "exercise_pinned_details"
 
     fun check(key: DrawKey) = "exercise_check_${key.slotKey}_${key.position}"
 
@@ -110,6 +119,9 @@ class ExerciseActions(
     val fields: FieldHandlers,
     val assess: AssessActions,
     val onOptionChanged: (String, Boolean) -> Unit = { _, _ -> },
+    val onDurationDecrease: () -> Unit = {},
+    val onDurationIncrease: () -> Unit = {},
+    val onUntimedChanged: (Boolean) -> Unit = {},
 )
 
 /** Point d'entrée avec état : branche le ViewModel, les événements ponctuels, l'écran allumé et la sortie. */
@@ -162,6 +174,9 @@ fun ExerciseRoute(
                     ),
                 assess = AssessActions(viewModel::onAssess, { leave() }, viewModel::fieldState, onNext),
                 onOptionChanged = viewModel::onOptionChanged,
+                onDurationDecrease = viewModel::onDurationDecreased,
+                onDurationIncrease = viewModel::onDurationIncreased,
+                onUntimedChanged = viewModel::onUntimedChanged,
             )
         }
     ExerciseContent(state, { timer.value }, actions, modifier, snackbarHost, daily, dailyPending)
@@ -204,11 +219,15 @@ fun ExerciseContent(
             }
         },
     ) { padding ->
-        Column(modifier = Modifier.padding(padding).imePadding().fillMaxSize()) {
-            when (phase) {
-                Phase.Ready -> ReadyBody(state, timer, actions)
-                Phase.Active -> ActiveBody(state, timer, actions)
-                Phase.Ended -> EndBody(state, timer, actions, daily, dailyPending)
+        BoxWithConstraints(modifier = Modifier.padding(padding).imePadding().fillMaxSize()) {
+            // Paysage, ou fenêtre basse avec le clavier : la zone épinglée se réduit pour laisser la saisie visible.
+            val compact = maxHeight < COMPACT_HEIGHT
+            Column(modifier = Modifier.fillMaxSize()) {
+                when (phase) {
+                    Phase.Ready -> ReadyBody(state, timer, actions)
+                    Phase.Active -> ActiveBody(state, timer, actions, compact)
+                    Phase.Ended -> EndBody(state, timer, actions, daily, dailyPending)
+                }
             }
         }
     }
@@ -257,6 +276,8 @@ private fun ReadyBody(
     timer: () -> TimerUi,
     actions: ExerciseActions,
 ) {
+    var sheetOpen by rememberSaveable { mutableStateOf(false) }
+    val setting = state.timerSetting
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -265,12 +286,28 @@ private fun ReadyBody(
         OptionsPanel(state.definition.options, state.session.options, actions.onOptionChanged)
         DrawArea(state, actions)
         ReminderCard(state.definition)
-        LiveTimerBar(timer, canPause = false, onPause = actions.onPause, onResume = actions.onResume)
+        LiveTimerBar(
+            timer,
+            canPause = false,
+            onPause = actions.onPause,
+            onResume = actions.onResume,
+            onClick = if (setting != null) ({ sheetOpen = true }) else null,
+        )
+    }
+    if (sheetOpen && setting != null) {
+        DurationSheet(
+            exerciseName = stringResource(state.definition.name),
+            setting = setting,
+            onDecrease = actions.onDurationDecrease,
+            onIncrease = actions.onDurationIncrease,
+            onUntimedChange = actions.onUntimedChanged,
+            onDismiss = { sheetOpen = false },
+        )
     }
 }
 
 @Composable
-private fun DrawArea(
+internal fun DrawArea(
     state: ExerciseUiState,
     actions: ExerciseActions,
 ) {
@@ -296,15 +333,16 @@ private fun ColumnScope.ActiveBody(
     state: ExerciseUiState,
     timer: () -> TimerUi,
     actions: ExerciseActions,
+    compact: Boolean,
 ) {
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) { runCatching { focus.requestFocus() } }
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(if (compact) 2.dp else 8.dp),
     ) {
-        LiveTimerBar(timer, canPause = true, onPause = actions.onPause, onResume = actions.onResume)
-        DrawArea(state, actions)
+        LiveTimerBar(timer, canPause = true, onPause = actions.onPause, onResume = actions.onResume, compact = compact)
+        if (compact) CompactDrawArea(state, actions) else DrawArea(state, actions)
     }
     Column(
         modifier =
@@ -315,7 +353,7 @@ private fun ColumnScope.ActiveBody(
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        ReminderCard(state.definition)
+        ReminderCard(state.definition, startOpen = !compact)
         FieldList(state.definition, state.session, state.progress, state.groupCount, actions.fields, focus)
     }
 }

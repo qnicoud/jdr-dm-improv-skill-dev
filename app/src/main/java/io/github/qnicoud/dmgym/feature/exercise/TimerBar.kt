@@ -1,11 +1,13 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -30,6 +32,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -52,7 +55,9 @@ fun LiveTimerBar(
     onPause: () -> Unit,
     onResume: () -> Unit,
     modifier: Modifier = Modifier,
-) = TimerBar(timer(), canPause, onPause, onResume, modifier)
+    compact: Boolean = false,
+    onClick: (() -> Unit)? = null,
+) = TimerBar(timer(), canPause, onPause, onResume, modifier, compact, onClick)
 
 /**
  * Minuteur de l'exercice : six états distincts sans la couleur (icône, libellé, forme de la barre), voir
@@ -65,18 +70,29 @@ fun TimerBar(
     onPause: () -> Unit,
     onResume: () -> Unit,
     modifier: Modifier = Modifier,
+    /** Hauteur disponible faible (paysage, clavier ouvert) : marges et texte réduits, libellé sous l'heure omis. */
+    compact: Boolean = false,
+    /** Écran Prêt : toute la barre ouvre le réglage de la durée. */
+    onClick: (() -> Unit)? = null,
 ) {
     val colors = timerColors(timer.kind)
     val description = timerDescription(timer)
+    val editLabel = stringResource(R.string.timer_ready_edit)
+    val tap =
+        if (onClick == null) {
+            Modifier
+        } else {
+            Modifier.heightIn(min = 48.dp).clickable(onClickLabel = editLabel, role = Role.Button, onClick = onClick)
+        }
     Surface(
-        modifier = modifier.fillMaxWidth().testTag(ExerciseTags.TIMER),
+        modifier = modifier.fillMaxWidth().testTag(ExerciseTags.TIMER).then(tap),
         shape = MaterialTheme.shapes.medium,
         color = colors.container,
         contentColor = colors.content,
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = if (compact) 2.dp else 8.dp),
+            verticalArrangement = Arrangement.spacedBy(if (compact) 2.dp else 8.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Row(
@@ -88,17 +104,22 @@ fun TimerBar(
                     Column {
                         Text(
                             timerText(timer),
-                            style = MaterialTheme.typography.headlineSmall.copy(fontFeatureSettings = TABULAR),
+                            style = timerTextStyle(compact).copy(fontFeatureSettings = TABULAR),
                         )
                         timerLabel(timer)?.let { Text(it, style = MaterialTheme.typography.labelMedium) }
                     }
                 }
+                if (onClick != null) Icon(DmIcons.Chevron, contentDescription = null)
                 PauseButton(timer, canPause, onPause, onResume)
             }
             TimerProgress(timer, colors.bar)
         }
     }
 }
+
+@Composable
+private fun timerTextStyle(compact: Boolean) =
+    if (compact) MaterialTheme.typography.titleLarge else MaterialTheme.typography.headlineSmall
 
 @Composable
 private fun PauseButton(
