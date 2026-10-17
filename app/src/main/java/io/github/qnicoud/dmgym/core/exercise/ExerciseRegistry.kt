@@ -1,5 +1,9 @@
 package io.github.qnicoud.dmgym.core.exercise
 
+import io.github.qnicoud.dmgym.core.exercise.definitions.ConnectStory
+import io.github.qnicoud.dmgym.core.exercise.definitions.ConstraintBox
+import io.github.qnicoud.dmgym.core.exercise.definitions.CrazyEights
+
 /**
  * Catalogue des définitions d'exercice (ADR 0012). Les définitions des 7 exercices s'y ajoutent aux lots L8
  * et L10 ; tant qu'une définition manque, [get] renvoie `null` et l'écran affiche l'écran provisoire.
@@ -19,7 +23,15 @@ class ExerciseRegistry(
     operator fun get(id: ExerciseId): ExerciseDefinition? = byId[id]
 
     companion object {
-        /** Registre livré : vide jusqu'aux lots L8 et L10. */
-        val Default = ExerciseRegistry(emptyList())
+        /** Registre livré : les exercices s'ajoutent par lots (L8, L10), une ligne par exercice. */
+        val Default =
+            ExerciseRegistry(
+                listOf(
+                    // L8 : Crazy Eights, Constraint Box, Connect the Story
+                    CrazyEights.definition,
+                    ConstraintBox.definition,
+                    ConnectStory.definition,
+                ),
+            )
     }
 }
