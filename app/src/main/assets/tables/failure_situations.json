@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "table": "failure_situations",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "guerrier-rate-coup-contre",
+      "text": "Le guerrier rate son coup contre le garde qui bloque le couloir.",
+      "difficulty": 1,
+      "category": "combat"
+    },
+    {
+      "id": "archere-manque-cible-fleche",
+      "text": "L'archère manque sa cible, et la flèche se perd dans les broussailles.",
+      "difficulty": 1,
+      "category": "combat"
+    },
+    {
+      "id": "mage-rate-sort-foudre",
+      "text": "Le mage rate son sort de foudre devant une horde de rats géants.",
+      "difficulty": 2,
+      "category": "combat"
+    },
+    {
+      "id": "paladine-lache-arme-parant",
+      "text": "La paladine lâche son arme en parant le coup du chef de bande.",
+      "difficulty": 2,
+      "category": "combat"
+    },
+    {
+      "id": "duelliste-echoue-desarmer-rival",
+      "text": "Le duelliste échoue à désarmer son rival devant toute la cour du château.",
+      "difficulty": 3,
+      "category": "combat"
+    },
+    {
+      "id": "barbare-rate-bond-dessus",
+      "text": "Le barbare rate son bond par-dessus le gouffre et s'accroche au rebord du pont.",
+      "difficulty": 2,
+      "category": "combat"
+    },
+    {
+      "id": "groupe-echoue-tenir-porte",
+      "text": "Le groupe échoue à tenir la porte face aux assaillants qui poussent de l'autre côté.",
+      "difficulty": 3,
+      "category": "combat"
+    },
+    {
+      "id": "barde-rate-jet-convaincre",
+      "text": "Le barde rate son jet pour convaincre le portier de les laisser entrer.",
+      "difficulty": 1,
+      "category": "social"
+    },
+    {
+      "id": "marchand-refuse-baisser-prix",
+      "text": "Le marchand refuse de baisser son prix malgré les arguments du voleur.",
+      "difficulty": 1,
+      "category": "social"
+    },
+    {
+      "id": "diplomate-echoue-calmer-deux",
+      "text": "La diplomate échoue à calmer deux familles prêtes à se battre en pleine fête.",
+      "difficulty": 2,
+      "category": "social"
+    },
+    {
+      "id": "aventurier-ment-mal-capitaine",
+      "text": "L'aventurier ment mal au capitaine de la garde, qui fronce les sourcils.",
+      "difficulty": 2,
+      "category": "social"
+    },
+    {
+      "id": "pretre-rate-discours-devant",
+      "text": "Le prêtre rate son discours devant un village qui se méfie des étrangers.",
+      "difficulty": 2,
+      "category": "social"
+    },
+    {
+      "id": "negociatrice-echoue-obtenir-audience",
+      "text": "La négociatrice échoue à obtenir l'audience de la reine avant le bal de demain.",
+      "difficulty": 3,
+      "category": "social"
+    },
+    {
+      "id": "chevalier-rate-jet-intimider",
+      "text": "Le chevalier rate son jet pour intimider le bandit, qui éclate de rire devant ses hommes.",
+      "difficulty": 3,
+      "category": "social"
+    },
+    {
+      "id": "eclaireur-rate-jet-trouver",
+      "text": "L'éclaireur rate son jet pour trouver un passage dans le marais.",
+      "difficulty": 1,
+      "category": "exploration"
+    },
+    {
+      "id": "groupe-echoue-allumer-feu",
+      "text": "Le groupe échoue à allumer un feu sous la pluie battante.",
+      "difficulty": 1,
+      "category": "exploration"
+    },
+    {
+      "id": "nain-rate-jet-etayer",
+      "text": "Le nain rate son jet pour étayer la galerie, qui gronde au-dessus d'eux.",
+      "difficulty": 2,
+      "category": "exploration"
+    },
+    {
+      "id": "rodeuse-perd-piste-cerf",
+      "text": "La rôdeuse perd la piste du cerf blanc au bord de la rivière.",
+      "difficulty": 2,
+      "category": "exploration"
+    },
+    {
+      "id": "capitaine-echoue-lire-carte",
+      "text": "Le capitaine échoue à lire la carte et mène l'équipage vers des récifs.",
+      "difficulty": 2,
+      "category": "exploration"
+    },
+    {
+      "id": "grimpeur-rate-prise-mi",
+      "text": "Le grimpeur rate sa prise à mi-hauteur de la falaise, la corde encore à la ceinture.",
+      "difficulty": 3,
+      "category": "exploration"
+    },
+    {
+      "id": "explorateur-echoue-desamorcer-mecanisme",
+      "text": "L'explorateur échoue à désamorcer le mécanisme de la porte de la crypte.",
+      "difficulty": 3,
+      "category": "exploration"
+    },
+    {
+      "id": "voleur-rate-jet-crocheter",
+      "text": "Le voleur rate son jet pour crocheter la porte du temple.",
+      "difficulty": 1,
+      "category": "stealth"
+    },
+    {
+      "id": "espionne-marche-latte-grince",
+      "text": "L'espionne marche sur une latte qui grince, au milieu de la nuit.",
+      "difficulty": 1,
+      "category": "stealth"
+    },
+    {
+      "id": "moine-echoue-glisser-derriere",
+      "text": "Le moine échoue à se glisser derrière la sentinelle sans bruit.",
+      "difficulty": 2,
+      "category": "stealth"
+    },
+    {
+      "id": "contrebandier-rate-jet-cacher",
+      "text": "Le contrebandier rate son jet pour cacher la caisse sous les yeux des douaniers.",
+      "difficulty": 2,
+      "category": "stealth"
+    },
+    {
+      "id": "voleuse-echoue-subtiliser-cle",
+      "text": "La voleuse échoue à subtiliser la clé accrochée à la ceinture du geôlier.",
+      "difficulty": 2,
+      "category": "stealth"
+    },
+    {
+      "id": "infiltre-rate-deguisement-face",
+      "text": "L'infiltré rate son déguisement face au seul invité qui connaît vraiment le comte.",
+      "difficulty": 3,
+      "category": "stealth"
+    },
+    {
+      "id": "groupe-echoue-traverser-camp",
+      "text": "Le groupe échoue à traverser le camp ennemi sans réveiller le chien de garde.",
+      "difficulty": 3,
+      "category": "stealth"
+    },
+    {
+      "id": "jeune-erudit-reconnait-plante",
+      "text": "Le jeune érudit ne reconnaît pas la plante qu'on lui tend.",
+      "difficulty": 1,
+      "category": "knowledge"
+    },
+    {
+      "id": "guerisseuse-rate-jet-soins",
+      "text": "La guérisseuse rate son jet de soins sur le blessé qui perd son sang.",
+      "difficulty": 1,
+      "category": "knowledge"
+    },
+    {
+      "id": "sage-echoue-dechiffrer-inscription",
+      "text": "Le sage échoue à déchiffrer l'inscription gravée au-dessus de la porte.",
+      "difficulty": 2,
+      "category": "knowledge"
+    },
+    {
+      "id": "alchimiste-trompe-dosage-preparant",
+      "text": "L'alchimiste se trompe de dosage en préparant l'antidote.",
+      "difficulty": 2,
+      "category": "knowledge"
+    },
+    {
+      "id": "historienne-souvient-quelle-maison",
+      "text": "L'historienne ne se souvient plus de quelle maison porte ce blason.",
+      "difficulty": 2,
+      "category": "knowledge"
+    },
+    {
+      "id": "mage-echoue-identifier-sort",
+      "text": "Le mage échoue à identifier le sort qui pèse sur l'anneau trouvé dans le tombeau.",
+      "difficulty": 3,
+      "category": "knowledge"
+    },
+    {
+      "id": "detective-rate-jet-observation",
+      "text": "Le détective rate son jet d'observation et ne remarque pas qu'on a déplacé le corps.",
+      "difficulty": 3,
+      "category": "knowledge"
+    },
+    {
+      "id": "pilote-trouve-bon-cap",
+      "text": "Le pilote ne trouve pas le bon cap dans le brouillard épais.",
+      "difficulty": 1,
+      "category": "knowledge"
+    }
+  ]
+}
