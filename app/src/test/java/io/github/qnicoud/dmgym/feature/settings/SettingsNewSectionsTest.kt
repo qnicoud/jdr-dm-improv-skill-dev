@@ -6,6 +6,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -222,6 +223,27 @@ class SettingsNewSectionsTest {
             .onNodeWithTag(SettingsTags.DATA_MESSAGE)
             .performScrollTo()
             .assertTextEquals("Toutes les sessions ont été effacées.")
+    }
+
+    @Test
+    fun `a successful export shows a check announced by the screen reader and no text`() {
+        show(state.copy(data = DataUiState(message = DataMessage.EXPORTED)))
+        compose
+            .onNodeWithTag(SettingsTags.EXPORT_DONE, useUnmergedTree = true)
+            .performScrollTo()
+            .assertIsDisplayed()
+            .assertContentDescriptionEquals("Export terminé.")
+        compose.onNodeWithTag(SettingsTags.DATA_MESSAGE).assertDoesNotExist()
+    }
+
+    @Test
+    fun `a failed export stays an explicit text and shows no check`() {
+        show(state.copy(data = DataUiState(message = DataMessage.EXPORT_FAILED)))
+        compose.onNodeWithTag(SettingsTags.EXPORT_DONE, useUnmergedTree = true).assertDoesNotExist()
+        compose
+            .onNodeWithTag(SettingsTags.DATA_MESSAGE)
+            .performScrollTo()
+            .assertTextEquals("L’export a échoué. Rien n’a été modifié.")
     }
 
     @Test

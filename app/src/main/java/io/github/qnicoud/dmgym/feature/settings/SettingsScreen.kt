@@ -4,8 +4,10 @@ import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -53,6 +55,7 @@ object SettingsTags {
     const val ERASE_PROMPT = "settings_erase_prompt"
     const val ERASE_INPUT = "settings_erase_input"
     const val DATA_MESSAGE = "settings_data_message"
+    const val EXPORT_DONE = "settings_export_done"
 
     fun strength(strength: VibrationStrength) = "settings_strength_${strength.name}"
 
@@ -114,7 +117,14 @@ fun SettingsScreen(
         },
     ) { padding ->
         if (!state.isLoading) {
-            Column(Modifier.padding(padding).verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
+            Column(
+                Modifier
+                    .padding(padding)
+                    .consumeWindowInsets(padding)
+                    .imePadding()
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 24.dp),
+            ) {
                 EndSignalSection(state, actions)
                 DurationsSection(state, actions)
                 DailySection(state, actions)
