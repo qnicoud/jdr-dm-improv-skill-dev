@@ -72,7 +72,9 @@ class AllExercisesSmokeTest {
         compose.onNodeWithTag(ExerciseTags.START).performClick()
         compose.waitForIdle()
         assertTrue("$id should leave Ready", vm.uiState.value.session.phase != Phase.Ready)
-        val tag = ExerciseTags.field(AnswerKey(definition.fieldKeys.first()))
+        // Status Numbers is played aloud: no input field during the scene.
+        val firstKey = definition.fieldKeys.firstOrNull() ?: return
+        val tag = ExerciseTags.field(AnswerKey(firstKey))
         if (compose.onAllNodesWithTag(tag).fetchSemanticsNodes().isNotEmpty()) {
             compose.onNodeWithTag(tag).performScrollTo().performTextInput("une auberge")
             compose.waitForIdle()
