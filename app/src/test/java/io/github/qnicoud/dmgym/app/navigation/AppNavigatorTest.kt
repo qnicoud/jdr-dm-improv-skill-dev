@@ -3,6 +3,7 @@ package io.github.qnicoud.dmgym.app.navigation
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.feature.history.HistoryFilter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -36,8 +37,8 @@ class AppNavigatorTest {
 
     @Test
     fun `selecting a tab keeps home at the root and replaces the previous tab`() {
-        navigator.selectTab(History)
-        assertEquals(listOf<NavKey>(Home, History), stack.toList())
+        navigator.selectTab(History())
+        assertEquals(listOf<NavKey>(Home, History()), stack.toList())
         navigator.selectTab(Stats)
         assertEquals(listOf<NavKey>(Home, Stats), stack.toList())
         navigator.selectTab(Home)
@@ -53,17 +54,55 @@ class AppNavigatorTest {
 
     @Test
     fun `selecting the current tab changes nothing`() {
-        navigator.selectTab(History)
-        navigator.selectTab(History)
-        assertEquals(listOf<NavKey>(Home, History), stack.toList())
+        navigator.selectTab(History())
+        navigator.selectTab(History())
+        assertEquals(listOf<NavKey>(Home, History()), stack.toList())
     }
 
     @Test
     fun `current tab is the top level route on the stack`() {
         assertEquals(Home, navigator.currentTab())
-        navigator.selectTab(History)
-        assertEquals(History, navigator.currentTab())
+        navigator.selectTab(History())
+        assertEquals(History(), navigator.currentTab())
         navigator.openSettings()
+        assertNull(navigator.currentTab())
+    }
+
+    @Test
+    fun `opening the history with a filter replaces the stack above home`() {
+        val gems = HistoryFilter(gemsOnly = true)
+        navigator.selectTab(Stats)
+        navigator.openHistory(gems)
+        assertEquals(listOf<NavKey>(Home, History(gems)), stack.toList())
+    }
+
+    @Test
+    fun `opening the same filtered history twice changes nothing`() {
+        val filter = HistoryFilter(exerciseId = crazy)
+        navigator.openHistory(filter)
+        navigator.openHistory(filter)
+        assertEquals(listOf<NavKey>(Home, History(filter)), stack.toList())
+    }
+
+    @Test
+    fun `a filtered history still counts as the history tab`() {
+        navigator.openHistory(HistoryFilter(gemsOnly = true))
+        assertEquals(History(), navigator.currentTab())
+    }
+
+    @Test
+    fun `selecting the history tab from a filtered history keeps the screen`() {
+        val filter = HistoryFilter(gemsOnly = true)
+        navigator.openHistory(filter)
+        navigator.selectTab(History())
+        assertEquals(listOf<NavKey>(Home, History(filter)), stack.toList())
+    }
+
+    @Test
+    fun `opening a session detail pushes it above the history`() {
+        navigator.selectTab(History())
+        navigator.openSessionDetail(7)
+        assertEquals(listOf<NavKey>(Home, History(), SessionDetail(7)), stack.toList())
         assertNull(navigator.currentTab())
     }
 }

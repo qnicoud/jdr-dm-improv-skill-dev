@@ -35,6 +35,7 @@ class StatsScreenTest {
     private val today = LocalDate.of(2026, 10, 14).toEpochDay()
     private var chosen = 0
     private var gemsShown = 0
+    private val shownExercises = mutableListOf<ExerciseId>()
 
     private fun row(vararg marks: DayMark) = marks.mapIndexed { i, mark -> DayStatus(today - 6 + i, mark) }
 
@@ -68,7 +69,12 @@ class StatsScreenTest {
         compose.setContent {
             DmGymTheme(darkTheme = dark) {
                 WithFontScale(fontScale) {
-                    StatsScreen(state, onChooseExercise = { chosen++ }, onShowGems = { gemsShown++ })
+                    StatsScreen(
+                        state,
+                        onChooseExercise = { chosen++ },
+                        onShowGems = { gemsShown++ },
+                        onShowExercise = { shownExercises += it },
+                    )
                 }
             }
         }
@@ -167,6 +173,13 @@ class StatsScreenTest {
             .onNodeWithTag(
                 StatsTags.bar(ExerciseId.ONE_PAGE),
             ).assertContentDescriptionEquals("One-Page Design : 1 session")
+    }
+
+    @Test
+    fun `touching an exercise bar opens the history for that exercise`() {
+        show(normal)
+        compose.onNodeWithTag(StatsTags.bar(ExerciseId.ONE_PAGE)).performClick()
+        assertEquals(listOf(ExerciseId.ONE_PAGE), shownExercises)
     }
 
     @Test

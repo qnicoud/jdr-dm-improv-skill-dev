@@ -58,6 +58,7 @@ fun StatsRoute(
     viewModel: StatsViewModel,
     onChooseExercise: () -> Unit,
     onShowGems: () -> Unit,
+    onShowExercise: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -65,7 +66,7 @@ fun StatsRoute(
         viewModel.refreshToday()
         onPauseOrDispose {}
     }
-    StatsScreen(state, onChooseExercise, onShowGems, modifier)
+    StatsScreen(state, onChooseExercise, onShowGems, onShowExercise, modifier)
 }
 
 /** Progrès (S10) : sessions d'abord (D32), puis série, meilleure série, répartition, bijoux et temps. */
@@ -75,6 +76,7 @@ fun StatsScreen(
     state: StatsUiState,
     onChooseExercise: () -> Unit,
     onShowGems: () -> Unit,
+    onShowExercise: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -100,7 +102,11 @@ fun StatsScreen(
             ) {
                 item(key = "sessions") { SessionsCard(state) }
                 item(key = "streak") { StreakCard(state) }
-                if (state.perExercise.isNotEmpty()) item(key = "by_exercise") { ExerciseBars(state.perExercise) }
+                if (state.perExercise.isNotEmpty()) {
+                    item(
+                        key = "by_exercise",
+                    ) { ExerciseBars(state.perExercise, onShowExercise) }
+                }
                 item(key = "extras") { Extras(state, onShowGems) }
             }
         }
@@ -158,7 +164,7 @@ private fun SessionsCard(state: StatsUiState) {
 @Composable
 private fun StatsScreenPreview() {
     DmGymTheme {
-        StatsScreen(PreviewState, onChooseExercise = {}, onShowGems = {})
+        StatsScreen(PreviewState, onChooseExercise = {}, onShowGems = {}, onShowExercise = {})
     }
 }
 
@@ -166,7 +172,7 @@ private fun StatsScreenPreview() {
 @Composable
 private fun StatsEmptyPreview() {
     DmGymTheme {
-        StatsScreen(StatsUiState(isLoading = false), onChooseExercise = {}, onShowGems = {})
+        StatsScreen(StatsUiState(isLoading = false), onChooseExercise = {}, onShowGems = {}, onShowExercise = {})
     }
 }
 

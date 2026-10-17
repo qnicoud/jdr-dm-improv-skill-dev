@@ -3,6 +3,7 @@ package io.github.qnicoud.dmgym.app.navigation
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.feature.history.HistoryFilter
 
 /**
  * Opérations de navigation sur la pile de retour (ADR 0003). Home est toujours la racine ;
@@ -31,6 +32,15 @@ class AppNavigator(
         backStack.add(Settings)
     }
 
+    /** Ouvre l'onglet Historique avec un filtre initial ; sans effet si cet écran est déjà affiché. */
+    fun openHistory(filter: HistoryFilter) {
+        val target = History(filter)
+        if (backStack.lastOrNull() == target) return
+        backStack.clear()
+        backStack.add(Home)
+        backStack.add(target)
+    }
+
     fun selectTab(tab: Route) {
         require(tab in TopLevelRoutes) { "$tab n'est pas un onglet" }
         if (currentTab() == tab) return
@@ -47,5 +57,5 @@ class AppNavigator(
     }
 
     /** L'onglet affiché, ou `null` si l'écran du dessus n'est pas un onglet. */
-    fun currentTab(): Route? = (backStack.lastOrNull() as? Route)?.takeIf { it in TopLevelRoutes }
+    fun currentTab(): Route? = (backStack.lastOrNull() as? Route)?.tab()
 }

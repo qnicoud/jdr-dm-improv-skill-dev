@@ -1,6 +1,7 @@
 package io.github.qnicoud.dmgym.feature.stats
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,18 +25,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
+import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.ui.components.nameRes
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 
 private const val SECONDS_PER_MINUTE = 60L
 private const val MINUTES_PER_HOUR = 60L
 private val BarHeight = 12.dp
+private val MinTouchTarget = 48.dp
 
 /** Série, jour de grâce, rangée des 7 jours et meilleure série. Aucune couleur d'alerte, même rompue (D15). */
 @Composable
@@ -92,7 +97,10 @@ private fun graceText(state: StatsUiState): String =
 
 /** Répartition par exercice : la liste vaut le graphique (texte alternatif pour TalkBack) et personne n'est pointé du doigt. */
 @Composable
-fun ExerciseBars(counts: List<ExerciseCount>) {
+fun ExerciseBars(
+    counts: List<ExerciseCount>,
+    onShowExercise: (ExerciseId) -> Unit,
+) {
     val max = counts.maxOf { it.count }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
@@ -100,7 +108,7 @@ fun ExerciseBars(counts: List<ExerciseCount>) {
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.semantics { heading() },
         )
-        counts.forEach { ExerciseBar(it, max) }
+        counts.forEach { ExerciseBar(it, max, onShowExercise) }
     }
 }
 
@@ -108,12 +116,16 @@ fun ExerciseBars(counts: List<ExerciseCount>) {
 private fun ExerciseBar(
     entry: ExerciseCount,
     max: Int,
+    onShowExercise: (ExerciseId) -> Unit,
 ) {
     val name = stringResource(entry.id.nameRes)
     val description = pluralStringResource(R.plurals.stats_exercise_count, entry.count, name, entry.count)
     Column(
         Modifier
-            .semantics(mergeDescendants = true) {
+            .heightIn(min = MinTouchTarget)
+            .clickable(role = Role.Button, onClickLabel = stringResource(R.string.stats_bar_action)) {
+                onShowExercise(entry.id)
+            }.semantics(mergeDescendants = true) {
                 contentDescription = description
             }.testTag(StatsTags.bar(entry.id)),
     ) {

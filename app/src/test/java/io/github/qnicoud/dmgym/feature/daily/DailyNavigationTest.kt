@@ -21,6 +21,7 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.core.history.SessionStatus
 import io.github.qnicoud.dmgym.core.time.localEpochDay
+import io.github.qnicoud.dmgym.feature.history.HistoryFilter
 import io.github.qnicoud.dmgym.feature.stats.StatsTags
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -123,6 +124,6 @@ class DailyNavigationTest {
         compose.onNodeWithTag(StatsTags.SESSIONS).assertTextEquals("3 sessions")
         compose.onNodeWithTag(StatsTags.GEMS_LINK).performClick()
         compose.waitForIdle()
-        assertEquals(History, stack.last())
+        assertEquals(History(HistoryFilter.Gems), stack.last())
     }
 }

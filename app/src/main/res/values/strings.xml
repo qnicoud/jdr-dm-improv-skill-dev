@@ -190,6 +190,51 @@
   <string name="end_done">Terminé</string>
   <string name="end_skip">Passer</string>
 
+  <!-- Historique et détail de session (L9 : S08, S09, carte Reprendre) -->
+  <string name="history_filters_label">Filtrer par exercice</string>
+  <string name="history_filter_all">Tous</string>
+  <string name="history_filter_gems">Bijoux</string>
+  <string name="history_empty_title">Ton carnet est vide.</string>
+  <string name="history_empty_body">Fais un premier exercice : il apparaîtra ici.</string>
+  <string name="history_empty_action">Choisir un exercice</string>
+  <string name="history_filter_empty">Aucune session pour ce filtre.</string>
+  <string name="history_filter_clear">Effacer le filtre</string>
+  <string name="history_day_today">Aujourd’hui</string>
+  <string name="history_day_yesterday">Hier</string>
+  <string name="history_unfinished">Inachevée</string>
+  <string name="stats_bar_action">Voir les sessions de cet exercice</string>
+  <string name="detail_share">Partager le texte</string>
+  <string name="detail_share_chooser">Partager le texte</string>
+  <string name="detail_more">Plus d’actions</string>
+  <string name="detail_delete">Supprimer</string>
+  <string name="detail_delete_title">Supprimer cette session ?</string>
+  <string name="detail_delete_body">Le tirage et le texte seront effacés. Cette action est définitive.</string>
+  <string name="detail_delete_cancel">Annuler</string>
+  <string name="detail_save_failed">Impossible d’enregistrer la modification.</string>
+  <string name="detail_delete_failed">Impossible de supprimer la session.</string>
+  <string name="detail_share_failed">Aucune application ne peut recevoir ce texte.</string>
+  <string name="detail_not_found">Cette session n’existe plus.</string>
+  <string name="detail_duration_overtime">%1$s + %2$s</string>
+  <string name="detail_unfinished_note">Session inachevée : le texte s’arrête là où tu t’es arrêté.</string>
+  <string name="detail_draw_title">Tirage</string>
+  <string name="detail_word_used">utilisé</string>
+  <string name="detail_word_unused">non utilisé</string>
+  <string name="detail_answers_title">Ton texte</string>
+  <string name="detail_answer_default_label">Réponse %1$d</string>
+  <string name="detail_answer_group">Élément %1$d</string>
+  <string name="detail_level_title">Niveau</string>
+  <string name="detail_no_rating">Pas d’évaluation</string>
+  <string name="detail_rubric_title">Tes réponses à la grille</string>
+  <string name="detail_rubric_line">%1$s : %2$s</string>
+  <string name="detail_redo">Refaire avec un nouveau tirage</string>
+  <string name="home_resume_kicker">Reprendre</string>
+  <string name="home_resume_meta">%1$s · brouillon · %2$s</string>
+  <string name="home_resume_action">Reprendre</string>
+  <string name="home_resume_action_description">Reprendre %1$s</string>
+  <string name="resume_ago_now">à l’instant</string>
+  <string name="resume_ago_minutes">il y a %1$d min</string>
+  <string name="resume_ago_hours">il y a %1$d h</string>
+
   <!-- L8 : détection et liste des éléments tirés -->
   <string name="checklist_state_used">Utilisé</string>
   <string name="checklist_state_unused">Pas encore utilisé</string>
