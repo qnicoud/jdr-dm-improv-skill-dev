@@ -1,6 +1,5 @@
 package io.github.qnicoud.dmgym.feature.home
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -101,42 +102,49 @@ private fun CardBody(
     }
 }
 
+/** Étiquette « Préparation » : même gabarit que [DurationChip], sur un fond plus doux (pas de couleur d'accent). */
 @Composable
 private fun PreparationTag() {
-    Surface(
-        shape = MaterialTheme.shapes.small,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
+    TagChip(MaterialTheme.colorScheme.surfaceContainerHigh, Modifier.testTag(HomeTags.PREPARATION_TAG)) {
         Text(
             text = stringResource(R.string.exercise_tag_preparation),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = 6.dp),
         )
     }
 }
 
 @Composable
 private fun DurationChip(durationSeconds: Int?) {
-    Surface(shape = MaterialTheme.shapes.small, color = MaterialTheme.colorScheme.secondaryContainer) {
+    TagChip(MaterialTheme.colorScheme.secondaryContainer, Modifier.testTag(HomeTags.DURATION_TAG)) {
+        Icon(
+            imageVector = if (durationSeconds == null) DmIcons.TimerOff else DmIcons.Timer,
+            contentDescription = null,
+            modifier = Modifier.size(16.dp),
+            tint = MaterialTheme.colorScheme.onSecondaryContainer,
+        )
+        Text(
+            text = durationLabel(durationSeconds),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+        )
+    }
+}
+
+/** Gabarit commun des étiquettes de la carte : forme, marges et espacement identiques. */
+@Composable
+private fun TagChip(
+    color: Color,
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit,
+) {
+    Surface(modifier = modifier, shape = MaterialTheme.shapes.small, color = color) {
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Icon(
-                imageVector = if (durationSeconds == null) DmIcons.TimerOff else DmIcons.Timer,
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-            )
-            Text(
-                text = durationLabel(durationSeconds),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-            )
-        }
+            content = content,
+        )
     }
 }
 
