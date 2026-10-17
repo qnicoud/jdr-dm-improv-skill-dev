@@ -35,13 +35,14 @@ import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.feature.daily.DailyCard
 import io.github.qnicoud.dmgym.feature.daily.DailyViewModel
-import io.github.qnicoud.dmgym.ui.icons.DmIcons
+import io.github.qnicoud.dmgym.ui.components.SettingsAction
+import io.github.qnicoud.dmgym.ui.components.SettingsActionTag
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 import java.time.Clock
 
 object HomeTags {
     const val WELCOME = "home_welcome"
-    const val SETTINGS_BUTTON = "home_settings"
+    const val SETTINGS_BUTTON = SettingsActionTag
     const val PREPARATION_TAG = "exercise_tag_preparation"
     const val DURATION_TAG = "exercise_tag_duration"
 
@@ -139,9 +140,7 @@ private fun HomeTopBar(
             )
         },
         actions = {
-            IconButton(onClick = onSettingsClick, modifier = Modifier.testTag(HomeTags.SETTINGS_BUTTON)) {
-                Icon(DmIcons.Settings, contentDescription = stringResource(R.string.action_settings))
-            }
+            SettingsAction(onClick = onSettingsClick)
         },
         scrollBehavior = scrollBehavior,
     )
