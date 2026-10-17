@@ -242,7 +242,11 @@ private fun Field(
         textStyle = MaterialTheme.typography.bodyLarge,
         label = { Text(label) },
         placeholder = { Text(stringResource(spec.hint ?: R.string.field_default_hint)) },
-        lineLimits = TextFieldLineLimits.MultiLine(minHeightInLines = spec.minLines, maxHeightInLines = MAX_LINES),
+        lineLimits =
+            TextFieldLineLimits.MultiLine(
+                minHeightInLines = spec.minLines,
+                maxHeightInLines = maxOf(MAX_LINES, spec.minLines),
+            ),
         supportingText = spec.softLimit?.let { limit -> { SoftCounter(state.text.length, limit) } },
         keyboardOptions = KeyboardOptions(imeAction = imeActionOf(position)),
         outputTransformation = LocalFieldHighlight.current(spec.key),
