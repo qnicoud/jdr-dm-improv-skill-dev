@@ -29,3 +29,8 @@ Une dépendance transitive peut ajouter `INTERNET` ou `ACCESS_NETWORK_STATE` au 
 - Le garde-fou s'applique en local (`./gradlew check`) comme en CI.
 - Si une montée de version de dépendance ajoute une permission, la CI casse : on la retire alors avec `tools:node="remove"` dans le manifeste et on le justifie dans le commit.
 - La sauvegarde automatique Android (`allowBackup`) n'a pas besoin de permission, mais elle copie les données hors de l'appareil. Décision D26 (2026-10-16) : seul le transfert d'appareil à appareil est autorisé (`dataExtractionRules` sans `cloud-backup` ; `fullBackupContent` vide pour API 26-30). Rien ne part vers un cloud.
+
+## Complément (2026-10-17, décisions D51, D52)
+
+- La v1 reste sans permission réseau ni audio. La saisie vocale passe par la dictée du clavier (aucune permission pour l'app).
+- Le LLM optionnel prévu après la v1 demandera `INTERNET` : il fera l'objet d'un nouvel ADR qui amende celui-ci (liste blanche de `verifyPermissions`, option désactivée par défaut, clé fournie par l'utilisateur et stockée chiffrée).

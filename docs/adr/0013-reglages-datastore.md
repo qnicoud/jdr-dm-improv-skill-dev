@@ -49,3 +49,7 @@ interface SettingsRepository {
 
 - Les tests JVM utilisent un `FakeSettingsRepository`. L'implémentation DataStore est testée sous Robolectric avec un fichier temporaire.
 - Ajouter un réglage revient à ajouter une clé, sans migration.
+
+## Complément (2026-10-17, décision D53)
+
+Nouveau réglage `themePalette` : `PARCHMENT` (défaut) / `DYNAMIC` (Material You, API 31+ ; masqué ou replié sur `PARCHMENT` en dessous) / quelques palettes Material conformes. Lu par le thème Compose ; contrastes vérifiés par `ContrastTest` pour chaque palette statique.

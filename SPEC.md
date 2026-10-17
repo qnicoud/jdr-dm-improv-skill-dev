@@ -40,6 +40,8 @@ L'app doit fonctionner **entièrement hors ligne**. Pas de compte, pas de backen
 - **Auto-évaluation optionnelle** en fin d'exercice : 3 niveaux, plus possibilité de marquer un « bijou » (production à garder).
 - Écran Historique : liste filtrable par exercice, détail d'une session.
 - Statistiques simples : nombre de sessions (affiché en premier), puis série de jours consécutifs **avec jour de grâce, sans remise à zéro punitive** ; le jour bascule à minuit local.
+- **Thème** (D53) : réglage « Parchemin » (défaut, identité de l'app) / « Couleurs du téléphone » (Material You, Android 12+) / 3-4 palettes Material conformes.
+- **Saisie vocale** (D52) : la v1 s'appuie sur la dictée du clavier Android ; aucun bouton micro intégré, aucune permission audio.
 - **Séance du jour** suggérée (3 exercices, graine = date, chaque exercice remplaçable ; One-Page exclu par défaut).
 
 ## Les 7 exercices
@@ -114,15 +116,21 @@ Chaque entrée porte un `id` stable et un champ `difficulty` (1-3) ; le champ `k
 ## Hors périmètre v1
 
 - Synchronisation cloud, comptes
-- IA générative intégrée
+- IA générative intégrée (prévue après la v1, en option : voir la feuille de route)
 - Enregistrement audio
-- Thèmes personnalisés
+- Thèmes entièrement personnalisés (la v1 propose seulement un choix de palette, voir « Fonctionnalités communes »)
 - Notifications (rappels, fin de minuteur hors app) → v1.1, optionnelles, désactivées par défaut
 
 ## Feuille de route après la v1
 
 - **v1.1** : exercices « Échec qui avance », « Règle des 3 indices », « Oui, et… » ; rappels par notification locale optionnels.
 - **v1.2** : « PNJ éclair ».
+- **Après la v1 — LLM optionnel** (D51) : exercices interactifs (dialogue) et génération de situations. Désactivé par défaut ; service distant (ChatGPT, Claude, Mistral…) avec la clé d'API de l'utilisateur, ou modèle local. L'app reste entièrement utilisable sans. Demandera la permission réseau, donc un nouvel ADR qui amende l'ADR 0010.
+- **Plus tard — saisie vocale intégrée** (D52) : bouton micro avec reconnaissance sur l'appareil.
+
+## Identité
+
+- Logo et icône (D49, D50) : **d20 dont la face est un sablier**, sur fond **brique** (`#8A2E1C`) ; source `docs/ux/logo/03-d20-sablier.svg`.
 
 ## Ordre de développement proposé
 
