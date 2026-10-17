@@ -157,7 +157,7 @@ private fun ExerciseBar(
     }
 }
 
-/** Bijoux et temps cumulé ; masqués tant qu'ils valent zéro (pas de zéro écrasant). */
+/** Bijoux (ou une aide neutre tant qu'il n'y en a aucun) et temps cumulé ; le temps reste masqué à zéro. */
 @Composable
 fun Extras(
     state: StatsUiState,
@@ -165,22 +165,14 @@ fun Extras(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         if (state.gems > 0) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Icon(
-                    DmIcons.Gem,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier.size(24.dp),
-                )
-                Text(
-                    text = pluralStringResource(R.plurals.stats_gems, state.gems, state.gems),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.testTag(StatsTags.GEMS),
-                )
-                TextButton(onClick = onShowGems, modifier = Modifier.testTag(StatsTags.GEMS_LINK)) {
-                    Text(stringResource(R.string.stats_gems_link))
-                }
-            }
+            GemsRow(state.gems, onShowGems)
+        } else {
+            Text(
+                text = stringResource(R.string.stats_gems_empty),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.testTag(StatsTags.GEMS_EMPTY),
+            )
         }
         if (state.totalSeconds >= SECONDS_PER_MINUTE) {
             Text(
@@ -189,6 +181,29 @@ fun Extras(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.testTag(StatsTags.TIME),
             )
+        }
+    }
+}
+
+@Composable
+private fun GemsRow(
+    gems: Int,
+    onShowGems: () -> Unit,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Icon(
+            DmIcons.Gem,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.tertiary,
+            modifier = Modifier.size(24.dp),
+        )
+        Text(
+            text = pluralStringResource(R.plurals.stats_gems, gems, gems),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.testTag(StatsTags.GEMS),
+        )
+        TextButton(onClick = onShowGems, modifier = Modifier.testTag(StatsTags.GEMS_LINK)) {
+            Text(stringResource(R.string.stats_gems_link))
         }
     }
 }

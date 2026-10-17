@@ -1,7 +1,9 @@
 package io.github.qnicoud.dmgym
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -20,19 +22,32 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import io.github.qnicoud.dmgym.app.Appearance
+import io.github.qnicoud.dmgym.app.ColdStartTracker
 import io.github.qnicoud.dmgym.app.DmGymApp
+import io.github.qnicoud.dmgym.app.SplashPolicy
+import io.github.qnicoud.dmgym.app.SplashVariant
 import io.github.qnicoud.dmgym.app.ThemeBootstrap
 import io.github.qnicoud.dmgym.core.settings.resolve
+import io.github.qnicoud.dmgym.platform.rememberSplashTheme
 import io.github.qnicoud.dmgym.platform.systemAnimationsDisabled
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val startedAt = SystemClock.elapsedRealtime()
+        val policy = SplashPolicy(isColdStart = ColdStartTracker.consume())
         val splash = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val container = (application as DmGymApplication).container
         val bootstrap = ThemeBootstrap(container.settingsRepository, lifecycleScope)
-        splash.setKeepOnScreenCondition { !bootstrap.isReady }
+        splash.setKeepOnScreenCondition {
+            policy.keepOnScreen(bootstrap.isReady, SystemClock.elapsedRealtime() - startedAt)
+        }
+        rememberSplashThemeOnChange(bootstrap)
         setContent {
             val appearance = bootstrap.appearance.collectAsStateWithLifecycle().value ?: Appearance()
             val dark = appearance.mode.isDark(isSystemInDarkTheme())
@@ -41,6 +56,20 @@ class MainActivity : ComponentActivity() {
             DmGymApp(container, palette = appearance.palette, darkTheme = dark, reduceMotion = reduceMotion)
         }
     }
+
+    /** Le démarrage suivant prend la couleur de la palette choisie, y compris après un changement de palette. */
+    private fun rememberSplashThemeOnChange(bootstrap: ThemeBootstrap) {
+        lifecycleScope.launch {
+            bootstrap.appearance
+                .filterNotNull()
+                .map { SplashVariant.of(it.palette, it.mode.isDark(systemDark())) }
+                .distinctUntilChanged()
+                .collect { rememberSplashTheme(it) }
+        }
+    }
+
+    private fun systemDark(): Boolean =
+        resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
     /** Réglage d'animations du système, relu quand l'app revient au premier plan. */
     @Composable

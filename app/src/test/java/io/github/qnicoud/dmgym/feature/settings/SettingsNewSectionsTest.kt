@@ -3,9 +3,11 @@ package io.github.qnicoud.dmgym.feature.settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -222,6 +224,32 @@ class SettingsNewSectionsTest {
             .onNodeWithTag(SettingsTags.DATA_MESSAGE)
             .performScrollTo()
             .assertTextEquals("Toutes les sessions ont été effacées.")
+    }
+
+    @Test
+    fun `a successful export shows a check announced by the screen reader and no text`() {
+        show(state.copy(data = DataUiState(message = DataMessage.EXPORTED)))
+        compose
+            .onNodeWithTag(SettingsTags.EXPORT_DONE, useUnmergedTree = true)
+            .performScrollTo()
+            .assertIsDisplayed()
+            .assertContentDescriptionEquals("Export terminé.")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite))
+        // La coche est hors de la ligne cliquable : sa zone vive n'est pas fusionnée dans le bouton.
+        compose
+            .onNodeWithTag(SettingsTags.EXPORT)
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.LiveRegion))
+        compose.onNodeWithTag(SettingsTags.DATA_MESSAGE).assertDoesNotExist()
+    }
+
+    @Test
+    fun `a failed export stays an explicit text and shows no check`() {
+        show(state.copy(data = DataUiState(message = DataMessage.EXPORT_FAILED)))
+        compose.onNodeWithTag(SettingsTags.EXPORT_DONE, useUnmergedTree = true).assertDoesNotExist()
+        compose
+            .onNodeWithTag(SettingsTags.DATA_MESSAGE)
+            .performScrollTo()
+            .assertTextEquals("L’export a échoué. Rien n’a été modifié.")
     }
 
     @Test

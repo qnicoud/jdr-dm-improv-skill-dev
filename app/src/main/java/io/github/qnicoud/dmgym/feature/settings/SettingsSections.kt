@@ -5,12 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -20,6 +22,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -34,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.settings.ThemeMode
 import io.github.qnicoud.dmgym.core.settings.VibrationStrength
+import io.github.qnicoud.dmgym.ui.icons.DmIcons
 
 private val MinButtonHeight = 48.dp
 
@@ -153,6 +157,7 @@ internal fun DataSection(
         hint = stringResource(R.string.settings_export_hint),
         onClick = actions.onExport,
         modifier = Modifier.testTag(SettingsTags.EXPORT),
+        trailing = if (state.message == DataMessage.EXPORTED) ({ ExportDoneCheck() }) else null,
     )
     if (state.confirmingErase) {
         EraseConfirmation(state, actions)
@@ -164,7 +169,7 @@ internal fun DataSection(
             modifier = Modifier.testTag(SettingsTags.ERASE),
         )
     }
-    state.message?.let { message ->
+    state.message?.takeIf { it != DataMessage.EXPORTED }?.let { message ->
         Text(
             text = stringResource(message.textRes),
             style = MaterialTheme.typography.bodyLarge,
@@ -183,19 +188,41 @@ private fun ActionRow(
     hint: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    trailing: (@Composable () -> Unit)? = null,
 ) {
-    Column(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .heightIn(min = 56.dp)
-                .clickable(role = Role.Button, onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.Center,
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(label, style = MaterialTheme.typography.bodyLarge)
-        Text(hint, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Column(
+            modifier =
+                modifier
+                    .weight(1f)
+                    .heightIn(min = 56.dp)
+                    .clickable(role = Role.Button, onClick = onClick)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(label, style = MaterialTheme.typography.bodyLarge)
+            Text(hint, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        trailing?.invoke()
     }
+}
+
+/** Coche de validation à côté du bouton d'export, hors de la ligne cliquable pour que sa zone vive soit annoncée (recette 8.5). */
+@Composable
+private fun ExportDoneCheck() {
+    Icon(
+        DmIcons.Check,
+        contentDescription = stringResource(R.string.settings_data_exported),
+        tint = MaterialTheme.colorScheme.primary,
+        modifier =
+            Modifier
+                .padding(end = 16.dp)
+                .semantics { liveRegion = LiveRegionMode.Polite }
+                .testTag(SettingsTags.EXPORT_DONE),
+    )
 }
 
 /**

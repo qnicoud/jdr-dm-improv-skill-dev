@@ -15,6 +15,7 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.streak.DayMark
 import io.github.qnicoud.dmgym.core.streak.DayStatus
 import io.github.qnicoud.dmgym.core.streak.StreakSummary
+import io.github.qnicoud.dmgym.ui.components.SettingsActionTag
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -35,6 +36,7 @@ class StatsScreenTest {
     private val today = LocalDate.of(2026, 10, 14).toEpochDay()
     private var chosen = 0
     private var gemsShown = 0
+    private var settingsOpened = 0
     private val shownExercises = mutableListOf<ExerciseId>()
 
     private fun row(vararg marks: DayMark) = marks.mapIndexed { i, mark -> DayStatus(today - 6 + i, mark) }
@@ -74,6 +76,7 @@ class StatsScreenTest {
                         onChooseExercise = { chosen++ },
                         onShowGems = { gemsShown++ },
                         onShowExercise = { shownExercises += it },
+                        onSettingsClick = { settingsOpened++ },
                     )
                 }
             }
@@ -197,6 +200,20 @@ class StatsScreenTest {
         compose.onNodeWithTag(StatsTags.TIME).assertTextEquals("25 min d’écriture")
         compose.onNodeWithTag(StatsTags.GEMS).assertDoesNotExist()
         compose.onNodeWithTag(StatsTags.GEMS_LINK).assertDoesNotExist()
+    }
+
+    @Test
+    fun `without any gem a neutral hint replaces the gems link`() {
+        show(normal.copy(gems = 0))
+        compose.onNodeWithTag(StatsTags.GEMS_EMPTY).performScrollTo().assertIsDisplayed()
+        compose.onNodeWithTag(StatsTags.GEMS_LINK).assertDoesNotExist()
+    }
+
+    @Test
+    fun `the settings gear is in the top bar`() {
+        show(normal)
+        compose.onNodeWithTag(SettingsActionTag).performClick()
+        assertEquals(1, settingsOpened)
     }
 
     @Test
