@@ -69,13 +69,13 @@ object DmIcons {
         }
 }
 
-private fun circle(
+internal fun circle(
     cx: Float,
     cy: Float,
     r: Float,
 ): String = "M${cx - r} ${cy}a$r $r 0 1 0 ${2 * r} 0a$r $r 0 1 0 ${-2 * r} 0"
 
-private fun icon(
+internal fun icon(
     name: String,
     vararg paths: String,
 ): ImageVector {
