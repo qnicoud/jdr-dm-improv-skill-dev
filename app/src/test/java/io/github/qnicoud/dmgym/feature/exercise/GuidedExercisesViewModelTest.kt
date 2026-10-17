@@ -1,9 +1,11 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.lifecycle.SavedStateHandle
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.core.exercise.contrastBand
+import io.github.qnicoud.dmgym.core.exercise.definitions.ConstraintBox
 import io.github.qnicoud.dmgym.core.exercise.definitions.CoreImage
 import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
 import io.github.qnicoud.dmgym.core.exercise.definitions.OnePage
@@ -126,6 +128,22 @@ class GuidedExercisesViewModelTest : ExerciseViewModelTestBase() {
                 if (card >= 8) assertTrue("shift:down" in tags, "card $card, tags $tags")
                 if (card <= 3) assertTrue("shift:up" in tags, "card $card, tags $tags")
             }
+        }
+
+    @Test
+    fun `a resumed session saved before categories existed gets its senses back from the table`() =
+        runTest {
+            val first = started(ConstraintBox.definition)
+            first.onStop()
+            runCurrent()
+            val saved = history.sessions.getValue(1)
+            history.sessions[1] = saved.copy(draws = saved.draws.map { it.copy(category = null) })
+            handle = SavedStateHandle()
+            val resumed = vm(ConstraintBox.definition, ExerciseLaunch(resumeSessionId = 1, seed = 9))
+            collect(resumed)
+            val words = resumed.session().drawsOf(ConstraintBox.WORDS)
+            assertEquals(3, words.size)
+            assertTrue(words.all { it.category != null })
         }
 
     @Test

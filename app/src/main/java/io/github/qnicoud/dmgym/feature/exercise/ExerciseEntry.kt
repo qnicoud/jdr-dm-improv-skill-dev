@@ -41,5 +41,5 @@ fun ExerciseEntry(
                 launch = ExerciseLaunch(route.resumeSessionId, route.fromDaily),
             )
         }
-    ExerciseRoute(viewModel, onBack, modifier, daily, onNextExercise, onDailyDone)
+    ExerciseRoute(viewModel, onBack, modifier, daily, onNextExercise, onDailyDone, route.fromDaily && daily == null)
 }

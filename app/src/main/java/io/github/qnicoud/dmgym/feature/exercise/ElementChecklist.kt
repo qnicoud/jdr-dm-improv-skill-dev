@@ -212,7 +212,10 @@ private fun ItemRow(
             .heightIn(min = 48.dp)
             .testTag(ExerciseTags.check(item.key))
     if (!item.checkable) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = rowModifier) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = rowModifier.semantics(mergeDescendants = true) {},
+        ) {
             SenseMark(item.category)
             Column { ItemTexts(item) }
         }

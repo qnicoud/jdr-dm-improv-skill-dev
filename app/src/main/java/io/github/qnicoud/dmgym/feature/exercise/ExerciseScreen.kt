@@ -121,6 +121,7 @@ fun ExerciseRoute(
     daily: DailyStep? = null,
     onNextExercise: (ExerciseId) -> Unit = {},
     onDailyDone: () -> Unit = {},
+    dailyPending: Boolean = false,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val timer = viewModel.timerState.collectAsStateWithLifecycle()
@@ -139,7 +140,7 @@ fun ExerciseRoute(
         if (next != null) onNextExercise(next.id) else onDailyDone()
     }
     val actions =
-        remember(viewModel, onBack, daily) {
+        remember(viewModel, onBack, daily, dailyPending) {
             ExerciseActions(
                 onLeave = leave,
                 onStart = viewModel::onStart,
@@ -163,7 +164,7 @@ fun ExerciseRoute(
                 onOptionChanged = viewModel::onOptionChanged,
             )
         }
-    ExerciseContent(state, { timer.value }, actions, modifier, snackbarHost, daily)
+    ExerciseContent(state, { timer.value }, actions, modifier, snackbarHost, daily, dailyPending)
 }
 
 /** Contenu sans état de l'écran : prêt, en cours (y compris en temps additionnel) ou bilan. */
@@ -176,6 +177,7 @@ fun ExerciseContent(
     modifier: Modifier = Modifier,
     snackbarHost: SnackbarHostState = remember { SnackbarHostState() },
     daily: DailyStep? = null,
+    dailyPending: Boolean = false,
 ) {
     val phase = state.session.phase
     Scaffold(
@@ -206,7 +208,7 @@ fun ExerciseContent(
             when (phase) {
                 Phase.Ready -> ReadyBody(state, timer, actions)
                 Phase.Active -> ActiveBody(state, timer, actions)
-                Phase.Ended -> EndBody(state, timer, actions, daily)
+                Phase.Ended -> EndBody(state, timer, actions, daily, dailyPending)
             }
         }
     }
@@ -324,9 +326,17 @@ private fun EndBody(
     timer: () -> TimerUi,
     actions: ExerciseActions,
     daily: DailyStep?,
+    dailyPending: Boolean,
 ) {
     Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        EndPanel(state.definition, state.session, timer().elapsedMs, actions.assess, daily = daily)
+        EndPanel(
+            state.definition,
+            state.session,
+            timer().elapsedMs,
+            actions.assess,
+            daily = daily,
+            dailyPending = dailyPending,
+        )
     }
 }
 
@@ -336,8 +346,8 @@ private fun ExerciseTitle(
     @StringRes name: Int,
     daily: DailyStep?,
 ) {
-    Column(modifier = Modifier.semantics { heading() }) {
-        Text(stringResource(name))
+    Column {
+        Text(stringResource(name), modifier = Modifier.semantics { heading() })
         if (daily != null) {
             Text(
                 stringResource(R.string.exercise_daily_step, daily.number, daily.total),

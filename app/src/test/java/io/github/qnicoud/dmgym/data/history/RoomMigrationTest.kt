@@ -6,6 +6,7 @@ import androidx.room3.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
 import io.github.qnicoud.dmgym.data.history.db.DmGymDatabase
+import io.github.qnicoud.dmgym.data.history.db.DrawEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.json.JSONObject
@@ -65,11 +66,12 @@ class RoomMigrationTest {
             .build()
 
     @Test
-    fun `migrating from 1 to 2 keeps every row and gives old draws no category`() =
+    fun `migrating from 1 to 2 keeps every row, gives old draws no category and accepts new ones`() =
         runTest {
             createV1WithData()
             val database = open()
-            val detail = checkNotNull(database.sessionDao().observeDetail(1).first())
+            val dao = database.sessionDao()
+            val detail = checkNotNull(dao.observeDetail(1).first())
             assertEquals("constraint_box", detail.session.exerciseId)
             assertEquals(2, detail.session.selfRating)
             assertEquals(true, detail.session.isGem)
@@ -80,19 +82,19 @@ class RoomMigrationTest {
             assertEquals("Il fait brumeux.", detail.answers.single().text)
             assertEquals(1, detail.rubric.size)
             detail.draws.forEach { assertNull(it.category) }
-            database.close()
-        }
 
-    @Test
-    fun `the migrated database is at version 2`() =
-        runTest {
-            createV1WithData()
-            val database = open()
-            database.sessionDao().observeDetail(1).first()
+            dao.upsertDraws(
+                listOf(DrawEntity(1, "words", 1, "sensory_words", "rouille", "rouillé", null, null, "sight")),
+            )
+            val after = checkNotNull(dao.observeDetail(1).first())
+            assertEquals(3, after.draws.size)
+            assertEquals("sight", after.draws.first { it.entryId == "rouille" }.category)
+            assertNull(after.draws.first { it.entryId == "cave" }.category)
             database.close()
-            val db = SQLiteDatabase.openDatabase(file.absolutePath, null, SQLiteDatabase.OPEN_READONLY)
-            val version = db.version
-            db.close()
+
+            val raw = SQLiteDatabase.openDatabase(file.absolutePath, null, SQLiteDatabase.OPEN_READONLY)
+            val version = raw.version
+            raw.close()
             assertEquals(2, version)
         }
 }

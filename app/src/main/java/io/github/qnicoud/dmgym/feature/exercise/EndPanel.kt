@@ -58,6 +58,8 @@ fun EndPanel(
     actions: AssessActions,
     modifier: Modifier = Modifier,
     daily: DailyStep? = null,
+    /** Exercice de la séance du jour dont la place n'est pas encore connue : pas de bouton principal. */
+    dailyPending: Boolean = false,
 ) {
     Column(
         modifier = modifier.fillMaxWidth().padding(16.dp).testTag(ExerciseTags.END_PANEL),
@@ -79,7 +81,9 @@ fun EndPanel(
         RubricGrid(definition, session) { actions.onAssess(session.selfRating, session.isGem, it) }
         GemToggle(session.isGem) { actions.onAssess(session.selfRating, it, session.rubric) }
         definition.endNote?.let { EndNote(it, actions.fieldState(AnswerKey(it.key))) }
-        if (daily == null) {
+        if (dailyPending && daily == null) {
+            // Le plan se charge : ni « Terminé » ni « Suivant » tant qu'on ne sait pas lequel proposer.
+        } else if (daily == null) {
             Button(
                 onClick = actions.onDone,
                 modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag(ExerciseTags.DONE),

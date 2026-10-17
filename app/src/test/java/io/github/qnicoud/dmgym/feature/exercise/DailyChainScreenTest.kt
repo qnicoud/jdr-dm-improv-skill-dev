@@ -38,7 +38,10 @@ class DailyChainScreenTest {
     private var openedNext: ExerciseId? = null
     private var dailyDone = false
 
-    private fun launch(step: DailyStep?) {
+    private fun launch(
+        step: DailyStep?,
+        planLoading: Boolean = false,
+    ) {
         val vm =
             ExerciseViewModel(
                 definition = DemoExercise.definition,
@@ -53,7 +56,7 @@ class DailyChainScreenTest {
                         Dispatchers.Unconfined,
                     ),
                 handle = SavedStateHandle(),
-                launch = ExerciseLaunch(fromDaily = step != null, seed = 3),
+                launch = ExerciseLaunch(fromDaily = step != null || planLoading, seed = 3),
             )
         compose.setContent {
             DmGymTheme {
@@ -61,6 +64,7 @@ class DailyChainScreenTest {
                     vm,
                     onBack = { left = true },
                     daily = step,
+                    dailyPending = planLoading,
                     onNextExercise = { openedNext = it },
                     onDailyDone = { dailyDone = true },
                 )
@@ -115,6 +119,15 @@ class DailyChainScreenTest {
         compose.onAllNodesWithTag(ExerciseTags.NEXT_EXERCISE).assertCountEquals(0)
         compose.onAllNodes(hasText("Séance du jour", substring = true)).assertCountEquals(0)
         assertEquals(false, left)
+    }
+
+    @Test
+    fun `while the daily plan loads, the review shows neither done nor next`() {
+        launch(null, planLoading = true)
+        toReview()
+        compose.onAllNodesWithTag(ExerciseTags.DONE).assertCountEquals(0)
+        compose.onAllNodesWithTag(ExerciseTags.NEXT_EXERCISE).assertCountEquals(0)
+        compose.onNodeWithTag(ExerciseTags.END_PANEL).assertIsDisplayed()
     }
 
     @Test
