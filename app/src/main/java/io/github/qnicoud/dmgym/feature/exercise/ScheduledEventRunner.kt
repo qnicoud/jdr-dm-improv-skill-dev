@@ -1,5 +1,7 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
+import io.github.qnicoud.dmgym.core.exercise.Draw
+import io.github.qnicoud.dmgym.core.exercise.DrawContext
 import io.github.qnicoud.dmgym.core.exercise.DueEvent
 import io.github.qnicoud.dmgym.core.exercise.EventPlan
 import io.github.qnicoud.dmgym.core.exercise.ExerciseAction
@@ -26,6 +28,8 @@ internal class ScheduledEventRunner(
     private val dispatch: (ExerciseAction) -> Unit,
     private val options: () -> Map<String, Boolean>,
     private val firedEvents: () -> Set<String>,
+    /** Tirages en cours : la bascule de Status Numbers dépend de la carte tirée. */
+    private val draws: () -> List<Draw>,
 ) {
     private var plan = EventPlan(engine, emptyList(), null, random)
     private var lastElapsedMs: Long? = null
@@ -69,16 +73,16 @@ internal class ScheduledEventRunner(
         stale: Boolean,
     ) {
         scope.launch {
-            val draws =
+            val drawn =
                 try {
-                    event.draw?.let { drawer.draw(it) }.orEmpty()
+                    event.draw?.let { drawer.draw(it, context = DrawContext(draws(), options())) }.orEmpty()
                 } catch (_: NotEnoughEntriesException) {
                     emptyList()
                 } catch (_: TableLoadException) {
                     emptyList()
                 }
-            dispatch(ExerciseAction.EventFired(event.id, draws))
-            if (!stale) draws.firstOrNull()?.let { out.trySend(ExerciseEvent.Shift(it.text)) }
+            dispatch(ExerciseAction.EventFired(event.id, drawn))
+            if (!stale) drawn.firstOrNull()?.let { out.trySend(ExerciseEvent.Shift(it.text)) }
         }
     }
 }

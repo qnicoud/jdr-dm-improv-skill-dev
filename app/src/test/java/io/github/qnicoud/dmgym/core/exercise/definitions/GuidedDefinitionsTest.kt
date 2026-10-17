@@ -126,6 +126,18 @@ class GuidedDefinitionsTest {
         }
 
     @Test
+    fun `only the decision point video mode has a pause-done start`() {
+        val def = DecisionPoint.definition
+        assertTrue(def.startVariantFor(emptyMap()) != null)
+        assertEquals(null, def.startVariantFor(mapOf(DecisionPoint.OPTION_SITUATION to true)))
+        assertTrue(def.endPrompt != null && def.endFlagHint != null)
+        listOf(
+            StatusNumbers.definition,
+            CoreImage.definition,
+        ).forEach { assertEquals(null, it.startVariantFor(emptyMap())) }
+    }
+
+    @Test
     fun `decision point is 30 seconds, 3 fields with a never flag, video mode by default`() =
         runTest {
             val def = DecisionPoint.definition

@@ -56,6 +56,19 @@ class ConstraintBoxTest {
         }
 
     @Test
+    fun `every drawn word carries its sense as category`() =
+        runTest {
+            repeat(20) { seed ->
+                val words = RealTables.drawAll(definition, seed).filter { it.slotKey == ConstraintBox.WORDS }
+                assertEquals(
+                    words.map { RealTables.entry(TableId.SensoryWords, it.entryId).category },
+                    words.map { it.category },
+                )
+                assertTrue(words.all { it.category != null })
+            }
+        }
+
+    @Test
     fun `every sensory word carries keywords to detect`() =
         runTest {
             val entries = RealTables.repository.table(TableId.SensoryWords).entries

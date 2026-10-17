@@ -104,6 +104,31 @@ class GuidedExercisesViewModelTest : ExerciseViewModelTestBase() {
         }
 
     @Test
+    fun `the shift goes against the status of the drawn card`() =
+        runTest {
+            val shifts = RealTables.file(TableId.StatusShifts).entries.associateBy { it.id }
+            repeat(12) {
+                val vm = vm(StatusNumbers.definition)
+                collect(vm)
+                vm.onOptionChanged(StatusNumbers.OPTION_SHIFT, true)
+                vm.onStart()
+                runCurrent()
+                repeat(120) { pass(1_000) }
+                val card =
+                    vm
+                        .session()
+                        .drawsOf(StatusNumbers.CARD_SLOT)
+                        .single()
+                        .text
+                        .toInt()
+                val shift = vm.session().drawsOf(StatusNumbers.SHIFT_SLOT).single()
+                val tags = shifts.getValue(shift.entryId).tags
+                if (card >= 8) assertTrue("shift:down" in tags, "card $card, tags $tags")
+                if (card <= 3) assertTrue("shift:up" in tags, "card $card, tags $tags")
+            }
+        }
+
+    @Test
     fun `no shift without the option`() =
         runTest {
             val vm = started(StatusNumbers.definition)

@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.Draw
 import io.github.qnicoud.dmgym.core.exercise.DrawKey
+import io.github.qnicoud.dmgym.core.exercise.TimerKind
+import io.github.qnicoud.dmgym.core.exercise.TimerUi
 import io.github.qnicoud.dmgym.ui.icons.ExerciseIcons
 
 /** Carte de tirage : éléments tirés, relance comptée et, si l'exercice détecte des mots, cases « utilisé ». */
@@ -150,8 +152,26 @@ fun DrawErrorCard(
 fun StartButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    label: String = stringResource(R.string.exercise_start),
 ) {
     Button(onClick = onClick, modifier = modifier.fillMaxWidth().heightIn(min = 56.dp).testTag(ExerciseTags.START)) {
-        Text(stringResource(R.string.exercise_start), style = MaterialTheme.typography.titleMedium)
+        Text(label, style = MaterialTheme.typography.titleMedium)
+    }
+}
+
+/** « Commencer », ou la variante de l'exercice (« Pause faite : lancer 30 s ») quand un minuteur est réglé. */
+@Composable
+internal fun ReadyStartButton(
+    state: ExerciseUiState,
+    timer: () -> TimerUi,
+    onStart: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val variant = state.definition.startVariantFor(state.session.options)
+    val ui = timer()
+    if (variant == null || ui.kind == TimerKind.Untimed) {
+        StartButton(onStart, modifier)
+    } else {
+        StartButton(onStart, modifier, stringResource(variant.label, shortDuration(ui.displayMs)))
     }
 }

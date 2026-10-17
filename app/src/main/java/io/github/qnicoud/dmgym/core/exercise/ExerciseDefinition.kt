@@ -61,6 +61,17 @@ fun DrawSlot.dependsOn(option: String): Boolean =
 fun List<DrawSlot>.activeFor(options: Map<String, Boolean>): List<DrawSlot> =
     filter { it.onlyIf?.holds(options) ?: true }
 
+/**
+ * Étiquette à préférer pour un tirage de table, selon le statut de la carte tirée dans [cardSlot] : un statut haut
+ * cherche [high], un statut bas [low], un statut moyen (ou une carte absente) n'a pas de préférence. La préférence
+ * cède si la table n'a pas assez d'entrées étiquetées.
+ */
+data class StatusTagRule(
+    val cardSlot: String,
+    val high: String,
+    val low: String,
+)
+
 /** Tirage de [count] entrées d'une table, sans remise. */
 data class TableSlot(
     override val key: String,
@@ -74,6 +85,8 @@ data class TableSlot(
     override val onlyIf: OptionCondition? = null,
     /** Libellé affiché devant chaque tirage du slot (par ex. « Lieu »), s'il y en a un. */
     val label: StringResId? = null,
+    /** Étiquette préférée selon le statut de la carte déjà tirée (bascule de Status Numbers). */
+    val tagByStatus: StatusTagRule? = null,
 ) : DrawSlot {
     init {
         require(count >= 1) { "count must be >= 1" }
@@ -205,6 +218,15 @@ data class ScheduledEvent(
     val requiresOption: String? = null,
 )
 
+/**
+ * Libellé du bouton de départ quand l'option de [whenOption] est remplie. Le texte reçoit la durée du minuteur
+ * (« Pause faite : lancer 30 s »).
+ */
+data class StartVariant(
+    val label: StringResId,
+    val whenOption: OptionCondition,
+)
+
 /** Description déclarative d'un exercice (ADR 0012). */
 data class ExerciseDefinition(
     val id: ExerciseId,
@@ -227,6 +249,12 @@ data class ExerciseDefinition(
     val endNote: FieldSpec? = null,
     /** Vrai si le panneau des éléments tirés se replie quand le clavier s'ouvre (Connect the Story, D48). */
     val collapsiblePanel: Boolean = false,
+    /** Libellé particulier du bouton de départ selon une option (Decision Point en mode vidéo). */
+    val startVariant: StartVariant? = null,
+    /** Phrase neutre posée dans le bilan (Decision Point : « Laquelle aurais-tu jouée en premier ? »). */
+    val endPrompt: StringResId? = null,
+    /** Suggestion du bilan tant qu'aucune réponse n'est marquée du drapeau (Decision Point : case « jamais »). */
+    val endFlagHint: StringResId? = null,
 ) {
     init {
         require(rubric.size in RUBRIC_SIZE) { "rubric must have 2 or 3 questions" }
@@ -236,6 +264,10 @@ data class ExerciseDefinition(
     /** Valeur des options de la session, complétée par les valeurs par défaut de celles qui manquent. */
     fun resolveOptions(stored: Map<String, Boolean>): Map<String, Boolean> =
         options.associate { it.key to it.default } + stored
+
+    /** La variante du bouton de départ valable pour les options de la session, `null` : libellé habituel. */
+    fun startVariantFor(stored: Map<String, Boolean>): StartVariant? =
+        startVariant?.takeIf { it.whenOption.holds(resolveOptions(stored)) }
 
     /** Clés des champs de saisie, dans l'ordre. */
     val fieldKeys: List<String>

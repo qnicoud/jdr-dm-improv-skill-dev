@@ -2,6 +2,7 @@ package io.github.qnicoud.dmgym.feature.exercise
 
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -42,15 +43,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.qnicoud.dmgym.R
-import io.github.qnicoud.dmgym.app.AppContainer
-import io.github.qnicoud.dmgym.app.navigation.Exercise
+import io.github.qnicoud.dmgym.core.daily.DailyStep
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.CardSlot
 import io.github.qnicoud.dmgym.core.exercise.DrawKey
+import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.FREE_SUBJECT_KEY
 import io.github.qnicoud.dmgym.core.exercise.FieldLayout
 import io.github.qnicoud.dmgym.core.exercise.Milestone
@@ -59,8 +58,6 @@ import io.github.qnicoud.dmgym.core.exercise.TimerKind
 import io.github.qnicoud.dmgym.core.exercise.TimerUi
 import io.github.qnicoud.dmgym.platform.KeepScreenOn
 import io.github.qnicoud.dmgym.platform.performTick
-import io.github.qnicoud.dmgym.ui.components.PlaceholderScreen
-import io.github.qnicoud.dmgym.ui.components.nameRes
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 
 /** Identifiants de test des éléments de l'écran d'exercice. */
@@ -79,6 +76,9 @@ object ExerciseTags {
     const val ADD_GROUP = "exercise_add_group"
     const val SAVE_STATUS = "exercise_save_status"
     const val END_PANEL = "exercise_end_panel"
+    const val NEXT_EXERCISE = "exercise_next_exercise"
+    const val END_PROMPT = "exercise_end_prompt"
+    const val END_HINT = "exercise_end_hint"
     const val DONE = "exercise_done"
     const val SKIP = "exercise_skip"
     const val RUBRIC_TOGGLE = "exercise_rubric_toggle"
@@ -119,6 +119,9 @@ fun ExerciseRoute(
     viewModel: ExerciseViewModel,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    daily: DailyStep? = null,
+    onNextExercise: (ExerciseId) -> Unit = {},
+    onDailyDone: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val timer = viewModel.timerState.collectAsStateWithLifecycle()
@@ -131,8 +134,13 @@ fun ExerciseRoute(
     KeepScreenOn(state.keepScreenOn)
     val snackbarHost = remember { SnackbarHostState() }
     EventsEffect(viewModel, snackbarHost)
+    val next = daily?.next
+    val onNext = {
+        viewModel.onLeave()
+        if (next != null) onNextExercise(next.id) else onDailyDone()
+    }
     val actions =
-        remember(viewModel, onBack) {
+        remember(viewModel, onBack, daily) {
             ExerciseActions(
                 onLeave = leave,
                 onStart = viewModel::onStart,
@@ -152,11 +160,11 @@ fun ExerciseRoute(
                         viewModel::onFinish,
                         viewModel::highlights,
                     ),
-                assess = AssessActions(viewModel::onAssess, { leave() }, viewModel::fieldState),
+                assess = AssessActions(viewModel::onAssess, { leave() }, viewModel::fieldState, onNext),
                 onOptionChanged = viewModel::onOptionChanged,
             )
         }
-    ExerciseContent(state, { timer.value }, actions, modifier, snackbarHost)
+    ExerciseContent(state, { timer.value }, actions, modifier, snackbarHost, daily)
 }
 
 /** Contenu sans état de l'écran : prêt, en cours (y compris en temps additionnel) ou bilan. */
@@ -168,6 +176,7 @@ fun ExerciseContent(
     actions: ExerciseActions,
     modifier: Modifier = Modifier,
     snackbarHost: SnackbarHostState = remember { SnackbarHostState() },
+    daily: DailyStep? = null,
 ) {
     val phase = state.session.phase
     Scaffold(
@@ -175,7 +184,7 @@ fun ExerciseContent(
         snackbarHost = { SnackbarHost(snackbarHost) },
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(state.definition.name), modifier = Modifier.semantics { heading() }) },
+                title = { ExerciseTitle(state.definition.name, daily) },
                 navigationIcon = {
                     IconButton(onClick = actions.onLeave) {
                         Icon(DmIcons.Back, contentDescription = stringResource(R.string.action_back))
@@ -186,7 +195,7 @@ fun ExerciseContent(
         },
         bottomBar = {
             if (phase == Phase.Ready && state.load != LoadStatus.Loading) {
-                StartButton(actions.onStart, Modifier.imePadding().padding(16.dp))
+                ReadyStartButton(state, timer, actions.onStart, Modifier.imePadding().padding(16.dp))
             }
             val layout = state.definition.layout
             if (phase == Phase.Active && layout is FieldLayout.None) {
@@ -198,7 +207,7 @@ fun ExerciseContent(
             when (phase) {
                 Phase.Ready -> ReadyBody(state, timer, actions)
                 Phase.Active -> ActiveBody(state, timer, actions)
-                Phase.Ended -> EndBody(state, timer, actions)
+                Phase.Ended -> EndBody(state, timer, actions, daily)
             }
         }
     }
@@ -315,36 +324,26 @@ private fun EndBody(
     state: ExerciseUiState,
     timer: () -> TimerUi,
     actions: ExerciseActions,
+    daily: DailyStep?,
 ) {
     Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        EndPanel(state.definition, state.session, timer().elapsedMs, actions.assess)
+        EndPanel(state.definition, state.session, timer().elapsedMs, actions.assess, daily = daily)
     }
 }
 
-/**
- * Entrée de navigation de l'écran d'exercice. Tant qu'un exercice n'a pas de définition (lots L8 et L10),
- * l'écran provisoire reste affiché.
- */
+/** Nom de l'exercice ; dans la séance du jour, « Séance du jour · 1 sur 3 » en dessous (parcours S04). */
 @Composable
-fun ExerciseEntry(
-    route: Exercise,
-    container: AppContainer,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
+private fun ExerciseTitle(
+    @StringRes name: Int,
+    daily: DailyStep?,
 ) {
-    val definition = container.exerciseRegistry[route.exerciseId]
-    if (definition == null) {
-        PlaceholderScreen(title = stringResource(route.exerciseId.nameRes), onBack = onBack, modifier = modifier)
-        return
-    }
-    val viewModel =
-        viewModel {
-            ExerciseViewModel(
-                definition = definition,
-                deps = container.exerciseDependencies,
-                handle = createSavedStateHandle(),
-                launch = ExerciseLaunch(route.resumeSessionId, route.fromDaily),
+    Column(modifier = Modifier.semantics { heading() }) {
+        Text(stringResource(name))
+        if (daily != null) {
+            Text(
+                stringResource(R.string.exercise_daily_step, daily.number, daily.total),
+                style = MaterialTheme.typography.labelMedium,
             )
         }
-    ExerciseRoute(viewModel, onBack, modifier)
+    }
 }

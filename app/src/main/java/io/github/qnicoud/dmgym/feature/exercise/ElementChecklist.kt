@@ -212,7 +212,10 @@ private fun ItemRow(
             .heightIn(min = 48.dp)
             .testTag(ExerciseTags.check(item.key))
     if (!item.checkable) {
-        Column(modifier = rowModifier) { ItemTexts(item) }
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = rowModifier) {
+            SenseMark(item.category)
+            Column { ItemTexts(item) }
+        }
         return
     }
     val state = stateText(item)
@@ -226,6 +229,7 @@ private fun ItemRow(
                     onValueChange = { onCheckToggled(item.key) },
                 ).semantics { stateDescription = state },
     ) {
+        SenseMark(item.category)
         Column(modifier = Modifier.weight(1f)) { ItemTexts(item) }
         if (item.auto) {
             Text(
@@ -237,6 +241,17 @@ private fun ItemRow(
         }
         Checkbox(checked = item.checked, onCheckedChange = null)
     }
+}
+
+/** Icône du sens, lue par TalkBack avec la ligne (« Vue, Mot imposé, brumeux »). Rien si la ligne n'a pas de sens. */
+@Composable
+private fun SenseMark(category: String?) {
+    val sense = Sense.fromCategory(category) ?: return
+    Icon(
+        sense.icon,
+        contentDescription = stringResource(sense.label),
+        modifier = Modifier.padding(end = 12.dp).size(24.dp),
+    )
 }
 
 @Composable

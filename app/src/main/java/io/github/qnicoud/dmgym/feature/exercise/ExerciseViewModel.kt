@@ -80,6 +80,7 @@ class ExerciseViewModel(
             ::dispatch,
             options = { definition.resolveOptions(model.value.session.options) },
             firedEvents = { model.value.session.firedEvents },
+            draws = { model.value.session.draws },
         )
     private val restorer = SessionRestorer(definition, deps, handle, launch, engine)
     private val drawing = DrawCoordinator(definition, drawer, channel, ::dispatch) { model.value.session }

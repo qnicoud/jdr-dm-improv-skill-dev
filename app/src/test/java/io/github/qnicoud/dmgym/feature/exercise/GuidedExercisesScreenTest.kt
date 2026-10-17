@@ -4,6 +4,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -133,6 +134,37 @@ class GuidedExercisesScreenTest {
             vm.uiState.value.session.options
                 .getValue(DecisionPoint.OPTION_SITUATION),
         )
+    }
+
+    @Test
+    fun `decision point in video mode offers to start the timer once the video is paused`() {
+        val vm = launch(DecisionPoint.definition)
+        compose.onNodeWithTag(ExerciseTags.START).assertTextContains("Pause faite", substring = true)
+        compose.onNodeWithTag(ExerciseTags.START).assertTextContains("30 s", substring = true)
+        tap(ExerciseExtraTags.option(DecisionPoint.OPTION_SITUATION))
+        compose.onNodeWithTag(ExerciseTags.START).assertTextContains("Commencer")
+        tap(ExerciseExtraTags.option(DecisionPoint.OPTION_SITUATION))
+        tap(ExerciseTags.START)
+        assertEquals(Phase.Active, vm.uiState.value.session.phase)
+    }
+
+    @Test
+    fun `decision point review asks which answer would have been played first, without judging`() {
+        launch(DecisionPoint.definition)
+        tap(ExerciseTags.START)
+        tap(ExerciseTags.FINISH)
+        compose.onNodeWithTag(ExerciseTags.END_PROMPT).assertTextContains("Laquelle aurais-tu jouée en premier ?")
+        compose.onNodeWithTag(ExerciseTags.END_HINT).assertIsDisplayed()
+        tap(ExerciseTags.DONE)
+    }
+
+    @Test
+    fun `other exercises keep the plain start button and no decision point prompt`() {
+        launch(CoreImage.definition)
+        compose.onNodeWithTag(ExerciseTags.START).assertTextContains("Commencer")
+        tap(ExerciseTags.START)
+        tap(ExerciseTags.FINISH)
+        compose.onAllNodesWithTag(ExerciseTags.END_PROMPT).assertCountEquals(0)
     }
 
     @Test

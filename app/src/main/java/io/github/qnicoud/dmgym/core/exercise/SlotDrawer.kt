@@ -1,6 +1,9 @@
 package io.github.qnicoud.dmgym.core.exercise
 
 import io.github.qnicoud.dmgym.core.tables.Drawer
+import io.github.qnicoud.dmgym.core.tables.NotEnoughEntriesException
+import io.github.qnicoud.dmgym.core.tables.TableEntry
+import io.github.qnicoud.dmgym.core.tables.TableFile
 import io.github.qnicoud.dmgym.core.tables.TableId
 import io.github.qnicoud.dmgym.core.tables.TableRepository
 import kotlin.random.Random
@@ -55,7 +58,7 @@ class SlotDrawer(
         context: DrawContext = DrawContext(),
     ): List<Draw> =
         when (slot) {
-            is TableSlot -> drawTable(slot, exclude)
+            is TableSlot -> drawTable(slot, exclude, context)
             is CardSlot -> listOf(drawCard(slot, exclude, context))
             is ChoiceSlot -> listOf(Draw(slot.key, 0, null, slot.default, slot.default))
         }
@@ -63,11 +66,12 @@ class SlotDrawer(
     private suspend fun drawTable(
         slot: TableSlot,
         exclude: Set<String>,
+        context: DrawContext,
     ): List<Draw> {
         val table = tables.table(slot.table)
         val entries =
             if (slot.categoryCycle.isEmpty()) {
-                drawer.draw(table, slot.count, slot.category, slot.difficulty, slot.distinctBy, exclude)
+                drawPreferringTag(slot, table, exclude, context)
             } else {
                 (0 until slot.count).fold(emptyList()) { picked, i ->
                     val category = slot.categoryCycle[i % slot.categoryCycle.size]
@@ -75,7 +79,48 @@ class SlotDrawer(
                     picked + drawer.draw(table, 1, category, slot.difficulty, slot.distinctBy, taken)
                 }
             }
-        return entries.mapIndexed { index, e -> Draw(slot.key, index, slot.table.fileName, e.id, e.text) }
+        return entries.mapIndexed { index, entry ->
+            Draw(slot.key, index, slot.table.fileName, entry.id, entry.text, category = entry.category)
+        }
+    }
+
+    /** Tire en privilégiant l'étiquette du statut de la carte ; sans assez d'entrées étiquetées, tire sans filtre. */
+    private fun drawPreferringTag(
+        slot: TableSlot,
+        table: TableFile,
+        exclude: Set<String>,
+        context: DrawContext,
+    ): List<TableEntry> {
+        val tag = slot.tagByStatus?.let { preferredTag(it, context) }
+        if (tag != null) {
+            try {
+                return drawer.draw(
+                    table,
+                    slot.count,
+                    slot.category,
+                    slot.difficulty,
+                    slot.distinctBy,
+                    exclude,
+                    tagFilter = { tag in it },
+                )
+            } catch (_: NotEnoughEntriesException) {
+                // Pas assez d'entrées dans ce sens : repli sur la table entière.
+            }
+        }
+        return drawer.draw(table, slot.count, slot.category, slot.difficulty, slot.distinctBy, exclude)
+    }
+
+    private fun preferredTag(
+        rule: StatusTagRule,
+        context: DrawContext,
+    ): String? {
+        val cardDraw = context.draws.firstOrNull { it.slotKey == rule.cardSlot }
+        val card = cardDraw?.text?.toIntOrNull() ?: return null
+        return when (statusLevel(card)) {
+            StatusLevel.High -> rule.high
+            StatusLevel.Low -> rule.low
+            StatusLevel.Medium -> null
+        }
     }
 
     private suspend fun drawCard(

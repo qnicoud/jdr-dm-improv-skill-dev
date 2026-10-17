@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
+import io.github.qnicoud.dmgym.core.daily.DailyStep
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseSession
@@ -44,6 +45,8 @@ class AssessActions(
     val onDone: () -> Unit,
     /** Zone de texte des notes de fin ; sans effet pour les exercices sans [ExerciseDefinition.endNote]. */
     val fieldState: (AnswerKey) -> TextFieldState = { TextFieldState() },
+    /** « Exercice suivant » (ou « Terminer la séance ») de la séance du jour. */
+    val onNext: () -> Unit = {},
 )
 
 /** Bilan S06 : récap neutre, niveau en 3 paliers, grille repliée, bijou, sorties « Terminé » et « Passer ». */
@@ -54,6 +57,7 @@ fun EndPanel(
     elapsedMs: Long,
     actions: AssessActions,
     modifier: Modifier = Modifier,
+    daily: DailyStep? = null,
 ) {
     Column(
         modifier = modifier.fillMaxWidth().padding(16.dp).testTag(ExerciseTags.END_PANEL),
@@ -70,15 +74,20 @@ fun EndPanel(
                 },
         )
         Text(stringResource(R.string.end_recap, shortDuration(elapsedMs)), style = MaterialTheme.typography.bodyLarge)
+        EndPrompts(definition, session)
         LevelPicker(session.selfRating) { actions.onAssess(it, session.isGem, session.rubric) }
         RubricGrid(definition, session) { actions.onAssess(session.selfRating, session.isGem, it) }
         GemToggle(session.isGem) { actions.onAssess(session.selfRating, it, session.rubric) }
         definition.endNote?.let { EndNote(it, actions.fieldState(AnswerKey(it.key))) }
-        Button(
-            onClick = actions.onDone,
-            modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag(ExerciseTags.DONE),
-        ) {
-            Text(stringResource(R.string.end_done))
+        if (daily == null) {
+            Button(
+                onClick = actions.onDone,
+                modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag(ExerciseTags.DONE),
+            ) {
+                Text(stringResource(R.string.end_done))
+            }
+        } else {
+            DailyNextButton(daily, actions.onNext)
         }
         TextButton(
             onClick = actions.onDone,
@@ -86,6 +95,51 @@ fun EndPanel(
         ) {
             Text(stringResource(R.string.end_skip))
         }
+    }
+}
+
+/** Bouton principal du bilan dans la séance du jour : « Exercice suivant (2 sur 3) », ou la fin de séance. */
+@Composable
+private fun DailyNextButton(
+    daily: DailyStep,
+    onNext: () -> Unit,
+) {
+    val next = daily.next
+    val label =
+        if (next != null) {
+            stringResource(R.string.end_next_exercise, next.number, daily.total)
+        } else {
+            stringResource(R.string.end_finish_daily)
+        }
+    Button(
+        onClick = onNext,
+        modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag(ExerciseTags.NEXT_EXERCISE),
+    ) {
+        Text(label)
+    }
+}
+
+/** Phrases neutres propres à l'exercice : une question ouverte, et la suggestion de la case « jamais ». */
+@Composable
+private fun EndPrompts(
+    definition: ExerciseDefinition,
+    session: ExerciseSession,
+) {
+    definition.endPrompt?.let {
+        Text(
+            stringResource(it),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.testTag(ExerciseTags.END_PROMPT),
+        )
+    }
+    val noneFlagged = session.answers.values.none { it.flagged }
+    definition.endFlagHint?.takeIf { noneFlagged }?.let {
+        Text(
+            stringResource(it),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.testTag(ExerciseTags.END_HINT),
+        )
     }
 }
 

@@ -10,6 +10,7 @@ import io.github.qnicoud.dmgym.core.exercise.FieldSpec
 import io.github.qnicoud.dmgym.core.exercise.RankContrast
 import io.github.qnicoud.dmgym.core.exercise.RubricQuestion
 import io.github.qnicoud.dmgym.core.exercise.ScheduledEvent
+import io.github.qnicoud.dmgym.core.exercise.StatusTagRule
 import io.github.qnicoud.dmgym.core.exercise.TableSlot
 import io.github.qnicoud.dmgym.core.exercise.TimerPolicy
 import io.github.qnicoud.dmgym.core.tables.TableId
@@ -32,6 +33,10 @@ object StatusNumbers {
 
     /** Option : un événement change le statut entre 40 et 60 % du temps. */
     const val OPTION_SHIFT = "shift"
+
+    /** Étiquettes de `status_shifts` : un statut haut descend, un statut bas monte. */
+    private const val SHIFT_DOWN = "shift:down"
+    private const val SHIFT_UP = "shift:up"
 
     private const val SHIFT_FROM = 0.4
     private const val SHIFT_TO = 0.6
@@ -60,7 +65,12 @@ object StatusNumbers {
                     ScheduledEvent(
                         id = SHIFT_EVENT,
                         timing = TimedEvent.Once(SHIFT_FROM, SHIFT_TO),
-                        draw = TableSlot(SHIFT_SLOT, TableId.StatusShifts),
+                        draw =
+                            TableSlot(
+                                SHIFT_SLOT,
+                                TableId.StatusShifts,
+                                tagByStatus = StatusTagRule(CARD_SLOT, high = SHIFT_DOWN, low = SHIFT_UP),
+                            ),
                         requiresOption = OPTION_SHIFT,
                     ),
                 ),

@@ -22,6 +22,7 @@ import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.timer.FakeMonotonicClock
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 import kotlinx.coroutines.Dispatchers
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -108,6 +109,32 @@ class CoreImageScreenTest {
         compose.onNodeWithTag(ExerciseTags.field(AnswerKey(CoreImage.ANSWER_FIELD, 0))).performTextInput("a")
         compose.waitForIdle()
         compose.onAllNodesWithTag(QuestionTags.LIST).assertCountEquals(0)
+    }
+
+    @Test
+    fun `skip link moves to the next question without an answer, and is hidden on the last one`() {
+        val vm = launch()
+        tap(ExerciseTags.START)
+        compose.onNodeWithTag(QuestionTags.SKIP).assertIsDisplayed()
+        tap(QuestionTags.SKIP)
+        assertEquals(1, vm.uiState.value.session.currentQuestion)
+        assertEquals(
+            "",
+            vm.uiState.value.session
+                .textOf(AnswerKey(CoreImage.ANSWER_FIELD, 0)),
+        )
+        repeat(CoreImage.QUESTION_COUNT - 2) { tap(QuestionTags.SKIP) }
+        assertEquals(CoreImage.QUESTION_COUNT - 1, vm.uiState.value.session.currentQuestion)
+        compose.onAllNodesWithTag(QuestionTags.SKIP).assertCountEquals(0)
+    }
+
+    @Test
+    fun `skip link is offered only while the answer is empty`() {
+        launch()
+        tap(ExerciseTags.START)
+        compose.onNodeWithTag(ExerciseTags.field(AnswerKey(CoreImage.ANSWER_FIELD, 0))).performTextInput("une idée")
+        compose.waitForIdle()
+        compose.onAllNodesWithTag(QuestionTags.SKIP).assertCountEquals(0)
     }
 
     @Test

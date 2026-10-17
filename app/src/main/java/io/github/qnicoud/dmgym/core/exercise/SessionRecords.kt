@@ -27,6 +27,7 @@ fun ExerciseSession.drawRecords(): List<DrawRecord> =
             textSnapshot = it.text,
             autoDetected = it.check?.auto,
             manualChecked = it.check?.manual,
+            category = it.category,
         )
     }
 
@@ -65,7 +66,7 @@ private fun DrawRecord.toDraw(): Draw {
             manualChecked != null -> ElementCheck(auto = false, manual = manualChecked)
             else -> null
         }
-    return Draw(slotKey, position, tableId, entryId, textSnapshot, check)
+    return Draw(slotKey, position, tableId, entryId, textSnapshot, check, category)
 }
 
 private fun decodeOptions(json: String): Map<String, Boolean> =

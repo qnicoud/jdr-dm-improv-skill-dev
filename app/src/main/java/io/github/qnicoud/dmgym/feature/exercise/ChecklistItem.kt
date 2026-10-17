@@ -18,6 +18,8 @@ data class ChecklistItem(
     val checkable: Boolean,
     val checked: Boolean,
     val auto: Boolean,
+    /** Catégorie de l'entrée tirée (le sens d'un mot sensoriel), pour l'icône de la ligne. */
+    val category: String? = null,
 )
 
 /** Lignes de [draws] dans l'ordre du tirage, avec le libellé du slot et l'état de la case. */
@@ -40,6 +42,7 @@ fun checklistItems(
             checkable = draw.slotKey in detected,
             checked = check?.checked == true,
             auto = check != null && check.manual == null && check.auto,
+            category = draw.category,
         )
     }
 }

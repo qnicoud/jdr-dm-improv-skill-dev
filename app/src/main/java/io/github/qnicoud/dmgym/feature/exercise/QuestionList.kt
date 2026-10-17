@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.drop
 object QuestionTags {
     const val PREVIOUS = "exercise_previous_question"
     const val LAST_FINISH = "exercise_last_question_finish"
+    const val SKIP = "exercise_skip_question"
     const val SOFT_COUNTER = "exercise_soft_counter"
     const val CURRENT = "exercise_current_question"
     const val TOGGLE_LIST = "exercise_questions_toggle"
@@ -129,6 +130,12 @@ internal fun SequentialField(
     }
     Field(layout.field, key, null, session, handlers, firstFieldFocus)
     QuestionNavigation(index, questions.size, handlers)
+    if (index < questions.size - 1 && answer.text.isBlank()) {
+        TextButton(
+            onClick = handlers.onNextQuestion,
+            modifier = Modifier.heightIn(min = 48.dp).testTag(QuestionTags.SKIP),
+        ) { Text(stringResource(R.string.question_skip)) }
+    }
     TextButton(
         onClick = { showAll = !showAll },
         modifier = Modifier.heightIn(min = 48.dp).testTag(QuestionTags.TOGGLE_LIST),

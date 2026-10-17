@@ -21,7 +21,10 @@ class SessionRecordsTest {
         val base = ExerciseSession(DemoExercise.id, sessionId = 3, phase = Phase.Active)
         return listOf(
             ExerciseAction.Drawn(
-                listOf(DemoExercise.draw(), DemoExercise.draw(position = 1).copy(check = ElementCheck(true, false))),
+                listOf(
+                    DemoExercise.draw(),
+                    DemoExercise.draw(position = 1).copy(check = ElementCheck(true, false), category = "smell"),
+                ),
             ),
             ExerciseAction.AnswerChanged(DemoExercise.keyA, "idée"),
             ExerciseAction.FlagToggled(DemoExercise.keyA),
