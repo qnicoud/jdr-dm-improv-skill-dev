@@ -8,6 +8,7 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import io.github.qnicoud.dmgym.core.tables.TableRepository
+import io.github.qnicoud.dmgym.core.time.SystemZoneClock
 import io.github.qnicoud.dmgym.data.history.RoomHistoryRepository
 import io.github.qnicoud.dmgym.data.history.db.DmGymDatabase
 import io.github.qnicoud.dmgym.data.history.periodicTicks
@@ -34,6 +35,9 @@ interface AppContainer {
     val exerciseCatalog: ExerciseCatalog
     val exerciseRegistry: ExerciseRegistry
     val exerciseDependencies: ExerciseDependencies
+
+    /** Horloge civile du téléphone : le jour (`localEpochDay`) bascule à minuit local (D16). */
+    val clock: Clock
 }
 
 /** Ne retient que l'[Application] (jamais une Activity). */
@@ -41,6 +45,8 @@ class DefaultAppContainer(
     private val application: Application,
 ) : AppContainer {
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    override val clock: Clock = SystemZoneClock()
 
     override val settingsRepository: SettingsRepository by lazy {
         DataStoreSettingsRepository(
@@ -59,7 +65,7 @@ class DefaultAppContainer(
     }
 
     override val historyRepository: HistoryRepository by lazy {
-        RoomHistoryRepository(database.sessionDao(), Clock.systemDefaultZone(), periodicTicks(Duration.ofMinutes(1)))
+        RoomHistoryRepository(database.sessionDao(), clock, periodicTicks(Duration.ofMinutes(1)))
     }
 
     override val exerciseCatalog: ExerciseCatalog by lazy { SettingsExerciseCatalog(settingsRepository) }

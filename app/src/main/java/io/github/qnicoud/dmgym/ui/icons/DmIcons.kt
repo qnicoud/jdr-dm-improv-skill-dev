@@ -28,6 +28,9 @@ object DmIcons {
     val Fire = icon("fire", "M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z")
     val Train = icon("train", "M2 9v6M5 6v12M19 6v12M22 9v6M5 12h14")
     val Book = icon("book", "M12 6c-2-1.5-5-2-8-1v13c3-1 6-.5 8 1 2-1.5 5-2 8-1V5c-3-1-6-.5-8 1zM12 6v13")
+    val Check = icon("check", "M5 12.5l4.5 4.5L19 7.5")
+    val Play = icon("play", "M8 5l11 7-11 7z")
+    val Gem = icon("gem", "M6 3h12l4 6-10 12L2 9zM2 9h20M9 3L7 9l5 12 5-12-2-6")
     val Chart = icon("chart", "M5 20V11M12 20V4M19 20v-6")
     val CrazyEights =
         icon(

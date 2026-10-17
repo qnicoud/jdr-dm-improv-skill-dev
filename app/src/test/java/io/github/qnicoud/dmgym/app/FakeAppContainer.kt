@@ -17,6 +17,9 @@ import io.github.qnicoud.dmgym.feature.home.SettingsExerciseCatalog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
 
 class FakeSettingsRepository(
     initial: Settings = Settings(untimed = ExerciseId.UNTIMED_BY_DEFAULT),
@@ -29,10 +32,16 @@ class FakeSettingsRepository(
     }
 }
 
-/** Seul `observeSessionCount` est utilisé par l'accueil ; le reste échoue explicitement. */
+/** Lectures configurables (compteur, jours, historique, comptages) ; les écritures échouent explicitement. */
 class FakeHistoryRepository(
     val sessionCount: Flow<Int> = MutableStateFlow(0),
+    val history: Flow<List<SessionRecord>> = MutableStateFlow(emptyList()),
+    val practicedDays: Flow<List<Long>> = MutableStateFlow(emptyList()),
+    val counts: (Long, Long) -> List<ExerciseCountRecord> = { _, _ -> emptyList() },
 ) : HistoryRepository {
+    /** Fenêtres demandées à `countSessionsByExercise`, dans l'ordre. */
+    val countCalls = mutableListOf<Pair<Long, Long>>()
+
     override fun observeSessionCount(): Flow<Int> = sessionCount
 
     override suspend fun createSession(session: SessionRecord): Long = unused()
@@ -66,16 +75,19 @@ class FakeHistoryRepository(
     override fun observeHistory(
         exerciseId: String?,
         gemsOnly: Boolean,
-    ): Flow<List<SessionRecord>> = flowOf(emptyList())
+    ): Flow<List<SessionRecord>> = history
 
     override fun observeDetail(id: Long): Flow<SessionDetail?> = flowOf(null)
 
-    override fun observePracticedDays(): Flow<List<Long>> = flowOf(emptyList())
+    override fun observePracticedDays(): Flow<List<Long>> = practicedDays
 
     override suspend fun countSessionsByExercise(
         fromEpochDay: Long,
         toEpochDay: Long,
-    ): List<ExerciseCountRecord> = unused()
+    ): List<ExerciseCountRecord> {
+        countCalls += fromEpochDay to toEpochDay
+        return counts(fromEpochDay, toEpochDay)
+    }
 
     override suspend fun purgeEmptyInProgress(): Int = unused()
 
@@ -87,6 +99,7 @@ class FakeAppContainer(
     override val settingsRepository: SettingsRepository = FakeSettingsRepository(),
     override val historyRepository: HistoryRepository = FakeHistoryRepository(),
     override val exerciseRegistry: ExerciseRegistry = ExerciseRegistry.Default,
+    override val clock: Clock = Clock.fixed(Instant.parse("2026-10-16T10:00:00Z"), ZoneOffset.UTC),
 ) : AppContainer {
     override val exerciseCatalog: ExerciseCatalog = SettingsExerciseCatalog(settingsRepository)
     override val exerciseDependencies: ExerciseDependencies

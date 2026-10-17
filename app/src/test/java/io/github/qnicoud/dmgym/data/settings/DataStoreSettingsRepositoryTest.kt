@@ -7,7 +7,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import io.github.qnicoud.dmgym.core.daily.replacementsFor
+import io.github.qnicoud.dmgym.core.daily.withReplacement
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.settings.Settings
 import kotlinx.coroutines.CoroutineScope
@@ -192,5 +195,66 @@ class DataStoreSettingsRepositoryTest {
             assertEquals(Settings(untimed = setOf(onePage)), repo.settings.first())
             repo.update { it.copy(soundEnabled = false) }
             assertFalse(repo.settings.first().soundEnabled)
+        }
+
+    @Test
+    fun `daily replacements and their day are persisted`() =
+        runBlocking {
+            val repo = repository()
+
+            repo.update {
+                it
+                    .withReplacement(
+                        20_000,
+                        1,
+                        ExerciseId.STATUS_NUMBERS,
+                    ).withReplacement(20_000, 2, ExerciseId.CORE_IMAGE)
+            }
+
+            val read = repository().settings.first()
+            assertEquals(20_000L, read.dailyEpochDay)
+            assertEquals(
+                mapOf(1 to ExerciseId.STATUS_NUMBERS, 2 to ExerciseId.CORE_IMAGE),
+                read.replacementsFor(20_000),
+            )
+            assertEquals(emptyMap<Int, ExerciseId>(), read.replacementsFor(20_001))
+        }
+
+    @Test
+    fun `daily replacements are stored in the documented format`() =
+        runBlocking {
+            repository().update { it.withReplacement(7, 0, ExerciseId.STATUS_NUMBERS) }
+
+            val prefs = store.data.first()
+            assertEquals(7L, prefs[longPreferencesKey("daily_epoch_day")])
+            assertEquals("0:status_numbers", prefs[stringPreferencesKey("daily_replacements")])
+        }
+
+    @Test
+    fun `clearing the daily replacements removes the keys`() =
+        runBlocking {
+            val repo = repository()
+            repo.update { it.withReplacement(7, 0, ExerciseId.STATUS_NUMBERS) }
+
+            repo.update { it.copy(dailyEpochDay = null, dailyReplacements = emptyMap()) }
+
+            val prefs = store.data.first()
+            assertEquals(null, prefs[longPreferencesKey("daily_epoch_day")])
+            assertEquals(null, prefs[stringPreferencesKey("daily_replacements")])
+            assertEquals(Settings(untimed = setOf(onePage)), repo.settings.first())
+        }
+
+    @Test
+    fun `unreadable daily values fall back to no replacement`() =
+        runBlocking {
+            store.edit {
+                it[stringPreferencesKey("daily_epoch_day")] = "hier"
+                it[intPreferencesKey("daily_replacements")] = 4
+            }
+
+            val read = repository().settings.first()
+
+            assertEquals(null, read.dailyEpochDay)
+            assertEquals(emptyMap<Int, ExerciseId>(), read.dailyReplacements)
         }
 }

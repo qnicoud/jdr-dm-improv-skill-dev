@@ -40,6 +40,9 @@ value class ExerciseId(
                 ONE_PAGE to 15.minutes,
             )
 
+        /** Exercices courts (≤ 5 min) éligibles comme échauffement de la séance du jour (ADR 0011). */
+        val DAILY_WARM_UPS: Set<ExerciseId> = setOf(DECISION_POINT, CONSTRAINT_BOX, STATUS_NUMBERS)
+
         val UNTIMED_BY_DEFAULT: Set<ExerciseId> = setOf(ONE_PAGE)
     }
 }
