@@ -54,6 +54,10 @@ class RecordingHistoryRepository : HistoryRepository {
 
     override suspend fun updateSession(session: SessionRecord) = unused()
 
+    override fun observeResumable(): Flow<SessionDetail?> = flowOf(null)
+
+    override fun observePreviews(): Flow<Map<Long, String>> = flowOf(emptyMap())
+
     override suspend fun upsertDraws(
         sessionId: Long,
         draws: List<DrawRecord>,

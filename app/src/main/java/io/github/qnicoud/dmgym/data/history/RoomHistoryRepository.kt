@@ -87,6 +87,12 @@ class RoomHistoryRepository(
 
     override fun observeDetail(id: Long): Flow<SessionDetail?> = dao.observeDetail(id).map { it?.toDetail() }
 
+    override fun observeResumable(): Flow<SessionDetail?> =
+        staleThresholds.flatMapLatest { dao.observeResumable(it) }.map { it?.toDetail() }
+
+    override fun observePreviews(): Flow<Map<Long, String>> =
+        dao.observePreviews().map { rows -> rows.associate { it.sessionId to it.text } }
+
     override fun observePracticedDays(): Flow<List<Long>> =
         staleThresholds.flatMapLatest { dao.observePracticedDays(it) }
 

@@ -14,3 +14,9 @@ data class ExerciseCount(
     val exerciseId: String,
     val n: Int,
 )
+
+/** Ligne de la requête des aperçus. */
+data class PreviewRow(
+    val sessionId: Long,
+    val text: String,
+)

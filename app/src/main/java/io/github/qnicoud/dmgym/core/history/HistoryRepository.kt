@@ -57,6 +57,15 @@ interface HistoryRepository {
 
     fun observeDetail(id: Long): Flow<SessionDetail?>
 
+    /**
+     * La session en cours la plus récemment active (moins de 24 h, avec contenu) : la carte « Reprendre » de
+     * l'accueil (D36). `null` s'il n'y en a pas.
+     */
+    fun observeResumable(): Flow<SessionDetail?>
+
+    /** Aperçu de chaque session : sa première réponse non vide (240 caractères au plus), indexé par identifiant. */
+    fun observePreviews(): Flow<Map<Long, String>>
+
     fun observePracticedDays(): Flow<List<Long>>
 
     /** Sessions comptées : avec contenu, terminées ou inachevées (la session active est exclue). */

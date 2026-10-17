@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.Flow
 private const val HAS_CONTENT =
     "id IN (SELECT sessionId FROM session_answers WHERE trim(text, ' ' || char(9, 10, 13)) <> '')"
 
+private const val NOT_BLANK_A = "trim(a.text, ' ' || char(9, 10, 13)) <> ''"
+private const val NOT_BLANK_B = "trim(b.text, ' ' || char(9, 10, 13)) <> ''"
+
 /** Inachevée : en cours, sans activité depuis plus de 24 h (`:staleBefore`, comparaison stricte). */
 private const val IS_STALE = "status = 'IN_PROGRESS' AND lastActivityAtEpochMillis < :staleBefore"
 
@@ -99,6 +102,22 @@ abstract class SessionDao {
     @Transaction
     @Query("SELECT * FROM sessions WHERE id = :id")
     abstract fun observeDetail(id: Long): Flow<SessionWithChildren?>
+
+    /** La session en cours la plus récente, encore active (`lastActivity >= :staleBefore`) et avec contenu. */
+    @Transaction
+    @Query(
+        "SELECT * FROM sessions WHERE status = 'IN_PROGRESS' AND lastActivityAtEpochMillis >= :staleBefore " +
+            "AND $HAS_CONTENT ORDER BY lastActivityAtEpochMillis DESC, id DESC LIMIT 1",
+    )
+    abstract fun observeResumable(staleBefore: Long): Flow<SessionWithChildren?>
+
+    /** Première réponse non vide de chaque session (par groupe puis par champ), tronquée à 240 caractères. */
+    @Query(
+        "SELECT sessionId, substr(text, 1, 240) AS text FROM session_answers AS a WHERE $NOT_BLANK_A " +
+            "AND NOT EXISTS (SELECT 1 FROM session_answers AS b WHERE b.sessionId = a.sessionId AND $NOT_BLANK_B " +
+            "AND (b.groupIndex < a.groupIndex OR (b.groupIndex = a.groupIndex AND b.fieldKey < a.fieldKey)))",
+    )
+    abstract fun observePreviews(): Flow<List<PreviewRow>>
 
     @Query("SELECT DISTINCT localEpochDay FROM sessions WHERE $IS_COUNTED ORDER BY localEpochDay")
     abstract fun observePracticedDays(staleBefore: Long): Flow<List<Long>>
