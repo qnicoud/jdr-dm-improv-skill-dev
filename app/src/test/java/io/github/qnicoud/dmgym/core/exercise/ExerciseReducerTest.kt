@@ -41,7 +41,7 @@ class ExerciseReducerTest {
     @Test
     fun `reroll after start keeps answers, phase and session`() {
         val typed = reduce(active, ExerciseAction.AnswerChanged(keyA, "idée"))
-        val drawn = reduce(typed, ExerciseAction.Drawn(listOf(DemoExercise.draw())))
+        val drawn = typed.copy(draws = listOf(DemoExercise.draw()))
         val rerolled = reduce(drawn, ExerciseAction.Rerolled(null, listOf(DemoExercise.draw(entry = "tour"))))
         assertEquals("idée", rerolled.textOf(keyA))
         assertEquals(Phase.Active, rerolled.phase)
@@ -157,7 +157,7 @@ class ExerciseReducerTest {
         assertEquals(listOf(DemoExercise.SLOT, "shift"), fired.draws.map { it.slotKey })
         val again =
             reduce(fired, ExerciseAction.EventFired("shift", listOf(DemoExercise.draw("shift", entry = "mine"))))
-        assertEquals(listOf("cave", "mine"), again.draws.map { it.entryId })
+        assertEquals(listOf("cave", "gue"), again.draws.map { it.entryId })
     }
 
     @Test
@@ -168,7 +168,8 @@ class ExerciseReducerTest {
 
     @Test
     fun `assessment stores rating, gem and rubric and can be cleared`() {
-        val rated = reduce(active, ExerciseAction.Assessed(2, true, mapOf("q1" to true)))
+        val ended = reduce(active, ExerciseAction.Finished)
+        val rated = reduce(ended, ExerciseAction.Assessed(2, true, mapOf("q1" to true)))
         assertEquals(2, rated.selfRating)
         assertTrue(rated.isGem)
         assertEquals(mapOf("q1" to true), rated.rubric)
@@ -182,5 +183,34 @@ class ExerciseReducerTest {
         assertFalse(active.hasContent)
         assertFalse(reduce(active, ExerciseAction.AnswerChanged(keyA, "   ")).hasContent)
         assertTrue(reduce(active, ExerciseAction.AnswerChanged(keyA, " a ")).hasContent)
+    }
+
+    private val ended = reduce(active, ExerciseAction.Finished)
+
+    @Test
+    fun `an event fired twice is applied once`() {
+        val first =
+            reduce(active, ExerciseAction.EventFired("shift", listOf(DemoExercise.draw("shift", entry = "gue"))))
+        val again =
+            reduce(first, ExerciseAction.EventFired("shift", listOf(DemoExercise.draw("shift", entry = "mine"))))
+        assertSame(first, again)
+    }
+
+    @Test
+    fun `illegal transitions are ignored`() {
+        val draws = listOf(DemoExercise.draw())
+        assertSame(active, reduce(active, ExerciseAction.Drawn(draws)))
+        assertSame(ended, reduce(ended, ExerciseAction.Drawn(draws)))
+        assertSame(ended, reduce(ended, ExerciseAction.Rerolled(null, draws)))
+        assertSame(ended, reduce(ended, ExerciseAction.AnswerChanged(keyA, "tard")))
+        assertSame(ended, reduce(ended, ExerciseAction.EventFired("shift", draws)))
+        assertSame(ready, reduce(ready, ExerciseAction.Assessed(1, true, emptyMap())))
+        assertSame(active, reduce(active, ExerciseAction.Assessed(1, true, emptyMap())))
+    }
+
+    @Test
+    fun `next question stays in bounds even without questions`() {
+        assertEquals(0, reduce(active, ExerciseAction.NextQuestion(lastIndex = -1)).currentQuestion)
+        assertEquals(0, reduce(active, ExerciseAction.NextQuestion(lastIndex = 0)).currentQuestion)
     }
 }

@@ -1,17 +1,20 @@
 package io.github.qnicoud.dmgym.core.exercise
 
-/** Réducteur pur de la session : même entrée, même sortie. Une action sans effet renvoie [state] tel quel. */
+/**
+ * Réducteur pur de la session : même entrée, même sortie. Une action sans effet, ou illégale dans la phase
+ * courante, renvoie [state] tel quel.
+ */
 fun reduce(
     state: ExerciseSession,
     action: ExerciseAction,
 ): ExerciseSession =
     when (action) {
         is ExerciseAction.Drawn -> {
-            state.copy(draws = action.draws)
+            if (state.phase == Phase.Ready) state.copy(draws = action.draws) else state
         }
 
         is ExerciseAction.Rerolled -> {
-            reroll(state, action)
+            if (state.phase == Phase.Ended) state else reroll(state, action)
         }
 
         is ExerciseAction.Started -> {
@@ -19,7 +22,7 @@ fun reduce(
         }
 
         is ExerciseAction.AnswerChanged -> {
-            changeAnswer(state, action)
+            if (state.phase == Phase.Ended) state else changeAnswer(state, action)
         }
 
         is ExerciseAction.FlagToggled -> {
@@ -35,7 +38,7 @@ fun reduce(
         }
 
         is ExerciseAction.NextQuestion -> {
-            state.copy(currentQuestion = (state.currentQuestion + 1).coerceAtMost(action.lastIndex))
+            state.copy(currentQuestion = (state.currentQuestion + 1).coerceIn(0, maxOf(0, action.lastIndex)))
         }
 
         is ExerciseAction.OptionChanged -> {
@@ -43,10 +46,7 @@ fun reduce(
         }
 
         is ExerciseAction.EventFired -> {
-            state.copy(
-                draws = replaceSlots(state.draws, action.draws),
-                firedEvents = state.firedEvents + action.eventId,
-            )
+            fireEvent(state, action)
         }
 
         ExerciseAction.Finished -> {
@@ -54,7 +54,11 @@ fun reduce(
         }
 
         is ExerciseAction.Assessed -> {
-            state.copy(selfRating = action.rating, isGem = action.isGem, rubric = action.rubric)
+            if (state.phase == Phase.Ended) {
+                state.copy(selfRating = action.rating, isGem = action.isGem, rubric = action.rubric)
+            } else {
+                state
+            }
         }
     }
 
@@ -132,4 +136,15 @@ private fun replaceSlots(
         val index = acc.indexOfFirst { it.slotKey == slotKey }
         val kept = acc.filter { it.slotKey != slotKey }
         if (index < 0) kept + draws else kept.take(index) + draws + kept.drop(index)
+    }
+
+/** Idempotent : un événement déjà déclenché, ou une séance terminée, ne change rien. */
+private fun fireEvent(
+    state: ExerciseSession,
+    action: ExerciseAction.EventFired,
+): ExerciseSession =
+    if (action.eventId in state.firedEvents || state.phase == Phase.Ended) {
+        state
+    } else {
+        state.copy(draws = replaceSlots(state.draws, action.draws), firedEvents = state.firedEvents + action.eventId)
     }
