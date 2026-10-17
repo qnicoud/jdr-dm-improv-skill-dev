@@ -50,21 +50,21 @@ private data class Run(
  *   (lundi à dimanche) : la grâce est rechargée chaque lundi. Il ne compte pas dans la série.
  * - Deux jours manquants d'affilée, ou une seconde grâce dans la même semaine, terminent la série.
  * - `best`, `practicedDays` et `totalSessions` ne baissent jamais.
- * - Les jours postérieurs à [today] (horloge réglée dans le passé) sont ignorés.
+ * - Les jours postérieurs à [today] (horloge réglée dans le passé) n'entrent pas dans `current`, mais restent
+ * comptés dans `best` et `practicedDays`, qui ne baissent jamais.
  */
 fun computeStreak(
     days: Set<Long>,
     sessions: Int,
     today: Long,
 ): StreakSummary {
-    val practiced = days.filter { it <= today }.sorted()
-    val runs = buildRuns(practiced)
-    val (current, graces) = currentRun(runs.lastOrNull(), today)
+    val past = buildRuns(days.filter { it <= today }.sorted())
+    val (current, graces) = currentRun(past.lastOrNull(), today)
     return StreakSummary(
         totalSessions = sessions,
-        practicedDays = practiced.size,
+        practicedDays = days.size,
         current = current,
-        best = maxOf(runs.maxOfOrNull { it.length } ?: 0, current),
+        best = maxOf(buildRuns(days.sorted()).maxOfOrNull { it.length } ?: 0, current),
         graceUsedOn = graces.maxOrNull(),
         todayDone = today in days,
         graceDays = graces.toSet(),

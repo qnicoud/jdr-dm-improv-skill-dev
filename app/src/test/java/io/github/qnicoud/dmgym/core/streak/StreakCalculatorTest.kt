@@ -134,7 +134,8 @@ class StreakCalculatorTest {
     fun `future days are ignored when the clock is set back`() {
         val s = computeStreak(setOf(wednesday - 1, wednesday + 3, wednesday + 4), 3, wednesday)
         assertEquals(1, s.current)
-        assertEquals(1, s.practicedDays)
+        assertEquals(3, s.practicedDays)
+        assertEquals(2, s.best)
         assertEquals(3, s.totalSessions)
         assertFalse(s.todayDone)
     }
