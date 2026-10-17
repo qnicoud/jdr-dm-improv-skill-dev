@@ -343,7 +343,8 @@
   <string name="settings_section_durations">Durée par exercice</string>
   <string name="settings_duration_decrease">Réduire la durée de %1$s</string>
   <string name="settings_duration_increase">Augmenter la durée de %1$s</string>
-  <string name="settings_untimed">Sans minuteur</string>
+  <string name="settings_state_on">Activé</string>
+  <string name="settings_state_off">Désactivé</string>
   <string name="settings_untimed_for">Sans minuteur pour %1$s</string>
   <string name="settings_section_daily">Séance du jour</string>
   <string name="settings_daily_one_page">Inclure One-Page Design</string>
