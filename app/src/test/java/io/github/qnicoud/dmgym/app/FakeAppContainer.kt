@@ -16,7 +16,7 @@ import io.github.qnicoud.dmgym.feature.home.ExerciseCatalog
 import io.github.qnicoud.dmgym.feature.home.SettingsExerciseCatalog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -32,13 +32,28 @@ class FakeSettingsRepository(
     }
 }
 
-/** Lectures configurables (compteur, jours, historique, comptages) ; les écritures échouent explicitement. */
+/**
+ * Lectures configurables (compteur, jours, historique, comptages, détails, aperçus, session à reprendre) ;
+ * seules la mise à jour d'une session et sa suppression sont gérées en mémoire, le reste échoue explicitement.
+ */
 class FakeHistoryRepository(
     val sessionCount: Flow<Int> = MutableStateFlow(0),
     val history: Flow<List<SessionRecord>> = MutableStateFlow(emptyList()),
     val practicedDays: Flow<List<Long>> = MutableStateFlow(emptyList()),
     val counts: (Long, Long) -> List<ExerciseCountRecord> = { _, _ -> emptyList() },
+    val resumable: Flow<SessionDetail?> = MutableStateFlow(null),
+    val previews: Flow<Map<Long, String>> = MutableStateFlow(emptyMap()),
+    val details: MutableStateFlow<Map<Long, SessionDetail>> = MutableStateFlow(emptyMap()),
+    val historyBy: (String?, Boolean) -> Flow<List<SessionRecord>> = { _, _ -> history },
 ) : HistoryRepository {
+    /** Filtres demandés à `observeHistory`, dans l'ordre. */
+    val historyCalls = mutableListOf<Pair<String?, Boolean>>()
+    val ratings = mutableListOf<Pair<Long, Int?>>()
+    val gems = mutableListOf<Pair<Long, Boolean>>()
+    val deleted = mutableListOf<Long>()
+    var failOnUpdate = false
+    var failOnDelete = false
+
     /** Fenêtres demandées à `countSessionsByExercise`, dans l'ordre. */
     val countCalls = mutableListOf<Pair<Long, Long>>()
 
@@ -48,6 +63,36 @@ class FakeHistoryRepository(
 
     override suspend fun updateSession(session: SessionRecord) = unused()
 
+    override suspend fun updateRating(
+        sessionId: Long,
+        rating: Int?,
+    ) {
+        check(!failOnUpdate) { "disk full" }
+        ratings += sessionId to rating
+        patch(sessionId) { it.copy(selfRating = rating) }
+    }
+
+    override suspend fun updateGem(
+        sessionId: Long,
+        isGem: Boolean,
+    ) {
+        check(!failOnUpdate) { "disk full" }
+        gems += sessionId to isGem
+        patch(sessionId) { it.copy(isGem = isGem) }
+    }
+
+    private fun patch(
+        id: Long,
+        change: (SessionRecord) -> SessionRecord,
+    ) {
+        details.value =
+            details.value.mapValues { (key, d) -> if (key == id) d.copy(session = change(d.session)) else d }
+    }
+
+    override fun observeResumable(): Flow<SessionDetail?> = resumable
+
+    override fun observePreviews(): Flow<Map<Long, String>> = previews
+
     override suspend fun saveSnapshot(
         session: SessionRecord,
         draws: List<DrawRecord>,
@@ -55,7 +100,11 @@ class FakeHistoryRepository(
         rubric: List<RubricRecord>,
     ) = unused()
 
-    override suspend fun deleteSession(id: Long) = unused()
+    override suspend fun deleteSession(id: Long) {
+        check(!failOnDelete) { "disk full" }
+        deleted += id
+        details.value = details.value - id
+    }
 
     override suspend fun upsertDraws(
         sessionId: Long,
@@ -75,9 +124,12 @@ class FakeHistoryRepository(
     override fun observeHistory(
         exerciseId: String?,
         gemsOnly: Boolean,
-    ): Flow<List<SessionRecord>> = history
+    ): Flow<List<SessionRecord>> {
+        historyCalls += exerciseId to gemsOnly
+        return historyBy(exerciseId, gemsOnly)
+    }
 
-    override fun observeDetail(id: Long): Flow<SessionDetail?> = flowOf(null)
+    override fun observeDetail(id: Long): Flow<SessionDetail?> = details.map { it[id] }
 
     override fun observePracticedDays(): Flow<List<Long>> = practicedDays
 

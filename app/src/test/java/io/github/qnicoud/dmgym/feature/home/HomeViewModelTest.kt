@@ -4,6 +4,10 @@ import app.cash.turbine.test
 import io.github.qnicoud.dmgym.app.FakeHistoryRepository
 import io.github.qnicoud.dmgym.app.FakeSettingsRepository
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.core.history.AnswerRecord
+import io.github.qnicoud.dmgym.core.history.SessionDetail
+import io.github.qnicoud.dmgym.core.history.SessionRecord
+import io.github.qnicoud.dmgym.core.history.SessionStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -88,6 +92,45 @@ class HomeViewModelTest {
                 assertFalse(state.isEmpty)
                 sessionCount.value = 48
                 assertEquals(48, awaitItem().sessionCount)
+            }
+        }
+
+    @Test
+    fun `no resumable session means no resume card`() =
+        runTest {
+            viewModel().uiState.test { assertNull(expectMostRecentItem().resume) }
+        }
+
+    @Test
+    fun `the resumable session becomes the resume card with its first non blank answer`() =
+        runTest {
+            val resumable = MutableStateFlow<SessionDetail?>(null)
+            val vm = HomeViewModel(SettingsExerciseCatalog(settings), FakeHistoryRepository(resumable = resumable))
+            vm.uiState.test {
+                assertNull(expectMostRecentItem().resume)
+                resumable.value =
+                    SessionDetail(
+                        SessionRecord(
+                            id = 4,
+                            exerciseId = ExerciseId.CONSTRAINT_BOX.value,
+                            status = SessionStatus.IN_PROGRESS,
+                            startedAtEpochMillis = 1_000,
+                            lastActivityAtEpochMillis = 5_000,
+                            zoneId = "UTC",
+                            localEpochDay = 1,
+                            activeDurationSec = 125,
+                        ),
+                        draws = emptyList(),
+                        answers = listOf(AnswerRecord("a", 0, "  "), AnswerRecord("b", 0, "  Le bois du comptoir  ")),
+                        rubric = emptyList(),
+                    )
+                val resume = expectMostRecentItem().resume!!
+                assertEquals(4L, resume.sessionId)
+                assertEquals(ExerciseId.CONSTRAINT_BOX, resume.exerciseId)
+                assertEquals("Le bois du comptoir", resume.preview)
+                assertEquals(5_000L, resume.lastActivityAtEpochMillis)
+                resumable.value = null
+                assertNull(expectMostRecentItem().resume)
             }
         }
 
