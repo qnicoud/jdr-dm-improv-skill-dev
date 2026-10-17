@@ -49,10 +49,76 @@
   </plurals>
   <string name="exercise_card_description">%1$s, %2$s, %3$s</string>
 
-  <!-- Écrans provisoires -->
+  <!-- Séance du jour (S03, S03b, carte de l'accueil) -->
   <string name="daily_title">Séance du jour</string>
-  <string name="history_title">Historique</string>
+  <string name="daily_date_title">Séance du %1$s</string>
+  <string name="daily_summary">3 exercices · ≈ %1$d min</string>
+  <string name="daily_state_done">Fait</string>
+  <string name="daily_state_in_progress">En cours</string>
+  <string name="daily_state_todo">À faire</string>
+  <string name="daily_replace">Remplacer</string>
+  <string name="daily_replace_description">Remplacer %1$s</string>
+  <string name="daily_redo">Refaire</string>
+  <string name="daily_redo_description">Refaire %1$s</string>
+  <string name="daily_sheet_title">Remplacer par…</string>
+  <string name="daily_sheet_subtitle">Remplace : %1$s</string>
+  <string name="daily_start">Commencer</string>
+  <string name="daily_continue">Continuer</string>
+  <string name="daily_finished">Séance terminée</string>
+  <string name="daily_row_description">%1$d. %2$s, %3$s, %4$s, %5$s</string>
+  <string name="home_daily_kicker">Séance du jour</string>
+  <string name="home_daily_exercise_done">%1$s · Fait</string>
+  <plurals name="home_daily_summary_todo">
+    <item quantity="one">≈ %1$d min · %2$d exercice à faire</item>
+    <item quantity="other">≈ %1$d min · %2$d exercices à faire</item>
+  </plurals>
+  <string name="home_daily_done">Séance du jour terminée</string>
+  <string name="home_daily_redo">Refaire un exercice</string>
+
+  <!-- Progrès (S10) -->
   <string name="stats_title">Progrès</string>
+  <plurals name="stats_this_week">
+    <item quantity="one">dont %1$d cette semaine</item>
+    <item quantity="other">dont %1$d cette semaine</item>
+  </plurals>
+  <plurals name="stats_streak">
+    <item quantity="one">Série : %1$d jour</item>
+    <item quantity="other">Série : %1$d jours</item>
+  </plurals>
+  <plurals name="stats_streak_restart">
+    <item quantity="one">Nouvelle série : %1$d jour</item>
+    <item quantity="other">Nouvelle série : %1$d jours</item>
+  </plurals>
+  <string name="stats_streak_waiting">Une nouvelle série commence à ta prochaine session.</string>
+  <string name="stats_grace_available">Jour de grâce disponible</string>
+  <string name="stats_grace_used">Jour de grâce utilisé cette semaine · rechargé lundi</string>
+  <plurals name="stats_best_streak">
+    <item quantity="one">Meilleure série : %1$d jour</item>
+    <item quantity="other">Meilleure série : %1$d jours</item>
+  </plurals>
+  <string name="stats_recent_days">7 derniers jours</string>
+  <string name="stats_day_practiced">pratiqué</string>
+  <string name="stats_day_grace">jour de grâce</string>
+  <string name="stats_day_none">pas de pratique</string>
+  <string name="stats_day_description">%1$s : %2$s</string>
+  <string name="stats_day_today">%1$s, aujourd’hui : %2$s</string>
+  <string name="stats_by_exercise">Sessions par exercice</string>
+  <plurals name="stats_exercise_count">
+    <item quantity="one">%1$s : %2$d session</item>
+    <item quantity="other">%1$s : %2$d sessions</item>
+  </plurals>
+  <plurals name="stats_gems">
+    <item quantity="one">%1$d bijou</item>
+    <item quantity="other">%1$d bijoux</item>
+  </plurals>
+  <string name="stats_gems_link">Voir mes bijoux</string>
+  <string name="stats_time_hours">%1$d h %2$02d d’écriture</string>
+  <string name="stats_time_minutes">%1$d min d’écriture</string>
+  <string name="stats_empty_title">Pas encore de session</string>
+  <string name="stats_empty_body">Tes progrès apparaîtront après ta première session.</string>
+  <string name="stats_empty_action">Choisir un exercice</string>
+
+  <!-- Écrans provisoires -->  <string name="history_title">Historique</string>
   <string name="settings_title">Réglages</string>
   <string name="session_detail_title">Détail de la session</string>
   <string name="placeholder_coming_soon">Cet écran arrive bientôt.</string>
