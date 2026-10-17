@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Variante sombre des fonds de démarrage. -->
-    <color name="splash_parchment">#1B1612</color>
-    <color name="splash_forest">#0F1511</color>
-    <color name="splash_night">#121318</color>
-    <color name="splash_mist">#0F1417</color>
-</resources>

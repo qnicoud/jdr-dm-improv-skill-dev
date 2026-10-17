@@ -16,16 +16,28 @@
     <item name="windowSplashScreenIconBackgroundColor">@color/ic_launcher_background</item>
     <item name="postSplashScreenTheme">@style/Theme.DmGym</item>
   </style>
-  <style name="Theme.DmGym.Splash.Parchment">
-    <item name="windowSplashScreenBackground">@color/splash_parchment</item>
+  <style name="Theme.DmGym.Splash.ParchmentLight" parent="Theme.DmGym.Splash">
+    <item name="windowSplashScreenBackground">@color/splash_parchment_light</item>
   </style>
-  <style name="Theme.DmGym.Splash.Forest">
-    <item name="windowSplashScreenBackground">@color/splash_forest</item>
+  <style name="Theme.DmGym.Splash.ParchmentDark" parent="Theme.DmGym.Splash">
+    <item name="windowSplashScreenBackground">@color/splash_parchment_dark</item>
   </style>
-  <style name="Theme.DmGym.Splash.Night">
-    <item name="windowSplashScreenBackground">@color/splash_night</item>
+  <style name="Theme.DmGym.Splash.ForestLight" parent="Theme.DmGym.Splash">
+    <item name="windowSplashScreenBackground">@color/splash_forest_light</item>
   </style>
-  <style name="Theme.DmGym.Splash.Mist">
-    <item name="windowSplashScreenBackground">@color/splash_mist</item>
+  <style name="Theme.DmGym.Splash.ForestDark" parent="Theme.DmGym.Splash">
+    <item name="windowSplashScreenBackground">@color/splash_forest_dark</item>
+  </style>
+  <style name="Theme.DmGym.Splash.NightLight" parent="Theme.DmGym.Splash">
+    <item name="windowSplashScreenBackground">@color/splash_night_light</item>
+  </style>
+  <style name="Theme.DmGym.Splash.NightDark" parent="Theme.DmGym.Splash">
+    <item name="windowSplashScreenBackground">@color/splash_night_dark</item>
+  </style>
+  <style name="Theme.DmGym.Splash.MistLight" parent="Theme.DmGym.Splash">
+    <item name="windowSplashScreenBackground">@color/splash_mist_light</item>
+  </style>
+  <style name="Theme.DmGym.Splash.MistDark" parent="Theme.DmGym.Splash">
+    <item name="windowSplashScreenBackground">@color/splash_mist_dark</item>
   </style>
 </resources>

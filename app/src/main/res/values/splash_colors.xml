@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Fonds d'écran de démarrage = fond de chaque palette (Palettes.kt, Color.kt), clair. -->
-    <color name="splash_parchment">#FBF5EA</color>
-    <color name="splash_forest">#F5FBF4</color>
-    <color name="splash_night">#FBF8FF</color>
-    <color name="splash_mist">#F6FAFC</color>
+    <!-- Fonds d'écran de démarrage = fond de chaque palette (Palettes.kt, Color.kt), clair et sombre. -->
+    <color name="splash_parchment_light">#FBF5EA</color>
+    <color name="splash_parchment_dark">#1B1612</color>
+    <color name="splash_forest_light">#F5FBF4</color>
+    <color name="splash_forest_dark">#0F1511</color>
+    <color name="splash_night_light">#FBF8FF</color>
+    <color name="splash_night_dark">#121318</color>
+    <color name="splash_mist_light">#F6FAFC</color>
+    <color name="splash_mist_dark">#0F1417</color>
 </resources>

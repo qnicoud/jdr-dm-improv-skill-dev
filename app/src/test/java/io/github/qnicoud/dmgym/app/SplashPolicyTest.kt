@@ -8,16 +8,21 @@ import org.junit.jupiter.api.Test
 
 class SplashPolicyTest {
     @Test
-    fun `each static palette has its own splash variant`() {
-        assertEquals(SplashVariant.PARCHMENT, SplashVariant.of(ThemePalette.PARCHMENT))
-        assertEquals(SplashVariant.FOREST, SplashVariant.of(ThemePalette.FOREST))
-        assertEquals(SplashVariant.NIGHT, SplashVariant.of(ThemePalette.NIGHT))
-        assertEquals(SplashVariant.MIST, SplashVariant.of(ThemePalette.MIST))
+    fun `each static palette has a light and a dark splash variant`() {
+        assertEquals(SplashVariant.PARCHMENT_LIGHT, SplashVariant.of(ThemePalette.PARCHMENT, dark = false))
+        assertEquals(SplashVariant.PARCHMENT_DARK, SplashVariant.of(ThemePalette.PARCHMENT, dark = true))
+        assertEquals(SplashVariant.FOREST_LIGHT, SplashVariant.of(ThemePalette.FOREST, dark = false))
+        assertEquals(SplashVariant.FOREST_DARK, SplashVariant.of(ThemePalette.FOREST, dark = true))
+        assertEquals(SplashVariant.NIGHT_LIGHT, SplashVariant.of(ThemePalette.NIGHT, dark = false))
+        assertEquals(SplashVariant.NIGHT_DARK, SplashVariant.of(ThemePalette.NIGHT, dark = true))
+        assertEquals(SplashVariant.MIST_LIGHT, SplashVariant.of(ThemePalette.MIST, dark = false))
+        assertEquals(SplashVariant.MIST_DARK, SplashVariant.of(ThemePalette.MIST, dark = true))
     }
 
     @Test
-    fun `phone colors use the parchment splash`() {
-        assertEquals(SplashVariant.PARCHMENT, SplashVariant.of(ThemePalette.DYNAMIC))
+    fun `phone colors use the parchment splash in both modes`() {
+        assertEquals(SplashVariant.PARCHMENT_LIGHT, SplashVariant.of(ThemePalette.DYNAMIC, dark = false))
+        assertEquals(SplashVariant.PARCHMENT_DARK, SplashVariant.of(ThemePalette.DYNAMIC, dark = true))
     }
 
     @Test
@@ -40,5 +45,29 @@ class SplashPolicyTest {
         val policy = SplashPolicy(isColdStart = false)
         assertFalse(policy.keepOnScreen(settingsReady = true, elapsedMillis = 0))
         assertTrue(policy.keepOnScreen(settingsReady = false, elapsedMillis = 0))
+    }
+
+    @Test
+    fun `the cold start is consumed once and can be reset`() {
+        ColdStartTracker.reset()
+        assertTrue(ColdStartTracker.consume())
+        assertFalse(ColdStartTracker.consume())
+        ColdStartTracker.reset()
+        assertTrue(ColdStartTracker.consume())
+        ColdStartTracker.reset()
+    }
+
+    @Test
+    fun `the system is only asked again when the variant changes`() {
+        var stored: String? = null
+        val applied = mutableListOf<SplashVariant>()
+        val sync = SplashThemeSync({ stored }, { stored = it }, { applied += it })
+        sync.onVariant(SplashVariant.FOREST_DARK)
+        sync.onVariant(SplashVariant.FOREST_DARK)
+        sync.onVariant(SplashVariant.MIST_LIGHT)
+        assertEquals(listOf(SplashVariant.FOREST_DARK, SplashVariant.MIST_LIGHT), applied)
+        val restarted = SplashThemeSync({ stored }, { stored = it }, { applied += it })
+        restarted.onVariant(SplashVariant.MIST_LIGHT)
+        assertEquals(2, applied.size)
     }
 }

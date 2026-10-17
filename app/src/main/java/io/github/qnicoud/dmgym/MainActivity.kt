@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
@@ -21,6 +22,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import io.github.qnicoud.dmgym.app.Appearance
+import io.github.qnicoud.dmgym.app.ColdStartTracker
 import io.github.qnicoud.dmgym.app.DmGymApp
 import io.github.qnicoud.dmgym.app.SplashPolicy
 import io.github.qnicoud.dmgym.app.SplashVariant
@@ -36,7 +38,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val startedAt = SystemClock.elapsedRealtime()
-        val policy = SplashPolicy(isColdStart = consumeColdStart())
+        val policy = SplashPolicy(isColdStart = ColdStartTracker.consume())
         val splash = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -60,11 +62,14 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             bootstrap.appearance
                 .filterNotNull()
-                .map { SplashVariant.of(it.palette) }
+                .map { SplashVariant.of(it.palette, it.mode.isDark(systemDark())) }
                 .distinctUntilChanged()
                 .collect { rememberSplashTheme(it) }
         }
     }
+
+    private fun systemDark(): Boolean =
+        resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
     /** Réglage d'animations du système, relu quand l'app revient au premier plan. */
     @Composable
@@ -88,11 +93,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private companion object {
-        /** Vrai une seule fois par processus : un retour à chaud (processus vivant) n'attend pas la seconde. */
-        var coldStart = true
-
-        fun consumeColdStart(): Boolean = coldStart.also { coldStart = false }
-
         val LIGHT_SCRIM = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
         val DARK_SCRIM = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
     }
