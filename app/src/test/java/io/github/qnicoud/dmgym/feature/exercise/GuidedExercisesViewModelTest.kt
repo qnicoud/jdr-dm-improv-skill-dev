@@ -4,13 +4,13 @@ import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.lifecycle.SavedStateHandle
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.Phase
-import io.github.qnicoud.dmgym.core.exercise.contrastBand
 import io.github.qnicoud.dmgym.core.exercise.definitions.ConstraintBox
 import io.github.qnicoud.dmgym.core.exercise.definitions.CoreImage
 import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
 import io.github.qnicoud.dmgym.core.exercise.definitions.OnePage
 import io.github.qnicoud.dmgym.core.exercise.definitions.RealTables
 import io.github.qnicoud.dmgym.core.exercise.definitions.StatusNumbers
+import io.github.qnicoud.dmgym.core.exercise.statusCards
 import io.github.qnicoud.dmgym.core.history.SessionStatus
 import io.github.qnicoud.dmgym.core.tables.TableId
 import kotlinx.coroutines.test.runCurrent
@@ -56,7 +56,7 @@ class GuidedExercisesViewModelTest : ExerciseViewModelTestBase() {
                         .single()
                         .text
                         .toInt()
-                val band = checkNotNull(contrastBand(roles.getValue(role.entryId).tags))
+                val band = statusCards(roles.getValue(role.entryId).tags, counter = true)
                 assertTrue(card in band, "card $card outside $band")
             }
             assertEquals(0, vm.session().rerollCount)
@@ -79,7 +79,7 @@ class GuidedExercisesViewModelTest : ExerciseViewModelTestBase() {
                         .single()
                         .text
                         .toInt()
-                assertTrue(card in checkNotNull(contrastBand(roles.getValue(role.entryId).tags)))
+                assertTrue(card in statusCards(roles.getValue(role.entryId).tags, counter = true))
             }
         }
 
