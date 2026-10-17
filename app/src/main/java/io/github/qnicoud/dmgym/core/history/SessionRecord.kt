@@ -32,6 +32,8 @@ data class DrawRecord(
     val textSnapshot: String,
     val autoDetected: Boolean? = null,
     val manualChecked: Boolean? = null,
+    /** Catégorie de l'entrée tirée (le sens d'un mot sensoriel), pour l'afficher sans relire la table. */
+    val category: String? = null,
 )
 
 data class AnswerRecord(

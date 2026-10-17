@@ -34,3 +34,13 @@ L'historique stocke des sessions, des tirages, des réponses et des auto-évalua
 - La couche `data/history` expose une interface `HistoryRepository`. Les ViewModels et la logique ne voient jamais d'entité ni de DAO, ce qui limite le repli Room 2 à changer de paquet dans `data/history/db`.
 - Tests de DAO : sous Robolectric, avec une base en mémoire.
 - La plupart des exemples en ligne utilisent `androidx.room` : il faut adapter les imports.
+
+## Complément (L12b) : toute évolution du schéma passe par une migration testée
+
+Des utilisateurs, à commencer par le premier testeur, ont déjà des sessions réelles dans la base. Dès maintenant, **tout changement de schéma Room** :
+
+- incrémente `version` de `DmGymDatabase` et exporte le nouveau fichier de schéma (`app/schemas/.../N.json`) ; les schémas déjà exportés ne sont jamais réécrits ;
+- s'accompagne d'une `AutoMigration` (ou d'une `Migration` manuelle quand Room ne sait pas la déduire), jamais d'une destruction de la base ;
+- est couvert par un test de migration (`RoomMigrationTest`) : une base construite depuis le schéma précédent, remplie de données, est ouverte à la version courante et toutes les données doivent être conservées.
+
+Premier cas : la version 2 ajoute `session_draws.category` (nullable ; `null` pour les tirages existants).

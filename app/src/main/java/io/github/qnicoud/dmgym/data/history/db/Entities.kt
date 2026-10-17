@@ -49,6 +49,7 @@ data class DrawEntity(
     val textSnapshot: String,
     val autoDetected: Boolean?,
     val manualChecked: Boolean?,
+    val category: String?,
 )
 
 @Entity(

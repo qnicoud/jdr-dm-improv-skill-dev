@@ -57,10 +57,10 @@ internal fun SessionEntity.toRecord() =
     )
 
 internal fun DrawRecord.toEntity(sessionId: Long) =
-    DrawEntity(sessionId, slotKey, position, tableId, entryId, textSnapshot, autoDetected, manualChecked)
+    DrawEntity(sessionId, slotKey, position, tableId, entryId, textSnapshot, autoDetected, manualChecked, category)
 
 internal fun DrawEntity.toRecord() =
-    DrawRecord(slotKey, position, tableId, entryId, textSnapshot, autoDetected, manualChecked)
+    DrawRecord(slotKey, position, tableId, entryId, textSnapshot, autoDetected, manualChecked, category)
 
 internal fun AnswerRecord.toEntity(sessionId: Long) =
     AnswerEntity(sessionId, fieldKey, groupIndex, text, flagged, isGem)
