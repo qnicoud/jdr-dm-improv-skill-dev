@@ -15,6 +15,7 @@ import io.github.qnicoud.dmgym.core.tables.TableRepository
 import io.github.qnicoud.dmgym.core.time.SystemZoneClock
 import io.github.qnicoud.dmgym.data.history.RoomHistoryRepository
 import io.github.qnicoud.dmgym.data.history.db.DmGymDatabase
+import io.github.qnicoud.dmgym.data.history.db.truncateWal
 import io.github.qnicoud.dmgym.data.history.periodicTicks
 import io.github.qnicoud.dmgym.data.settings.DataStoreSettingsRepository
 import io.github.qnicoud.dmgym.data.tables.AssetTableSource
@@ -75,7 +76,12 @@ class DefaultAppContainer(
     }
 
     private val roomHistory: RoomHistoryRepository by lazy {
-        RoomHistoryRepository(database.sessionDao(), clock, periodicTicks(Duration.ofMinutes(1)))
+        RoomHistoryRepository(
+            database.sessionDao(),
+            clock,
+            periodicTicks(Duration.ofMinutes(1)),
+            checkpoint = { database.truncateWal() },
+        )
     }
 
     override val historyRepository: HistoryRepository get() = roomHistory
