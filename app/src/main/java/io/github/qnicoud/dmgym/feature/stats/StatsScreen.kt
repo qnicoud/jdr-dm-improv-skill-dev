@@ -32,6 +32,7 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.streak.DayMark
 import io.github.qnicoud.dmgym.core.streak.DayStatus
 import io.github.qnicoud.dmgym.core.streak.StreakSummary
+import io.github.qnicoud.dmgym.ui.components.SettingsAction
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 
 object StatsTags {
@@ -44,6 +45,7 @@ object StatsTags {
     const val EMPTY = "stats_empty"
     const val EMPTY_ACTION = "stats_empty_action"
     const val GEMS = "stats_gems"
+    const val GEMS_EMPTY = "stats_gems_empty"
     const val GEMS_LINK = "stats_gems_link"
     const val TIME = "stats_time"
 
@@ -59,6 +61,7 @@ fun StatsRoute(
     onChooseExercise: () -> Unit,
     onShowGems: () -> Unit,
     onShowExercise: (ExerciseId) -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -66,7 +69,7 @@ fun StatsRoute(
         viewModel.refreshToday()
         onPauseOrDispose {}
     }
-    StatsScreen(state, onChooseExercise, onShowGems, onShowExercise, modifier)
+    StatsScreen(state, onChooseExercise, onShowGems, onShowExercise, onSettingsClick, modifier)
 }
 
 /** Progrès (S10) : sessions d'abord (D32), puis série, meilleure série, répartition, bijoux et temps. */
@@ -77,6 +80,7 @@ fun StatsScreen(
     onChooseExercise: () -> Unit,
     onShowGems: () -> Unit,
     onShowExercise: (ExerciseId) -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -84,6 +88,7 @@ fun StatsScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.stats_title), Modifier.semantics { heading() }) },
+                actions = { SettingsAction(onSettingsClick) },
             )
         },
     ) { padding ->
@@ -164,7 +169,7 @@ private fun SessionsCard(state: StatsUiState) {
 @Composable
 private fun StatsScreenPreview() {
     DmGymTheme {
-        StatsScreen(PreviewState, onChooseExercise = {}, onShowGems = {}, onShowExercise = {})
+        StatsScreen(PreviewState, onChooseExercise = {}, onShowGems = {}, onShowExercise = {}, onSettingsClick = {})
     }
 }
 
@@ -172,7 +177,8 @@ private fun StatsScreenPreview() {
 @Composable
 private fun StatsEmptyPreview() {
     DmGymTheme {
-        StatsScreen(StatsUiState(isLoading = false), onChooseExercise = {}, onShowGems = {}, onShowExercise = {})
+        StatsScreen(StatsUiState(isLoading = false), onChooseExercise = {
+        }, onShowGems = {}, onShowExercise = {}, onSettingsClick = {})
     }
 }
 

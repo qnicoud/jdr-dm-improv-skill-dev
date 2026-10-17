@@ -425,4 +425,7 @@
   <string name="about_font_atkinson">Atkinson Hyperlegible Next (texte) : © 2020-2024 The Atkinson Hyperlegible Next Project Authors, licence SIL Open Font 1.1.</string>
   <string name="about_ofl_note">Le texte intégral de la licence SIL Open Font 1.1 est publié sur openfontlicense.org.</string>
   <string name="about_beep">Bip de fin : son original synthétisé pour l’app, placé dans le domaine public (CC0 1.0).</string>
+
+  <!-- Lot R1c : recette du cadre de l’app -->
+  <string name="stats_gems_empty">Pas encore de bijou. Garde une réponse comme bijou pour la retrouver ici.</string>
 </resources>
