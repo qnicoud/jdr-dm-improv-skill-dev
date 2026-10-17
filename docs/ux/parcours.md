@@ -181,7 +181,7 @@ Règles : le jour bascule à minuit local (D16). Un « jour pratiqué » = au mo
 Sections (S11) :
 - **Minuteur** : vibration à la fin (oui par défaut), bip (oui, ne sonne qu'en mode sonnerie), durée par défaut par exercice (7 lignes, stepper + « Sans minuteur »), rythme Crazy Eights (vibration chaque minute, non par défaut ; DÉCISION 14).
 - **Apparence** : thème Clair / Sombre / Système (défaut Système) ; « Réduire les animations » (défaut : suit le système).
-- **Données** : « Exporter mon historique » (fichier texte via le sélecteur système), « Supprimer tout l'historique » (confirmation par saisie du mot ou appui long : seul dialogue de l'app, car destructif et hors exercice).
+- **Données** : « Exporter mon historique » (fichier texte via le sélecteur système), « Tout effacer » (confirmation dans la page, sans dialogue : on tape le mot EFFACER, sans tenir compte de la casse ni des espaces autour, pour activer le bouton ; « Annuler » passe avant, le focus TalkBack va sur la consigne). Limite connue : l'écran de démarrage suit le mode du système même si « Clair » est forcé.
 - **À propos** : version, licences (polices, bip), sources des exercices (Johnstone, GV, Edariad), diagnostic des tables.
 Pas de notifications (v1.1). Pas de compte.
 Chaque réglage s'applique immédiatement, sans bouton « Enregistrer ».

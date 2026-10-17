@@ -11,10 +11,11 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.settings.Settings
+import io.github.qnicoud.dmgym.core.settings.VibrationStrength
 import io.github.qnicoud.dmgym.core.signal.EndSignal
 
 /**
- * Signal de fin (ADR 0006) : deux impulsions de vibration si activé et possible, bip SoundPool si activé
+ * Signal de fin (ADR 0006) : deux impulsions de vibration, à la force choisie, si activé et possible, bip SoundPool si activé
  * et seulement en mode sonnerie normal. Aucun focus audio n'est demandé. Vérifié à la main (docs/qa/l3-signal-fin.md).
  */
 class AndroidEndSignal(
@@ -50,7 +51,7 @@ class AndroidEndSignal(
     }
 
     override fun play(settings: Settings) {
-        if (settings.vibrationEnabled) vibrate()
+        if (settings.vibrationEnabled) previewVibration(settings.vibrationStrength)
         if (settings.soundEnabled) beep()
     }
 
@@ -60,13 +61,27 @@ class AndroidEndSignal(
         loaded = false
     }
 
-    private fun vibrate() {
+    override fun previewVibration(strength: VibrationStrength) =
+        vibrate(strength.endPattern(), strength.endAmplitudes())
+
+    /**
+     * Rappel de rythme de Crazy Eights : une impulsion en usage ALARM, comme le signal de fin. Choix assumé : c'est
+     * un réglage que l'utilisateur active volontairement pendant l'exercice, et il ne doit pas être filtré par le
+     * réglage système « retour haptique » (usage ASSISTANCE_SONIFICATION).
+     */
+    override fun tick(strength: VibrationStrength) = vibrate(strength.tickPattern(), strength.tickAmplitudes())
+
+    /** Sans contrôle de l'amplitude, seule la durée du motif change. */
+    private fun vibrate(
+        pattern: LongArray,
+        amplitudes: IntArray,
+    ) {
         val target = vibrator?.takeIf { it.hasVibrator() } ?: return
         val effect =
             if (target.hasAmplitudeControl()) {
-                VibrationEffect.createWaveform(VIBRATION_PATTERN, VIBRATION_AMPLITUDES, NO_REPEAT)
+                VibrationEffect.createWaveform(pattern, amplitudes, NO_REPEAT)
             } else {
-                VibrationEffect.createWaveform(VIBRATION_PATTERN, NO_REPEAT)
+                VibrationEffect.createWaveform(pattern, NO_REPEAT)
             }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             target.vibrate(effect, VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM))
@@ -98,7 +113,7 @@ class AndroidEndSignal(
         /**
          * Usage ALARM pour la vibration : la fin du minuteur est le seul signal en mode vibreur ou silencieux,
          * et ne doit pas être filtrée par le réglage « retour haptique » (USAGE_ASSISTANCE_SONIFICATION).
-         * Elle reste brève (deux impulsions de 250 ms).
+         * Elle reste brève (deux impulsions, 250 ms au plus : voir [VibrationStrength]).
          */
         fun defaultVibrator(context: Context): Vibrator? =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -108,9 +123,6 @@ class AndroidEndSignal(
                 context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
             }
 
-        /** Pause initiale, impulsion, pause, impulsion (ms). */
-        val VIBRATION_PATTERN = longArrayOf(0, 250, 120, 250)
-        val VIBRATION_AMPLITUDES = intArrayOf(0, 255, 0, 255)
         const val NO_REPEAT = -1
         const val VOLUME = 1f
     }

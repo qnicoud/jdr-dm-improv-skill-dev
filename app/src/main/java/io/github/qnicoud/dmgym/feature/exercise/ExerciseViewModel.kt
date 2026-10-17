@@ -25,6 +25,7 @@ import io.github.qnicoud.dmgym.core.exercise.timerUi
 import io.github.qnicoud.dmgym.core.exercise.toExerciseSession
 import io.github.qnicoud.dmgym.core.exercise.toLongs
 import io.github.qnicoud.dmgym.core.history.SessionDetail
+import io.github.qnicoud.dmgym.core.settings.VibrationStrength
 import io.github.qnicoud.dmgym.core.tables.NotEnoughEntriesException
 import io.github.qnicoud.dmgym.core.tables.TableLoadException
 import io.github.qnicoud.dmgym.core.timer.TickResult
@@ -112,6 +113,15 @@ class ExerciseViewModel(
             .map { it.crazyEightsMinuteHaptic && it.vibrationEnabled }
             .distinctUntilChanged()
             .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    private val vibrationStrength: StateFlow<VibrationStrength> =
+        deps.settings.settings
+            .map { it.vibrationStrength }
+            .distinctUntilChanged()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, VibrationStrength.NORMAL)
+
+    /** Impulsion du rappel périodique, à la force choisie dans les réglages. */
+    fun playReminderTick() = deps.endSignal.tick(vibrationStrength.value)
 
     init {
         deps.endSignal.prepare()

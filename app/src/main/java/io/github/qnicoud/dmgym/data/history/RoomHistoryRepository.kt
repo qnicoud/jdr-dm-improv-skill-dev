@@ -5,6 +5,7 @@ import io.github.qnicoud.dmgym.core.history.DrawRecord
 import io.github.qnicoud.dmgym.core.history.ExerciseCountRecord
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.history.RubricRecord
+import io.github.qnicoud.dmgym.core.history.SessionArchive
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionNotFoundException
 import io.github.qnicoud.dmgym.core.history.SessionRecord
@@ -29,7 +30,8 @@ class RoomHistoryRepository(
     private val dao: SessionDao,
     private val clock: Clock,
     ticks: Flow<Unit>,
-) : HistoryRepository {
+) : HistoryRepository,
+    SessionArchive {
     private val staleThresholds: Flow<Long> = ticks.map { staleBefore() }.distinctUntilChanged()
 
     private fun staleBefore(): Long = clock.millis() - IN_PROGRESS_TTL.toMillis()
@@ -75,6 +77,10 @@ class RoomHistoryRepository(
     }
 
     override suspend fun deleteSession(id: Long) = dao.deleteById(id)
+
+    override suspend fun readAll(): List<SessionDetail> = dao.readAll().map { it.toDetail() }
+
+    override suspend fun deleteAll() = dao.deleteAll()
 
     override suspend fun upsertDraws(
         sessionId: Long,

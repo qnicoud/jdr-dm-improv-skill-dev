@@ -9,6 +9,7 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.core.settings.ThemePalette
@@ -25,20 +26,22 @@ val DmGymShapes =
 
 /**
  * Thème de l'app. [palette] est celle choisie dans les réglages (D53) ; [ThemePalette.DYNAMIC] n'est honorée
- * qu'à partir de l'API 31, sinon on retombe sur « Parchemin ». Le mode clair ou sombre suit le système.
+ * qu'à partir de l'API 31, sinon on retombe sur « Parchemin ». [darkTheme] vient du réglage Clair / Sombre / Système.
  */
 @Composable
 fun DmGymTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     palette: ThemePalette = ThemePalette.PARCHMENT,
+    reduceMotion: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
         colorScheme = colorSchemeFor(palette.effective(Build.VERSION.SDK_INT), darkTheme),
         typography = DmGymTypography,
         shapes = DmGymShapes,
-        content = content,
-    )
+    ) {
+        CompositionLocalProvider(LocalReduceMotion provides reduceMotion, content = content)
+    }
 }
 
 @Composable

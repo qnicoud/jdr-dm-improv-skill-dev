@@ -2,6 +2,7 @@ package io.github.qnicoud.dmgym.app
 
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
+import io.github.qnicoud.dmgym.core.settings.ThemeMode
 import io.github.qnicoud.dmgym.core.settings.ThemePalette
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,10 +35,10 @@ class ThemeBootstrapTest {
     fun `is not ready until the first settings are read`() {
         val source = MutableSharedFlow<Settings>()
         val bootstrap = ThemeBootstrap(SourceRepository(source), scope)
-        assertNull(bootstrap.palette.value)
+        assertNull(bootstrap.appearance.value?.palette)
         assertFalse(bootstrap.isReady)
         runBlocking { source.emit(Settings(themePalette = ThemePalette.FOREST)) }
-        assertEquals(ThemePalette.FOREST, bootstrap.palette.value)
+        assertEquals(ThemePalette.FOREST, bootstrap.appearance.value?.palette)
         assertTrue(bootstrap.isReady)
     }
 
@@ -49,13 +50,36 @@ class ThemeBootstrapTest {
             source.emit(Settings(themePalette = ThemePalette.FOREST))
             source.emit(Settings(themePalette = ThemePalette.MIST))
         }
-        assertEquals(ThemePalette.MIST, bootstrap.palette.value)
+        assertEquals(ThemePalette.MIST, bootstrap.appearance.value?.palette)
     }
 
     @Test
     fun `a failing read falls back to parchment instead of blocking the splash screen`() {
         val bootstrap = ThemeBootstrap(SourceRepository(flow { error("disk") }), scope)
-        assertEquals(ThemePalette.PARCHMENT, bootstrap.palette.value)
+        assertEquals(ThemePalette.PARCHMENT, bootstrap.appearance.value?.palette)
         assertTrue(bootstrap.isReady)
+    }
+
+    @Test
+    fun `exposes the theme mode and the animation choice with the palette`() {
+        val source = MutableSharedFlow<Settings>()
+        val bootstrap = ThemeBootstrap(SourceRepository(source), scope)
+        assertNull(bootstrap.appearance.value)
+        runBlocking {
+            source.emit(
+                Settings(themePalette = ThemePalette.NIGHT, themeMode = ThemeMode.DARK, reduceAnimations = true),
+            )
+        }
+        assertEquals(
+            Appearance(ThemePalette.NIGHT, ThemeMode.DARK, reduceAnimations = true),
+            bootstrap.appearance.value,
+        )
+        assertEquals(ThemePalette.NIGHT, bootstrap.appearance.value?.palette)
+    }
+
+    @Test
+    fun `a failing read gives the default appearance`() {
+        val bootstrap = ThemeBootstrap(SourceRepository(flow { error("disk") }), scope)
+        assertEquals(Appearance(), bootstrap.appearance.value)
     }
 }

@@ -47,3 +47,10 @@ Cible : `platform/AndroidEndSignal` (ADR 0006, architecture §7). Appareil : Sam
 ## Résultat
 
 Date : ________  Testeur : ________  Verdict : ________  Remarques :
+
+## Force des vibrations et rappel de rythme (L12a)
+
+- Réglage Douce / Normale / Forte (défaut Normale) : Forte = 2 x 250 ms à pleine amplitude (signal d'origine). Sans contrôle d'amplitude, seule la durée change. Bouton « Essayer » dans les Réglages (anti-rebond 500 ms).
+- Le rappel de rythme de Crazy Eights (une impulsion par minute, `AndroidEndSignal.tick`) est lui aussi en **usage ALARM**, comme le signal de fin : l'utilisateur l'active volontairement pendant l'exercice et le retour haptique système ne doit pas le couper. Il suit la même force.
+- [ ] Les trois forces se distinguent au toucher sur le Z Flip3 (la Douce reste perceptible).
+- [ ] Rappel de rythme actif, retour haptique système coupé : l'impulsion se sent quand même.

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -18,7 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -28,10 +26,11 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.core.settings.ThemeMode
 import io.github.qnicoud.dmgym.core.settings.ThemePalette
+import io.github.qnicoud.dmgym.core.settings.VibrationStrength
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 
@@ -42,6 +41,22 @@ object SettingsTags {
     const val DAILY_ONE_PAGE = "settings_daily_one_page"
     const val ABOUT = "settings_about"
     const val DICTATION_HINT = "settings_dictation_hint"
+    const val TRY_VIBRATION = "settings_try_vibration"
+    const val REDUCE_SYSTEM = "settings_reduce_system"
+    const val REDUCE_ALWAYS = "settings_reduce_always"
+    const val REDUCE_NEVER = "settings_reduce_never"
+    const val DATA_HINT = "settings_data_hint"
+    const val EXPORT = "settings_export"
+    const val ERASE = "settings_erase"
+    const val ERASE_CONFIRM = "settings_erase_confirm"
+    const val ERASE_CANCEL = "settings_erase_cancel"
+    const val ERASE_PROMPT = "settings_erase_prompt"
+    const val ERASE_INPUT = "settings_erase_input"
+    const val DATA_MESSAGE = "settings_data_message"
+
+    fun strength(strength: VibrationStrength) = "settings_strength_${strength.name}"
+
+    fun themeMode(mode: ThemeMode) = "settings_theme_mode_${mode.name}"
 
     fun decrease(id: ExerciseId) = "settings_decrease_${id.value}"
 
@@ -63,34 +78,19 @@ data class SettingsActions(
     val onCrazyHaptic: (Boolean) -> Unit = {},
     val onDailyOnePage: (Boolean) -> Unit = {},
     val onPalette: (ThemePalette) -> Unit = {},
+    val onVibrationStrength: (VibrationStrength) -> Unit = {},
+    val onTryVibration: () -> Unit = {},
+    val onThemeMode: (ThemeMode) -> Unit = {},
+    val onReduceAnimations: (Boolean?) -> Unit = {},
+    val onExport: () -> Unit = {},
+    val onRequestErase: () -> Unit = {},
+    val onCancelErase: () -> Unit = {},
+    val onConfirmErase: () -> Unit = {},
+    val onEraseInput: (String) -> Unit = {},
     val onDecrease: (ExerciseId) -> Unit = {},
     val onIncrease: (ExerciseId) -> Unit = {},
     val onUntimed: (ExerciseId, Boolean) -> Unit = { _, _ -> },
 )
-
-@Composable
-fun SettingsRoute(
-    viewModel: SettingsViewModel,
-    onBack: () -> Unit,
-    onOpenAbout: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val actions =
-        SettingsActions(
-            onBack = onBack,
-            onOpenAbout = onOpenAbout,
-            onVibration = viewModel::setVibration,
-            onSound = viewModel::setSound,
-            onCrazyHaptic = viewModel::setCrazyMinuteHaptic,
-            onDailyOnePage = viewModel::setDailyIncludeOnePage,
-            onPalette = viewModel::setPalette,
-            onDecrease = viewModel::decrease,
-            onIncrease = viewModel::increase,
-            onUntimed = viewModel::setUntimed,
-        )
-    SettingsScreen(state, actions, modifier)
-}
 
 /** Réglages (S11) : chaque changement s'applique immédiatement, sans bouton « Enregistrer ». */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -120,6 +120,7 @@ fun SettingsScreen(
                 DailySection(state, actions)
                 AppearanceSection(state, actions)
                 HelpSection()
+                DataSection(state.data, actions)
                 AboutEntry(actions.onOpenAbout)
             }
         }
@@ -138,6 +139,7 @@ private fun EndSignalSection(
         onCheckedChange = actions.onVibration,
         modifier = Modifier.testTag(SettingsTags.VIBRATION),
     )
+    VibrationStrengthRows(state, actions)
     SwitchRow(
         label = stringResource(R.string.settings_sound),
         supporting = stringResource(R.string.settings_sound_hint),
@@ -176,24 +178,6 @@ private fun DailySection(
         onCheckedChange = actions.onDailyOnePage,
         modifier = Modifier.testTag(SettingsTags.DAILY_ONE_PAGE),
     )
-}
-
-@Composable
-private fun AppearanceSection(
-    state: SettingsUiState,
-    actions: SettingsActions,
-) {
-    SectionTitle(stringResource(R.string.settings_section_appearance))
-    Column(Modifier.selectableGroup()) {
-        state.palettes.forEach { palette ->
-            PaletteRow(
-                palette = palette,
-                selected = palette == state.palette,
-                onSelect = { actions.onPalette(palette) },
-                modifier = Modifier.testTag(SettingsTags.palette(palette)),
-            )
-        }
-    }
 }
 
 @Composable

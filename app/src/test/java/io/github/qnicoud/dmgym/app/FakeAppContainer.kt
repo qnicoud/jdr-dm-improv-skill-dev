@@ -7,13 +7,17 @@ import io.github.qnicoud.dmgym.core.history.DrawRecord
 import io.github.qnicoud.dmgym.core.history.ExerciseCountRecord
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.history.RubricRecord
+import io.github.qnicoud.dmgym.core.history.SessionArchive
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
+import io.github.qnicoud.dmgym.core.signal.EndSignal
 import io.github.qnicoud.dmgym.feature.exercise.ExerciseDependencies
+import io.github.qnicoud.dmgym.feature.exercise.FakeEndSignal
 import io.github.qnicoud.dmgym.feature.home.ExerciseCatalog
 import io.github.qnicoud.dmgym.feature.home.SettingsExerciseCatalog
+import io.github.qnicoud.dmgym.feature.settings.FakeSessionArchive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -150,6 +154,8 @@ class FakeHistoryRepository(
 class FakeAppContainer(
     override val settingsRepository: SettingsRepository = FakeSettingsRepository(),
     override val historyRepository: HistoryRepository = FakeHistoryRepository(),
+    override val sessionArchive: SessionArchive = FakeSessionArchive(),
+    override val endSignal: EndSignal = FakeEndSignal(),
     override val exerciseRegistry: ExerciseRegistry = ExerciseRegistry(emptyList()),
     override val clock: Clock = Clock.fixed(Instant.parse("2026-10-16T10:00:00Z"), ZoneOffset.UTC),
 ) : AppContainer {

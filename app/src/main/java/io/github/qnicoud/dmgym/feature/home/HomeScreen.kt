@@ -42,6 +42,8 @@ import java.time.Clock
 object HomeTags {
     const val WELCOME = "home_welcome"
     const val SETTINGS_BUTTON = "home_settings"
+    const val PREPARATION_TAG = "exercise_tag_preparation"
+    const val DURATION_TAG = "exercise_tag_duration"
 
     fun card(id: ExerciseId) = "exercise_card_${id.value}"
 }
