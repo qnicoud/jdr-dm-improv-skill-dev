@@ -58,6 +58,7 @@ import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.core.exercise.TimerKind
 import io.github.qnicoud.dmgym.core.exercise.TimerUi
 import io.github.qnicoud.dmgym.platform.KeepScreenOn
+import io.github.qnicoud.dmgym.platform.performTick
 import io.github.qnicoud.dmgym.ui.components.PlaceholderScreen
 import io.github.qnicoud.dmgym.ui.components.nameRes
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
@@ -82,6 +83,10 @@ object ExerciseTags {
     const val SKIP = "exercise_skip"
     const val RUBRIC_TOGGLE = "exercise_rubric_toggle"
     const val GEM = "exercise_gem"
+    const val CHECKLIST_COUNT = "exercise_checklist_count"
+    const val CHECKLIST_TOGGLE = "exercise_checklist_toggle"
+
+    fun check(key: DrawKey) = "exercise_check_${key.slotKey}_${key.position}"
 
     fun field(key: AnswerKey) = "exercise_field_${key.fieldKey}_${key.groupIndex}"
 
@@ -145,6 +150,7 @@ fun ExerciseRoute(
                         viewModel::onAddGroup,
                         viewModel::onPreviousQuestion,
                         viewModel::onFinish,
+                        viewModel::highlights,
                     ),
                 assess = AssessActions(viewModel::onAssess, { leave() }, viewModel::fieldState),
                 onOptionChanged = viewModel::onOptionChanged,
@@ -269,28 +275,7 @@ private fun DrawArea(
         }
 
         LoadStatus.Ready -> {
-            val slotKeys =
-                state.definition.slots
-                    .map { it.key }
-                    .toSet()
-            val shown = state.session.draws.filter { it.slotKey in slotKeys }
-            state.session.draws
-                .filter { it.slotKey !in slotKeys }
-                .forEach { ShiftBanner(it) }
-            if (shown.isEmpty()) return
-            DrawCard(
-                cardSlots =
-                    state.definition.slots
-                        .filterIsInstance<CardSlot>()
-                        .map { it.key }
-                        .toSet(),
-                draws = shown,
-                rerollCount = state.session.rerollCount,
-                showReroll = state.session.phase != Phase.Ended,
-                showChecks = state.definition.detection != null,
-                onReroll = { actions.onReroll(null) },
-                onCheckToggled = actions.onCheckToggled,
-            )
+            ReadyDraw(state, actions)
         }
     }
 }

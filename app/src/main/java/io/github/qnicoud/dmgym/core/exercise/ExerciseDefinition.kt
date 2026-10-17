@@ -72,6 +72,8 @@ data class TableSlot(
     /** Si non vide, la i-ème entrée vient de la catégorie `i % taille` (questions « dans l'ordre des catégories »). */
     val categoryCycle: List<String> = emptyList(),
     override val onlyIf: OptionCondition? = null,
+    /** Libellé affiché devant chaque tirage du slot (par ex. « Lieu »), s'il y en a un. */
+    val label: StringResId? = null,
 ) : DrawSlot {
     init {
         require(count >= 1) { "count must be >= 1" }
@@ -221,6 +223,8 @@ data class ExerciseDefinition(
     val acceptsFreeSubject: Boolean = false,
     /** Notes facultatives saisies dans le bilan (Status Numbers). */
     val endNote: FieldSpec? = null,
+    /** Vrai si le panneau des éléments tirés se replie quand le clavier s'ouvre (Connect the Story, D48). */
+    val collapsiblePanel: Boolean = false,
 ) {
     init {
         require(rubric.size in RUBRIC_SIZE) { "rubric must have 2 or 3 questions" }

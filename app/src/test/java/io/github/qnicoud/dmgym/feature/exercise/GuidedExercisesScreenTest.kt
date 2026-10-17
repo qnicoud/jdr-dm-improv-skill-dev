@@ -53,7 +53,7 @@ class GuidedExercisesScreenTest {
                 definition = definition,
                 deps =
                     ExerciseDependencies(
-                        RealTables.repository(),
+                        RealTables.repository,
                         history,
                         FakeSettingsRepository(Settings()),
                         FakeEndSignal(),

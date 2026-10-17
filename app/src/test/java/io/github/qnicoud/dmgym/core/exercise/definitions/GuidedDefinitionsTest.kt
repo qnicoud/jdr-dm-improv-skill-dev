@@ -28,7 +28,7 @@ class GuidedDefinitionsTest {
     private val all =
         listOf(CoreImage.definition, StatusNumbers.definition, DecisionPoint.definition, OnePage.definition)
 
-    private fun drawer(seed: Int = 1) = SlotDrawer(RealTables.repository(), Random(seed))
+    private fun drawer(seed: Int = 1) = SlotDrawer(RealTables.repository, Random(seed))
 
     @Test
     fun `the four definitions are registered with distinct ids`() {

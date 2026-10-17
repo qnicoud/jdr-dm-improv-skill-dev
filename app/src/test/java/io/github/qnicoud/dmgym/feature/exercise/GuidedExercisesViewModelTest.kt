@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test
 
 /** Les quatre exercices de L10 joués sur le ViewModel générique, avec les vraies tables. */
 class GuidedExercisesViewModelTest : ExerciseViewModelTestBase() {
-    override fun tables() = RealTables.repository()
+    override fun tables() = RealTables.repository
 
     private val roles = RealTables.file(TableId.NpcRoles).entries.associateBy { it.id }
 

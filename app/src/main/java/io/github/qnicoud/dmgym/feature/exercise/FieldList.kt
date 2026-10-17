@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Button
@@ -18,6 +19,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -27,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
@@ -44,6 +47,8 @@ class FieldHandlers(
     val onAddGroup: () -> Unit,
     val onPreviousQuestion: () -> Unit = {},
     val onFinish: () -> Unit = {},
+    /** Plages à surligner dans le champ surveillé par la détection ; `null` pour un exercice sans détection. */
+    val highlights: ((String) -> List<IntRange>)? = null,
 )
 
 /** Zone de saisie : champs fixes, champ unique, questions successives ou groupes répétables (ADR 0012). */
@@ -58,6 +63,22 @@ fun FieldList(
     modifier: Modifier = Modifier,
 ) {
     val session = stored.copy(options = definition.resolveOptions(stored.options))
+    val highlight = rememberHighlight(definition.detection?.field, session.draws, handlers.highlights)
+    CompositionLocalProvider(LocalFieldHighlight provides highlight) {
+        FieldColumn(definition, session, progress, groupCount, handlers, firstFieldFocus, modifier)
+    }
+}
+
+@Composable
+private fun FieldColumn(
+    definition: ExerciseDefinition,
+    session: ExerciseSession,
+    progress: Progress?,
+    groupCount: Int,
+    handlers: FieldHandlers,
+    firstFieldFocus: FocusRequester,
+    modifier: Modifier,
+) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         progress?.let { ProgressLine(it) }
         when (val layout = definition.layout) {
@@ -223,6 +244,8 @@ private fun Field(
         placeholder = { Text(stringResource(spec.hint ?: R.string.field_default_hint)) },
         lineLimits = TextFieldLineLimits.MultiLine(minHeightInLines = spec.minLines, maxHeightInLines = MAX_LINES),
         supportingText = spec.softLimit?.let { limit -> { SoftCounter(state.text.length, limit) } },
+        keyboardOptions = KeyboardOptions(imeAction = imeActionOf(position)),
+        outputTransformation = LocalFieldHighlight.current(spec.key),
     )
     spec.flagLabel?.let { flag ->
         FlagRow(stringResource(flag), session.answers[key]?.flagged == true) { handlers.onFlagToggled(key) }
@@ -240,6 +263,14 @@ private fun SoftCounter(
         modifier = Modifier.testTag(QuestionTags.SOFT_COUNTER),
     )
 }
+
+/** Suivant d'un champ numéroté au suivant ; Terminé au dernier ferme le clavier sans finir l'exercice. */
+private fun imeActionOf(position: Pair<Int, Int>?): ImeAction =
+    when {
+        position == null -> ImeAction.Default
+        position.first < position.second -> ImeAction.Next
+        else -> ImeAction.Done
+    }
 
 @Composable
 private fun FlagRow(

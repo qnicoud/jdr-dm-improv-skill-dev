@@ -244,4 +244,40 @@
   <string name="one_page_inaction_hint">Que se passe-t-il d’ici la prochaine séance ?</string>
   <string name="one_page_rubric_fits">Tout tient-il en une page ?</string>
   <string name="one_page_rubric_tomorrow">Puis-je jouer ça demain ?</string>
+  <!-- L8 : détection et liste des éléments tirés -->
+  <string name="checklist_state_used">Utilisé</string>
+  <string name="checklist_state_unused">Pas encore utilisé</string>
+  <string name="checklist_state_auto">Utilisé, détecté automatiquement</string>
+  <string name="checklist_auto_badge">auto</string>
+  <string name="checklist_linked">%1$d sur %2$d reliés</string>
+  <string name="checklist_used_count">%1$d sur %2$d utilisés</string>
+  <string name="checklist_expand">Déplier les éléments</string>
+  <string name="checklist_collapse">Replier les éléments</string>
+
+  <!-- L8 : Crazy Eights -->
+  <string name="crazy_eights_instructions">Un problème est tiré. En 8 minutes, écris 8 solutions : la quantité d’abord, car les premières idées sont les plus banales.</string>
+  <string name="crazy_eights_hint">Une solution, même bancale</string>
+  <string name="crazy_eights_rubric_beyond">Ai-je dépassé mes 3 premières idées ?</string>
+  <string name="crazy_eights_rubric_surprise">Une idée m’a surpris ?</string>
+
+  <!-- L8 : Constraint Box -->
+  <string name="constraint_box_instructions">Décris le lieu en t’appuyant uniquement sur ces trois mots sensoriels. Chacun vient d’un sens différent.</string>
+  <string name="constraint_box_place">Lieu</string>
+  <string name="constraint_box_words">Mot imposé</string>
+  <string name="constraint_box_field_label">Ta description</string>
+  <string name="constraint_box_field_hint">Décris le lieu comme tu le dirais à ta table</string>
+  <string name="constraint_box_rubric_visual">Ai-je évité le visuel facile ?</string>
+  <string name="constraint_box_rubric_aloud">Pourrais-je le dire à voix haute tel quel ?</string>
+
+  <!-- L8 : Connect the Story -->
+  <string name="connect_story_instructions">Cinq éléments sont tirés. En 10 minutes, écris une scène qui les relie tous, comme si tout avait été prévu.</string>
+  <string name="connect_story_place">Lieu</string>
+  <string name="connect_story_object">Objet</string>
+  <string name="connect_story_trait">Trait de personnage</string>
+  <string name="connect_story_sensory">Détail sensoriel</string>
+  <string name="connect_story_line">Réplique</string>
+  <string name="connect_story_field_label">Ta scène</string>
+  <string name="connect_story_field_hint">Écris la scène qui relie les cinq éléments</string>
+  <string name="connect_story_rubric_planned">La connexion semblait-elle prévue ?</string>
+  <string name="connect_story_rubric_unexpected">Ai-je relié un élément inattendu ?</string>
 </resources>
