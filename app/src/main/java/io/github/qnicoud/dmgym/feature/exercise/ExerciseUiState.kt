@@ -1,12 +1,10 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
+import androidx.annotation.StringRes
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseSession
 import io.github.qnicoud.dmgym.core.exercise.Milestone
-import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.core.exercise.Progress
-import io.github.qnicoud.dmgym.core.exercise.TimerKind
-import io.github.qnicoud.dmgym.core.exercise.TimerUi
 
 enum class LoadStatus { Loading, Ready, DrawFailed }
 
@@ -16,21 +14,14 @@ enum class SaveStatus { Idle, Saved, Failed }
 data class ExerciseUiState(
     val definition: ExerciseDefinition,
     val session: ExerciseSession,
-    val timer: TimerUi,
     val load: LoadStatus = LoadStatus.Loading,
     val progress: Progress? = null,
     val save: SaveStatus = SaveStatus.Idle,
     /** Nombre de groupes de saisie affichés (disposition répétable). */
     val groupCount: Int = 1,
-) {
-    /** Écran maintenu allumé en décompte et en temps additionnel, pas en pause (ADR 0006). */
-    val keepScreenOn: Boolean
-        get() = timer.kind in KEEP_ON_KINDS && session.phase == Phase.Active
-
-    private companion object {
-        val KEEP_ON_KINDS = setOf(TimerKind.Running, TimerKind.LastMinute, TimerKind.Overtime, TimerKind.Untimed)
-    }
-}
+    /** Écran maintenu allumé tant que le chrono tourne (ADR 0006). */
+    val keepScreenOn: Boolean = false,
+)
 
 /** Événements ponctuels, consommés par l'écran pendant l'état `STARTED`. */
 sealed interface ExerciseEvent {
@@ -43,5 +34,10 @@ sealed interface ExerciseEvent {
     data class Reminder(
         val eventId: String,
         val haptic: Boolean,
+    ) : ExerciseEvent
+
+    /** Message bref (snackbar) : l'action n'a pas abouti, rien n'est perdu. */
+    data class Snackbar(
+        @StringRes val textRes: Int,
     ) : ExerciseEvent
 }

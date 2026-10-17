@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Checkbox
@@ -20,7 +21,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -182,8 +183,6 @@ private fun Field(
 ) {
     val label =
         spec.label?.let { stringResource(it) } ?: stringResource(R.string.field_default_label, (position?.first ?: 1))
-    val spoken =
-        position?.let { stringResource(R.string.field_description, label, it.first, it.second) } ?: label
     val state = handlers.fieldState(key)
     val focusModifier = focus?.let { Modifier.focusRequester(it) } ?: Modifier
     OutlinedTextField(
@@ -193,8 +192,7 @@ private fun Field(
                 .fillMaxWidth()
                 .heightIn(min = 56.dp)
                 .then(focusModifier)
-                .testTag(ExerciseTags.field(key))
-                .semantics { contentDescription = spoken },
+                .testTag(ExerciseTags.field(key)),
         textStyle = MaterialTheme.typography.bodyLarge,
         label = { Text(label) },
         placeholder = { Text(stringResource(spec.hint ?: R.string.field_default_hint)) },
@@ -211,17 +209,17 @@ private fun FlagRow(
     checked: Boolean,
     onToggle: () -> Unit,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 4.dp)) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = { onToggle() },
-            modifier =
-                Modifier.semantics {
-                    contentDescription =
-                        label
-                },
-        )
-        Text(label, style = MaterialTheme.typography.bodyMedium)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = 48.dp)
+                .toggleable(value = checked, role = Role.Checkbox, onValueChange = { onToggle() })
+                .padding(start = 4.dp),
+    ) {
+        Checkbox(checked = checked, onCheckedChange = null)
+        Text(label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(start = 8.dp))
     }
 }
 

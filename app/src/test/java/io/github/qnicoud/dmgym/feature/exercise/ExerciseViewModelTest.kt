@@ -49,8 +49,8 @@ class ExerciseViewModelTest : ExerciseViewModelTestBase() {
             val state = vm.uiState.value
             assertEquals(LoadStatus.Ready, state.load)
             assertEquals(1, state.session.draws.size)
-            assertEquals(TimerKind.Ready, state.timer.kind)
-            assertEquals(300_000, state.timer.displayMs)
+            assertEquals(TimerKind.Ready, vm.timerState.value.kind)
+            assertEquals(300_000, vm.timerState.value.displayMs)
             assertTrue(endSignal.prepared)
         }
 
@@ -99,7 +99,7 @@ class ExerciseViewModelTest : ExerciseViewModelTestBase() {
             assertEquals(300, record.plannedDurationSec)
             assertEquals(SessionStatus.IN_PROGRESS, record.status)
             assertEquals(Phase.Active, vm.uiState.value.session.phase)
-            assertEquals(TimerKind.Running, vm.uiState.value.timer.kind)
+            assertEquals(TimerKind.Running, vm.timerState.value.kind)
             assertTrue(vm.uiState.value.keepScreenOn)
             assertEquals(1L, handle.get<Long>("session_id"))
         }
@@ -147,14 +147,14 @@ class ExerciseViewModelTest : ExerciseViewModelTestBase() {
             val vm = started()
             vm.onAnswerChanged(DemoExercise.keyA, "texte")
             pass(10_000)
-            val before = vm.uiState.value
+            val before = vm.timerState.value
             val saved = history.snapshots.size
             vm.onReroll()
             runCurrent()
             val after = vm.uiState.value
             assertEquals(1, after.session.rerollCount)
             assertEquals("texte", after.session.textOf(DemoExercise.keyA))
-            assertEquals(before.timer.displayMs, after.timer.displayMs)
+            assertEquals(before.displayMs, vm.timerState.value.displayMs)
             assertTrue(history.snapshots.size > saved)
             vm.onReroll(DemoExercise.SLOT)
             runCurrent()
@@ -162,19 +162,13 @@ class ExerciseViewModelTest : ExerciseViewModelTestBase() {
         }
 
     @Test
-    fun `rerolling before the start works and a reroll that cannot draw flags the error`() =
+    fun `rerolling before the start works`() =
         runTest {
             val vm = vm()
             collect(vm)
             vm.onReroll()
             runCurrent()
             assertEquals(1, vm.uiState.value.session.rerollCount)
-            source.failing = true
-            val broken = vm(DemoExercise.definition.copy(slots = listOf(TableSlot("x", TableId.Places, count = 50))))
-            collect(broken)
-            broken.onReroll()
-            runCurrent()
-            assertEquals(LoadStatus.DrawFailed, broken.uiState.value.load)
         }
 
     @Test

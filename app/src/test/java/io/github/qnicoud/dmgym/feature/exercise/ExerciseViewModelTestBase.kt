@@ -48,6 +48,7 @@ abstract class ExerciseViewModelTestBase {
     protected val monotonic = FakeMonotonicClock(1_000_000)
     protected val wall = MutableClock()
     protected val source = DemoExercise.FixtureSource()
+    protected var detector: io.github.qnicoud.dmgym.core.exercise.AnswerDetector? = null
     protected var handle = SavedStateHandle()
 
     @BeforeEach
@@ -57,7 +58,16 @@ abstract class ExerciseViewModelTestBase {
     fun tearDown() = Dispatchers.resetMain()
 
     protected fun deps() =
-        ExerciseDependencies(DemoExercise.tables(source), history, settings, endSignal, monotonic, wall, dispatcher)
+        ExerciseDependencies(
+            DemoExercise.tables(source),
+            history,
+            settings,
+            endSignal,
+            monotonic,
+            wall,
+            dispatcher,
+            detector,
+        )
 
     protected fun vm(
         definition: ExerciseDefinition = DemoExercise.definition,
@@ -66,7 +76,8 @@ abstract class ExerciseViewModelTestBase {
 
     /** Garde l'écran « collecté » pour que les tics tournent. */
     protected fun TestScope.collect(vm: ExerciseViewModel): Job {
-        val job = backgroundScope.launch(dispatcher) { vm.uiState.collect {} }
+        backgroundScope.launch(dispatcher) { vm.uiState.collect {} }
+        val job = backgroundScope.launch(dispatcher) { vm.timerState.collect {} }
         runCurrent()
         return job
     }

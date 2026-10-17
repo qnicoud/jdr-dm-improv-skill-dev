@@ -48,7 +48,7 @@ private val previewSession =
         draws = listOf(Draw("p", 0, "problems", "x", "Un pont s’effondre au milieu de la fête")),
     )
 
-private fun previewState(timer: TimerUi) = ExerciseUiState(previewDefinition, previewSession, timer, LoadStatus.Ready)
+private fun previewState() = ExerciseUiState(previewDefinition, previewSession, LoadStatus.Ready)
 
 private val noOp = {}
 
@@ -93,7 +93,7 @@ private fun TimerStatesPreview() {
 @Preview(name = "En cours, sombre", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun ActivePreview() {
-    DmGymTheme { ExerciseContent(previewState(TimerUi(TimerKind.Overtime, 12_000, 0f)), previewActions()) }
+    DmGymTheme { ExerciseContent(previewState(), { TimerUi(TimerKind.Overtime, 12_000, 0f) }, previewActions()) }
 }
 
 @Preview(name = "Bilan, clair", showBackground = true)
@@ -103,7 +103,8 @@ private fun EndPreview() {
     val ended = previewSession.copy(phase = Phase.Ended, selfRating = 2)
     DmGymTheme {
         ExerciseContent(
-            previewState(TimerUi(TimerKind.Paused, 0, 0f, elapsedMs = 492_000)).copy(session = ended),
+            previewState().copy(session = ended),
+            { TimerUi(TimerKind.Paused, 0, 0f, elapsedMs = 492_000) },
             previewActions(),
         )
     }

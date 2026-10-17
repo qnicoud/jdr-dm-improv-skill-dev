@@ -125,7 +125,14 @@ internal suspend fun Flow<ExerciseSession>.autosave(
         .collect { (_, current) -> current?.let { persist(it) } }
 }
 
+/** Frappe et détection automatique suivent le debounce ; tirages, cases manuelles et bilan sont écrits tout de suite. */
 private fun isTypingOnly(
     previous: ExerciseSession?,
     current: ExerciseSession?,
-): Boolean = previous != null && current != null && previous.copy(answers = current.answers) == current
+): Boolean = previous != null && current != null && previous.withoutTyping() == current.withoutTyping()
+
+private fun ExerciseSession.withoutTyping(): ExerciseSession =
+    copy(
+        answers = emptyMap(),
+        draws = draws.map { it.copy(check = it.check?.takeIf { c -> c.manual != null }?.copy(auto = false)) },
+    )

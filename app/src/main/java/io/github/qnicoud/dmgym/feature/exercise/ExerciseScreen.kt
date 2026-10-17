@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,14 +18,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -48,6 +53,7 @@ import io.github.qnicoud.dmgym.core.exercise.FREE_SUBJECT_KEY
 import io.github.qnicoud.dmgym.core.exercise.Milestone
 import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.core.exercise.TimerKind
+import io.github.qnicoud.dmgym.core.exercise.TimerUi
 import io.github.qnicoud.dmgym.platform.KeepScreenOn
 import io.github.qnicoud.dmgym.ui.components.PlaceholderScreen
 import io.github.qnicoud.dmgym.ui.components.nameRes
@@ -106,6 +112,7 @@ fun ExerciseRoute(
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val timer = viewModel.timerState.collectAsStateWithLifecycle()
     val leave = {
         viewModel.onLeave()
         onBack()
@@ -113,7 +120,8 @@ fun ExerciseRoute(
     BackHandler(onBack = leave)
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
     KeepScreenOn(state.keepScreenOn)
-    AnnouncementEffect(viewModel)
+    val snackbarHost = remember { SnackbarHostState() }
+    EventsEffect(viewModel, snackbarHost)
     val actions =
         remember(viewModel, onBack) {
             ExerciseActions(
@@ -135,11 +143,14 @@ fun ExerciseRoute(
                 assess = AssessActions(viewModel::onAssess) { leave() },
             )
         }
-    ExerciseContent(state, actions, modifier)
+    ExerciseContent(state, { timer.value }, actions, modifier, snackbarHost)
 }
 
 @Composable
-private fun AnnouncementEffect(viewModel: ExerciseViewModel) {
+private fun EventsEffect(
+    viewModel: ExerciseViewModel,
+    snackbarHost: SnackbarHostState,
+) {
     val view = LocalView.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val texts =
@@ -149,12 +160,23 @@ private fun AnnouncementEffect(viewModel: ExerciseViewModel) {
             Milestone.LastMinute to stringResource(R.string.announce_last_minute),
             Milestone.TimeUp to stringResource(R.string.announce_time_up),
         )
+    val resources = LocalResources.current
     LaunchedEffect(viewModel, lifecycle) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.events.collect { event ->
-                if (event is ExerciseEvent.Announce) {
-                    @Suppress("DEPRECATION")
-                    view.announceForAccessibility(texts.getValue(event.milestone))
+                when (event) {
+                    is ExerciseEvent.Announce -> {
+                        @Suppress("DEPRECATION")
+                        view.announceForAccessibility(texts.getValue(event.milestone))
+                    }
+
+                    is ExerciseEvent.Snackbar -> {
+                        snackbarHost.showSnackbar(resources.getString(event.textRes))
+                    }
+
+                    is ExerciseEvent.Reminder -> {
+                        Unit
+                    }
                 }
             }
         }
@@ -166,12 +188,15 @@ private fun AnnouncementEffect(viewModel: ExerciseViewModel) {
 @Composable
 fun ExerciseContent(
     state: ExerciseUiState,
+    timer: () -> TimerUi,
     actions: ExerciseActions,
     modifier: Modifier = Modifier,
+    snackbarHost: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val phase = state.session.phase
     Scaffold(
         modifier = modifier,
+        snackbarHost = { SnackbarHost(snackbarHost) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(state.definition.name), modifier = Modifier.semantics { heading() }) },
@@ -180,20 +205,20 @@ fun ExerciseContent(
                         Icon(DmIcons.Back, contentDescription = stringResource(R.string.action_back))
                     }
                 },
-                actions = { if (phase == Phase.Active) ActiveBarActions(state, actions) },
+                actions = { if (phase == Phase.Active) ActiveBarActions(state, timer, actions) },
             )
         },
         bottomBar = {
             if (phase == Phase.Ready && state.load != LoadStatus.Loading) {
-                StartButton(actions.onStart, Modifier.padding(16.dp))
+                StartButton(actions.onStart, Modifier.imePadding().padding(16.dp))
             }
         },
     ) { padding ->
-        Column(modifier = Modifier.padding(padding).fillMaxSize()) {
+        Column(modifier = Modifier.padding(padding).imePadding().fillMaxSize()) {
             when (phase) {
-                Phase.Ready -> ReadyBody(state, actions)
-                Phase.Active -> ActiveBody(state, actions)
-                Phase.Ended -> EndBody(state, actions)
+                Phase.Ready -> ReadyBody(state, timer, actions)
+                Phase.Active -> ActiveBody(state, timer, actions)
+                Phase.Ended -> EndBody(state, timer, actions)
             }
         }
     }
@@ -202,10 +227,11 @@ fun ExerciseContent(
 @Composable
 private fun ActiveBarActions(
     state: ExerciseUiState,
+    timer: () -> TimerUi,
     actions: ExerciseActions,
 ) {
     val label = stringResource(R.string.exercise_finish)
-    val overtime = state.timer.kind == TimerKind.Overtime
+    val overtime by remember { derivedStateOf { timer().kind == TimerKind.Overtime } }
     Row(
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -238,6 +264,7 @@ private fun SaveIndicator(status: SaveStatus) {
 @Composable
 private fun ReadyBody(
     state: ExerciseUiState,
+    timer: () -> TimerUi,
     actions: ExerciseActions,
 ) {
     Column(
@@ -246,7 +273,7 @@ private fun ReadyBody(
     ) {
         Text(stringResource(state.definition.instructions), style = MaterialTheme.typography.bodyLarge)
         DrawArea(state, actions)
-        TimerBar(state.timer, canPause = false, onPause = actions.onPause, onResume = actions.onResume)
+        LiveTimerBar(timer, canPause = false, onPause = actions.onPause, onResume = actions.onResume)
     }
 }
 
@@ -281,6 +308,7 @@ private fun DrawArea(
 @Composable
 private fun ColumnScope.ActiveBody(
     state: ExerciseUiState,
+    timer: () -> TimerUi,
     actions: ExerciseActions,
 ) {
     val focus = remember { FocusRequester() }
@@ -289,7 +317,7 @@ private fun ColumnScope.ActiveBody(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        TimerBar(state.timer, canPause = true, onPause = actions.onPause, onResume = actions.onResume)
+        LiveTimerBar(timer, canPause = true, onPause = actions.onPause, onResume = actions.onResume)
         DrawArea(state, actions)
     }
     Column(
@@ -308,10 +336,11 @@ private fun ColumnScope.ActiveBody(
 @Composable
 private fun EndBody(
     state: ExerciseUiState,
+    timer: () -> TimerUi,
     actions: ExerciseActions,
 ) {
     Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        EndPanel(state.definition, state.session, state.timer.elapsedMs, actions.assess)
+        EndPanel(state.definition, state.session, timer().elapsedMs, actions.assess)
     }
 }
 

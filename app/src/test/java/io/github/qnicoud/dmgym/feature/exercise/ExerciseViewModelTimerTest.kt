@@ -58,7 +58,7 @@ class ExerciseViewModelTimerTest : ExerciseViewModelTestBase() {
             }
             assertEquals(1, endSignal.played.size)
             val ui = vm.uiState.value
-            assertEquals(TimerKind.Overtime, ui.timer.kind)
+            assertEquals(TimerKind.Overtime, vm.timerState.value.kind)
             assertTrue(ui.keepScreenOn)
             assertEquals(Phase.Active, ui.session.phase)
         }
@@ -84,7 +84,7 @@ class ExerciseViewModelTimerTest : ExerciseViewModelTestBase() {
             wall.millis += 400_000
             advanceTimeBy(TICK)
             runCurrent()
-            assertEquals(TimerKind.Overtime, vm.uiState.value.timer.kind)
+            assertEquals(TimerKind.Overtime, vm.timerState.value.kind)
             assertTrue(endSignal.played.isEmpty())
         }
 
@@ -115,21 +115,21 @@ class ExerciseViewModelTimerTest : ExerciseViewModelTestBase() {
             val vm = started()
             pass(60_000)
             vm.onPause()
-            val frozen = vm.uiState.value.timer.displayMs
+            val frozen = vm.timerState.value.displayMs
             pass(120_000)
-            assertEquals(TimerKind.Paused, vm.uiState.value.timer.kind)
-            assertEquals(frozen, vm.uiState.value.timer.displayMs)
+            assertEquals(TimerKind.Paused, vm.timerState.value.kind)
+            assertEquals(frozen, vm.timerState.value.displayMs)
             assertFalse(vm.uiState.value.keepScreenOn)
             vm.onResume()
             pass(1_000)
-            assertEquals(TimerKind.Running, vm.uiState.value.timer.kind)
+            assertEquals(TimerKind.Running, vm.timerState.value.kind)
             pass(300_000)
-            assertEquals(TimerKind.Overtime, vm.uiState.value.timer.kind)
+            assertEquals(TimerKind.Overtime, vm.timerState.value.kind)
             vm.onPause()
             pass(60_000)
-            assertTrue(vm.uiState.value.timer.overtime)
+            assertTrue(vm.timerState.value.overtime)
             vm.onResume()
-            assertEquals(TimerKind.Overtime, vm.uiState.value.timer.kind)
+            assertEquals(TimerKind.Overtime, vm.timerState.value.kind)
         }
 
     @Test
@@ -149,7 +149,7 @@ class ExerciseViewModelTimerTest : ExerciseViewModelTestBase() {
             vm.onPause()
             vm.onResume()
             vm.onFinish()
-            assertEquals(TimerKind.Ready, vm.uiState.value.timer.kind)
+            assertEquals(TimerKind.Ready, vm.timerState.value.kind)
             assertEquals(Phase.Ready, vm.uiState.value.session.phase)
         }
 
@@ -170,14 +170,14 @@ class ExerciseViewModelTimerTest : ExerciseViewModelTestBase() {
         runTest {
             settings.state.value = Settings(untimed = setOf(DemoExercise.id))
             val vm = started()
-            assertEquals(TimerKind.Untimed, vm.uiState.value.timer.kind)
+            assertEquals(TimerKind.Untimed, vm.timerState.value.kind)
             assertNull(
                 history.sessions
                     .getValue(1)
                     .session.plannedDurationSec,
             )
             pass(20_000)
-            assertEquals(20_000, vm.uiState.value.timer.displayMs)
+            assertEquals(20_000, vm.timerState.value.displayMs)
         }
 
     @Test
@@ -186,7 +186,7 @@ class ExerciseViewModelTimerTest : ExerciseViewModelTestBase() {
             settings.state.value = Settings(durations = mapOf(DemoExercise.id to kotlin.time.Duration.parse("2m")))
             val vm = vm()
             collect(vm)
-            assertEquals(120_000, vm.uiState.value.timer.displayMs)
+            assertEquals(120_000, vm.timerState.value.displayMs)
         }
 
     @Test
@@ -195,7 +195,7 @@ class ExerciseViewModelTimerTest : ExerciseViewModelTestBase() {
             val none = DemoExercise.definition.copy(timer = io.github.qnicoud.dmgym.core.exercise.TimerPolicy.None)
             val vm = vm(none)
             collect(vm)
-            assertEquals(TimerKind.Untimed, vm.uiState.value.timer.kind)
+            assertEquals(TimerKind.Untimed, vm.timerState.value.kind)
         }
 
     @Test
@@ -243,8 +243,8 @@ class ExerciseViewModelTimerTest : ExerciseViewModelTestBase() {
             val state = second.uiState.value
             assertEquals(Phase.Active, state.session.phase)
             assertEquals("avant la mort", state.session.textOf(DemoExercise.keyA))
-            assertEquals(TimerKind.Running, state.timer.kind)
-            assertEquals(210_000, state.timer.displayMs)
+            assertEquals(TimerKind.Running, second.timerState.value.kind)
+            assertEquals(210_000, second.timerState.value.displayMs)
             assertTrue(endSignal.played.isEmpty())
         }
 
@@ -259,7 +259,7 @@ class ExerciseViewModelTimerTest : ExerciseViewModelTestBase() {
             wall.millis += 400_000
             val second = vm()
             collect(second)
-            assertEquals(TimerKind.Overtime, second.uiState.value.timer.kind)
+            assertEquals(TimerKind.Overtime, second.timerState.value.kind)
             advanceTimeBy(1_000)
             assertTrue(endSignal.played.isEmpty())
         }
@@ -288,8 +288,8 @@ class ExerciseViewModelTimerTest : ExerciseViewModelTestBase() {
             val resumed = vm(launch = ExerciseLaunch(resumeSessionId = 1, seed = 9))
             collect(resumed)
             val state = resumed.uiState.value
-            assertEquals(TimerKind.Paused, state.timer.kind)
-            assertEquals(210_000, state.timer.displayMs)
+            assertEquals(TimerKind.Paused, resumed.timerState.value.kind)
+            assertEquals(210_000, resumed.timerState.value.displayMs)
             assertEquals("reste", state.session.textOf(DemoExercise.keyA))
         }
 

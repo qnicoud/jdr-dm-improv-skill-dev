@@ -161,13 +161,14 @@
   <string name="draw_error_title">Les tirages de cet exercice sont indisponibles</string>
   <string name="draw_error_body">Rien n’est perdu : tes sessions sont intactes.</string>
   <string name="draw_retry">Réessayer</string>
+  <string name="draw_reroll_failed">Impossible de relancer le tirage pour l’instant.</string>
+  <string name="start_failed">Impossible de démarrer la session. Réessaie.</string>
   <string name="draw_free_subject">Écrire mon propre sujet</string>
   <string name="draw_free_subject_hint">Ton sujet</string>
 
   <!-- Saisie -->
   <string name="field_default_label">Réponse %1$d</string>
   <string name="field_default_hint">Ta première idée, même mauvaise</string>
-  <string name="field_description">%1$s, %2$d sur %3$d</string>
   <string name="question_progress">Question %1$d sur %2$d</string>
   <string name="question_next">Question suivante</string>
   <string name="group_title">Élément %1$d</string>

@@ -22,9 +22,11 @@ class RecordingHistoryRepository : HistoryRepository {
     val snapshots = mutableListOf<SessionDetail>()
     val deleted = mutableListOf<Long>()
     var failOnSave = false
+    var failOnCreate = false
     private var nextId = 1L
 
     override suspend fun createSession(session: SessionRecord): Long {
+        check(!failOnCreate) { "database locked" }
         val id = nextId++
         sessions[id] = SessionDetail(session.copy(id = id), emptyList(), emptyList(), emptyList())
         return id

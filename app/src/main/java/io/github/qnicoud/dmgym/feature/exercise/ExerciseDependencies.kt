@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
+import io.github.qnicoud.dmgym.core.exercise.AnswerDetector
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import io.github.qnicoud.dmgym.core.signal.EndSignal
@@ -19,6 +20,7 @@ class ExerciseDependencies(
     val monotonicClock: MonotonicClock,
     val wallClock: Clock,
     val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    val detector: AnswerDetector? = null,
 )
 
 /** Paramètres de lancement d'un exercice (route `Exercise`). */

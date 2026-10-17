@@ -40,6 +40,16 @@ private val STRIPE_STEP = 8.dp
 private val BAR_HEIGHT = 6.dp
 private val THICK_BAR_HEIGHT = 8.dp
 
+/** Lit [timer] ici, dans sa propre portée, pour qu'un tic ne recompose que la barre (pas tout l'écran). */
+@Composable
+fun LiveTimerBar(
+    timer: () -> TimerUi,
+    canPause: Boolean,
+    onPause: () -> Unit,
+    onResume: () -> Unit,
+    modifier: Modifier = Modifier,
+) = TimerBar(timer(), canPause, onPause, onResume, modifier)
+
 /**
  * Minuteur de l'exercice : six états distincts sans la couleur (icône, libellé, forme de la barre), voir
  * design-system §5.3 et maquette 05. Un seul nœud d'accessibilité, sans annonce à la seconde.

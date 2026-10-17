@@ -89,7 +89,7 @@ class ExerciseScreenTest {
         compose.waitForIdle()
         compose.onNodeWithTag(ExerciseTags.field(DemoExercise.keyA)).assertIsDisplayed()
         compose.onNodeWithTag(ExerciseTags.FINISH).assertIsDisplayed()
-        assertEquals(TimerKind.Running, vm.uiState.value.timer.kind)
+        assertEquals(TimerKind.Running, vm.timerState.value.kind)
         assertEquals(1, history.sessions.size)
     }
 
@@ -100,7 +100,7 @@ class ExerciseScreenTest {
         compose.waitForIdle()
         typeInFirstField("avant ")
         passTime(301_000)
-        assertEquals(TimerKind.Overtime, vm.uiState.value.timer.kind)
+        assertEquals(TimerKind.Overtime, vm.timerState.value.kind)
         compose.onAllNodes(isDialog()).assertCountEquals(0)
         typeInFirstField("après")
         compose.onNodeWithTag(ExerciseTags.field(DemoExercise.keyA)).assertIsDisplayed()
@@ -120,8 +120,8 @@ class ExerciseScreenTest {
         passTime(301_000)
         compose.onNodeWithTag(ExerciseTags.PAUSE).performClick()
         compose.waitForIdle()
-        assertEquals(TimerKind.Paused, vm.uiState.value.timer.kind)
-        assertTrue(vm.uiState.value.timer.overtime)
+        assertEquals(TimerKind.Paused, vm.timerState.value.kind)
+        assertTrue(vm.timerState.value.overtime)
     }
 
     @Test
