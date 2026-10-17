@@ -14,6 +14,8 @@ import io.github.qnicoud.dmgym.core.history.SessionStatus
 data class DrawLine(
     val text: String,
     val used: Boolean?,
+    /** Catégorie de l'entrée (sens, type d'élément d'histoire) : donne l'icône de la ligne. */
+    val category: String? = null,
 )
 
 /** Une réponse saisie. Les libellés viennent de la définition de l'exercice quand elle existe. */
@@ -73,7 +75,7 @@ internal fun SessionDetail.toUi(definition: ExerciseDefinition?): SessionDetailU
     )
 }
 
-private fun DrawRecord.toLine() = DrawLine(textSnapshot, manualChecked ?: autoDetected)
+private fun DrawRecord.toLine() = DrawLine(textSnapshot, manualChecked ?: autoDetected, category)
 
 private fun List<AnswerRecord>.toLines(definition: ExerciseDefinition?): List<AnswerLine> {
     val keys = definition?.fieldKeys.orEmpty()

@@ -6,12 +6,14 @@ import io.github.qnicoud.dmgym.core.exercise.DemoExercise
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
+import io.github.qnicoud.dmgym.core.exercise.definitions.RealTables
 import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.DrawRecord
 import io.github.qnicoud.dmgym.core.history.RubricRecord
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.core.history.SessionStatus
+import io.github.qnicoud.dmgym.core.tables.TableId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -58,7 +60,7 @@ class SessionDetailViewModelTest {
         repo.details.value = mapOf(record.id to SessionDetail(record, draws, answers, rubric))
     }
 
-    private fun viewModel(id: Long = 7) = SessionDetailViewModel(id, repo, registry)
+    private fun viewModel(id: Long = 7) = SessionDetailViewModel(id, repo, registry, RealTables.repository)
 
     @BeforeEach
     fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
@@ -108,7 +110,7 @@ class SessionDetailViewModelTest {
                 answers = listOf(AnswerRecord("answer_1", 0, "fuir"), AnswerRecord("answer_2", 0, "négocier")),
                 rubric = listOf(RubricRecord("playable", true), RubricRecord("first_pick:answer_2", true)),
             )
-            SessionDetailViewModel(7, repo, registry).uiState.test {
+            SessionDetailViewModel(7, repo, registry, RealTables.repository).uiState.test {
                 val detail = expectMostRecentItem().detail!!
                 assertEquals("négocier", detail.firstPick)
                 assertEquals(1, detail.rubric.size)
@@ -131,6 +133,27 @@ class SessionDetailViewModelTest {
                 val draws = expectMostRecentItem().detail!!.draws
                 assertEquals(listOf(true, false, true, null), draws.map { it.used })
                 assertEquals(listOf("tiède", "moisi", "grésillement", "Auberge"), draws.map { it.text })
+            }
+        }
+
+    @Test
+    fun `draws carry their category, completed from the table for old sessions`() =
+        runTest {
+            val entry =
+                RealTables.repository
+                    .table(TableId.StoryElements)
+                    .entries
+                    .first { it.category == "object" }
+            store(
+                draws =
+                    listOf(
+                        DrawRecord("object", 0, "story_elements", entry.id, entry.text),
+                        DrawRecord("prompt", 1, "t", "b", "moisi", category = "smell"),
+                        DrawRecord("prompt", 2, null, "7", "sept"),
+                    ),
+            )
+            viewModel().uiState.test {
+                assertEquals(listOf("object", "smell", null), expectMostRecentItem().detail!!.draws.map { it.category })
             }
         }
 

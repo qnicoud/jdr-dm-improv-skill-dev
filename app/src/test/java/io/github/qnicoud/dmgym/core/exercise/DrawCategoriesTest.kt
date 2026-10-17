@@ -1,6 +1,7 @@
 package io.github.qnicoud.dmgym.core.exercise
 
 import io.github.qnicoud.dmgym.core.exercise.definitions.RealTables
+import io.github.qnicoud.dmgym.core.history.DrawRecord
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -42,5 +43,19 @@ class DrawCategoriesTest {
             val broken = DemoExercise.tables(DemoExercise.FixtureSource(failing = true))
             val draws = listOf(word("poussiereux"))
             assertEquals(draws, draws.withCategories(broken))
+        }
+
+    @Test
+    fun `archived draws get their category the same way`() =
+        runTest {
+            val place =
+                repository
+                    .table(io.github.qnicoud.dmgym.core.tables.TableId.StoryElements)
+                    .entries
+                    .first { it.category == "place" }
+            val old = DrawRecord("place", 0, "story_elements", place.id, place.text)
+            val kept = DrawRecord("x", 1, "story_elements", place.id, place.text, category = "line")
+            val result = listOf(old, kept, DrawRecord("c", 2, null, "7", "7")).withRecordCategories(repository)
+            assertEquals(listOf("place", "line", null), result.map { it.category })
         }
 }

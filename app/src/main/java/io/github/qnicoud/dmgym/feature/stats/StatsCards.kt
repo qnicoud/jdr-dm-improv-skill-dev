@@ -157,23 +157,14 @@ private fun ExerciseBar(
     }
 }
 
-/** Bijoux (ou une aide neutre tant qu'il n'y en a aucun) et temps cumulé ; le temps reste masqué à zéro. */
+/** Compteur de bijoux (le lien « Voir mes bijoux » seulement s'il y en a) et temps cumulé ; le temps reste masqué à zéro. */
 @Composable
 fun Extras(
     state: StatsUiState,
     onShowGems: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        if (state.gems > 0) {
-            GemsRow(state.gems, onShowGems)
-        } else {
-            Text(
-                text = stringResource(R.string.stats_gems_empty),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.testTag(StatsTags.GEMS_EMPTY),
-            )
-        }
+        GemsRow(state.gems, onShowGems)
         if (state.totalSeconds >= SECONDS_PER_MINUTE) {
             Text(
                 text = timeText(state.totalSeconds),
@@ -198,12 +189,14 @@ private fun GemsRow(
             modifier = Modifier.size(24.dp),
         )
         Text(
-            text = pluralStringResource(R.plurals.stats_gems, gems, gems),
+            text = pluralStringResource(R.plurals.stats_gems, maxOf(gems, 1), gems),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.testTag(StatsTags.GEMS),
         )
-        TextButton(onClick = onShowGems, modifier = Modifier.testTag(StatsTags.GEMS_LINK)) {
-            Text(stringResource(R.string.stats_gems_link))
+        if (gems > 0) {
+            TextButton(onClick = onShowGems, modifier = Modifier.testTag(StatsTags.GEMS_LINK)) {
+                Text(stringResource(R.string.stats_gems_link))
+            }
         }
     }
 }
