@@ -13,6 +13,7 @@ import io.github.qnicoud.dmgym.core.daily.replacementsFor
 import io.github.qnicoud.dmgym.core.daily.withReplacement
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.settings.Settings
+import io.github.qnicoud.dmgym.core.settings.ThemePalette
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -122,6 +123,24 @@ class DataStoreSettingsRepositoryTest {
             repo.update { it.copy(durations = emptyMap()) }
 
             assertEquals(emptyMap<ExerciseId, Duration>(), repo.settings.first().durations)
+        }
+
+    @Test
+    fun `the theme palette is persisted and read back`() =
+        runBlocking {
+            repository().update { it.copy(themePalette = ThemePalette.FOREST) }
+
+            assertEquals(ThemePalette.FOREST, repository().settings.first().themePalette)
+        }
+
+    @Test
+    fun `a corrupted or foreign theme value falls back to parchment`() =
+        runBlocking {
+            store.edit { it[stringPreferencesKey("theme_palette")] = "NEON" }
+            assertEquals(ThemePalette.PARCHMENT, repository().settings.first().themePalette)
+
+            store.edit { it[intPreferencesKey("theme_palette")] = 3 }
+            assertEquals(ThemePalette.PARCHMENT, repository().settings.first().themePalette)
         }
 
     @Test
