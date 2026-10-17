@@ -98,7 +98,7 @@ class FakeHistoryRepository(
 class FakeAppContainer(
     override val settingsRepository: SettingsRepository = FakeSettingsRepository(),
     override val historyRepository: HistoryRepository = FakeHistoryRepository(),
-    override val exerciseRegistry: ExerciseRegistry = ExerciseRegistry.Default,
+    override val exerciseRegistry: ExerciseRegistry = ExerciseRegistry(emptyList()),
     override val clock: Clock = Clock.fixed(Instant.parse("2026-10-16T10:00:00Z"), ZoneOffset.UTC),
 ) : AppContainer {
     override val exerciseCatalog: ExerciseCatalog = SettingsExerciseCatalog(settingsRepository)

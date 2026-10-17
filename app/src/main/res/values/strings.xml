@@ -189,4 +189,59 @@
   <string name="gem_kept">Bijou</string>
   <string name="end_done">Terminé</string>
   <string name="end_skip">Passer</string>
+
+  <!-- L10 : moteur générique (options, rappel, carte, bascule, questions) -->
+  <string name="options_title">Options</string>
+  <string name="reminder_show">Afficher le rappel</string>
+  <string name="reminder_hide">Masquer le rappel</string>
+  <string name="question_previous">Question précédente</string>
+  <string name="field_soft_counter">%1$d/%2$d caractères</string>
+  <string name="status_card_label">Statut %1$d sur 10 · %2$s</string>
+  <string name="status_level_low">bas</string>
+  <string name="status_level_medium">moyen</string>
+  <string name="status_level_high">haut</string>
+  <string name="shift_banner">Bascule : %1$s</string>
+
+  <!-- Core Image Threading (L10) -->
+  <string name="core_image_instructions">Une image centrale est tirée. Réponds aux questions une à la fois : chaque réponse relie l’image au reste de ton monde.</string>
+  <string name="core_image_answer_label">Ta réponse</string>
+  <string name="core_image_answer_hint">Quelques phrases suffisent</string>
+  <string name="core_image_rubric_surprise">Un lien m’a-t-il surpris ?</string>
+  <string name="core_image_rubric_sentence">Ai-je une phrase à dire à ma table ?</string>
+
+  <!-- Status Numbers (L10) -->
+  <string name="status_instructions">Joue le PNJ à voix haute, comme à ta table. Montre son statut par le comportement uniquement, jamais en le disant.</string>
+  <string name="status_reminder">Le statut n’est pas le rang social : c’est la façon dont le personnage s’attend à être traité.\nStatut haut : contrôle la conversation, regard direct, suppose la coopération.\nStatut bas : hésite, se coupe, évite le regard.</string>
+  <string name="status_option_counter">Contre-stéréotype : statut opposé au rang du rôle</string>
+  <string name="status_option_shift">Bascule en cours de scène</string>
+  <string name="status_scene_done">Scène terminée</string>
+  <string name="status_notes_label">Notes (facultatif)</string>
+  <string name="status_notes_hint">Ce que tu as remarqué, ce que tu referais</string>
+  <string name="status_rubric_readable">Mon statut se lisait-il sans mots ?</string>
+  <string name="status_rubric_cliche">Ai-je évité le cliché ?</string>
+
+  <!-- Decision Point Drill (L10) -->
+  <string name="decision_point_instructions">Mets ta vidéo en pause quand un joueur surprend le MJ, puis lance le chrono : 30 secondes pour écrire 3 réponses possibles. Entraîne-toi à ce que ta première idée soit meilleure.</string>
+  <string name="decision_point_option_situation">Sans vidéo : tirer une situation surprise</string>
+  <string name="decision_point_hint">Une réponse courte</string>
+  <string name="decision_point_never">Je ne ferais jamais ça</string>
+  <string name="decision_point_rubric_playable">Ma première idée était-elle jouable ?</string>
+  <string name="decision_point_rubric_dared">Ai-je osé une réponse « jamais » ?</string>
+
+  <!-- One-Page Design (L10) -->
+  <string name="one_page_instructions">Décris une situation de ta campagne, puis condense-la sur une page : les PNJ clés, ce qu’ils veulent, comment ils sont liés. 15 minutes conseillées, sans minuteur par défaut.</string>
+  <string name="one_page_option_drawn">Sans campagne : tirer une situation</string>
+  <string name="one_page_context_label">Situation</string>
+  <string name="one_page_context_hint">Décris la situation en une ou deux phrases</string>
+  <string name="one_page_npc_title">PNJ %1$d</string>
+  <string name="one_page_npc_add">Ajouter un PNJ</string>
+  <string name="one_page_name_label">Nom</string>
+  <string name="one_page_motivation_label">Motivation</string>
+  <string name="one_page_motivation_hint">Ce qu’il veut, en une phrase</string>
+  <string name="one_page_links_label">Liens</string>
+  <string name="one_page_links_hint">Lien avec un autre PNJ</string>
+  <string name="one_page_inaction_label">Si les PJ ne font rien</string>
+  <string name="one_page_inaction_hint">Que se passe-t-il d’ici la prochaine séance ?</string>
+  <string name="one_page_rubric_fits">Tout tient-il en une page ?</string>
+  <string name="one_page_rubric_tomorrow">Puis-je jouer ça demain ?</string>
 </resources>
