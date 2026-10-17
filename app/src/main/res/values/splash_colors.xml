@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fonds d'écran de démarrage = fond de chaque palette (Palettes.kt, Color.kt), clair. -->
+    <color name="splash_parchment">#FBF5EA</color>
+    <color name="splash_forest">#F5FBF4</color>
+    <color name="splash_night">#FBF8FF</color>
+    <color name="splash_mist">#F6FAFC</color>
+</resources>

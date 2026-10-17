@@ -8,4 +8,24 @@
     <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
     <item name="postSplashScreenTheme">@style/Theme.DmGym</item>
   </style>
+
+  <!-- Écran de démarrage par palette (Android 13+, SplashScreen.setSplashScreenTheme) : fond de la palette,
+       d20 sur pastille brique pour rester lisible sur les fonds clairs comme sombres. -->
+  <style name="Theme.DmGym.Splash" parent="Theme.SplashScreen">
+    <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+    <item name="windowSplashScreenIconBackgroundColor">@color/ic_launcher_background</item>
+    <item name="postSplashScreenTheme">@style/Theme.DmGym</item>
+  </style>
+  <style name="Theme.DmGym.Splash.Parchment">
+    <item name="windowSplashScreenBackground">@color/splash_parchment</item>
+  </style>
+  <style name="Theme.DmGym.Splash.Forest">
+    <item name="windowSplashScreenBackground">@color/splash_forest</item>
+  </style>
+  <style name="Theme.DmGym.Splash.Night">
+    <item name="windowSplashScreenBackground">@color/splash_night</item>
+  </style>
+  <style name="Theme.DmGym.Splash.Mist">
+    <item name="windowSplashScreenBackground">@color/splash_mist</item>
+  </style>
 </resources>
