@@ -88,6 +88,22 @@ class HistoryNavigationTest {
     }
 
     @Test
+    fun `the gems link of the progress screen opens the history on gems`() {
+        val gemRepo =
+            FakeHistoryRepository(
+                sessionCount = MutableStateFlow(1),
+                history = MutableStateFlow(listOf(record.copy(isGem = true))),
+            )
+        stack = NavBackStack<NavKey>(Home, Stats)
+        compose.setContent {
+            DmGymTheme { AppNavDisplay(AppNavigator(stack), FakeAppContainer(historyRepository = gemRepo)) }
+        }
+        compose.onNodeWithTag(StatsTags.GEMS_LINK).performScrollTo().performClick()
+        compose.waitForIdle()
+        assertEquals(History(HistoryFilter.Gems), stack.last())
+    }
+
+    @Test
     fun `a session of the history opens its detail`() {
         launch(Home, History())
         compose.onNodeWithTag(HistoryTags.card(7)).performClick()

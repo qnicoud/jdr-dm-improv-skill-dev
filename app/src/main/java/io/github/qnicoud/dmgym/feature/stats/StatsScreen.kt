@@ -177,8 +177,13 @@ private fun StatsScreenPreview() {
 @Composable
 private fun StatsEmptyPreview() {
     DmGymTheme {
-        StatsScreen(StatsUiState(isLoading = false), onChooseExercise = {
-        }, onShowGems = {}, onShowExercise = {}, onSettingsClick = {})
+        StatsScreen(
+            StatsUiState(isLoading = false),
+            onChooseExercise = {},
+            onShowGems = {},
+            onShowExercise = {},
+            onSettingsClick = {},
+        )
     }
 }
 
