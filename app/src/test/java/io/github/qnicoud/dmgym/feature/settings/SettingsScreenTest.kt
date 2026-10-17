@@ -5,6 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -15,6 +18,7 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.assertTouchHeightIsEqualTo
 import androidx.compose.ui.test.assertTouchWidthIsEqualTo
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -102,6 +106,21 @@ class SettingsScreenTest {
         compose.onNodeWithTag(SettingsTags.SOUND).assertIsOff()
         compose.onNodeWithTag(SettingsTags.CRAZY_HAPTIC).performScrollTo().assertIsOff()
         compose.onNodeWithTag(SettingsTags.DAILY_ONE_PAGE).performScrollTo().assertIsOff()
+    }
+
+    @Test
+    fun `a switch row is read with its help text and its state`() {
+        show()
+        compose
+            .onNodeWithTag(SettingsTags.SOUND)
+            .assert(hasText("Bip de fin"))
+            .assert(hasText("Ne sonne que si le téléphone est en mode sonnerie."))
+            .assert(
+                SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Désactivé"),
+            )
+        compose
+            .onNodeWithTag(SettingsTags.VIBRATION)
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Activé"))
     }
 
     @Test

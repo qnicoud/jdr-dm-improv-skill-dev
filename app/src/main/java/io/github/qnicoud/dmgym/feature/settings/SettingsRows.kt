@@ -28,12 +28,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
@@ -66,15 +68,15 @@ internal fun SwitchRow(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     supporting: String? = null,
-    spokenLabel: String? = null,
 ) {
+    val stateText = stringResource(if (checked) R.string.settings_state_on else R.string.settings_state_off)
     Row(
         modifier =
             modifier
                 .fillMaxWidth()
                 .heightIn(min = MinRowHeight)
                 .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
-                .semantics { spokenLabel?.let { contentDescription = it } }
+                .semantics { stateDescription = stateText }
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -148,10 +150,9 @@ internal fun DurationItem(
             }
         }
         SwitchRow(
-            label = stringResource(R.string.settings_untimed),
+            label = stringResource(R.string.settings_untimed_for, name),
             checked = row.untimed,
             onCheckedChange = { actions.onUntimed(row.id, it) },
-            spokenLabel = stringResource(R.string.settings_untimed_for, name),
             modifier = Modifier.testTag(SettingsTags.untimed(row.id)),
         )
     }
@@ -181,18 +182,25 @@ internal fun PaletteRow(
     }
 }
 
-/** Pastille décorative (le nom suffit à TalkBack) ; la palette dynamique n'a pas de couleur fixe à montrer. */
+/** Pastille décorative (le nom suffit à TalkBack) ; la palette dynamique, sans couleur fixe, montre un dégradé. */
 @Composable
 private fun Swatch(palette: ThemePalette) {
-    val size = Modifier.size(24.dp)
-    if (palette == ThemePalette.DYNAMIC) {
-        Box(size)
-        return
-    }
+    val dark = isSystemInDarkTheme()
+    val brush =
+        if (palette == ThemePalette.DYNAMIC) {
+            Brush.sweepGradient(
+                ThemePalette.entries
+                    .filter { it != ThemePalette.DYNAMIC }
+                    .map { staticColorScheme(it, dark).primary },
+            )
+        } else {
+            SolidColor(staticColorScheme(palette, dark).primary)
+        }
     Box(
-        size
+        Modifier
+            .size(24.dp)
             .clip(CircleShape)
-            .background(staticColorScheme(palette, isSystemInDarkTheme()).primary)
+            .background(brush)
             .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), CircleShape),
     )
 }
