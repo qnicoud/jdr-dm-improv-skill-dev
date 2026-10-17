@@ -17,8 +17,11 @@ import io.github.qnicoud.dmgym.app.AppContainer
 import io.github.qnicoud.dmgym.feature.daily.DailyRoute
 import io.github.qnicoud.dmgym.feature.daily.DailyViewModel
 import io.github.qnicoud.dmgym.feature.exercise.ExerciseEntry
-import io.github.qnicoud.dmgym.feature.history.HistoryScreen
-import io.github.qnicoud.dmgym.feature.history.SessionDetailScreen
+import io.github.qnicoud.dmgym.feature.history.HistoryFilter
+import io.github.qnicoud.dmgym.feature.history.HistoryRoute
+import io.github.qnicoud.dmgym.feature.history.HistoryViewModel
+import io.github.qnicoud.dmgym.feature.history.SessionDetailRoute
+import io.github.qnicoud.dmgym.feature.history.SessionDetailViewModel
 import io.github.qnicoud.dmgym.feature.home.HomeRoute
 import io.github.qnicoud.dmgym.feature.home.HomeViewModel
 import io.github.qnicoud.dmgym.feature.settings.SettingsScreen
@@ -67,6 +70,8 @@ private fun appEntryProvider(
                 onExerciseClick = { navigator.openExercise(it) },
                 onDailyClick = navigator::openDaily,
                 onSettingsClick = navigator::openSettings,
+                onResumeClick = { navigator.openExercise(it.exerciseId, resumeSessionId = it.sessionId) },
+                clock = container.clock,
             )
         }
         entry<Exercise> { route -> ExerciseEntry(route, container, onBack = { navigator.back() }) }
@@ -77,13 +82,29 @@ private fun appEntryProvider(
                 onOpenExercise = { navigator.openExercise(it, fromDaily = true) },
             )
         }
-        entry<History> { HistoryScreen() }
-        entry<SessionDetail> { SessionDetailScreen(onBack = { navigator.back() }) }
+        entry<History> { route ->
+            HistoryRoute(
+                viewModel = viewModel { HistoryViewModel(container.historyRepository, container.clock, route.filter) },
+                onOpenSession = navigator::openSessionDetail,
+                onChooseExercise = { navigator.selectTab(Home) },
+            )
+        }
+        entry<SessionDetail> { route ->
+            SessionDetailRoute(
+                viewModel =
+                    viewModel {
+                        SessionDetailViewModel(route.sessionId, container.historyRepository, container.exerciseRegistry)
+                    },
+                onBack = { navigator.back() },
+                onRedo = { navigator.openExercise(it) },
+            )
+        }
         entry<Stats> {
             StatsRoute(
                 viewModel = viewModel { StatsViewModel(container.historyRepository, container.clock) },
                 onChooseExercise = { navigator.selectTab(Home) },
-                onShowGems = { navigator.selectTab(History) },
+                onShowGems = { navigator.openHistory(HistoryFilter.Gems) },
+                onShowExercise = { navigator.openHistory(HistoryFilter.exercise(it)) },
             )
         }
         entry<Settings> { SettingsScreen(onBack = { navigator.back() }) }

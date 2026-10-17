@@ -2,6 +2,7 @@ package io.github.qnicoud.dmgym.app.navigation
 
 import androidx.navigation3.runtime.NavKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.feature.history.HistoryFilter
 import kotlinx.serialization.Serializable
 
 /** Destinations de l'app (ADR 0003). Sérialisables pour survivre à la rotation et à la mort du processus. */
@@ -21,8 +22,11 @@ data class Exercise(
 @Serializable
 data object Daily : Route
 
+/** Historique (S08) ; [filter] est le filtre initial (liens de l'écran Progrès). */
 @Serializable
-data object History : Route
+data class History(
+    val filter: HistoryFilter = HistoryFilter.All,
+) : Route
 
 @Serializable
 data class SessionDetail(
@@ -36,4 +40,11 @@ data object Stats : Route
 data object Settings : Route
 
 /** Les trois onglets de la barre de navigation (D37). */
-val TopLevelRoutes: List<Route> = listOf(Home, History, Stats)
+val TopLevelRoutes: List<Route> = listOf(Home, History(), Stats)
+
+/** L'onglet auquel appartient cette route (l'historique filtré reste l'onglet Historique), sinon `null`. */
+fun Route.tab(): Route? =
+    when (this) {
+        is History -> History()
+        else -> takeIf { it in TopLevelRoutes }
+    }

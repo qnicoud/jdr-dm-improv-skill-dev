@@ -20,7 +20,7 @@ private data class TabSpec(
 private val Tabs =
     listOf(
         TabSpec(Home, R.string.nav_train, DmIcons.Train),
-        TabSpec(History, R.string.nav_history, DmIcons.Book),
+        TabSpec(History(), R.string.nav_history, DmIcons.Book),
         TabSpec(Stats, R.string.nav_progress, DmIcons.Chart),
     )
 
