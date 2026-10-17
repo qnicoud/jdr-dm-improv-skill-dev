@@ -78,7 +78,7 @@ private fun DrawLine(
 }
 
 @Composable
-private fun RerollRow(
+internal fun RerollRow(
     rerollCount: Int,
     onReroll: () -> Unit,
 ) {

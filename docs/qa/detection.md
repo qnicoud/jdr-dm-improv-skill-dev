@@ -103,3 +103,27 @@ Ajout de flexions naturelles (pluriel, féminin, participe, imparfait), par exem
   évitent. `lettre-cachetee` (`lettré`, « à la lettre ») et `sale` (`salé` replié en `sale`) restent tels
   quels : les modifier coûterait des positifs directs du corpus.
 - 11 faux négatifs : conjugaisons ou dérivés isolés (« crépite », « grincement », « il se brûle », « pique »).
+
+## Surlignage (L8)
+
+Le surlignage passe par `OutputTransformation` sur le `TextFieldState` (`TextFieldBuffer.addStyle`, stable dans
+Compose Foundation 1.12.1) : le repli `VisualTransformation` de l'ADR 0008 n'a pas été nécessaire. Le style
+cumule gras, soulignement et fond `tertiaryContainer` (jamais la couleur seule). Le texte n'est pas modifié, donc
+le curseur ne bouge pas. `HighlightTransformation` mémorise le dernier texte : un rendu sans frappe ne relance pas la
+détection. La transformation est recréée quand les tirages changent (relance).
+
+Mesure (`HighlightPerformanceTest`, JVM, vraie table `story_elements`, 5 tirages de Connect the Story, texte de
+5 046 caractères, moyenne de 200 appels après échauffement) :
+
+| Appel | Durée |
+|---|---|
+| `KeywordAnswerDetector.highlights` (surlignage, à chaque frappe) | **0,23 ms** |
+| `KeywordAnswerDetector.detect` (cases, à chaque frappe) | **0,21 ms** |
+
+Objectif de l'ADR 0008 : moins de 1 ms pour 5 000 caractères, atteint. Le test échoue au-delà de 2 ms. La mesure
+sur appareil réel reste à faire au lot L12 (l'appareil est plus lent que le poste de développement).
+
+Écart avec l'ADR : les cases sont recalculées de façon synchrone à chaque changement du champ (point d'entrée
+`AnswerDetector` du lot L5), sans `debounce(300 ms)` ni `Dispatchers.Default`. À 0,2 ms par frappe, le débounce
+n'apporterait rien et compliquerait la sortie de l'écran (la dernière frappe doit être déjà détectée avant
+l'écriture en base).

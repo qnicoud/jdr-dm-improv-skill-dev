@@ -94,6 +94,13 @@ class ExerciseViewModel(
             .distinctUntilChanged()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), model.value.toTimerUi(engine, 0))
 
+    /** Vibration du rappel périodique : réglage dédié et vibration globale activés (D41). */
+    val hapticReminders: StateFlow<Boolean> =
+        deps.settings.settings
+            .map { it.crazyEightsMinuteHaptic && it.vibrationEnabled }
+            .distinctUntilChanged()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
     init {
         deps.endSignal.prepare()
         viewModelScope.launch { initialise() }
@@ -114,13 +121,40 @@ class ExerciseViewModel(
         if (key.fieldKey == definition.detection?.field) redetect()
     }
 
-    /** Recalcule les cases « utilisé » ; le changement suit le debounce de la frappe (voir `autosave`). */
+    /** Recalcule les cases « utilisé » ; le cochage manuel n'est jamais touché (réducteur, ADR 0008). */
     private fun redetect() {
         val spec = definition.detection ?: return
         val detector = deps.detector ?: return
         val session = model.value.session
         val draws = session.draws.filter { it.slotKey in spec.slotKeys }
         dispatch(ExerciseAction.AutoDetected(detector.detect(draws, session.textOf(AnswerKey(spec.field)))))
+    }
+
+    /** Charge les mots-clés des tirages courants puis recalcule les cases. À rappeler après chaque tirage. */
+    private suspend fun prepareDetection() {
+        val spec = definition.detection ?: return
+        val detector = deps.detector ?: return
+        detector.prepare(
+            model.value.session.draws
+                .filter { it.slotKey in spec.slotKeys },
+        )
+        if (model.value.session
+                .textOf(AnswerKey(spec.field))
+                .isNotBlank()
+        ) {
+            redetect()
+        }
+    }
+
+    /** Plages du [text] à surligner (champ surveillé) ; synchrone, appelé à chaque rendu du champ. */
+    fun highlights(text: String): List<IntRange> {
+        val spec = definition.detection ?: return emptyList()
+        val detector = deps.detector ?: return emptyList()
+        return detector.highlights(
+            model.value.session.draws
+                .filter { it.slotKey in spec.slotKeys },
+            text,
+        )
     }
 
     fun onFlagToggled(key: AnswerKey) = dispatch(ExerciseAction.FlagToggled(key))
@@ -164,7 +198,7 @@ class ExerciseViewModel(
             try {
                 val draws = slots.flatMap { drawer.draw(it, session.drawsOf(it.key).map { d -> d.entryId }.toSet()) }
                 dispatch(ExerciseAction.Rerolled(slotKey, draws))
-                redetect()
+                prepareDetection()
             } catch (_: NotEnoughEntriesException) {
                 channel.trySend(ExerciseEvent.Snackbar(R.string.draw_reroll_failed))
             } catch (_: TableLoadException) {
@@ -307,13 +341,19 @@ class ExerciseViewModel(
         model.update { it.copy(timer = TimerState.Idle(durationMs), untimed = untimed) }
         val resumeId = handle.get<Long>(KEY_SESSION) ?: launch.resumeSessionId
         val detail = resumeId?.let { withContext(deps.ioDispatcher) { deps.history.observeDetail(it).first() } }
-        if (detail != null && detail.session.exerciseId == definition.id.value) restore(detail) else drawFirst()
+        if (detail != null && detail.session.exerciseId == definition.id.value) {
+            restore(detail)
+            prepareDetection()
+        } else {
+            drawFirst()
+        }
     }
 
     private suspend fun drawFirst() {
         try {
             val draws = drawer.drawAll(definition.slots)
             model.update { it.copy(session = reduce(it.session, ExerciseAction.Drawn(draws)), loading = false) }
+            prepareDetection()
         } catch (_: NotEnoughEntriesException) {
             model.update { it.copy(loading = false, drawFailed = true) }
         } catch (_: TableLoadException) {
