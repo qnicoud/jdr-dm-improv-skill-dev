@@ -64,6 +64,11 @@ class AndroidEndSignal(
     override fun previewVibration(strength: VibrationStrength) =
         vibrate(strength.endPattern(), strength.endAmplitudes())
 
+    /**
+     * Rappel de rythme de Crazy Eights : une impulsion en usage ALARM, comme le signal de fin. Choix assumé : c'est
+     * un réglage que l'utilisateur active volontairement pendant l'exercice, et il ne doit pas être filtré par le
+     * réglage système « retour haptique » (usage ASSISTANCE_SONIFICATION).
+     */
     override fun tick(strength: VibrationStrength) = vibrate(strength.tickPattern(), strength.tickAmplitudes())
 
     /** Sans contrôle de l'amplitude, seule la durée du motif change. */
