@@ -65,3 +65,17 @@ Plus de plantage ! En revanche lorsaue la liste des éléments tirés est repli�
 
 c'est parfait !
 
+## Série de tests post 2 salve de corrections
+
+### Général
+
+Parmetres et bip ok !
+Ajouter la possibilité d'ajuster la force des vibrations dans l'app
+
+### Connect the Story
+
+OK
+
+### One Page Design
+
+Juste une remarque sur laspect du tag préparation sur la liste des exercices, j'aimerai quil aie un aspect similaire au tag de la durée, peut être avec une couleur moins franche en fond.
