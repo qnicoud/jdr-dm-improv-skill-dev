@@ -30,8 +30,8 @@ fun computeStreak(days: Set<Long>, sessions: Int, today: Long): StreakSummary
 ```
 Règles :
 1. On remonte depuis aujourd'hui. **Aujourd'hui non pratiqué ne rompt pas la série** : on part d'hier.
-2. **Jour de grâce** : un jour manquant isolé, encadré par deux jours pratiqués, ne rompt pas la série si aucun autre jour de grâce n'a été consommé dans les **6 jours précédents** (au plus un par fenêtre glissante de 7 jours). Le jour de grâce ne compte pas dans `current`.
-3. Deux jours consécutifs manquants, ou un second jour de grâce dans la fenêtre, terminent la série.
+2. **Jour de grâce** : un jour manquant isolé, encadré par deux jours pratiqués, ne rompt pas la série si le jour de grâce **de la semaine** (lundi à dimanche, heure locale) n'a pas encore été consommé : **un jour de grâce par semaine, rechargé chaque lundi** (décision D35 du 2026-10-16, remplace la fenêtre glissante initialement proposée). Le jour de grâce ne compte pas dans `current`.
+3. Deux jours consécutifs manquants, ou un second jour de grâce dans la même semaine, terminent la série.
 4. **Pas de remise à zéro punitive** : `best`, `practicedDays` et `totalSessions` ne baissent jamais. Après une rupture, la série repart de 1 à la session suivante, sans message de reproche (le libellé est fixé par l'UX). `current` vaut 0 seulement si ni aujourd'hui ni hier ni (en grâce) avant-hier n'ont été pratiqués.
 
 Cas de test obligatoires : deux sessions le même jour, trou d'un jour (grâce), deux trous dans la même semaine, trou de deux jours, aujourd'hui non fait, changement d'heure en mars et en octobre, changement de fuseau, horloge réglée dans le passé (jour futur ignoré), historique vide.
