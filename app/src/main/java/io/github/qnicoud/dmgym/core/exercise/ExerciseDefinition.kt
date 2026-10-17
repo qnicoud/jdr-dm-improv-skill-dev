@@ -46,6 +46,8 @@ data class TableSlot(
     val category: String? = null,
     val distinctBy: DistinctBy = DistinctBy.Id,
     val difficulty: IntRange = 1..3,
+    /** Libellé affiché devant chaque tirage du slot (par ex. « Lieu »), s'il y en a un. */
+    val label: StringResId? = null,
 ) : DrawSlot {
     init {
         require(count >= 1) { "count must be >= 1" }
@@ -164,6 +166,8 @@ data class ExerciseDefinition(
     val warmUp: Boolean = true,
     /** Vrai si l'exercice accepte « Écrire mon propre sujet » quand la table est illisible (DÉCISION 12). */
     val acceptsFreeSubject: Boolean = false,
+    /** Vrai si le panneau des éléments tirés se replie quand le clavier s'ouvre (Connect the Story, D48). */
+    val collapsiblePanel: Boolean = false,
 ) {
     init {
         require(rubric.size in RUBRIC_SIZE) { "rubric must have 2 or 3 questions" }
