@@ -57,6 +57,7 @@ class ExerciseCatalogTest {
 
     @Test
     fun `warm-ups are the definitions flagged as warm-up`() {
+        assertTrue(ExerciseId.FAILING_FORWARD in ExerciseId.DAILY_WARM_UPS)
         assertEquals(
             registry.all
                 .filter { it.warmUp }

@@ -10,6 +10,7 @@ import io.github.qnicoud.dmgym.core.exercise.TimerPolicy
 import io.github.qnicoud.dmgym.core.exercise.boundFields
 import io.github.qnicoud.dmgym.core.tables.DistinctBy
 import io.github.qnicoud.dmgym.core.tables.TableId
+import io.github.qnicoud.dmgym.ui.components.CategoryIcon
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -56,6 +57,15 @@ class FailingForwardTest {
         assertEquals(ids, layout.hintByCode.keys)
         assertEquals(ids, layout.helpByCode.keys)
         assertEquals(ProgressRule.FilledFields, definition.progress)
+    }
+
+    @Test
+    fun `every complication type has a hint, a definition and an icon`() {
+        RealTables.file(TableId.ComplicationTypes).entries.forEach {
+            assertNotNull(layout.hintByCode[it.id], "hint for ${it.id}")
+            assertNotNull(layout.helpByCode[it.id], "definition for ${it.id}")
+            assertNotNull(CategoryIcon.fromCategory(it.id), "icon for ${it.id}")
+        }
     }
 
     @Test
