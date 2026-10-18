@@ -8,6 +8,7 @@ import io.github.qnicoud.dmgym.core.history.SessionDetail
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 /**
@@ -41,14 +42,23 @@ class HomeViewModel(
             catalog.exercises,
             history.observeSessionCount(),
             history.observeResumable(),
-        ) { exercises, count, resumable ->
-            HomeUiState(isLoading = false, sessionCount = count, exercises = exercises, resume = resumable?.toResume())
+            history.observeHistory().map { sessions -> sessions.map { it.exerciseId }.toSet() },
+        ) { exercises, count, resumable, practised ->
+            HomeUiState(
+                isLoading = false,
+                sessionCount = count,
+                exercises = exercises.map { it.withNewTag(practised) },
+                resume = resumable?.toResume(),
+            )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), HomeUiState())
 
     private companion object {
         const val STOP_TIMEOUT_MS = 5_000L
     }
 }
+
+private fun ExerciseSummary.withNewTag(practised: Set<String>): ExerciseSummary =
+    copy(isNew = id in ExerciseId.NEW_IN_LATEST_RELEASE && id.value !in practised)
 
 private fun SessionDetail.toResume(): ResumeUi {
     val text =
