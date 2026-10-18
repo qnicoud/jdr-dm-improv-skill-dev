@@ -48,8 +48,8 @@ class ExerciseRegistry(
                     // v1.1 : V2a
                     FailingForward.definition,
                     // v1.1 : V2b
-                    // v1.1 : V2c
                     ThreeClues.definition,
+                    // v1.1 : V2c
                 ),
             )
     }

@@ -8,8 +8,9 @@ import io.github.qnicoud.dmgym.ui.icons.SenseIcons
 import io.github.qnicoud.dmgym.ui.icons.StoryIcons
 
 /**
- * Icône d'une catégorie d'élément tiré : les cinq sens d'un mot sensoriel (Constraint Box), les cinq types
- * d'élément d'histoire (Connect the Story) et les six types de complication (Échec qui avance, clé = `id`). Chaque catégorie a une forme propre et un libellé lu par TalkBack :
+ * Icône d'une catégorie d'élément tiré : les cinq sens d'un mot sensoriel (Constraint Box), les types d'élément
+ * d'histoire et le PNJ (Connect the Story, Règle des 3 indices) et les six types de complication (Échec qui
+ * avance, clé = `id`). Chaque catégorie a une forme propre et un libellé lu par TalkBack :
  * la couleur ne porte jamais l'information.
  */
 enum class CategoryIcon(
