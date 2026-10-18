@@ -4,6 +4,7 @@ import io.github.qnicoud.dmgym.core.exercise.Draw
 import io.github.qnicoud.dmgym.core.exercise.DrawContext
 import io.github.qnicoud.dmgym.core.exercise.SlotDrawer
 import io.github.qnicoud.dmgym.core.exercise.TableSlot
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.tables.TableFile
 import io.github.qnicoud.dmgym.core.tables.TableId
 import io.github.qnicoud.dmgym.core.tables.TableRepository
@@ -71,7 +72,10 @@ class StatusShiftDrawTest {
                 {"id":"b","text":"B","difficulty":1,"tags":["shift:up"]}]}"""
             val source =
                 object : TableSource {
-                    override suspend fun load(id: TableId): TableFile = TableFile.decode(onlyUp)
+                    override suspend fun load(
+                        id: TableId,
+                        language: ContentLanguage,
+                    ): TableFile = TableFile.decode(onlyUp)
                 }
             val drawer = SlotDrawer(TableRepository(source), Random(1))
             val drawn = drawer.draw(shiftSlot, context = context(card = 9)).single()

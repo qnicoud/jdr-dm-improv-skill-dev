@@ -237,7 +237,7 @@ class BackupDecoderTest {
     }
 
     @Test
-    fun `contentLocale is written as fr and ignored when reading (V5 will make it a column)`() {
+    fun `contentLocale is written from the session and read back`() {
         val text = encode(fullSession())
         assertTrue(text.contains(""""contentLocale":"fr""""))
 
@@ -245,6 +245,29 @@ class BackupDecoderTest {
         val without = success(text.replace(""","contentLocale":"fr"""", "")).sessions
 
         assertEquals(withLocale, without)
+        assertEquals("fr", withLocale.single().session.contentLocale)
+    }
+
+    @Test
+    fun `the language of a session is carried by the file in both directions`() {
+        val english = fullSession().withSession { it.copy(contentLocale = "en") }
+
+        assertTrue(encode(english).contains(""""contentLocale":"en""""))
+        assertEquals(
+            "en",
+            english
+                .toV1()
+                .toDomain()
+                .session.contentLocale,
+        )
+        assertEquals(
+            "fr",
+            english
+                .toV1()
+                .copy(contentLocale = null)
+                .toDomain()
+                .session.contentLocale,
+        )
     }
 
     @Test

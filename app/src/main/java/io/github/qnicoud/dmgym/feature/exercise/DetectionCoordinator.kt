@@ -10,10 +10,13 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseSession
 /** Détection des mots tirés dans le texte saisi (ADR 0008) : cases automatiques, mots-clés et surlignage. */
 internal class DetectionCoordinator(
     private val definition: ExerciseDefinition,
-    private val detector: AnswerDetector?,
+    private val baseDetector: AnswerDetector?,
     private val dispatch: (ExerciseAction) -> Unit,
     private val session: () -> ExerciseSession,
 ) {
+    /** Détecteur de la langue de la séance en cours. */
+    private val detector: AnswerDetector? get() = baseDetector?.forLanguage(session().language)
+
     /** Recalcule les cases « utilisé » ; le cochage manuel n'est jamais touché (réducteur). */
     fun redetect() {
         val spec = definition.detection ?: return

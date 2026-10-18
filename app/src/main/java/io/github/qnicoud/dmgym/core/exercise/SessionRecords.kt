@@ -5,6 +5,7 @@ import io.github.qnicoud.dmgym.core.history.DrawRecord
 import io.github.qnicoud.dmgym.core.history.RubricRecord
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionStatus
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
@@ -56,6 +57,7 @@ fun SessionDetail.toExerciseSession(): ExerciseSession {
         selfRating = session.selfRating,
         isGem = session.isGem,
         rubric = rubric.associate { it.questionKey to it.value },
+        language = ContentLanguage.fromCode(session.contentLocale) ?: ContentLanguage.DEFAULT,
     )
 }
 

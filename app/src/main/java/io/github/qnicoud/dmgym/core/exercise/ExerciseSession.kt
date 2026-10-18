@@ -1,5 +1,7 @@
 package io.github.qnicoud.dmgym.core.exercise
 
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
+
 enum class Phase { Ready, Active, Ended }
 
 /** Clé de réponse du « sujet libre » (mode dégradé quand la table est illisible, DÉCISION 12). */
@@ -67,6 +69,8 @@ data class ExerciseSession(
     val selfRating: Int? = null,
     val isGem: Boolean = false,
     val rubric: Map<String, Boolean> = emptyMap(),
+    /** Langue des tirages, fixée avant le premier tirage et conservée jusqu'à la fin (ADR 0016 §3). */
+    val language: ContentLanguage = ContentLanguage.DEFAULT,
 ) {
     /** Contenu au sens de l'ADR 0011 : au moins une réponse non vide après `trim`. */
     val hasContent: Boolean get() = answers.values.any { it.text.isNotBlank() }

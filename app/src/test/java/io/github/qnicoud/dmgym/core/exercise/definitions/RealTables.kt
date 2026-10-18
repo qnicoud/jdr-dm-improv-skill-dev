@@ -2,6 +2,7 @@ package io.github.qnicoud.dmgym.core.exercise.definitions
 
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.SlotDrawer
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.tables.TableFile
 import io.github.qnicoud.dmgym.core.tables.TableId
 import io.github.qnicoud.dmgym.core.tables.TableRepository
@@ -13,7 +14,10 @@ import kotlin.random.Random
 object RealTables {
     private val source =
         object : TableSource {
-            override suspend fun load(id: TableId): TableFile = TableFile.decode(TestTables.assetFile(id).readText())
+            override suspend fun load(
+                id: TableId,
+                language: ContentLanguage,
+            ): TableFile = TableFile.decode(TestTables.assetFile(id).readText())
         }
 
     val repository = TableRepository(source)

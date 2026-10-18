@@ -2,6 +2,7 @@ package io.github.qnicoud.dmgym.feature.exercise
 
 import io.github.qnicoud.dmgym.core.exercise.AnswerDetector
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
+import io.github.qnicoud.dmgym.core.i18n.LanguageProvider
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import io.github.qnicoud.dmgym.core.signal.EndSignal
 import io.github.qnicoud.dmgym.core.tables.TableRepository
@@ -21,6 +22,8 @@ class ExerciseDependencies(
     val wallClock: Clock,
     val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     val detector: AnswerDetector? = null,
+    /** Langue de contenu courante, lue une fois au démarrage d'une séance (ADR 0016 §3). */
+    val language: LanguageProvider = LanguageProvider.Fixed(),
 )
 
 /** Paramètres de lancement d'un exercice (route `Exercise`). */

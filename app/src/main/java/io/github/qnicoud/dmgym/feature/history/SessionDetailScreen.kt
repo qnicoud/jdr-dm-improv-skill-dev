@@ -45,6 +45,7 @@ import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.feature.exercise.shortDuration
 import io.github.qnicoud.dmgym.platform.shareText
+import io.github.qnicoud.dmgym.ui.components.currentLocale
 import io.github.qnicoud.dmgym.ui.components.nameRes
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 import io.github.qnicoud.dmgym.ui.icons.HistoryIcons
@@ -246,7 +247,7 @@ private fun Header(detail: SessionDetailUi) {
             active
         }
     val name = stringResource(detail.exerciseId.nameRes)
-    val moment = dateTime(detail.startedAtEpochMillis, detail.zoneId)
+    val moment = dateTime(detail.startedAtEpochMillis, detail.zoneId, currentLocale())
     Text(
         text = "$name · $moment · $duration",
         style = MaterialTheme.typography.bodyLarge,

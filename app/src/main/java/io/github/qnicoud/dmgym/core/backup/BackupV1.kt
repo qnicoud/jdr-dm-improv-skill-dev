@@ -6,6 +6,7 @@ import io.github.qnicoud.dmgym.core.history.RubricRecord
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.core.history.SessionStatus
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -98,7 +99,7 @@ internal fun SessionDetail.toV1(): SessionV1 =
         isGem = session.isGem,
         fromDaily = session.fromDaily,
         drawSeed = session.drawSeed,
-        contentLocale = DEFAULT_CONTENT_LOCALE,
+        contentLocale = session.contentLocale,
         draws =
             draws.map {
                 DrawV1(
@@ -137,6 +138,7 @@ internal fun SessionV1.toDomain(): SessionDetail =
                 isGem = isGem,
                 fromDaily = fromDaily,
                 drawSeed = drawSeed,
+                contentLocale = contentLocale ?: ContentLanguage.DEFAULT.code,
             ),
         draws =
             draws.map {

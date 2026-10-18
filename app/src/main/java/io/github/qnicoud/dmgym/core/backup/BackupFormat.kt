@@ -10,12 +10,6 @@ const val READABLE_EXPORT_HEADER = "DM Gym - export de mes sessions"
 internal const val BACKUP_FORMAT = "dmgym-sessions"
 internal const val BACKUP_VERSION = 1
 
-/**
- * Langue du contenu écrite tant que la colonne `contentLocale` n'existe pas (ADR 0016, lot V5).
- * TODO(V5): la remplacer par la colonne `contentLocale` de la session et lire le champ.
- */
-internal const val DEFAULT_CONTENT_LOCALE = "fr"
-
 /** Raisons pour lesquelles un fichier est refusé en entier ; chacune a son message dans l'écran d'import (UX §3.3). */
 enum class ImportError {
     /** Pas du JSON, ou pas le bon format. */

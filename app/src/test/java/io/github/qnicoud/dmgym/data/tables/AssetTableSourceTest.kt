@@ -1,6 +1,7 @@
 package io.github.qnicoud.dmgym.data.tables
 
 import androidx.test.core.app.ApplicationProvider
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.tables.TableId
 import io.github.qnicoud.dmgym.core.tables.TableLoadException
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +22,7 @@ class AssetTableSourceTest {
     @Test
     fun `loads and decodes a shipped table`() =
         runBlocking {
-            val table = AssetTableSource(assets, Dispatchers.IO).load(TableId.CoreImages)
+            val table = AssetTableSource(assets, Dispatchers.IO).load(TableId.CoreImages, ContentLanguage.FR)
 
             assertEquals("core_images", table.table)
             assertTrue(table.entries.size >= 30)
@@ -32,7 +33,7 @@ class AssetTableSourceTest {
         runBlocking {
             val source = AssetTableSource(assets, Dispatchers.Unconfined)
 
-            TableId.entries.forEach { assertEquals(it.fileName, source.load(it).table) }
+            TableId.entries.forEach { assertEquals(it.fileName, source.load(it, ContentLanguage.FR).table) }
         }
 
     @Test
@@ -41,7 +42,7 @@ class AssetTableSourceTest {
             val source = AssetTableSource(assets, Dispatchers.Unconfined, basePath = "nowhere")
 
             try {
-                source.load(TableId.Places)
+                source.load(TableId.Places, ContentLanguage.FR)
                 fail("expected TableLoadException")
             } catch (e: TableLoadException) {
                 assertEquals(TableId.Places, e.id)

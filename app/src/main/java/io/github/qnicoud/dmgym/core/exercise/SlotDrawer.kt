@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.core.exercise
 
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.tables.Drawer
 import io.github.qnicoud.dmgym.core.tables.NotEnoughEntriesException
 import io.github.qnicoud.dmgym.core.tables.TableEntry
@@ -23,6 +24,8 @@ data class DrawContext(
 class SlotDrawer(
     private val tables: TableRepository,
     private val random: Random,
+    /** Langue des tables à lire : celle de la session, relue à chaque tirage (ADR 0016 §3). */
+    private val language: () -> ContentLanguage = { ContentLanguage.DEFAULT },
 ) {
     private val drawer = Drawer(random)
 
@@ -68,7 +71,7 @@ class SlotDrawer(
         exclude: Set<String>,
         context: DrawContext,
     ): List<Draw> {
-        val table = tables.table(slot.table)
+        val table = tables.table(slot.table, language())
         val entries =
             if (slot.categoryCycle.isEmpty()) {
                 drawPreferringTag(slot, table, exclude, context)
@@ -145,7 +148,7 @@ class SlotDrawer(
         val table = TableId.entries.firstOrNull { it.fileName == role.tableId } ?: return null
         val tags =
             tables
-                .table(table)
+                .table(table, language())
                 .entries
                 .firstOrNull { it.id == role.entryId }
                 ?.tags
