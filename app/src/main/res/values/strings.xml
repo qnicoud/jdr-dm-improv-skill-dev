@@ -371,8 +371,8 @@
   <string name="settings_vibration">Vibration de fin</string>
   <string name="settings_sound">Bip de fin</string>
   <string name="settings_sound_hint">Ne sonne que si le téléphone est en mode sonnerie.</string>
-  <string name="settings_crazy_haptic">Vibration chaque minute</string>
-  <string name="settings_crazy_haptic_hint">Pour Crazy Eights, afin de sentir le rythme sans regarder l’écran.</string>
+  <string name="settings_crazy_haptic">Vibration de rythme</string>
+  <string name="settings_crazy_haptic_hint">Pour Crazy Eights et Oui, et…, afin de sentir le rythme sans regarder l’écran.</string>
   <string name="settings_section_durations">Durée par exercice</string>
   <string name="settings_duration_decrease">Réduire la durée de %1$s</string>
   <string name="settings_duration_increase">Augmenter la durée de %1$s</string>
