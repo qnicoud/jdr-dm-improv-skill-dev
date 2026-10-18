@@ -343,7 +343,7 @@ class ExerciseViewModelTest : ExerciseViewModelTestBase() {
             val sequential =
                 DemoExercise.definition.copy(
                     slots = listOf(TableSlot("q", TableId.Places, count = 3)),
-                    layout = FieldLayout.Sequential("q", FieldSpec("answer")),
+                    layout = FieldLayout.Sequential("q", listOf(FieldSpec("answer"))),
                 )
             val vm = vm(sequential)
             collect(vm)

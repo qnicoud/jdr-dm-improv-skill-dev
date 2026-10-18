@@ -1,0 +1,64 @@
+package io.github.qnicoud.dmgym.core.exercise
+
+import io.github.qnicoud.dmgym.core.timer.TimedEvent
+
+/** Champs d'une question visibles pour les [options] de la session (un champ masqué n'est ni affiché ni compté). */
+fun FieldLayout.Sequential.visibleFields(options: Map<String, Boolean>): List<FieldSpec> =
+    fields.filter { it.visibleWhen?.holds(options) ?: true }
+
+/** Ce que le tirage lié à un champ ([FieldLayout.Fixed.boundSlot]) impose à ce champ. */
+data class BoundField(
+    /** Code stable de l'entrée tirée (son `id`) : il choisit l'icône et l'indication. */
+    val code: String,
+    /** Nom de l'entrée tirée, affiché dans le libellé (« Complication 1 · Coût »). */
+    val name: String,
+    /** Indication propre au code, ou `null` : celle du champ s'applique. */
+    val hint: StringResId?,
+)
+
+/** Pour chaque champ, le tirage qui le contraint ; `null` sans lien ou si le tirage manque (sujet libre, relance). */
+fun FieldLayout.Fixed.boundFields(draws: List<Draw>): List<BoundField?> {
+    val bound = boundSlot?.let { slot -> draws.filter { it.slotKey == slot }.sortedBy { it.position } }.orEmpty()
+    return fields.indices.map { i ->
+        bound.getOrNull(i)?.let { BoundField(it.entryId, it.text, hintByCode[it.entryId]) }
+    }
+}
+
+/**
+ * Questions que l'écran peut montrer. Sans [FieldLayout.Sequential.revealProgressively], toutes. Avec : aucune avant
+ * le départ, la seule question courante pendant le jeu, toutes une fois l'exercice terminé (bilan, historique).
+ */
+fun FieldLayout.Sequential.revealedQuestions(session: ExerciseSession): List<Draw> {
+    val all = session.drawsOf(questionsSlot)
+    if (!revealProgressively) return all
+    return when (session.phase) {
+        Phase.Ready -> {
+            emptyList()
+        }
+
+        Phase.Active -> {
+            listOfNotNull(
+                all.getOrNull(session.currentQuestion.coerceIn(0, (all.size - 1).coerceAtLeast(0))),
+            )
+        }
+
+        Phase.Ended -> {
+            all
+        }
+    }
+}
+
+/** Avancement de la minute (ou de la période) en cours, entre 0 inclus et 1 exclu. Ne déclenche jamais rien. */
+fun minuteFraction(
+    elapsedMs: Long,
+    periodMs: Long,
+): Float = (elapsedMs.coerceAtLeast(0) % periodMs).toFloat() / periodMs
+
+/** Période du rythme (repère par minute) quand l'exercice a un rappel périodique, sinon `null`. */
+val ExerciseDefinition.rhythmPeriodMs: Long?
+    get() =
+        events
+            .map { it.timing }
+            .filterIsInstance<TimedEvent.Periodic>()
+            .firstOrNull()
+            ?.intervalMs
