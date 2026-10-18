@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.backup
 
+import androidx.lifecycle.SavedStateHandle
 import io.github.qnicoud.dmgym.core.backup.BACKUP_NOW
 import io.github.qnicoud.dmgym.core.backup.BackupEncoder
 import io.github.qnicoud.dmgym.core.backup.ImportError
@@ -45,7 +46,9 @@ class ImportViewModelTest {
     @AfterEach
     fun tearDown() = Dispatchers.resetMain()
 
-    private fun viewModel() = ImportViewModel(archive, KNOWN_EXERCISES, clock, dispatcher)
+    private val handle = SavedStateHandle()
+
+    private fun viewModel() = ImportViewModel(archive, KNOWN_EXERCISES, clock, handle, dispatcher)
 
     private fun fileOf(vararg sessions: SessionDetail) = BackupEncoder.encode(sessions.toList(), BACKUP_NOW, "1.1.0")
 
@@ -266,6 +269,67 @@ class ImportViewModelTest {
             advanceUntilIdle()
 
             assertFalse((vm.uiState.value as ImportUiState.Done).canUndo)
+        }
+
+    @Test
+    fun `an out of memory error while reading says the file is too big`() =
+        runTest(dispatcher) {
+            val vm = viewModel()
+
+            vm.onFileChosen { throw OutOfMemoryError() }
+            advanceUntilIdle()
+
+            assertEquals(ImportUiState.Failed(ImportError.TooLarge), vm.uiState.value)
+        }
+
+    @Test
+    fun `the undo survives the death of the process`() =
+        runTest(dispatcher) {
+            archive.sessions = listOf(a)
+            val first = viewModel()
+            choose(first, fileOf(a, b))
+            first.confirm()
+            advanceUntilIdle()
+            val importedIds = archive.sessions.map { it.session.id }.filter { it >= 1_000 }
+
+            val restored = viewModel()
+
+            assertEquals(ImportUiState.Done(added = 1, alreadyPresent = 1, canUndo = true), restored.uiState.value)
+            restored.undo()
+            advanceUntilIdle()
+            assertEquals(importedIds, archive.deletedIds)
+            assertEquals(ImportUiState.Choose(undone = true), restored.uiState.value)
+            assertEquals(ImportUiState.Choose(), viewModel().uiState.value)
+        }
+
+    @Test
+    fun `a double tap on undo deletes once`() =
+        runTest(dispatcher) {
+            val vm = viewModel()
+            choose(vm, fileOf(a))
+            vm.confirm()
+            advanceUntilIdle()
+
+            vm.undo()
+            assertEquals(ImportUiState.Undoing, vm.uiState.value)
+            vm.undo()
+            advanceUntilIdle()
+
+            assertEquals(1, archive.deleteSessionsCalls)
+        }
+
+    @Test
+    fun `ignored invalid sessions reach the preview`() =
+        runTest(dispatcher) {
+            val bad =
+                fullSession(
+                    START_2026_10_17 + 5,
+                ).copy().let { it.copy(session = it.session.copy(difficulty = 9)) }
+            val vm = viewModel()
+
+            choose(vm, fileOf(a, bad))
+
+            assertEquals(1, (vm.uiState.value as ImportUiState.Preview).plan.invalid)
         }
 
     @Test

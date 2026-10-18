@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.backup
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.qnicoud.dmgym.core.backup.BackupDecoder
@@ -46,6 +47,9 @@ sealed interface ImportUiState {
     /** Écriture en cours : un second appui sur « Ajouter » est ignoré. */
     data object Importing : ImportUiState
 
+    /** Annulation en cours : un second appui sur « Annuler cet import » est ignoré. */
+    data object Undoing : ImportUiState
+
     /** D. Résultat ; [canUndo] tant que des sessions ajoutées peuvent être retirées. */
     data class Done(
         val added: Int,
@@ -62,20 +66,35 @@ sealed interface ImportUiState {
 
 /**
  * Importe une sauvegarde (ADR 0015). Le décodage et la validation tournent sur [computation], jamais sur le fil
- * principal. Les identifiants ajoutés vivent ici et pas dans l'état sauvegardé : après la mort du processus,
- * l'annulation n'est plus proposée.
+ * principal. Les identifiants ajoutés sont gardés dans [savedState] : l'annulation survit à la mort du processus,
+ * puisque `AUTOINCREMENT` ne réutilise jamais un identifiant (elle ne peut donc pas supprimer autre chose).
  */
 class ImportViewModel(
     private val archive: SessionArchive,
     private val knownExercises: Set<String>,
     private val clock: Clock,
+    private val savedState: SavedStateHandle = SavedStateHandle(),
     private val computation: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
-    private val state = MutableStateFlow<ImportUiState>(ImportUiState.Choose())
+    private val state = MutableStateFlow(restoredState())
     val uiState: StateFlow<ImportUiState> = state.asStateFlow()
 
+    private val busyStates = setOf(ImportUiState.Importing, ImportUiState.Reading, ImportUiState.Undoing)
     private var job: Job? = null
-    private var importedIds: List<Long> = emptyList()
+    private var importedIds: List<Long>
+        get() = savedState.get<LongArray>(KEY_IDS)?.toList().orEmpty()
+        set(value) {
+            savedState[KEY_IDS] = value.toLongArray()
+        }
+
+    private fun restoredState(): ImportUiState {
+        val ids = savedState.get<LongArray>(KEY_IDS)
+        return if (ids == null || ids.isEmpty()) {
+            ImportUiState.Choose()
+        } else {
+            ImportUiState.Done(ids.size, savedState[KEY_ALREADY] ?: 0, canUndo = true)
+        }
+    }
 
     /** [read] lit le fichier choisi et renvoie son texte ; ses exceptions d'entrée-sortie deviennent des erreurs typées. */
     fun onFileChosen(read: suspend () -> String) {
@@ -96,6 +115,8 @@ class ImportViewModel(
                 throw e
             } catch (_: TooLargeException) {
                 ImportUiState.Failed(ImportError.TooLarge)
+            } catch (_: OutOfMemoryError) {
+                ImportUiState.Failed(ImportError.TooLarge)
             } catch (_: Exception) {
                 ImportUiState.Failed(ImportError.Unreadable)
             } finally {
@@ -110,7 +131,8 @@ class ImportViewModel(
             }
 
             is DecodeResult.Success -> {
-                val plan = ImportPlanner.plan(decoded.sessions, decoded.unknownExercise, archive.identities())
+                val plan =
+                    ImportPlanner.plan(decoded.sessions, decoded.unknownExercise, archive.identities(), decoded.invalid)
                 if (plan.hasSomethingToAdd) ImportUiState.Preview(plan) else ImportUiState.NothingToAdd(plan.found)
             }
         }
@@ -124,10 +146,12 @@ class ImportViewModel(
                 state.value =
                     try {
                         val result = archive.importSessions(preview.plan.toInsert)
+                        val already = preview.plan.alreadyPresent + result.alreadyPresent
                         importedIds = result.insertedIds
+                        savedState[KEY_ALREADY] = already
                         ImportUiState.Done(
                             added = result.insertedIds.size,
-                            alreadyPresent = preview.plan.alreadyPresent + result.alreadyPresent,
+                            alreadyPresent = already,
                             canUndo = result.insertedIds.isNotEmpty(),
                         )
                     } catch (e: CancellationException) {
@@ -142,24 +166,26 @@ class ImportViewModel(
     fun undo() {
         val done = state.value as? ImportUiState.Done ?: return
         if (!done.canUndo) return
+        state.value = ImportUiState.Undoing
         viewModelScope.launch {
             try {
                 archive.deleteSessions(importedIds)
                 importedIds = emptyList()
+                savedState.remove<Int>(KEY_ALREADY)
                 state.value = ImportUiState.Choose(undone = true)
             } catch (e: CancellationException) {
                 throw e
             } catch (_: IOException) {
-                state.update { done.copy(undoFailed = true) }
+                state.value = done.copy(undoFailed = true)
             } catch (_: RuntimeException) {
-                state.update { done.copy(undoFailed = true) }
+                state.value = done.copy(undoFailed = true)
             }
         }
     }
 
     /** « Choisir un autre fichier » : retour à l'état A. */
     fun chooseAnother() {
-        if (state.value is ImportUiState.Importing || state.value is ImportUiState.Reading) return
+        if (state.value in busyStates) return
         state.value = ImportUiState.Choose()
     }
 
@@ -168,5 +194,7 @@ class ImportViewModel(
 
     private companion object {
         const val READING_DELAY_MILLIS = 300L
+        const val KEY_IDS = "imported_ids"
+        const val KEY_ALREADY = "imported_already_present"
     }
 }

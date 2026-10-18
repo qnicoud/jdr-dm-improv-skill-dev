@@ -1,6 +1,7 @@
 package io.github.qnicoud.dmgym.core.backup
 
 import io.github.qnicoud.dmgym.core.history.SessionDetail
+import io.github.qnicoud.dmgym.core.history.SessionStatus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -92,7 +93,7 @@ class BackupDecoderTest {
     }
 
     @Test
-    fun `every validation rule refuses the whole file`() {
+    fun `every validation rule skips only the offending session`() {
         val cases =
             mapOf(
                 "bad exercise key" to mutated(""""exerciseId":"crazy_eights"""", """"exerciseId":"Crazy Eights""""),
@@ -115,13 +116,23 @@ class BackupDecoderTest {
                 "control character" to mutated("Texte avec", "Texte\\u0007avec"),
                 "duplicate draw" to mutated(""""position":1""", """"position":0"""),
                 "duplicate answer" to mutated(""""groupIndex":1""", """"groupIndex":0"""),
+                "bidi control" to mutated("Texte avec", "Texte\\u202Eavec"),
+                "bidi isolate" to mutated("Texte avec", "Texte\\u2066avec"),
+                "too many options" to
+                    mutated(
+                        """"options":{"situation_mode":true,"event:minute":true}""",
+                        """"options":{${(1..33).joinToString(",") { "\"o$it\":true" }}}""",
+                    ),
                 "duplicate rubric" to
                     mutated(""""questionKey":"first_pick:idea"""", """"questionKey":"beyond_first_ideas""""),
             )
 
         cases.forEach { (name, text) ->
-            val result = decode(text)
-            assertTrue(result is DecodeResult.Failure, "$name should be refused but gave $result")
+            val result = decode(text.replace("]}]}", "]}]}"))
+            assertTrue(result is DecodeResult.Success, "$name should be skipped, not refuse the file: $result")
+            result as DecodeResult.Success
+            assertTrue(result.sessions.isEmpty(), name)
+            assertEquals(1, result.invalid, name)
         }
     }
 
@@ -136,8 +147,104 @@ class BackupDecoderTest {
             )
 
         listOf(tooLong, manyDraws, longSnapshot).forEach {
-            assertTrue(decode(encode(it)) is DecodeResult.Failure)
+            assertEquals(1, success(encode(it)).invalid)
         }
+    }
+
+    @Test
+    fun `one bad session does not drop the good ones`() {
+        val bad = fullSession(START_2026_10_17 + 1).withSession { it.copy(difficulty = 9) }
+
+        val result = success(encode(fullSession(), bad))
+
+        assertEquals(1, result.sessions.size)
+        assertEquals(1, result.invalid)
+    }
+
+    @Test
+    fun `a file with too many sessions is refused as a whole`() {
+        val one = fullSession()
+        val text =
+            BackupEncoder.encode(
+                List(20_001) {
+                    one.withSession { s ->
+                        s.copy(
+                            startedAtEpochMillis =
+                                START_2026_10_17 + it,
+                        )
+                    }
+                },
+                BACKUP_NOW,
+                "1",
+            )
+
+        assertEquals(ImportError.Incomplete, errorOf(text))
+    }
+
+    @Test
+    fun `an imported in-progress session is never active or resumable`() {
+        val recent =
+            fullSession(BACKUP_NOW.toEpochMilli() - 60_000)
+                .withSession {
+                    it.copy(
+                        status = SessionStatus.IN_PROGRESS,
+                        endedAtEpochMillis = null,
+                        lastActivityAtEpochMillis = BACKUP_NOW.toEpochMilli() - 1_000,
+                        localEpochDay = EPOCH_DAY_2026_10_18,
+                        zoneId = "UTC",
+                    )
+                }
+
+        val imported = success(encode(recent)).sessions.single().session
+
+        assertEquals(SessionStatus.IN_PROGRESS, imported.status)
+        assertTrue(imported.lastActivityAtEpochMillis < BACKUP_NOW.toEpochMilli() - 24 * 3_600_000L)
+    }
+
+    @Test
+    fun `an old in-progress session keeps its last activity`() {
+        val old =
+            fullSession().withSession {
+                it.copy(status = SessionStatus.IN_PROGRESS, endedAtEpochMillis = null)
+            }
+
+        assertEquals(
+            old.session.lastActivityAtEpochMillis,
+            success(encode(old))
+                .sessions
+                .single()
+                .session.lastActivityAtEpochMillis,
+        )
+    }
+
+    @Test
+    fun `dates are never in the future`() {
+        val now = BACKUP_NOW.toEpochMilli()
+        val future =
+            fullSession(now - 1_000).withSession {
+                it.copy(
+                    lastActivityAtEpochMillis = now + 3_600_000,
+                    endedAtEpochMillis = now + 3_600_000,
+                    localEpochDay = EPOCH_DAY_2026_10_18,
+                    zoneId = "UTC",
+                )
+            }
+
+        val imported = success(encode(future)).sessions.single().session
+
+        assertTrue(imported.lastActivityAtEpochMillis <= now)
+        assertTrue((imported.endedAtEpochMillis ?: 0) <= now)
+    }
+
+    @Test
+    fun `contentLocale is written as fr and ignored when reading (V5 will make it a column)`() {
+        val text = encode(fullSession())
+        assertTrue(text.contains(""""contentLocale":"fr""""))
+
+        val withLocale = success(text).sessions
+        val without = success(text.replace(""","contentLocale":"fr"""", "")).sessions
+
+        assertEquals(withLocale, without)
     }
 
     @Test

@@ -459,6 +459,11 @@
   <string name="import_switch_step4">4. Dans la nouvelle app : Réglages, Données, Importer des sessions, puis choisis le fichier.</string>
   <string name="import_choose_file">Choisir un fichier</string>
   <string name="import_choose_other">Choisir un autre fichier</string>
+  <string name="import_undoing">Annulation en cours…</string>
+  <plurals name="import_invalid">
+    <item quantity="one">%d session aux valeurs hors limites sera ignorée</item>
+    <item quantity="other">%d sessions aux valeurs hors limites seront ignorées</item>
+  </plurals>
   <string name="import_reading">Lecture du fichier…</string>
   <string name="import_importing">Ajout en cours…</string>
   <plurals name="import_found">

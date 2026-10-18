@@ -205,6 +205,7 @@ private fun appEntryProvider(
                                 .map { it.id.value }
                                 .toSet(),
                             container.clock,
+                            createSavedStateHandle(),
                         )
                     },
                 onBack = { navigator.back() },

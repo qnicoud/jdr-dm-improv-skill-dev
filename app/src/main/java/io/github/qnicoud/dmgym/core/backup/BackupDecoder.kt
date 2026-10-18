@@ -1,5 +1,7 @@
 package io.github.qnicoud.dmgym.core.backup
 
+import io.github.qnicoud.dmgym.core.history.SessionDetail
+import io.github.qnicoud.dmgym.core.history.SessionStatus
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import java.time.Instant
@@ -10,8 +12,7 @@ import java.time.Instant
  * l'appelant la fait tourner hors du fil principal.
  */
 object BackupDecoder {
-    /** En-tête du texte lisible (`SessionExportFormatter`), pour l'erreur « export à lire ». */
-    private const val READABLE_EXPORT_HEADER = "DM Gym - export de mes sessions"
+    private const val STALE_MARGIN_MILLIS = 25 * 3_600_000L
     private const val PREFIX_WINDOW = 200
     private val BOM = Char(0xFEFF)
 
@@ -73,12 +74,31 @@ object BackupDecoder {
         if (backup.sessions.size > BackupValidator.MAX_SESSIONS) return DecodeResult.Failure(ImportError.Incomplete)
         val validator = BackupValidator(now)
         val (known, unknown) = backup.sessions.partition { it.exerciseId in knownExercises }
-        val valid =
-            unknown.all { validator.isValidExerciseId(it.exerciseId) } && known.all { validator.isValid(it) }
-        return if (valid) {
-            DecodeResult.Success(known.map { it.toDomain() }, unknown.size)
-        } else {
-            DecodeResult.Failure(ImportError.Incomplete)
-        }
+        val (valid, invalid) = known.partition { validator.isValid(it) }
+        val unknownInvalid = unknown.count { !validator.isValidExerciseId(it.exerciseId) }
+        return DecodeResult.Success(
+            sessions = valid.map { it.toDomain().safeAt(now) },
+            unknownExercise = unknown.size - unknownInvalid,
+            invalid = invalid.size + unknownInvalid,
+        )
+    }
+
+    /**
+     * Une session importée ne devient jamais la session active ni celle à reprendre (elle est « inachevée »), et
+     * aucune de ses dates n'est dans le futur.
+     */
+    private fun SessionDetail.safeAt(now: Instant): SessionDetail {
+        val nowMillis = now.toEpochMilli()
+        val ceiling = maxOf(nowMillis, session.startedAtEpochMillis)
+        val stale = nowMillis - STALE_MARGIN_MILLIS
+        var lastActivity = minOf(session.lastActivityAtEpochMillis, ceiling)
+        if (session.status == SessionStatus.IN_PROGRESS) lastActivity = minOf(lastActivity, stale)
+        return copy(
+            session =
+                session.copy(
+                    lastActivityAtEpochMillis = lastActivity,
+                    endedAtEpochMillis = session.endedAtEpochMillis?.let { minOf(it, ceiling) },
+                ),
+        )
     }
 }

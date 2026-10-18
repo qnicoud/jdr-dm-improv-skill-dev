@@ -6,6 +6,7 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import io.github.qnicoud.dmgym.core.backup.BoundedText
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import java.io.FileNotFoundException
 
@@ -16,8 +17,9 @@ import java.io.FileNotFoundException
  */
 suspend fun ContentResolver.readBoundedText(uri: Uri): String =
     withContext(Dispatchers.IO) {
+        if (uri.scheme != ContentResolver.SCHEME_CONTENT) throw SecurityException("Only content:// documents are read")
         val stream = openInputStream(uri) ?: throw FileNotFoundException("No input stream for $uri")
-        stream.use { BoundedText.read(it) }
+        stream.use { BoundedText.read(it, checkActive = { ensureActive() }) }
     }
 
 /** Écrit la sauvegarde et renvoie le nom du fichier créé (celui que l'utilisateur a choisi), `uri` en repli. */

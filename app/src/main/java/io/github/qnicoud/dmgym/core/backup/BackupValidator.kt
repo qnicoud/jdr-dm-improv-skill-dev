@@ -36,6 +36,7 @@ internal class BackupValidator(
             (s.selfRating == null || s.selfRating in RATING_RANGE) &&
             s.difficulty in DIFFICULTY_RANGE &&
             listOfNotNull(s.plannedDurationSec, s.activeDurationSec, s.overtimeSec).all { it in 0..MAX_SECONDS } &&
+            s.options.size <= MAX_OPTIONS &&
             s.options.keys.all { KEY.matches(it) } &&
             (s.contentLocale == null || s.contentLocale in contentLocales)
 
@@ -75,7 +76,7 @@ internal class BackupValidator(
     private fun isPlainText(
         text: String,
         maxLength: Int,
-    ) = text.length <= maxLength && text.none { it.isISOControl() && it != '\n' && it != '\t' }
+    ) = text.length <= maxLength && text.none { (it.isISOControl() && it != '\n' && it != '\t') || it in BIDI_CONTROLS }
 
     private fun zoneOrNull(id: String): ZoneId? =
         try {
@@ -89,6 +90,7 @@ internal class BackupValidator(
         private const val MAX_DRAWS = 64
         private const val MAX_ANSWERS = 256
         private const val MAX_RUBRIC = 16
+        private const val MAX_OPTIONS = 32
         private const val MAX_ANSWER_TEXT = 20_000
         private const val MAX_SNAPSHOT = 1_000
         private const val MAX_SECONDS = 24 * 3_600
@@ -96,6 +98,7 @@ internal class BackupValidator(
         private const val EARLIEST_START = "2026-01-01T00:00:00Z"
         private val RATING_RANGE = 1..3
         private val DIFFICULTY_RANGE = 1..3
+        private val BIDI_CONTROLS = ('\u202A'..'\u202E') + ('\u2066'..'\u2069')
         private val KEY = Regex("[a-z0-9_:.-]{1,64}")
         private val ENTRY = Regex("[A-Za-z0-9_-]{1,64}")
     }

@@ -12,6 +12,7 @@ val BACKUP_NOW: Instant = Instant.parse("2026-10-18T14:03:00Z")
 val KNOWN_EXERCISES = setOf("crazy_eights", "constraint_box", "core_image")
 const val START_2026_10_17 = 1_792_220_400_000L // 2026-10-17T07:00:00Z
 const val EPOCH_DAY_2026_10_17 = 20_743L
+const val EPOCH_DAY_2026_10_18 = 20_744L
 
 /** Une session complète : tous les champs sont renseignés, pour qu'un aller-retour les éprouve tous. */
 fun fullSession(

@@ -26,7 +26,7 @@ class BoundedTextTest {
     }
 
     @Test
-    fun `the 16 MiB limit is refused without reading the whole stream`() {
+    fun `the 8 MiB limit is refused without reading the whole stream`() {
         var served = 0L
         val endless =
             object : InputStream() {
@@ -45,6 +45,26 @@ class BoundedTextTest {
         assertThrows(TooLargeException::class.java) { BoundedText.read(endless) }
 
         assertEquals(true, served < BoundedText.MAX_BYTES + 16 * 1024)
+    }
+
+    @Test
+    fun `the maximum is 8 MiB`() {
+        assertEquals(8 * 1024 * 1024, BoundedText.MAX_BYTES)
+    }
+
+    @Test
+    fun `reading stops when the caller is cancelled`() {
+        var checks = 0
+
+        assertThrows(IllegalStateException::class.java) {
+            BoundedText.read(ByteArrayInputStream(ByteArray(100_000)), checkActive = {
+                if (++checks >
+                    2
+                ) {
+                    error("cancelled")
+                }
+            })
+        }
     }
 
     @Test

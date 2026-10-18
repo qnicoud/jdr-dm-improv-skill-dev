@@ -6,6 +6,11 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.charset.CodingErrorAction
 
+/** Tampon dont on lit les octets sans les recopier. */
+private class ExposedBuffer : ByteArrayOutputStream() {
+    fun view(): ByteBuffer = ByteBuffer.wrap(buf, 0, count)
+}
+
 /** Le flux dépasse la taille maximale autorisée. */
 class TooLargeException(
     maxBytes: Int,
@@ -16,8 +21,8 @@ class TooLargeException(
  * annoncée par le fournisseur de fichiers, et le UTF-8 est strict : une séquence invalide est une erreur.
  */
 object BoundedText {
-    /** 16 Mio : environ trois sessions par jour pendant trois ans tiennent dans 10 Mo. */
-    const val MAX_BYTES = 16 * 1024 * 1024
+    /** 8 Mio : environ trois sessions par jour pendant trois ans tiennent dans 10 Mo, mais le décodage coûte cher en mémoire. */
+    const val MAX_BYTES = 8 * 1024 * 1024
     private const val CHUNK = 8 * 1024
 
     /**
@@ -27,11 +32,13 @@ object BoundedText {
     fun read(
         stream: InputStream,
         maxBytes: Int = MAX_BYTES,
+        checkActive: () -> Unit = {},
     ): String {
-        val out = ByteArrayOutputStream()
+        val out = ExposedBuffer()
         val buffer = ByteArray(CHUNK)
         var total = 0
         while (true) {
+            checkActive()
             val n = stream.read(buffer)
             if (n < 0) break
             total += n
@@ -42,7 +49,7 @@ object BoundedText {
             .newDecoder()
             .onMalformedInput(CodingErrorAction.REPORT)
             .onUnmappableCharacter(CodingErrorAction.REPORT)
-            .decode(ByteBuffer.wrap(out.toByteArray()))
+            .decode(out.view())
             .toString()
     }
 }

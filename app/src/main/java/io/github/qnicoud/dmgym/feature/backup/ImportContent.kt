@@ -80,6 +80,10 @@ internal fun ImportBody(state: ImportUiState) {
             ProgressBody(R.string.import_importing, ImportTags.READING)
         }
 
+        ImportUiState.Undoing -> {
+            ProgressBody(R.string.import_undoing, ImportTags.READING)
+        }
+
         is ImportUiState.Preview -> {
             PreviewBody(state.plan)
         }
@@ -193,6 +197,12 @@ private fun PreviewBody(plan: ImportPlan) {
                     DmIcons.Check,
                     pluralStringResource(R.plurals.import_already, plan.alreadyPresent, plan.alreadyPresent),
                 )
+                if (plan.invalid > 0) {
+                    Text(
+                        pluralStringResource(R.plurals.import_invalid, plan.invalid, plan.invalid),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
                 if (plan.unknownExercise > 0) {
                     Text(
                         pluralStringResource(R.plurals.import_unknown, plan.unknownExercise, plan.unknownExercise),
@@ -320,7 +330,7 @@ internal fun ImportActionBar(
                 Primary(R.string.import_choose_other, ImportTags.CHOOSE_OTHER, actions.onChooseFile)
             }
 
-            ImportUiState.Reading, ImportUiState.Importing -> {
+            ImportUiState.Reading, ImportUiState.Importing, ImportUiState.Undoing -> {
                 Unit
             }
         }

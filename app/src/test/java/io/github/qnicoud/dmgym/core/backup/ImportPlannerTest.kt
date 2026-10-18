@@ -48,6 +48,14 @@ class ImportPlannerTest {
     }
 
     @Test
+    fun `invalid sessions are carried to the preview`() {
+        val plan = ImportPlanner.plan(listOf(a), unknownExercise = 1, existing = emptySet(), invalid = 2)
+
+        assertEquals(2, plan.invalid)
+        assertEquals(3, plan.ignored)
+    }
+
+    @Test
     fun `an empty file has no date range and nothing to add`() {
         val plan = ImportPlanner.plan(emptyList(), 0, emptySet())
 

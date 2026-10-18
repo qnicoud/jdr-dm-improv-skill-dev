@@ -27,6 +27,7 @@ class FakeSessionArchive : SessionArchive {
     /** Nombre d'appels à [importSessions] et à [deleteSessions]. */
     var importCalls = 0
     val deletedIds = mutableListOf<Long>()
+    var deleteSessionsCalls = 0
     private var nextId = 1_000L
 
     /** Appelé au début de [importSessions], pour simuler une session créée entre l'aperçu et la confirmation. */
@@ -53,6 +54,7 @@ class FakeSessionArchive : SessionArchive {
 
     override suspend fun deleteSessions(ids: List<Long>) {
         failure?.let { throw it }
+        deleteSessionsCalls++
         deletedIds += ids
         sessions = sessions.filterNot { it.session.id in ids }
     }

@@ -44,6 +44,7 @@ class ImportScreenTest {
             toInsert = listOf(fullSession(), fullSession(1_792_220_460_000)),
             alreadyPresent = 3,
             unknownExercise = 2,
+            invalid = 1,
             firstEpochDay = 20_743,
             lastEpochDay = 20_750,
         )
