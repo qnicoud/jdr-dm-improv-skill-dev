@@ -91,6 +91,12 @@ interface HistoryRepository {
     /** Sessions comptées : terminées, ou inachevées avec contenu (la session active est exclue). */
     fun observeSessionCount(): Flow<Int>
 
+    /**
+     * Parmi [exerciseIds], ceux qui ont au moins une session comptée (même règle que [observeSessionCount]).
+     * N'émet que lorsque l'ensemble change.
+     */
+    fun observeCountedExerciseIds(exerciseIds: Set<String>): Flow<Set<String>>
+
     suspend fun countSessionsByExercise(
         fromEpochDay: Long,
         toEpochDay: Long,

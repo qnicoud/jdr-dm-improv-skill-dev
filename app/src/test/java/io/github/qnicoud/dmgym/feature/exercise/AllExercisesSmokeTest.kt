@@ -56,7 +56,7 @@ class AllExercisesSmokeTest {
     }
 
     @Test
-    fun `the real registry holds every catalogue exercise`() {
+    fun `the real registry holds every exercise`() {
         assertEquals(
             ExerciseId.ALL.toSet(),
             ExerciseRegistry.Default.all
@@ -102,7 +102,9 @@ class AllExercisesSmokeTest {
     @Test
     fun `one page opens, starts and accepts typing`() = smoke(ExerciseId.ONE_PAGE)
 
-    // v1.1 : un test par exercice ajouté (V2b et V2c ajoutent le leur ici).
+    @Test
+    fun `three clues opens, starts and accepts typing`() = smoke(ExerciseId.THREE_CLUES)
+
     @Test
     fun `failing forward opens, starts and accepts typing`() = smoke(ExerciseId.FAILING_FORWARD)
 }

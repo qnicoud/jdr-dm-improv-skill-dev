@@ -33,6 +33,7 @@ enum class CategoryIcon(
     Relation("relation", ComplicationIcons.Relation, R.string.complication_relation),
     Position("position", ComplicationIcons.Position, R.string.complication_position),
     Danger("danger", ComplicationIcons.Danger, R.string.complication_danger),
+    Npc("npc", StoryIcons.Npc, R.string.category_npc),
     ;
 
     companion object {

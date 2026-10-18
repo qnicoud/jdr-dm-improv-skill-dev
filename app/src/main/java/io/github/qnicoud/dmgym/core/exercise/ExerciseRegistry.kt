@@ -8,6 +8,7 @@ import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
 import io.github.qnicoud.dmgym.core.exercise.definitions.FailingForward
 import io.github.qnicoud.dmgym.core.exercise.definitions.OnePage
 import io.github.qnicoud.dmgym.core.exercise.definitions.StatusNumbers
+import io.github.qnicoud.dmgym.core.exercise.definitions.ThreeClues
 
 /**
  * Catalogue des définitions d'exercice (ADR 0012). Les définitions des 7 exercices s'y ajoutent aux lots L8
@@ -48,6 +49,7 @@ class ExerciseRegistry(
                     FailingForward.definition,
                     // v1.1 : V2b
                     // v1.1 : V2c
+                    ThreeClues.definition,
                 ),
             )
     }

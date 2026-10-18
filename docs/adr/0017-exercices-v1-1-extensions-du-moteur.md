@@ -127,6 +127,10 @@ Le plan du jour est aujourd'hui recalculé à chaque affichage à partir de la d
   - `DailySessionPlanner` avec 10 exercices et plan figé ;
   - export lisible : libellé du choix tiré de la définition.
 
+## Complément : étiquette « Nouveau » (V2b)
+
+L'étiquette « Nouveau » de la carte d'accueil est portée par `ExerciseId.NEW_IN_LATEST_RELEASE`. Elle disparaît après la **première session comptée** de l'exercice, c'est-à-dire terminée, ou inachevée avec du contenu : la règle du compteur de sessions (ADR 0011, `IS_COUNTED`). Une session inachevée sans contenu, ou encore en cours, la laisse en place. Rien n'est stocké : `HistoryRepository.observeCountedExerciseIds(ids)` (requête `SELECT DISTINCT`, émission sur changement seulement) la déduit de l'historique.
+
 ## Décisions de l'utilisateur (2026-10-18)
 
 - D56 : types de complication tirés et imposés depuis une table de 6 à 8 types. D57 : offres de « Oui, et… » révélées une à une. D58 : repère par minute, passage manuel à l'offre suivante. D69 : la séance du jour déjà proposée le jour de la mise à jour reste figée jusqu'au lendemain.

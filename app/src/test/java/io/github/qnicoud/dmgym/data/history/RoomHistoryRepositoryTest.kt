@@ -363,6 +363,23 @@ class RoomHistoryRepositoryTest {
         }
 
     @Test
+    fun countedExerciseIdsFollowTheCountingRuleAndTheRequestedIds() =
+        runTest {
+            create(session("done", day = 10))
+            create(session("stale_content", day = 10, status = SessionStatus.IN_PROGRESS, startedAgoMillis = 30 * hour))
+            create(
+                session("stale_empty", day = 10, status = SessionStatus.IN_PROGRESS, startedAgoMillis = 30 * hour),
+                text = null,
+            )
+            create(session("fresh", day = 10, status = SessionStatus.IN_PROGRESS))
+            create(session("other", day = 10))
+
+            val ids = setOf("done", "stale_content", "stale_empty", "fresh", "absent")
+            assertEquals(setOf("done", "stale_content"), repo.observeCountedExerciseIds(ids).first())
+            assertEquals(emptySet<String>(), repo.observeCountedExerciseIds(emptySet()).first())
+        }
+
+    @Test
     fun purgeRemovesOnlyStaleEmptyInProgress() =
         runTest {
             val emptyStale = create(inProgress(30), text = null)

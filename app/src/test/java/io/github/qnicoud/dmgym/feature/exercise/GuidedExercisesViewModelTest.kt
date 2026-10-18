@@ -1,6 +1,7 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.SavedStateHandle
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.FieldLayout
@@ -99,6 +100,7 @@ class GuidedExercisesViewModelTest : ExerciseViewModelTestBase() {
             var firedAt: Long? = null
             var elapsed = 0L
             while (elapsed < total && firedAt == null) {
+                Snapshot.sendApplyNotifications()
                 pass(1_000)
                 elapsed += 1_000
                 if (StatusNumbers.SHIFT_SLOT in vm.session().draws.map { it.slotKey }) firedAt = elapsed
@@ -238,8 +240,9 @@ class GuidedExercisesViewModelTest : ExerciseViewModelTestBase() {
             assertEquals(3, types.distinct().size)
             FailingForward.FIELD_KEYS.forEachIndexed { i, key ->
                 vm.fieldState(AnswerKey(key)).setTextAndPlaceCursorAtEnd("complication ${types[i]}")
+                Snapshot.sendApplyNotifications()
+                pass(1_000)
             }
-            pass(1_000)
             vm.onFinish()
             runCurrent()
             val favourite = FailingForward.FIELD_KEYS[1]
@@ -250,7 +253,13 @@ class GuidedExercisesViewModelTest : ExerciseViewModelTestBase() {
             runCurrent()
             val saved = history.sessions.values.single()
             assertEquals(favourite, FirstPick.chosen(saved.rubric.associate { it.questionKey to it.value }))
-            assertEquals(3, saved.answers.count { it.text.isNotBlank() })
+            assertEquals(
+                3,
+                vm
+                    .session()
+                    .answers.values
+                    .count { it.text.isNotBlank() },
+            )
         }
 
     @Test

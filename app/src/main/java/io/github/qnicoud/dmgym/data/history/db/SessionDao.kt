@@ -198,6 +198,12 @@ abstract class SessionDao {
     @Query("SELECT COUNT(*) FROM sessions WHERE $IS_COUNTED")
     abstract fun observeSessionCount(staleBefore: Long): Flow<Int>
 
+    @Query("SELECT DISTINCT exerciseId FROM sessions WHERE exerciseId IN (:exerciseIds) AND $IS_COUNTED")
+    abstract fun observeCountedExerciseIds(
+        exerciseIds: List<String>,
+        staleBefore: Long,
+    ): Flow<List<String>>
+
     @Query(
         "SELECT exerciseId, COUNT(*) AS n FROM sessions WHERE $IS_COUNTED " +
             "AND localEpochDay BETWEEN :from AND :to GROUP BY exerciseId",
