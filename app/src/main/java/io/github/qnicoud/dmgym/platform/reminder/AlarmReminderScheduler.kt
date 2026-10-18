@@ -22,19 +22,22 @@ class AlarmReminderScheduler(
 ) : ReminderScheduler {
     override suspend fun sync(schedule: ReminderSchedule) {
         val alarms = context.getSystemService(AlarmManager::class.java)
-        val pending = alarmIntent()
-        alarms.cancel(pending)
+        // Annule sans créer de PendingIntent si aucune alarme n'existe.
+        alarmIntent(PendingIntent.FLAG_NO_CREATE)?.let { alarms.cancel(it) }
         val trigger = nextTrigger(ZonedDateTime.now(clock), schedule)
         setRescheduleReceiverEnabled(trigger != null)
-        if (trigger != null) alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, trigger.toEpochMilli(), pending)
+        if (trigger != null) {
+            val pending = checkNotNull(alarmIntent(PendingIntent.FLAG_UPDATE_CURRENT))
+            alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, trigger.toEpochMilli(), pending)
+        }
     }
 
-    private fun alarmIntent(): PendingIntent =
+    private fun alarmIntent(flag: Int): PendingIntent? =
         PendingIntent.getBroadcast(
             context,
             REQUEST_CODE,
             Intent(context, ReminderAlarmReceiver::class.java),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            PendingIntent.FLAG_IMMUTABLE or flag,
         )
 
     private fun setRescheduleReceiverEnabled(enabled: Boolean) {

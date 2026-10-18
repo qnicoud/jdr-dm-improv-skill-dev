@@ -19,9 +19,9 @@ class AppNavigatorReminderTest {
     }
 
     @Test
-    fun `from deeper in the app the stack is reset to home then daily`() {
+    fun `from settings the stack is reset to home then daily`() {
         navigator.openSettings()
-        navigator.openExercise(ExerciseId.CRAZY_EIGHTS)
+        navigator.openAbout()
 
         navigator.openDailyFromReminder()
 
@@ -35,5 +35,26 @@ class AppNavigatorReminderTest {
         navigator.openDailyFromReminder()
 
         assertEquals(listOf<NavKey>(Home, Daily), stack.toList())
+    }
+
+    @Test
+    fun `an exercise in progress is never lost`() {
+        navigator.openExercise(ExerciseId.CRAZY_EIGHTS)
+        val before = stack.toList()
+
+        navigator.openDailyFromReminder()
+
+        assertEquals(before, stack.toList())
+    }
+
+    @Test
+    fun `an exercise of the daily session is never lost either`() {
+        navigator.openDaily()
+        navigator.openExercise(ExerciseId.CRAZY_EIGHTS, fromDaily = true)
+        val before = stack.toList()
+
+        navigator.openDailyFromReminder()
+
+        assertEquals(before, stack.toList())
     }
 }

@@ -6,9 +6,12 @@ import android.content.Intent
 import android.util.Log
 import io.github.qnicoud.dmgym.app.AppContainer
 import io.github.qnicoud.dmgym.core.reminder.ReminderDelivery
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 /** Application qui expose l'[AppContainer] (injection manuelle, ADR 0005) ; permet de le remplacer dans les tests. */
 interface ContainerProvider {
@@ -16,6 +19,9 @@ interface ContainerProvider {
 }
 
 private const val TAG = "DmGymReminder"
+
+/** Le système laisse environ 10 s à un récepteur sous `goAsync`. */
+private const val GO_ASYNC_TIMEOUT_MILLIS = 8_000L
 
 private fun BroadcastReceiver.runDelivery(
     context: Context,
@@ -25,7 +31,10 @@ private fun BroadcastReceiver.runDelivery(
     val delivery = (context.applicationContext as ContainerProvider).container.reminderDelivery
     CoroutineScope(Dispatchers.IO).launch {
         try {
-            delivery.block()
+            withTimeout(GO_ASYNC_TIMEOUT_MILLIS) { delivery.block() }
+        } catch (error: CancellationException) {
+            if (error is TimeoutCancellationException) Log.w(TAG, "Reminder delivery timed out", error)
+            throw error
         } catch (
             @Suppress("TooGenericExceptionCaught") error: Exception,
         ) {
