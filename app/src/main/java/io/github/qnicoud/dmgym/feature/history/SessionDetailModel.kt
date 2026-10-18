@@ -5,6 +5,7 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.FieldLayout
 import io.github.qnicoud.dmgym.core.exercise.FirstPick
 import io.github.qnicoud.dmgym.core.exercise.StringResId
+import io.github.qnicoud.dmgym.core.exercise.reachedQuestions
 import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.DrawRecord
 import io.github.qnicoud.dmgym.core.history.SessionDetail
@@ -28,6 +29,9 @@ data class AnswerLine(
     val text: String,
     val flagged: Boolean,
     val flagLabel: StringResId?,
+    /** Libellé « Offre %1$d sur %2$d » du rang [group] quand l'exercice montre ses questions une à une. */
+    val groupLabel: StringResId? = null,
+    val groupCount: Int? = null,
 )
 
 data class RubricLine(
@@ -58,7 +62,7 @@ data class SessionDetailUi(
 )
 
 internal fun SessionDetail.toUi(definition: ExerciseDefinition?): SessionDetailUi {
-    val answers = answers.toLines(definition)
+    val answers = answers.toLines(definition, questionCount(definition))
     return SessionDetailUi(
         sessionId = session.id,
         exerciseId = ExerciseId(session.exerciseId),
@@ -67,7 +71,7 @@ internal fun SessionDetail.toUi(definition: ExerciseDefinition?): SessionDetailU
         activeSec = session.activeDurationSec,
         overtimeSec = session.overtimeSec,
         unfinished = session.status == SessionStatus.IN_PROGRESS,
-        draws = draws.map { it.toLine() },
+        draws = reachedDraws(definition).map { it.toLine() },
         answers = answers,
         rubric = rubricLines(definition),
         firstPick = firstPickText(),
@@ -78,23 +82,50 @@ internal fun SessionDetail.toUi(definition: ExerciseDefinition?): SessionDetailU
     )
 }
 
+private fun SessionDetail.questionCount(definition: ExerciseDefinition?): Int {
+    val layout = definition?.layout as? FieldLayout.Sequential ?: return 0
+    return draws.count { it.slotKey == layout.questionsSlot }
+}
+
+/** Tirages à montrer : les questions révélées une à une s'arrêtent à la plus haute atteinte (jamais une offre cachée). */
+private fun SessionDetail.reachedDraws(definition: ExerciseDefinition?): List<DrawRecord> {
+    val layout = definition?.layout as? FieldLayout.Sequential
+    if (layout == null || !layout.revealProgressively) return draws
+    val answered = answers.filter { it.text.isNotBlank() }.map { it.groupIndex }
+    val reached = reachedQuestions(answered, questionCount(definition))
+    return draws.filter { it.slotKey != layout.questionsSlot || it.position < reached }
+}
+
 private fun DrawRecord.toLine() = DrawLine(textSnapshot, manualChecked ?: autoDetected, category)
 
-private fun List<AnswerRecord>.toLines(definition: ExerciseDefinition?): List<AnswerLine> {
+private fun List<AnswerRecord>.toLines(
+    definition: ExerciseDefinition?,
+    questionCount: Int,
+): List<AnswerLine> {
     val keys = definition?.fieldKeys.orEmpty()
     val specs = definition?.fieldSpecs().orEmpty()
     val repeatable = definition?.layout is FieldLayout.RepeatableGroup
+    val itemLabel = (definition?.layout as? FieldLayout.Sequential)?.itemLabel
+    val fieldRank = { a: AnswerRecord -> keys.indexOf(a.fieldKey).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE }
+    val order =
+        if (itemLabel != null) {
+            compareBy<AnswerRecord>({ it.groupIndex }, fieldRank)
+        } else {
+            compareBy(fieldRank, { it.groupIndex })
+        }
     return filter { it.text.isNotBlank() }
-        .sortedWith(compareBy({ keys.indexOf(it.fieldKey).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE }, { it.groupIndex }))
+        .sortedWith(order)
         .mapIndexed { position, answer ->
             val spec = specs.firstOrNull { it.key == answer.fieldKey }
             AnswerLine(
                 fieldLabel = spec?.label,
                 fieldIndex = keys.indexOf(answer.fieldKey).takeIf { it >= 0 }?.plus(1) ?: (position + 1),
-                group = answer.groupIndex.takeIf { repeatable }?.plus(1),
+                group = answer.groupIndex.takeIf { repeatable || itemLabel != null }?.plus(1),
                 text = answer.text,
                 flagged = answer.flagged,
                 flagLabel = spec?.flagLabel,
+                groupLabel = itemLabel,
+                groupCount = questionCount.takeIf { itemLabel != null },
             )
         }
 }

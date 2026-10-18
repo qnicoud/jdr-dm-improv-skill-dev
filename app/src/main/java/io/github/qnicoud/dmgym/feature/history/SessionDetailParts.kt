@@ -121,13 +121,22 @@ private fun AnswerBlock(
         modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}.testTag(DetailTags.answer(index)),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        val heading = answer.group?.let { stringResource(R.string.detail_answer_group, it) + " · " + label } ?: label
+        val heading = answer.group?.let { groupHeading(answer, it) + " · " + label } ?: label
         Text(heading, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(answer.text, style = MaterialTheme.typography.bodyLarge)
         if (answer.flagged) {
             answer.flagLabel?.let { Text(stringResource(it), style = MaterialTheme.typography.labelLarge) }
         }
     }
+}
+
+@Composable
+private fun groupHeading(
+    answer: AnswerLine,
+    group: Int,
+): String {
+    val itemLabel = answer.groupLabel ?: return stringResource(R.string.detail_answer_group, group)
+    return stringResource(itemLabel, group, answer.groupCount ?: group)
 }
 
 /** Niveau (3 paliers, une touche pour choisir, une seconde pour retirer) et bijou, modifiables à tout moment. */

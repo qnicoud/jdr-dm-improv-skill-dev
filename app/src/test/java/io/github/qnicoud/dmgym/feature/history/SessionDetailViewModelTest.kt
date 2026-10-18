@@ -7,8 +7,10 @@ import io.github.qnicoud.dmgym.core.exercise.DemoEngine
 import io.github.qnicoud.dmgym.core.exercise.DemoExercise
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
+import io.github.qnicoud.dmgym.core.exercise.definitions.CoreImage
 import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
 import io.github.qnicoud.dmgym.core.exercise.definitions.RealTables
+import io.github.qnicoud.dmgym.core.exercise.definitions.YesAnd
 import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.DrawRecord
 import io.github.qnicoud.dmgym.core.history.RubricRecord
@@ -355,5 +357,49 @@ class SessionDetailViewModelTest {
             val vm = viewModel()
             vm.onDeleteConfirmed()
             assertTrue(repo.deleted.isEmpty())
+        }
+
+    private fun offers(count: Int) =
+        (0 until count).map { DrawRecord("offers", it, "player_offers", "o$it", "Offre texte $it") }
+
+    @Test
+    fun `offers never reached are not listed and answers are numbered per offer in order`() =
+        runTest {
+            val yesAnd = YesAnd.definition
+            store(
+                record = record(exercise = yesAnd.id),
+                draws = offers(5),
+                answers =
+                    listOf(
+                        AnswerRecord("yes_and", 0, "et voilà"),
+                        AnswerRecord("block", 1, "je refuse"),
+                        AnswerRecord("yes_and", 1, "et alors"),
+                        AnswerRecord("block", 0, "non"),
+                    ),
+            )
+            SessionDetailViewModel(7, repo, ExerciseRegistry(listOf(yesAnd)), RealTables.repository).uiState.test {
+                val detail = expectMostRecentItem().detail!!
+                assertEquals(listOf("Offre texte 0", "Offre texte 1"), detail.draws.map { it.text })
+                assertEquals(listOf("non", "et voilà", "je refuse", "et alors"), detail.answers.map { it.text })
+                assertEquals(listOf(1, 1, 2, 2), detail.answers.map { it.group })
+                assertEquals(R.string.yes_and_item_label, detail.answers.first().groupLabel)
+                assertEquals(5, detail.answers.first().groupCount)
+            }
+        }
+
+    @Test
+    fun `core image answers keep their plain numbering`() =
+        runTest {
+            val core = CoreImage.definition
+            store(
+                record = record(exercise = core.id),
+                draws = listOf(DrawRecord("image", 0, "core_images", "i", "Une image")) + offers(0),
+                answers = listOf(AnswerRecord("answer", 0, "a"), AnswerRecord("answer", 1, "b")),
+            )
+            SessionDetailViewModel(7, repo, ExerciseRegistry(listOf(core)), RealTables.repository).uiState.test {
+                val detail = expectMostRecentItem().detail!!
+                assertEquals(listOf(null, null), detail.answers.map { it.group })
+                assertEquals(listOf("a", "b"), detail.answers.map { it.text })
+            }
         }
 }
