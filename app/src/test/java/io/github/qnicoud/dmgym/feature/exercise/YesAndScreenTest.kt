@@ -1,11 +1,19 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
+import android.content.Context
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.SavedStateHandle
+import androidx.test.core.app.ApplicationProvider
+import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.app.FakeSettingsRepository
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.Phase
@@ -88,4 +96,55 @@ class YesAndScreenTest {
         assertEquals(YesAnd.OFFER_COUNT - 1, vm.uiState.value.session.currentQuestion)
         assertEquals(Phase.Active, vm.uiState.value.session.phase)
     }
+
+    private fun finishAndOpenGrid(vm: ExerciseViewModel) {
+        vm.onAnswerChanged(AnswerKey(YesAnd.YES_AND_FIELD, 0), "x")
+        vm.onFinish()
+        compose.waitForIdle()
+        compose.onNodeWithTag(ExerciseTags.RUBRIC_TOGGLE).performScrollTo().performClick()
+        compose.waitForIdle()
+    }
+
+    private fun questionCount(): Int =
+        listOf("adds_something", "builds_on_offer", "spotted_reflex").sumOf { key ->
+            compose.onAllNodesWithTag(ExerciseTags.rubric(key, true)).fetchSemanticsNodes().size
+        }
+
+    @Test
+    fun `the end grid shows two questions without blocking first`() {
+        val vm = launch()
+        vm.onFinish()
+        compose.waitForIdle()
+        compose
+            .onNodeWithTag(
+                ExerciseTags.RUBRIC_TOGGLE,
+            ).assert(hasText(context.getString(R.string.end_rubric_toggle, 2)))
+        finishAndOpenGrid(vm)
+        assertEquals(2, questionCount())
+        compose.onAllNodesWithTag(ExerciseTags.rubric("spotted_reflex", true)).assertCountEquals(0)
+    }
+
+    @Test
+    fun `the end grid shows three questions with blocking first, including the reflex one`() {
+        finishAndOpenGrid(launch(block = true))
+        assertEquals(3, questionCount())
+        compose.onNodeWithTag(ExerciseTags.rubric("spotted_reflex", true)).assertExists()
+        compose.onNodeWithText(context.getString(R.string.yes_and_rubric_reflex)).assertExists()
+    }
+
+    @Test
+    fun `the answer field is titled Oui, et with the add-something placeholder`() {
+        launch()
+        val field = compose.onNodeWithTag(ExerciseTags.field(AnswerKey(YesAnd.YES_AND_FIELD, 0)))
+        field.assert(hasText(context.getString(R.string.yes_and_title), substring = true))
+        compose.onNodeWithText(context.getString(R.string.yes_and_answer_hint)).assertExists()
+    }
+
+    @Test
+    fun `the rhythm marker shows during the exercise`() {
+        launch()
+        compose.onNodeWithTag(ExerciseTags.RHYTHM_MARKER).assertExists()
+    }
+
+    private val context get() = ApplicationProvider.getApplicationContext<Context>()
 }

@@ -75,7 +75,6 @@ object ExerciseTags {
     const val REROLL_COUNT = "exercise_reroll_count"
     const val FREE_SUBJECT = "exercise_free_subject"
     const val PROGRESS = "exercise_progress"
-    const val FIELD_PREFIX = "exercise_field_prefix"
     const val RHYTHM_MARKER = "exercise_rhythm_marker"
     const val NEXT_QUESTION = "exercise_next_question"
     const val ADD_GROUP = "exercise_add_group"

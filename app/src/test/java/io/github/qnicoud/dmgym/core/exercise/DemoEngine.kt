@@ -71,11 +71,11 @@ object DemoEngine {
                     fields =
                         listOf(
                             FieldSpec(BLOCK_FIELD, visibleWhen = OptionCondition(BLOCK_OPTION), softLimit = 80),
-                            FieldSpec(YES_FIELD, prefix = R.string.rubric_yes),
+                            FieldSpec(YES_FIELD, label = R.string.rubric_yes),
                         ),
                     itemLabel = R.string.exercise_progress,
                     revealProgressively = true,
                 ),
-            events = listOf(ScheduledEvent("beat", TimedEvent.Periodic(60_000, haptic = true))),
+            events = listOf(ScheduledEvent("beat", TimedEvent.Steps(OFFER_COUNT, haptic = true))),
         )
 }

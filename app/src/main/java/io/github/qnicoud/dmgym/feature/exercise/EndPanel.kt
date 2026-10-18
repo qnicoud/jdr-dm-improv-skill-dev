@@ -268,13 +268,14 @@ private fun RubricGrid(
     onChange: (Map<String, Boolean>) -> Unit,
 ) {
     var open by rememberSaveable { mutableStateOf(false) }
+    val questions = definition.rubricFor(session.options)
     OutlinedButton(onClick = {
         open = !open
     }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag(ExerciseTags.RUBRIC_TOGGLE)) {
-        Text(stringResource(R.string.end_rubric_title))
+        Text(stringResource(R.string.end_rubric_toggle, questions.size))
     }
     if (!open) return
-    definition.rubricFor(session.options).forEach { question ->
+    questions.forEach { question ->
         val answer = session.rubric[question.key]
         Text(stringResource(question.text), style = MaterialTheme.typography.bodyLarge)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -140,8 +140,6 @@ data class FieldSpec(
     val softLimit: Int? = null,
     /** Icône devant le libellé (3 indices : objet / PNJ / lieu). */
     val icon: IconKey? = null,
-    /** Préfixe visuel non modifiable devant la saisie (« Oui, et »), jamais enregistré avec la réponse. */
-    val prefix: StringResId? = null,
 )
 
 /** Disposition de la saisie (ADR 0012). */

@@ -46,7 +46,7 @@ class CrazyEightsTest {
     @Test
     fun `reminds every minute with a haptic tick`() {
         val event = definition.events.single()
-        assertEquals(TimedEvent.Periodic(60_000, haptic = true), event.timing)
+        assertEquals(TimedEvent.Steps(8, haptic = true), event.timing)
     }
 
     @Test

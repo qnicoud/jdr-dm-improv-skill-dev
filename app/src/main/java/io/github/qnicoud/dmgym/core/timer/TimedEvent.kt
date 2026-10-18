@@ -12,6 +12,19 @@ sealed interface TimedEvent {
         }
     }
 
+    /**
+     * Une impulsion à chaque frontière entre deux des [count] étapes de l'exercice (offres, idées, questions) : au
+     * temps `durée / count`, `2 × durée / count`… Pas d'impulsion au départ ni à la fin (signal de fin).
+     */
+    data class Steps(
+        val count: Int,
+        val haptic: Boolean,
+    ) : TimedEvent {
+        init {
+            require(count > 0) { "step count must be positive" }
+        }
+    }
+
     /** Événement unique, tiré entre `fromFraction` et `toFraction` de la durée (ex. bascule de Status). */
     data class Once(
         val fromFraction: Double,

@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.core.exercise.definitions
 
+import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.core.exercise.FieldLayout
@@ -41,10 +42,11 @@ class YesAndTest {
     }
 
     @Test
-    fun `reveals offers one by one with the yes-and prefix`() {
+    fun `reveals offers one by one, the yes-and is the field title`() {
         assertTrue(layout.revealProgressively)
         assertNotNull(layout.itemLabel)
-        assertNotNull(layout.fields.last().prefix)
+        assertEquals(R.string.yes_and_title, layout.fields.last().label)
+        assertEquals(R.string.yes_and_answer_hint, layout.fields.last().hint)
         assertEquals(listOf("block", "yes_and"), layout.fields.map { it.key })
     }
 
@@ -72,8 +74,8 @@ class YesAndTest {
     }
 
     @Test
-    fun `beats every minute and has no choice at the end`() {
-        assertEquals(TimedEvent.Periodic(60_000, haptic = true), definition.events.single().timing)
+    fun `beats between two offers and has no choice at the end`() {
+        assertEquals(TimedEvent.Steps(5, haptic = true), definition.events.single().timing)
         assertNull(definition.endChoiceLabel)
         assertFalse(definition.endChoice)
     }

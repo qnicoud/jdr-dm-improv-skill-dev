@@ -1,11 +1,14 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
 import android.os.Looper
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.SavedStateHandle
 import io.github.qnicoud.dmgym.app.FakeSettingsRepository
+import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.definitions.CrazyEights
 import io.github.qnicoud.dmgym.core.exercise.definitions.RealTables
 import io.github.qnicoud.dmgym.core.settings.Settings
@@ -21,6 +24,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 /** Le rappel périodique de Crazy Eights fait vibrer le vibreur (`EndSignal.tick`) quand le réglage est actif. */
 @RunWith(RobolectricTestRunner::class)
@@ -83,5 +87,22 @@ class ReminderHapticTest {
         launch(Settings(crazyEightsMinuteHaptic = false))
         passTime(60_500)
         assertEquals(emptyList<VibrationStrength>(), endSignal.ticks)
+    }
+
+    @Test
+    fun `the reminder follows the duration, 8 ideas in 4 minutes pulse every 30 seconds`() {
+        launch(Settings(crazyEightsMinuteHaptic = true, durations = mapOf(ExerciseId.CRAZY_EIGHTS to 4.minutes)))
+        passTime(30_500)
+        assertEquals(1, endSignal.ticks.size)
+        passTime(30_000)
+        assertEquals(2, endSignal.ticks.size)
+    }
+
+    @Test
+    fun `without a timer there is no pulse and no marker`() {
+        launch(Settings(crazyEightsMinuteHaptic = true, untimed = setOf(ExerciseId.CRAZY_EIGHTS)))
+        passTime(90_000)
+        assertEquals(emptyList<VibrationStrength>(), endSignal.ticks)
+        compose.onAllNodesWithTag(ExerciseTags.RHYTHM_MARKER).assertCountEquals(0)
     }
 }

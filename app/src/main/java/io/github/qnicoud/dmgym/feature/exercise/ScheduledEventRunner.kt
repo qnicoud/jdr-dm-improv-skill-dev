@@ -64,6 +64,7 @@ internal class ScheduledEventRunner(
         if (event.requiresOption?.let { options()[it] != true } == true) return
         when (val timing = event.timing) {
             is TimedEvent.Periodic -> if (!due.stale) out.trySend(ExerciseEvent.Reminder(event.id, timing.haptic))
+            is TimedEvent.Steps -> if (!due.stale) out.trySend(ExerciseEvent.Reminder(event.id, timing.haptic))
             is TimedEvent.Once -> if (event.id !in firedEvents()) fireOnce(event, due.stale)
         }
     }
