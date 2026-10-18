@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "table": "complication_types",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "cost",
+      "text": "Coût",
+      "difficulty": 1
+    },
+    {
+      "id": "time",
+      "text": "Temps",
+      "difficulty": 1
+    },
+    {
+      "id": "information",
+      "text": "Information",
+      "difficulty": 2
+    },
+    {
+      "id": "relation",
+      "text": "Relation",
+      "difficulty": 2
+    },
+    {
+      "id": "position",
+      "text": "Position",
+      "difficulty": 2
+    },
+    {
+      "id": "danger",
+      "text": "Danger",
+      "difficulty": 3
+    }
+  ]
+}

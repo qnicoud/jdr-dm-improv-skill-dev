@@ -81,6 +81,15 @@ internal fun SessionWithChildren.toDetail() =
         rubric = rubric.map { it.toRecord() }.sortedBy { it.questionKey },
     )
 
+/** Une session à insérer : `id` à 0 (le DAO attribue le vrai), enfants rattachés à 0 puis réécrits à l'insertion. */
+internal fun SessionDetail.toNewRows() =
+    SessionWithChildren(
+        session = session.toEntity().copy(id = 0),
+        draws = draws.map { it.toEntity(0) },
+        answers = answers.map { it.toEntity(0) },
+        rubric = rubric.map { it.toEntity(0) },
+    )
+
 private fun parseStatus(raw: String): SessionStatus =
     SessionStatus.entries.firstOrNull { it.name == raw }
         ?: error("Unknown session status '$raw' in the history database")

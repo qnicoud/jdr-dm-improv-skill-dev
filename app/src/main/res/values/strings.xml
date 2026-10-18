@@ -492,4 +492,94 @@
   <string name="reminder_day_letter_friday">V</string>
   <string name="reminder_day_letter_saturday">S</string>
   <string name="reminder_day_letter_sunday">D</string>
+
+  <!-- V4 : sauvegarde réimportable et import des sessions (S11 Données, S13) -->
+  <string name="settings_backup">Sauvegarder mes sessions</string>
+  <string name="settings_backup_hint">Pour changer de téléphone ou d’installation. Tes sessions, tirages, évaluations et bijoux. Les réglages ne sont pas inclus.</string>
+  <string name="settings_backup_done">Sauvegarde terminée.</string>
+  <string name="settings_backup_failed">La sauvegarde a échoué. Rien n’a été modifié.</string>
+  <plurals name="settings_backup_proof">
+    <item quantity="one">%1$s · %2$d session</item>
+    <item quantity="other">%1$s · %2$d sessions</item>
+  </plurals>
+  <string name="settings_import">Importer des sessions</string>
+  <string name="settings_import_hint">Retrouve tes sessions depuis une sauvegarde.</string>
+
+  <string name="import_title">Importer des sessions</string>
+  <string name="import_intro">Retrouve tes sessions depuis un fichier créé par « Sauvegarder mes sessions ». Elles sont ajoutées à celles que tu as déjà : rien n’est supprimé ni remplacé. Les réglages ne sont pas dans la sauvegarde.</string>
+  <string name="import_switch_title">Je change d’installation de DM Gym</string>
+  <string name="import_switch_warning">Sauvegarde avant de désinstaller : désinstaller efface les sessions.</string>
+  <string name="import_switch_step1">1. Installe la nouvelle version par-dessus l’ancienne.</string>
+  <string name="import_switch_step2">2. Réglages, Données, Sauvegarder mes sessions. Enregistre le fichier dans Documents ou Téléchargements, et vérifie le nom et le nombre de sessions.</string>
+  <string name="import_switch_step3">3. Installe l’autre version de DM Gym, en désinstallant l’ancienne si le téléphone l’exige.</string>
+  <string name="import_switch_step4">4. Dans la nouvelle app : Réglages, Données, Importer des sessions, puis choisis le fichier.</string>
+  <string name="import_choose_file">Choisir un fichier</string>
+  <string name="import_choose_other">Choisir un autre fichier</string>
+  <string name="import_undoing">Annulation en cours…</string>
+  <plurals name="import_invalid">
+    <item quantity="one">%d session aux valeurs hors limites sera ignorée</item>
+    <item quantity="other">%d sessions aux valeurs hors limites seront ignorées</item>
+  </plurals>
+  <string name="import_reading">Lecture du fichier…</string>
+  <string name="import_importing">Ajout en cours…</string>
+  <plurals name="import_found">
+    <item quantity="one">%d session trouvée</item>
+    <item quantity="other">%d sessions trouvées</item>
+  </plurals>
+  <string name="import_range">du %1$s au %2$s</string>
+  <string name="import_range_single">le %1$s</string>
+  <plurals name="import_will_add">
+    <item quantity="one">%d sera ajoutée</item>
+    <item quantity="other">%d seront ajoutées</item>
+  </plurals>
+  <plurals name="import_already">
+    <item quantity="one">%d est déjà présente</item>
+    <item quantity="other">%d sont déjà présentes</item>
+  </plurals>
+  <plurals name="import_unknown">
+    <item quantity="one">%d d’un exercice inconnu sera ignorée</item>
+    <item quantity="other">%d d’un exercice inconnu seront ignorées</item>
+  </plurals>
+  <plurals name="import_preview_spoken">
+    <item quantity="one">%1$d session trouvée, %2$d sera ajoutée, %3$d déjà présente.</item>
+    <item quantity="other">%1$d sessions trouvées, %2$d seront ajoutées, %3$d déjà présentes.</item>
+  </plurals>
+  <string name="import_preview_reassure">Rien n’est supprimé. Les sessions déjà présentes ne changent pas.</string>
+  <plurals name="import_confirm">
+    <item quantity="one">Ajouter %d session</item>
+    <item quantity="other">Ajouter %d sessions</item>
+  </plurals>
+  <string name="import_nothing_to_add">Toutes les sessions de ce fichier sont déjà dans ton carnet.</string>
+  <string name="import_empty_file">Ce fichier ne contient aucune session à ajouter.</string>
+  <string name="import_close">Fermer</string>
+  <plurals name="import_done_added">
+    <item quantity="one">%d session ajoutée.</item>
+    <item quantity="other">%d sessions ajoutées.</item>
+  </plurals>
+  <plurals name="import_done_already">
+    <item quantity="one">%d était déjà présente.</item>
+    <item quantity="other">%d étaient déjà présentes.</item>
+  </plurals>
+  <string name="import_done_uptodate">Ton historique et tes statistiques sont à jour.</string>
+  <string name="import_done_check">Import terminé</string>
+  <string name="import_see_history">Voir l’historique</string>
+  <string name="import_undo">Annuler cet import</string>
+  <string name="import_undo_failed">L’annulation a échoué. Tu peux supprimer les sessions une à une depuis l’historique.</string>
+  <string name="import_undone">Import annulé</string>
+  <string name="import_finished">Terminé</string>
+  <string name="import_error_not_backup_title">Ce fichier n’est pas une sauvegarde DM Gym</string>
+  <string name="import_error_not_backup_text">Choisis un fichier créé avec « Sauvegarder mes sessions ».</string>
+  <string name="import_error_readable_title">Ce fichier est un export à lire</string>
+  <string name="import_error_readable_text">Il ne peut pas être réimporté. Utilise « Sauvegarder mes sessions » pour créer un fichier réimportable.</string>
+  <string name="import_error_incomplete_title">Le fichier semble incomplet</string>
+  <string name="import_error_incomplete_text">Rien n’a été ajouté. Refais une sauvegarde depuis l’installation d’origine si tu peux.</string>
+  <string name="import_error_newer_title">Ce fichier vient d’une version plus récente de DM Gym</string>
+  <string name="import_error_newer_text">Mets l’app à jour pour l’importer. Rien n’a été ajouté.</string>
+  <string name="import_error_unreadable_title">Impossible de lire ce fichier</string>
+  <string name="import_error_unreadable_text">Copie-le sur le téléphone, puis choisis-le de nouveau. Rien n’a été ajouté.</string>
+  <string name="import_error_too_large_title">Ce fichier est trop gros pour une sauvegarde DM Gym</string>
+  <string name="import_error_too_large_text">Vérifie que c’est le bon fichier.</string>
+  <string name="import_error_write_title">L’import a échoué</string>
+  <string name="import_error_write_text">Rien n’a été ajouté. Tes sessions n’ont pas changé.</string>
+
 </resources>
