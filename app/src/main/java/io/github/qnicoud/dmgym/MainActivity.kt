@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,6 +31,7 @@ import io.github.qnicoud.dmgym.app.SplashVariant
 import io.github.qnicoud.dmgym.app.ThemeBootstrap
 import io.github.qnicoud.dmgym.core.settings.resolve
 import io.github.qnicoud.dmgym.platform.rememberSplashTheme
+import io.github.qnicoud.dmgym.platform.reminder.ReminderIntents
 import io.github.qnicoud.dmgym.platform.systemAnimationsDisabled
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
@@ -36,11 +39,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    /** Appuis sur la notification du rappel (démarrage et `onNewIntent`) ; la rotation ne les rejoue pas. */
+    private var openDailyRequest by mutableIntStateOf(0)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val startedAt = SystemClock.elapsedRealtime()
         val policy = SplashPolicy(isColdStart = ColdStartTracker.consume())
         val splash = installSplashScreen()
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) handleReminderIntent(intent)
         enableEdgeToEdge()
         val container = (application as DmGymApplication).container
         val bootstrap = ThemeBootstrap(container.settingsRepository, lifecycleScope)
@@ -53,7 +60,25 @@ class MainActivity : ComponentActivity() {
             val dark = appearance.mode.isDark(isSystemInDarkTheme())
             val reduceMotion = appearance.reduceAnimations.resolve(rememberSystemReducedMotion())
             SystemBarsFollowTheme(dark)
-            DmGymApp(container, palette = appearance.palette, darkTheme = dark, reduceMotion = reduceMotion)
+            DmGymApp(
+                container,
+                palette = appearance.palette,
+                darkTheme = dark,
+                reduceMotion = reduceMotion,
+                openDailyRequest = openDailyRequest,
+            )
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleReminderIntent(intent)
+    }
+
+    private fun handleReminderIntent(intent: Intent?) {
+        if (intent?.getStringExtra(ReminderIntents.EXTRA_DESTINATION) == ReminderIntents.DESTINATION_DAILY) {
+            intent.removeExtra(ReminderIntents.EXTRA_DESTINATION)
+            openDailyRequest++
         }
     }
 

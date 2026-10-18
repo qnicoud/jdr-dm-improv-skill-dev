@@ -42,6 +42,17 @@ class AppNavigator(
         backStack.add(Daily)
     }
 
+    /**
+     * Appui sur la notification du rappel : ouvre l'aperçu de la séance du jour (S03) ; « retour » mène à l'accueil.
+     * Un exercice en cours n'est jamais perdu : la pile reste alors telle quelle.
+     */
+    fun openDailyFromReminder() {
+        if (backStack.any { it is Exercise } || backStack.lastOrNull() == Daily) return
+        backStack.clear()
+        backStack.add(Home)
+        backStack.add(Daily)
+    }
+
     fun openSessionDetail(sessionId: Long) {
         backStack.add(SessionDetail(sessionId))
     }

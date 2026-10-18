@@ -30,6 +30,7 @@ fun SettingsRoute(
     onBack: () -> Unit,
     onOpenAbout: () -> Unit,
     onOpenImport: () -> Unit,
+    reminder: @Composable () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -71,5 +72,5 @@ fun SettingsRoute(
             onIncrease = viewModel::increase,
             onUntimed = viewModel::setUntimed,
         )
-    SettingsScreen(state, actions, modifier)
+    SettingsScreen(state, actions, reminder, modifier)
 }

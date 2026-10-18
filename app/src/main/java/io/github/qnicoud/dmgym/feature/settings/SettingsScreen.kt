@@ -107,6 +107,7 @@ data class SettingsActions(
 fun SettingsScreen(
     state: SettingsUiState,
     actions: SettingsActions,
+    reminder: @Composable () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -134,6 +135,7 @@ fun SettingsScreen(
                 EndSignalSection(state, actions)
                 DurationsSection(state, actions)
                 DailySection(state, actions)
+                reminder()
                 AppearanceSection(state, actions)
                 HelpSection()
                 DataSection(state.data, actions)
