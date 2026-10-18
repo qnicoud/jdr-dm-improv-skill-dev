@@ -16,7 +16,7 @@ private const val SECONDS_PER_MINUTE = 60
 
 /**
  * Texte lisible de l'export des sessions (S11, Données). Le contenu du fichier est un document, pas de l'interface :
- * il est en français et ne passe pas par `strings.xml`. [labels] : libellés lisibles, repli sur les clés brutes.
+ * il est en français ; ses mots fixes viennent de [ExportLabels] (`strings.xml`). [labels] : libellés lisibles, repli sur les clés brutes.
  * Les sessions en cours sans réponse écrite sont omises (rien à exporter).
  */
 class SessionExportFormatter(
@@ -55,14 +55,14 @@ class SessionExportFormatter(
             detail.answers.filter { it.text.isNotBlank() }.map { "${answerLabel(exercise, it)} : ${it.text}" },
         )
         appendSection(
-            "Grille",
+            labels.rubricTitle,
             detail.rubric
                 .filterNot { FirstPick.isKey(it.questionKey) }
-                .map { "${labels.question(exercise, it.questionKey)} : ${if (it.value) "oui" else "non"}" },
+                .map { "${labels.question(exercise, it.questionKey)} : ${if (it.value) labels.yes else labels.no}" },
         )
         val chosen = FirstPick.chosen(detail.rubric.associate { it.questionKey to it.value })
         detail.answers.firstOrNull { it.fieldKey == chosen && it.text.isNotBlank() }?.let {
-            appendLine("Jouée en premier : ${it.text}")
+            appendLine("${labels.playedFirst} : ${it.text}")
         }
     }
 

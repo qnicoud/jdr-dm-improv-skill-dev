@@ -170,6 +170,47 @@ class ExerciseReducerTest {
     }
 
     @Test
+    fun `retyping up to the count recorded at unchecking does not check the word again`() {
+        val unchecked = uncheckedAfter(2)
+        assertFalse(
+            unchecked
+                .seen(0)
+                .seen(2)
+                .draws[0]
+                .check!!
+                .checked,
+        )
+        assertTrue(
+            unchecked
+                .seen(0)
+                .seen(3)
+                .draws[0]
+                .check!!
+                .checked,
+        )
+    }
+
+    @Test
+    fun `a first pick on an emptied field is dropped when the assessment is stored`() {
+        val ended = reduce(reduce(active, ExerciseAction.AnswerChanged(keyA, "texte")), ExerciseAction.Finished)
+        val pick = FirstPick.key(keyA.fieldKey)
+        val kept = reduce(ended, ExerciseAction.Assessed(1, false, mapOf(pick to true, "q1" to true)))
+        assertEquals(mapOf(pick to true, "q1" to true), kept.rubric)
+        val emptied = ended.copy(answers = ended.answers + (keyA to Answer("")))
+        val dropped = reduce(emptied, ExerciseAction.Assessed(1, false, mapOf(pick to true, "q1" to true)))
+        assertEquals(mapOf("q1" to true), dropped.rubric)
+    }
+
+    @Test
+    fun `emptying the chosen answer or finishing removes the orphan first pick`() {
+        val pick = FirstPick.key(keyA.fieldKey)
+        val typed = reduce(active, ExerciseAction.AnswerChanged(keyA, "texte")).copy(rubric = mapOf(pick to true))
+        assertEquals(emptyMap<String, Boolean>(), reduce(typed, ExerciseAction.AnswerChanged(keyA, "")).rubric)
+        val orphan = typed.copy(answers = emptyMap())
+        assertEquals(emptyMap<String, Boolean>(), reduce(orphan, ExerciseAction.Finished).rubric)
+    }
+
+    @Test
     fun `an unchecked word restored without its count adopts the next count`() {
         val restored =
             reduce(

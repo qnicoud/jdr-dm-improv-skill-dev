@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.settings
 
+import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.core.exercise.FieldLayout
@@ -16,6 +17,10 @@ class ExportLabels(
     private val fields: Map<Pair<String, String>, String> = emptyMap(),
     private val questions: Map<Pair<String, String>, String> = emptyMap(),
     private val slots: Map<Pair<String, String>, String> = emptyMap(),
+    val playedFirst: String = "Jouée en premier",
+    val rubricTitle: String = "Grille",
+    val yes: String = "oui",
+    val no: String = "non",
 ) {
     fun exercise(id: String): String = exercises[id] ?: id
 
@@ -42,6 +47,10 @@ class ExportLabels(
         ): ExportLabels {
             val definitions = registry.all
             return ExportLabels(
+                playedFirst = resolve(R.string.export_played_first),
+                rubricTitle = resolve(R.string.export_rubric),
+                yes = resolve(R.string.export_yes),
+                no = resolve(R.string.export_no),
                 exercises = definitions.associate { it.id.value to resolve(it.name) },
                 fields =
                     definitions.keyed(resolve) {

@@ -110,6 +110,31 @@ class SessionExportFormatterTest {
         assertEquals(1, Regex("""=== """).findAll(text).count())
     }
 
+    @Test
+    fun `the fixed words of the export come from the labels`() {
+        val labels = ExportLabels(playedFirst = "PF", rubricTitle = "GR", yes = "Y", no = "N")
+        val text =
+            SessionExportFormatter(labels).format(
+                listOf(
+                    detail(
+                        session(1),
+                        answers = listOf(AnswerRecord("a", 0, "négocier")),
+                        rubric =
+                            listOf(
+                                RubricRecord("q", true),
+                                RubricRecord("r", false),
+                                RubricRecord("first_pick:a", true),
+                            ),
+                    ),
+                ),
+                exportedAt,
+            )
+        assertTrue(text.contains("GR :"))
+        assertTrue(text.contains("q : Y"))
+        assertTrue(text.contains("r : N"))
+        assertTrue(text.contains("PF : négocier"))
+    }
+
     private val registryLabels = ExportLabels.from(ExerciseRegistry.Default) { "str$it" }
 
     private fun formatWithRegistry(vararg details: SessionDetail) =
@@ -129,7 +154,7 @@ class SessionExportFormatterTest {
         assertTrue(text.contains("str${R.string.exercise_connect_story}"))
         assertTrue(text.contains("str${R.string.connect_story_place} : Une crypte"))
         assertTrue(text.contains("str${R.string.connect_story_field_label} : Il pleuvait."))
-        assertTrue(text.contains("str${R.string.connect_story_rubric_planned} : oui"))
+        assertTrue(text.contains("str${R.string.connect_story_rubric_planned} : str${R.string.export_yes}"))
         assertFalse(text.contains("connection_felt_planned"))
         assertFalse(text.contains("scene :"))
     }
@@ -152,7 +177,7 @@ class SessionExportFormatterTest {
         assertTrue(text.contains("str${R.string.one_page_name_label} : Brenna"))
         assertTrue(text.contains("str${R.string.one_page_name_label} (2) : Odo"))
         assertTrue(text.contains("str${R.string.one_page_inaction_label} : Le pont brûle."))
-        assertTrue(text.contains("str${R.string.one_page_rubric_fits} : non"))
+        assertTrue(text.contains("str${R.string.one_page_rubric_fits} : str${R.string.export_no}"))
     }
 
     @Test
@@ -165,7 +190,7 @@ class SessionExportFormatterTest {
                     rubric = listOf(RubricRecord("first_pick:answer_2", true)),
                 ),
             )
-        assertTrue(text.contains("Jouée en premier : négocier"))
+        assertTrue(text.contains("str${R.string.export_played_first} : négocier"))
         assertTrue(!text.contains("first_pick"))
     }
 

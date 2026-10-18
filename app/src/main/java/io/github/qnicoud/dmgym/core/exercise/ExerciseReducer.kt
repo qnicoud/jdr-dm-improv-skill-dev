@@ -58,12 +58,20 @@ fun reduce(
         }
 
         ExerciseAction.Finished -> {
-            if (state.phase == Phase.Active) state.copy(phase = Phase.Ended) else state
+            if (state.phase == Phase.Active) {
+                state.copy(phase = Phase.Ended, rubric = FirstPick.pruned(state.rubric, state.answers))
+            } else {
+                state
+            }
         }
 
         is ExerciseAction.Assessed -> {
             if (state.phase == Phase.Ended) {
-                state.copy(selfRating = action.rating, isGem = action.isGem, rubric = action.rubric)
+                state.copy(
+                    selfRating = action.rating,
+                    isGem = action.isGem,
+                    rubric = FirstPick.pruned(action.rubric, state.answers),
+                )
             } else {
                 state
             }
@@ -87,9 +95,18 @@ private fun changeAnswer(
 ): ExerciseSession {
     val current = state.answers[action.key]
     return when {
-        current == null && action.text.isEmpty() -> state
-        current?.text == action.text -> state
-        else -> state.copy(answers = state.answers + (action.key to (current ?: Answer()).copy(text = action.text)))
+        current == null && action.text.isEmpty() -> {
+            state
+        }
+
+        current?.text == action.text -> {
+            state
+        }
+
+        else -> {
+            val answers = state.answers + (action.key to (current ?: Answer()).copy(text = action.text))
+            state.copy(answers = answers, rubric = FirstPick.pruned(state.rubric, answers))
+        }
     }
 }
 

@@ -27,6 +27,20 @@ object FirstPick {
         val others = rubric.filterKeys { !isKey(it) }
         return if (fieldKey == null) others else others + (key(fieldKey) to true)
     }
+
+    /** [rubric] sans les choix qui pointent vers un champ vide ou absent de [answers] (clé orpheline). */
+    fun pruned(
+        rubric: Map<String, Boolean>,
+        answers: Map<AnswerKey, Answer>,
+    ): Map<String, Boolean> {
+        val filled =
+            answers
+                .filterValues { it.text.isNotBlank() }
+                .keys
+                .map { it.fieldKey }
+                .toSet()
+        return rubric.filterKeys { !isKey(it) || it.removePrefix(PREFIX) in filled }
+    }
 }
 
 /** Clés des champs proposés au choix du bilan ; vide si l'exercice n'a pas ce choix. */
