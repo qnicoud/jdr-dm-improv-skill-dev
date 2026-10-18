@@ -639,4 +639,20 @@
   <string name="three_clues_rubric_points">Chaque indice pointe-t-il vers la conclusion sans la dire ?</string>
   <string name="three_clues_rubric_reusable">Pourrais-je les glisser dans ma prochaine séance ?</string>
 
+  <!-- V2c : Oui, et… -->
+  <string name="exercise_yes_and">Oui, et…</string>
+  <string name="discipline_yes_and">théâtre d’impro</string>
+  <string name="yes_and_instructions">Un joueur fait une proposition. Réponds « Oui, et… » et ajoute quelque chose. Compte environ une minute par offre.</string>
+  <string name="yes_and_item_label">Offre %1$d sur %2$d</string>
+  <string name="yes_and_prefix">Oui, et</string>
+  <string name="yes_and_answer_label">Ma réponse</string>
+  <string name="yes_and_answer_hint">…ajoute quelque chose</string>
+  <string name="yes_and_block_label">Mon réflexe : je bloque…</string>
+  <string name="yes_and_block_hint">Comment tu bloquerais, en quelques mots</string>
+  <string name="yes_and_option_block">Bloquer d’abord</string>
+  <string name="yes_and_option_block_help">Pour chaque offre, écris d’abord comment tu la bloquerais (ton premier réflexe), puis ta réponse « Oui, et… ». Cela t’aide à repérer ta façon de bloquer.</string>
+  <string name="yes_and_rubric_adds">Mon « et » ajoute-t-il quelque chose de nouveau ?</string>
+  <string name="yes_and_rubric_builds">Ai-je construit sur l’offre sans la corriger ?</string>
+  <string name="yes_and_rubric_reflex">Ai-je repéré mon réflexe de blocage ?</string>
+
 </resources>

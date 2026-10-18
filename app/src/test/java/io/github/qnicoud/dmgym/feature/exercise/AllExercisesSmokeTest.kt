@@ -107,4 +107,7 @@ class AllExercisesSmokeTest {
 
     @Test
     fun `failing forward opens, starts and accepts typing`() = smoke(ExerciseId.FAILING_FORWARD)
+
+    @Test
+    fun `yes and opens, starts and accepts typing`() = smoke(ExerciseId.YES_AND)
 }

@@ -3,6 +3,8 @@ package io.github.qnicoud.dmgym.feature.exercise
 import androidx.lifecycle.SavedStateHandle
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseSession
+import io.github.qnicoud.dmgym.core.exercise.FieldLayout
+import io.github.qnicoud.dmgym.core.exercise.lastAnsweredQuestion
 import io.github.qnicoud.dmgym.core.exercise.timerSnapshotOf
 import io.github.qnicoud.dmgym.core.exercise.toExerciseSession
 import io.github.qnicoud.dmgym.core.history.SessionDetail
@@ -63,11 +65,22 @@ internal class SessionRestorer(
         val now = deps.monotonicClock.now()
         val timer = snapshot?.let { engine.restore(it, deps.wallClock.millis(), now) } ?: pausedTimerFor(detail.session)
         return ExerciseModel(
-            session.copy(currentQuestion = handle.get<Int>(HandleKeys.QUESTION) ?: 0),
+            session.copy(currentQuestion = handle.get<Int>(HandleKeys.QUESTION) ?: lastAnsweredQuestionOf(session)),
             timer,
             untimed = timer is TimerState.Untimed || timer is TimerState.UntimedPaused,
             loading = false,
             extraGroups = session.answers.keys.maxOfOrNull { it.groupIndex } ?: 0,
         )
+    }
+
+    /** Sans état gardé, une session à questions successives reprend à la dernière question répondue. */
+    private fun lastAnsweredQuestionOf(session: ExerciseSession): Int {
+        val layout = definition.layout as? FieldLayout.Sequential ?: return 0
+        val answered =
+            session.answers
+                .filter { it.value.text.isNotBlank() }
+                .keys
+                .map { it.groupIndex }
+        return lastAnsweredQuestion(answered, session.drawsOf(layout.questionsSlot).size)
     }
 }

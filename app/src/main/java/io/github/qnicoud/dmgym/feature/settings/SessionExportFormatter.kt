@@ -2,7 +2,9 @@ package io.github.qnicoud.dmgym.feature.settings
 
 import io.github.qnicoud.dmgym.core.backup.READABLE_EXPORT_HEADER
 import io.github.qnicoud.dmgym.core.exercise.FirstPick
+import io.github.qnicoud.dmgym.core.exercise.reachedQuestions
 import io.github.qnicoud.dmgym.core.history.AnswerRecord
+import io.github.qnicoud.dmgym.core.history.DrawRecord
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionStatus
 import java.time.DateTimeException
@@ -49,10 +51,17 @@ class SessionExportFormatter(
         session.selfRating?.let { appendLine("Auto-évaluation : $it") }
         if (session.isGem) appendLine("Bijou : oui")
         val exercise = session.exerciseId
-        appendSection("Tirages", detail.draws.map { "${labels.slot(exercise, it.slotKey)} : ${it.textSnapshot}" })
+        val answers = detail.answers.filter { it.text.isNotBlank() }
+        val total = detail.draws.count { it.slotKey == labels.questionSlot(exercise) }
+        appendSection(
+            "Tirages",
+            reachedDraws(detail, answers).map {
+                "${labels.slot(exercise, it.slotKey)} : ${it.textSnapshot}"
+            },
+        )
         appendSection(
             "Réponses",
-            detail.answers.filter { it.text.isNotBlank() }.map { "${answerLabel(exercise, it)} : ${it.text}" },
+            orderedAnswers(exercise, answers).map { "${answerLabel(exercise, it, total)} : ${it.text}" },
         )
         appendSection(
             labels.rubricTitle,
@@ -66,12 +75,35 @@ class SessionExportFormatter(
         }
     }
 
-    /** Le premier groupe (PNJ n°1) garde le libellé seul ; les suivants sont numérotés. */
+    /** Questions révélées une à une : seules celles atteintes (jusqu'à la plus haute répondue) sont listées. */
+    private fun reachedDraws(
+        detail: SessionDetail,
+        answers: List<AnswerRecord>,
+    ): List<DrawRecord> {
+        val slot = labels.questionSlot(detail.session.exerciseId) ?: return detail.draws
+        val reached = reachedQuestions(answers.map { it.groupIndex }, detail.draws.count { it.slotKey == slot })
+        return detail.draws.filter { it.slotKey != slot || it.position < reached }
+    }
+
+    /** Questions numérotées : par question d'abord, puis dans l'ordre des champs de la définition. */
+    private fun orderedAnswers(
+        exercise: String,
+        answers: List<AnswerRecord>,
+    ): List<AnswerRecord> =
+        if (labels.itemLabel(exercise, 1, 1) == null) {
+            answers
+        } else {
+            answers.sortedWith(compareBy({ it.groupIndex }, { labels.fieldRank(exercise, it.fieldKey) }))
+        }
+
+    /** Le premier groupe (PNJ n°1) garde le libellé seul ; les suivants sont numérotés (« Offre 2 sur 5 » si défini). */
     private fun answerLabel(
         exercise: String,
         answer: AnswerRecord,
+        total: Int,
     ): String {
         val label = labels.field(exercise, answer.fieldKey)
+        labels.itemLabel(exercise, answer.groupIndex + 1, total)?.let { return "$it · $label" }
         return if (answer.groupIndex > 0) "$label (${answer.groupIndex + 1})" else label
     }
 

@@ -70,3 +70,15 @@ val ExerciseDefinition.rhythmPeriodMs: Long?
             .filterIsInstance<TimedEvent.Periodic>()
             .firstOrNull()
             ?.intervalMs
+
+/** Nombre de questions atteintes : jusqu'à la plus haute question répondue (au moins la première), dans [total]. */
+fun reachedQuestions(
+    answeredGroups: Collection<Int>,
+    total: Int,
+): Int = ((answeredGroups.maxOrNull() ?: 0) + 1).coerceIn(1, total.coerceAtLeast(1))
+
+/** Indice de la dernière question répondue (0 s'il n'y en a aucune), où l'on reprend une session de l'historique. */
+fun lastAnsweredQuestion(
+    answeredGroups: Collection<Int>,
+    total: Int,
+): Int = reachedQuestions(answeredGroups, total) - 1

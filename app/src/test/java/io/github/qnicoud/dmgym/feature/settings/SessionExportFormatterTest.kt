@@ -220,4 +220,30 @@ class SessionExportFormatterTest {
         val text = formatWithRegistry(detail(session(1), answers = listOf(AnswerRecord("mystery_field", 0, "x"))))
         assertTrue(text.contains("mystery_field : x"))
     }
+
+    @Test
+    fun `an exercise shown one item at a time lists only reached items, numbered per item`() {
+        val labels =
+            ExportLabels(
+                exercises = mapOf("yes_and" to "Oui, et…"),
+                fields = mapOf(("yes_and" to "yes_and") to "Ma réponse", ("yes_and" to "block") to "Réflexe"),
+                itemLabels = mapOf("yes_and" to { n, total -> "Offre $n sur $total" }),
+                questionSlots = mapOf("yes_and" to "offers"),
+                fieldOrders = mapOf("yes_and" to listOf("block", "yes_and")),
+            )
+        val draws = (0 until 5).map { DrawRecord("offers", it, "player_offers", "o$it", "Je veux $it") }
+        val answers =
+            listOf(
+                AnswerRecord("yes_and", 0, "et zéro"),
+                AnswerRecord("yes_and", 1, "et un"),
+                AnswerRecord("block", 1, "non"),
+            )
+        val text =
+            SessionExportFormatter(labels)
+                .format(listOf(detail(session(1, "yes_and"), answers, draws)), exportedAt)
+        assertTrue(text.contains("Je veux 1"))
+        assertFalse(text.contains("Je veux 2"))
+        assertTrue(text.indexOf("Offre 2 sur 5 · Réflexe : non") < text.indexOf("Offre 2 sur 5 · Ma réponse : et un"))
+        assertTrue(text.contains("- Offre 1 sur 5 · Ma réponse : et zéro"))
+    }
 }

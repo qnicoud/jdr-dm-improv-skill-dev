@@ -19,12 +19,31 @@ class ExportLabels(
     private val slots: Map<Pair<String, String>, String> = emptyMap(),
     /** Libellé du choix du bilan par exercice (`endChoiceLabel`) ; sinon [playedFirst]. */
     private val endChoices: Map<String, String> = emptyMap(),
+    /** « Offre 2 sur 5 » par exercice dont les questions sont révélées une à une ; absent : numérotation « (n) ». */
+    private val itemLabels: Map<String, (Int, Int) -> String> = emptyMap(),
+    /** Slot des questions révélées une à une, par exercice : ses tirages s'arrêtent à la dernière question atteinte. */
+    private val questionSlots: Map<String, String> = emptyMap(),
+    /** Clés des champs dans l'ordre de la définition, par exercice. */
+    private val fieldOrders: Map<String, List<String>> = emptyMap(),
     val playedFirst: String = "Jouée en premier",
     val rubricTitle: String = "Grille",
     val yes: String = "oui",
     val no: String = "non",
 ) {
     fun exercise(id: String): String = exercises[id] ?: id
+
+    fun itemLabel(
+        exerciseId: String,
+        item: Int,
+        total: Int,
+    ): String? = itemLabels[exerciseId]?.invoke(item, total)
+
+    fun questionSlot(exerciseId: String): String? = questionSlots[exerciseId]
+
+    fun fieldRank(
+        exerciseId: String,
+        key: String,
+    ): Int = fieldOrders[exerciseId]?.indexOf(key)?.takeIf { it >= 0 } ?: Int.MAX_VALUE
 
     fun endChoice(exerciseId: String): String = endChoices[exerciseId] ?: playedFirst
 
@@ -47,10 +66,25 @@ class ExportLabels(
         /** Table clé vers libellé construite depuis les définitions ; [resolve] lit `strings.xml`. */
         fun from(
             registry: ExerciseRegistry,
+            /** Résout un libellé à deux nombres (« Offre %1$d sur %2$d ») ; `null` : le libellé brut. */
+            resolveItem: ((StringResId, Int, Int) -> String)? = null,
             resolve: (StringResId) -> String,
         ): ExportLabels {
             val definitions = registry.all
+            val sequential = definitions.mapNotNull { d -> (d.layout as? FieldLayout.Sequential)?.let { d to it } }
+            val itemized = sequential.filter { (_, l) -> l.itemLabel != null }
             return ExportLabels(
+                itemLabels =
+                    itemized.associate { (d, l) ->
+                        val res = requireNotNull(l.itemLabel)
+                        d.id.value to { item: Int, total: Int -> resolveItem?.invoke(res, item, total) ?: resolve(res) }
+                    },
+                questionSlots =
+                    sequential.filter { (_, l) -> l.revealProgressively }.associate { (d, l) ->
+                        d.id.value to
+                            l.questionsSlot
+                    },
+                fieldOrders = sequential.associate { (d, _) -> d.id.value to d.fieldKeys },
                 playedFirst = resolve(R.string.export_played_first),
                 rubricTitle = resolve(R.string.export_rubric),
                 yes = resolve(R.string.export_yes),

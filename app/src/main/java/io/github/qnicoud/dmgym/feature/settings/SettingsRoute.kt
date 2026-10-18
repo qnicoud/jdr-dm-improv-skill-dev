@@ -36,7 +36,14 @@ fun SettingsRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val resolver = LocalContext.current.contentResolver
     val resources = LocalResources.current
-    val labels = remember(resources) { ExportLabels.from(ExerciseRegistry.Default, resources::getString) }
+    val labels =
+        remember(resources) {
+            ExportLabels.from(
+                ExerciseRegistry.Default,
+                resolveItem = { id, a, b -> resources.getString(id, a, b) },
+                resolve = resources::getString,
+            )
+        }
     val picker =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) { uri ->
             if (uri != null) viewModel.export(labels) { resolver.writeText(uri, it) }

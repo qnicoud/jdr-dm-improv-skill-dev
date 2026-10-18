@@ -45,7 +45,7 @@ class HomeViewModelTest {
                 val state = expectMostRecentItem()
                 assertEquals(ExerciseId.ALL, state.exercises.map { it.id })
                 assertEquals(
-                    listOf(480, 300, 600, 180, 30, 600, null, 240, 300),
+                    listOf(480, 300, 600, 180, 30, 600, null, 240, 300, 300),
                     state.exercises.map { it.durationSeconds },
                 )
             }

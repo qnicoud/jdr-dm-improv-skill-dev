@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
@@ -144,7 +145,8 @@ internal fun SequentialField(
     QuestionHeading(layout, questions.getOrNull(index), index, questions.size)
     specs.forEachIndexed { i, spec ->
         val position = if (specs.size > 1) i + 1 to specs.size else null
-        Field(spec, keys[i], position, session, handlers, if (i == 0) firstFieldFocus else null)
+        val keyboard = if (i == specs.lastIndex) lastFieldKeyboard(index, questions.size, handlers) else null
+        Field(spec, keys[i], position, session, handlers, if (i == 0) firstFieldFocus else null, keyboard = keyboard)
     }
     QuestionNavigation(index, questions.size, handlers)
     if (index < questions.size - 1 && states.all { it.text.isBlank() }) {
@@ -160,6 +162,17 @@ internal fun SequentialField(
     ) { Text(stringResource(if (showAll) R.string.questions_hide_all else R.string.questions_show_all)) }
     if (showAll) NumberedQuestions(questions, Modifier.testTag(QuestionTags.LIST))
 }
+
+/**
+ * Dernier champ d'une question : Suivant passe à la question suivante ; sur la dernière, Terminé ferme le clavier sans
+ * finir l'exercice.
+ */
+private fun lastFieldKeyboard(
+    index: Int,
+    count: Int,
+    handlers: FieldHandlers,
+): FieldKeyboard =
+    if (index < count - 1) FieldKeyboard(ImeAction.Next, handlers.onNextQuestion) else FieldKeyboard(ImeAction.Done)
 
 /**
  * Titre de la question : « i/n — texte », ou [FieldLayout.Sequential.itemLabel] seul quand le texte est déjà épinglé

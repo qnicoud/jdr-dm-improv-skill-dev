@@ -21,6 +21,7 @@ value class ExerciseId(
         val DECISION_POINT = ExerciseId("decision_point")
         val CONNECT_STORY = ExerciseId("connect_story")
         val ONE_PAGE = ExerciseId("one_page")
+        val YES_AND = ExerciseId("yes_and")
         val THREE_CLUES = ExerciseId("three_clues")
 
         // v1.1 : un identifiant par exercice, une ligne chacun (V2b et V2c ajoutent la leur ici).
@@ -51,7 +52,7 @@ value class ExerciseId(
          * Exercices de la dernière version. La carte d'accueil porte « Nouveau » jusqu'à la première session comptée
          * de l'exercice : terminée, ou inachevée avec contenu (même règle que le compteur de sessions, ADR 0011).
          */
-        val NEW_IN_LATEST_RELEASE: Set<ExerciseId> = setOf(FAILING_FORWARD, THREE_CLUES)
+        val NEW_IN_LATEST_RELEASE: Set<ExerciseId> = setOf(FAILING_FORWARD, THREE_CLUES, YES_AND)
 
         val UNTIMED_BY_DEFAULT: Set<ExerciseId> = setOf(ONE_PAGE)
     }

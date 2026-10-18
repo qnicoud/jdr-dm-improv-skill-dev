@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Button
@@ -189,6 +190,8 @@ internal fun Field(
     focus: FocusRequester?,
     /** Tirage qui impose son type au champ (disposition liée) : libellé, icône et indication en dépendent. */
     bound: BoundField? = null,
+    /** Action du clavier propre au champ (dernier champ d'une offre) ; `null` : Suivant / Terminé selon [position]. */
+    keyboard: FieldKeyboard? = null,
 ) {
     val number = position?.first ?: 1
     val base = spec.label?.let { stringResource(it) } ?: stringResource(R.string.field_default_label, number)
@@ -214,13 +217,20 @@ internal fun Field(
                 maxHeightInLines = maxOf(MAX_LINES, spec.minLines),
             ),
         supportingText = spec.softLimit?.let { limit -> { SoftCounter(state.text.length, limit) } },
-        keyboardOptions = KeyboardOptions(imeAction = imeActionOf(position)),
+        keyboardOptions = KeyboardOptions(imeAction = keyboard?.action ?: imeActionOf(position)),
+        onKeyboardAction = keyboard?.onAction?.let { act -> KeyboardActionHandler { act() } },
         outputTransformation = LocalFieldHighlight.current(spec.key),
     )
     spec.flagLabel?.let { flag ->
         FlagRow(stringResource(flag), session.answers[key]?.flagged == true) { handlers.onFlagToggled(key) }
     }
 }
+
+/** Action du clavier d'un champ : [onAction] remplace le comportement par défaut (focus suivant ou fermeture). */
+internal data class FieldKeyboard(
+    val action: ImeAction,
+    val onAction: (() -> Unit)? = null,
+)
 
 /** Compteur souple : il informe, il ne bloque jamais la saisie. */
 @Composable
