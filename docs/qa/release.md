@@ -26,6 +26,26 @@ apksigner verify --print-certs dmgym-1.1.0.apk
 
 Garder la clé et son mot de passe hors du dépôt, avec une sauvegarde : une mise à jour doit être signée par la même clé.
 
+### Script automatisé : `tools/release.sh`
+
+Enchaîne construction, signature, vérification et publication sur GitHub :
+
+```bash
+export DMGYM_KEYSTORE=~/chemin/vers/ma-cle.jks
+export DMGYM_CERT_SHA256=<empreinte SHA-256 du certificat>   # recommandé : refuse une autre clé
+tools/release.sh --dry-run   # construit et signe dans dist/, sans rien publier
+tools/release.sh             # idem, puis pousse le tag et crée la release GitHub
+```
+
+- La version vient de `versionName` (`app/build.gradle.kts`) ; le tag est `v<version>`.
+- L'APK est toujours construit **depuis le tag**, dans un worktree temporaire. Si le tag n'existe pas encore, il est créé sur `HEAD` : `main` doit alors être propre et synchronisée avec `origin`.
+- Le mot de passe est demandé par `apksigner` : il ne passe jamais par le script ni par un fichier.
+- `DMGYM_KEY_ALIAS` est facultatif si la clé est seule dans le magasin.
+- Le script refuse de publier si la release GitHub existe déjà : il faut d'abord incrémenter `versionCode` et `versionName`.
+- Options : `--skip-checks` (sans `./gradlew check`), `--draft`, `--notes-file FICHIER` (par défaut : les commits depuis le tag précédent), `--yes` (sans confirmation). Une version contenant `-` (ex. `1.2.0-rc1`) est publiée en préversion.
+- Prérequis : `gh` authentifié (`gh auth login`), JDK 21 (`JAVA_HOME`, par défaut `/usr/lib/jvm/java-21-openjdk`), build-tools 36.0.0.
+- Le script n'installe rien sur un appareil.
+
 ## 3. Vérification locale sur appareil
 
 Propriété Gradle optionnelle, uniquement en local : signe avec la clé debug **et** ajoute `applicationIdSuffix ".release"`.
