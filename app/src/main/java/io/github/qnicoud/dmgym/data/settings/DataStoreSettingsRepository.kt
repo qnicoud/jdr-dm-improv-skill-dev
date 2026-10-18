@@ -14,7 +14,9 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
+import io.github.qnicoud.dmgym.core.daily.decodePlan
 import io.github.qnicoud.dmgym.core.daily.decodeReplacements
+import io.github.qnicoud.dmgym.core.daily.encodePlan
 import io.github.qnicoud.dmgym.core.daily.encodeReplacements
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.reminder.ReminderSettings
@@ -68,6 +70,7 @@ class DataStoreSettingsRepository(
             dailyIncludeOnePage = values.bool(DAILY_ONE_PAGE, default = false),
             dailyEpochDay = values[DAILY_EPOCH_DAY] as? Long,
             dailyReplacements = decodeReplacements(values[DAILY_REPLACEMENTS] as? String),
+            frozenPlan = decodePlan(values[DAILY_PLAN] as? String),
             crazyEightsMinuteHaptic = values.bool(CRAZY_MINUTE_HAPTIC, default = false),
             themePalette = ThemePalette.parse(values[THEME_PALETTE] as? String),
             vibrationStrength = VibrationStrength.parse(values[VIBRATION_STRENGTH] as? String),
@@ -155,6 +158,8 @@ class DataStoreSettingsRepository(
     ) {
         val epochDayKey = longPreferencesKey(DAILY_EPOCH_DAY)
         val replacementsKey = stringPreferencesKey(DAILY_REPLACEMENTS)
+        val planKey = stringPreferencesKey(DAILY_PLAN)
+        settings.frozenPlan?.let { prefs[planKey] = encodePlan(it) } ?: prefs.remove(planKey)
         val day = settings.dailyEpochDay
         if (day != null && settings.dailyReplacements.isNotEmpty()) {
             prefs[epochDayKey] = day
@@ -209,6 +214,7 @@ class DataStoreSettingsRepository(
         private const val DAILY_ONE_PAGE = "daily_include_one_page"
         private const val DAILY_EPOCH_DAY = "daily_epoch_day"
         private const val DAILY_REPLACEMENTS = "daily_replacements"
+        private const val DAILY_PLAN = "daily_plan"
         private const val CRAZY_MINUTE_HAPTIC = "crazy_eights_minute_haptic"
         private const val THEME_PALETTE = "theme_palette"
         private const val VIBRATION_STRENGTH = "vibration_strength"

@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import io.github.qnicoud.dmgym.core.daily.DailyPlan
 import io.github.qnicoud.dmgym.core.daily.replacementsFor
 import io.github.qnicoud.dmgym.core.daily.withReplacement
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
@@ -282,6 +283,24 @@ class DataStoreSettingsRepositoryTest {
             val prefs = store.data.first()
             assertEquals(7L, prefs[longPreferencesKey("daily_epoch_day")])
             assertEquals("0:status_numbers", prefs[stringPreferencesKey("daily_replacements")])
+        }
+
+    @Test
+    fun `the frozen daily plan is stored in the documented format and read back`() =
+        runBlocking {
+            val plan = DailyPlan(7, listOf(ExerciseId.STATUS_NUMBERS, ExerciseId.CORE_IMAGE, ExerciseId.ONE_PAGE))
+            repository().update { it.copy(frozenPlan = plan) }
+
+            assertEquals("7:status_numbers,core_image,one_page", store.data.first()[stringPreferencesKey("daily_plan")])
+            assertEquals(plan, repository().settings.first().frozenPlan)
+        }
+
+    @Test
+    fun `a corrupted daily plan reads as absent`() =
+        runBlocking {
+            store.edit { it[stringPreferencesKey("daily_plan")] = "garbage" }
+
+            assertEquals(null, repository().settings.first().frozenPlan)
         }
 
     @Test
