@@ -1,5 +1,7 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
+import android.content.Context
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
@@ -10,10 +12,13 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.SavedStateHandle
+import androidx.test.core.app.ApplicationProvider
+import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.app.FakeSettingsRepository
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.DemoEngine
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
+import io.github.qnicoud.dmgym.core.exercise.ExerciseOption
 import io.github.qnicoud.dmgym.core.exercise.definitions.RealTables
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.timer.FakeMonotonicClock
@@ -132,6 +137,27 @@ class EngineExtensionsScreenTest {
             vm.uiState.value.session
                 .textOf(AnswerKey(DemoEngine.YES_FIELD, 0)),
         )
+    }
+
+    @Test
+    fun `the prefix is read with the field by screen readers`() {
+        launch(DemoEngine.offers)
+        tap(ExerciseTags.START)
+        val prefix = ApplicationProvider.getApplicationContext<Context>().getString(R.string.rubric_yes)
+        compose
+            .onNodeWithTag(ExerciseTags.field(AnswerKey(DemoEngine.YES_FIELD, 0)))
+            .assert(hasText(prefix, substring = true))
+    }
+
+    @Test
+    fun `an option true by default shows its field without being stored`() {
+        val defaultTrue =
+            DemoEngine.offers.copy(
+                options = listOf(ExerciseOption(DemoEngine.BLOCK_OPTION, R.string.rubric_yes, default = true)),
+            )
+        launch(defaultTrue)
+        tap(ExerciseTags.START)
+        compose.onNodeWithTag(ExerciseTags.field(AnswerKey(DemoEngine.BLOCK_FIELD, 0))).assertIsDisplayed()
     }
 
     @Test

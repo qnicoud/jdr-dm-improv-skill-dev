@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -69,12 +70,15 @@ internal fun RhythmMarker(
     periodMs: Long,
     modifier: Modifier = Modifier,
 ) {
-    val elapsed = timer().elapsedMs
-    val fraction = minuteFraction(elapsed, periodMs)
-    val seconds = ((elapsed % periodMs) / MS_PER_SECOND).toInt()
-    val description = stringResource(R.string.rhythm_marker_description, seconds, (periodMs / MS_PER_SECOND).toInt())
+    // Le temps est lu dans les lambdas de dessin et de sémantique : un tic ne recompose pas ce composable.
+    val resources = LocalResources.current
+    val total = (periodMs / MS_PER_SECOND).toInt()
     LinearProgressIndicator(
-        progress = { fraction },
-        modifier = modifier.testTag(ExerciseTags.RHYTHM_MARKER).semantics { contentDescription = description },
+        progress = { minuteFraction(timer().elapsedMs, periodMs) },
+        modifier =
+            modifier.testTag(ExerciseTags.RHYTHM_MARKER).semantics {
+                val seconds = ((timer().elapsedMs % periodMs) / MS_PER_SECOND).toInt()
+                contentDescription = resources.getString(R.string.rhythm_marker_description, seconds, total)
+            },
     )
 }

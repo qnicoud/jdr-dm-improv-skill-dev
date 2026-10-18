@@ -1,10 +1,18 @@
 package io.github.qnicoud.dmgym.core.exercise
 
+import io.github.qnicoud.dmgym.core.tables.TableFile
 import io.github.qnicoud.dmgym.core.timer.TimedEvent
 
-/** Champs d'une question visibles pour les [options] de la session (un champ masqué n'est ni affiché ni compté). */
+/**
+ * Champs d'une question visibles pour les [options] de la session (un champ masqué n'est ni affiché ni compté).
+ * [options] doit être résolu avec les valeurs par défaut de la définition (`ExerciseDefinition.resolveOptions`).
+ */
 fun FieldLayout.Sequential.visibleFields(options: Map<String, Boolean>): List<FieldSpec> =
     fields.filter { it.visibleWhen?.holds(options) ?: true }
+
+/** Codes de [FieldLayout.Fixed.hintByCode] absents de [table] : une indication qui ne serait jamais affichée. */
+fun FieldLayout.Fixed.unknownHintCodes(table: TableFile): Set<String> =
+    hintByCode.keys - table.entries.map { it.id }.toSet()
 
 /** Ce que le tirage lié à un champ ([FieldLayout.Fixed.boundSlot]) impose à ce champ. */
 data class BoundField(

@@ -96,6 +96,15 @@ class EngineExtensionsTest {
     }
 
     @Test
+    fun `an option true by default and not stored makes its field visible`() {
+        val layout = FieldLayout.Sequential("offers", listOf(FieldSpec("block", visibleWhen = blockFirst)))
+        val d =
+            define(layout, listOf(offers), options = listOf(ExerciseOption("block_first", 9, default = true)))
+        assertEquals(listOf("block"), layout.visibleFields(d.resolveOptions(emptyMap())).map { it.key })
+        assertEquals(emptyList<FieldSpec>(), layout.visibleFields(d.resolveOptions(mapOf("block_first" to false))))
+    }
+
+    @Test
     fun `a conditional rubric question is asked only when its option holds`() {
         val d =
             define(
