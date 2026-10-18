@@ -437,4 +437,59 @@
   <string name="pinned_summary_collapse">Replier le tirage</string>
 
   <!-- Lot R1c : recette du cadre de l’app -->
+  <!-- V3 : rappels d’entraînement (ADR 0014) -->
+  <string name="reminder_channel_name">Rappels d’entraînement</string>
+  <string name="reminder_channel_description">Un rappel discret, aux jours que tu choisis.</string>
+  <string name="reminder_notification_title">DM Gym</string>
+  <string name="reminder_text_first">Un premier exercice ? Cinq minutes suffisent.</string>
+  <string-array name="reminder_texts_general">
+    <item>La séance du jour t’attend : trois exercices courts.</item>
+    <item>5 minutes pour échauffer ton imagination ?</item>
+    <item>Un petit exercice avant la partie ?</item>
+  </string-array>
+  <string name="settings_section_reminder">Rappels</string>
+  <string name="reminder_switch">Rappel d’entraînement</string>
+  <string name="reminder_summary_off">Désactivé</string>
+  <string name="reminder_summary_on">%1$s · vers %2$s</string>
+  <string name="reminder_scheduled_description">Rappel programmé</string>
+  <string name="reminder_help">Une notification discrète, aux jours choisis. Rien ne quitte ton téléphone.</string>
+  <string name="reminder_time_row">Heure</string>
+  <string name="reminder_time_dialog_title">Heure du rappel</string>
+  <string name="reminder_time_ok">Valider</string>
+  <string name="reminder_time_cancel">Annuler</string>
+  <string name="reminder_time_to_keyboard">Saisir au clavier</string>
+  <string name="reminder_time_to_dial">Utiliser le cadran</string>
+  <string name="reminder_days_group">Jours du rappel</string>
+  <string name="reminder_day_selected">Sélectionné</string>
+  <string name="reminder_day_unselected">Non sélectionné</string>
+  <string name="reminder_keep_one_day">Garde au moins un jour, ou coupe le rappel avec l’interrupteur.</string>
+  <string name="reminder_send_test">Envoyer un test</string>
+  <string name="reminder_open_channel">Réglages Android de cette notification</string>
+  <string name="reminder_denied">Les notifications sont refusées pour DM Gym. Tu peux les autoriser dans les réglages Android.</string>
+  <string name="reminder_blocked">Rappel en pause : les notifications sont désactivées dans Android.</string>
+  <string name="reminder_open_android_settings">Ouvrir les réglages Android</string>
+  <string name="reminder_paused">Rappel en pause : aucune session depuis 14 jours.</string>
+  <string name="reminder_resume">Reprendre</string>
+  <string name="reminder_announce_enabled">Rappel activé, %1$s, vers %2$s</string>
+  <string name="reminder_day_monday">Lundi</string>
+  <string name="reminder_day_tuesday">Mardi</string>
+  <string name="reminder_day_wednesday">Mercredi</string>
+  <string name="reminder_day_thursday">Jeudi</string>
+  <string name="reminder_day_friday">Vendredi</string>
+  <string name="reminder_day_saturday">Samedi</string>
+  <string name="reminder_day_sunday">Dimanche</string>
+  <string name="reminder_day_short_monday">Lun</string>
+  <string name="reminder_day_short_tuesday">Mar</string>
+  <string name="reminder_day_short_wednesday">Mer</string>
+  <string name="reminder_day_short_thursday">Jeu</string>
+  <string name="reminder_day_short_friday">Ven</string>
+  <string name="reminder_day_short_saturday">Sam</string>
+  <string name="reminder_day_short_sunday">Dim</string>
+  <string name="reminder_day_letter_monday">L</string>
+  <string name="reminder_day_letter_tuesday">M</string>
+  <string name="reminder_day_letter_wednesday">M</string>
+  <string name="reminder_day_letter_thursday">J</string>
+  <string name="reminder_day_letter_friday">V</string>
+  <string name="reminder_day_letter_saturday">S</string>
+  <string name="reminder_day_letter_sunday">D</string>
 </resources>

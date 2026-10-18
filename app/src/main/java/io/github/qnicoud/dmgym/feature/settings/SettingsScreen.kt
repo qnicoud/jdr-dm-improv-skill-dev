@@ -102,6 +102,7 @@ fun SettingsScreen(
     state: SettingsUiState,
     actions: SettingsActions,
     modifier: Modifier = Modifier,
+    reminder: @Composable () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier,
@@ -128,6 +129,7 @@ fun SettingsScreen(
                 EndSignalSection(state, actions)
                 DurationsSection(state, actions)
                 DailySection(state, actions)
+                reminder()
                 AppearanceSection(state, actions)
                 HelpSection()
                 DataSection(state.data, actions)

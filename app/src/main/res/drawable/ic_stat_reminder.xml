@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Petite icône de notification monochrome : le d20 (ADR 0014 §2). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M12,2L20.7,7V17L12,22L3.3,17V7Z
+M12,5.4L7.2,8.2H16.8Z
+M12,18.6L7.6,16H16.4Z" />
+</vector>

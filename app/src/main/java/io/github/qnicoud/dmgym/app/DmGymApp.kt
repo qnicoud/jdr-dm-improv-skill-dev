@@ -2,6 +2,7 @@ package io.github.qnicoud.dmgym.app
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -14,6 +15,7 @@ import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 /**
  * Racine de l'UI : thème + navigation. La pile est sauvegardée sur rotation et mort du processus.
  * [palette], [darkTheme] et [reduceMotion] viennent des réglages, lus en direct par [ThemeBootstrap] (D53).
+ * [openDailyRequest] : nombre d'appuis sur la notification du rappel, qui ouvre la séance du jour.
  */
 @Composable
 fun DmGymApp(
@@ -22,9 +24,12 @@ fun DmGymApp(
     palette: ThemePalette = ThemePalette.PARCHMENT,
     darkTheme: Boolean = isSystemInDarkTheme(),
     reduceMotion: Boolean = false,
+    openDailyRequest: Int = 0,
 ) {
     val backStack = rememberNavBackStack(Home)
     val navigator = remember(backStack) { AppNavigator(backStack) }
+    // Chaque appui sur la notification du rappel incrémente la demande (le compteur reste 0 sans elle).
+    LaunchedEffect(openDailyRequest) { if (openDailyRequest > 0) navigator.openDailyFromReminder() }
     DmGymTheme(darkTheme = darkTheme, palette = palette, reduceMotion = reduceMotion) {
         AppNavDisplay(navigator = navigator, container = container, modifier = modifier)
     }

@@ -9,6 +9,7 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.core.exercise.KeywordAnswerDetector
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.history.SessionArchive
+import io.github.qnicoud.dmgym.core.reminder.ReminderDelivery
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import io.github.qnicoud.dmgym.core.signal.EndSignal
 import io.github.qnicoud.dmgym.core.tables.TableRepository
@@ -22,11 +23,16 @@ import io.github.qnicoud.dmgym.data.tables.AssetTableSource
 import io.github.qnicoud.dmgym.feature.exercise.ExerciseDependencies
 import io.github.qnicoud.dmgym.feature.home.ExerciseCatalog
 import io.github.qnicoud.dmgym.feature.home.SettingsExerciseCatalog
+import io.github.qnicoud.dmgym.feature.settings.NotificationPermissionGate
 import io.github.qnicoud.dmgym.platform.AndroidEndSignal
 import io.github.qnicoud.dmgym.platform.SystemMonotonicClock
+import io.github.qnicoud.dmgym.platform.reminder.AlarmReminderScheduler
+import io.github.qnicoud.dmgym.platform.reminder.AndroidNotificationPermissionGate
+import io.github.qnicoud.dmgym.platform.reminder.AndroidReminderNotifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.time.Clock
 import java.time.Duration
 
@@ -52,6 +58,15 @@ interface AppContainer {
 
     /** Horloge civile du téléphone : le jour (`localEpochDay`) bascule à minuit local (D16). */
     val clock: Clock
+
+    /** Alarme, publication et test du rappel d'entraînement (ADR 0014). */
+    val reminderDelivery: ReminderDelivery
+
+    /** État des notifications d'Android, pour la section Rappels des Réglages. */
+    val notificationPermissionGate: NotificationPermissionGate
+
+    /** Appelé à chaque démarrage du processus : crée le canal et réarme le rappel. */
+    fun onAppStart() {}
 }
 
 /** Ne retient que l'[Application] (jamais une Activity). */
@@ -99,6 +114,27 @@ class DefaultAppContainer(
 
     override val tableRepository: TableRepository by lazy {
         TableRepository(AssetTableSource(application.assets, Dispatchers.IO))
+    }
+
+    private val reminderNotifier: AndroidReminderNotifier by lazy { AndroidReminderNotifier(application) }
+
+    override val reminderDelivery: ReminderDelivery by lazy {
+        ReminderDelivery(
+            settings = settingsRepository,
+            history = historyRepository,
+            notifier = reminderNotifier,
+            scheduler = AlarmReminderScheduler(application, clock),
+            clock = clock,
+        )
+    }
+
+    override val notificationPermissionGate: NotificationPermissionGate by lazy {
+        AndroidNotificationPermissionGate(application)
+    }
+
+    override fun onAppStart() {
+        reminderNotifier.ensureChannel()
+        appScope.launch { reminderDelivery.resync() }
     }
 
     override val exerciseDependencies: ExerciseDependencies by lazy {
