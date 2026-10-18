@@ -118,6 +118,9 @@ class BackupDecoderTest {
                 "duplicate answer" to mutated(""""groupIndex":1""", """"groupIndex":0"""),
                 "bidi control" to mutated("Texte avec", "Texte\\u202Eavec"),
                 "bidi isolate" to mutated("Texte avec", "Texte\\u2066avec"),
+                "left-to-right mark" to mutated("Texte avec", "Texte\\u200Eavec"),
+                "right-to-left mark" to mutated("Texte avec", "Texte\\u200Favec"),
+                "arabic letter mark" to mutated("Texte avec", "Texte\\u061Cavec"),
                 "too many options" to
                     mutated(
                         """"options":{"situation_mode":true,"event:minute":true}""",
