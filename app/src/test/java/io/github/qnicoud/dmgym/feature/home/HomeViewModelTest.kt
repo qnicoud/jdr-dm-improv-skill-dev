@@ -39,12 +39,12 @@ class HomeViewModelTest {
     fun tearDown() = Dispatchers.resetMain()
 
     @Test
-    fun `lists the seven exercises in order with default durations`() =
+    fun `lists the exercises in order with default durations`() =
         runTest {
             viewModel().uiState.test {
                 val state = expectMostRecentItem()
                 assertEquals(ExerciseId.ALL, state.exercises.map { it.id })
-                assertEquals(listOf(480, 300, 600, 180, 30, 600, null), state.exercises.map { it.durationSeconds })
+                assertEquals(listOf(480, 300, 600, 180, 30, 600, null, 300), state.exercises.map { it.durationSeconds })
             }
         }
 
@@ -143,6 +143,29 @@ class HomeViewModelTest {
                 assertEquals(720, awaitItem().exercises.first().durationSeconds)
                 settings.update { it.copy(untimed = setOf(ExerciseId.CRAZY_EIGHTS)) }
                 assertNull(awaitItem().exercises.first().durationSeconds)
+            }
+        }
+
+    @Test
+    fun `an exercise of the latest release is new until a counted session of it exists`() =
+        runTest {
+            val counted = MutableStateFlow<Set<String>>(emptySet())
+            val vm =
+                HomeViewModel(SettingsExerciseCatalog(settings), FakeHistoryRepository(countedExerciseIds = counted))
+            vm.uiState.test {
+                assertEquals(
+                    ExerciseId.NEW_IN_LATEST_RELEASE,
+                    expectMostRecentItem()
+                        .exercises
+                        .filter { it.isNew }
+                        .map { it.id }
+                        .toSet(),
+                )
+                // Unfinished without content: not counted, the set stays empty and the tag stays.
+                counted.value = setOf(ExerciseId.THREE_CLUES.value)
+                assertTrue(expectMostRecentItem().exercises.none { it.isNew })
+                counted.value = emptySet()
+                assertTrue(expectMostRecentItem().exercises.any { it.isNew })
             }
         }
 }

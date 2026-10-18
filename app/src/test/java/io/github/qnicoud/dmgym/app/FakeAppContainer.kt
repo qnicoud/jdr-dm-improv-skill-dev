@@ -60,6 +60,7 @@ class FakeHistoryRepository(
     val resumable: Flow<SessionDetail?> = MutableStateFlow(null),
     val previews: Flow<Map<Long, String>> = MutableStateFlow(emptyMap()),
     val details: MutableStateFlow<Map<Long, SessionDetail>> = MutableStateFlow(emptyMap()),
+    val countedExerciseIds: Flow<Set<String>> = MutableStateFlow(emptySet()),
     val historyBy: (String?, Boolean) -> Flow<List<SessionRecord>> = { _, _ -> history },
 ) : HistoryRepository {
     /** Filtres demandés à `observeHistory`, dans l'ordre. */
@@ -74,6 +75,9 @@ class FakeHistoryRepository(
     val countCalls = mutableListOf<Pair<Long, Long>>()
 
     override fun observeSessionCount(): Flow<Int> = sessionCount
+
+    override fun observeCountedExerciseIds(exerciseIds: Set<String>): Flow<Set<String>> =
+        countedExerciseIds.map { it intersect exerciseIds }
 
     override suspend fun createSession(session: SessionRecord): Long = unused()
 

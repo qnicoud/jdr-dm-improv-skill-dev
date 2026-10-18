@@ -45,8 +45,9 @@ fun ExerciseCard(
 ) {
     val name = stringResource(summary.id.nameRes)
     val discipline = stringResource(summary.id.disciplineRes)
-    val description =
-        stringResource(R.string.exercise_card_description, name, discipline, spokenDuration(summary.durationSeconds))
+    val descriptionRes =
+        if (summary.isNew) R.string.exercise_card_description_new else R.string.exercise_card_description
+    val description = stringResource(descriptionRes, name, discipline, spokenDuration(summary.durationSeconds))
     Surface(
         onClick = onClick,
         modifier =
@@ -63,7 +64,7 @@ fun ExerciseCard(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             ExercisePastille(summary.id)
-            CardBody(summary.id, name, discipline, summary.durationSeconds, Modifier.weight(1f))
+            CardBody(summary, name, discipline, Modifier.weight(1f))
             Icon(DmIcons.Chevron, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
@@ -82,10 +83,9 @@ private fun ExercisePastille(id: ExerciseId) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CardBody(
-    id: ExerciseId,
+    summary: ExerciseSummary,
     name: String,
     discipline: String,
-    durationSeconds: Int?,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -96,8 +96,9 @@ private fun CardBody(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.padding(top = 4.dp),
         ) {
-            if (id == ExerciseId.ONE_PAGE) PreparationTag()
-            DurationChip(durationSeconds)
+            if (summary.id == ExerciseId.ONE_PAGE) PreparationTag()
+            if (summary.isNew) NewTag()
+            DurationChip(summary.durationSeconds)
         }
     }
 }
@@ -110,6 +111,18 @@ private fun PreparationTag() {
             text = stringResource(R.string.exercise_tag_preparation),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+/** Étiquette « Nouveau » : un texte, jamais un point de couleur seul. */
+@Composable
+private fun NewTag() {
+    TagChip(MaterialTheme.colorScheme.tertiaryContainer, Modifier.testTag(HomeTags.NEW_TAG)) {
+        Text(
+            text = stringResource(R.string.exercise_tag_new),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
         )
     }
 }

@@ -122,6 +122,7 @@ C'est l'exercice le plus différent : 5 mini-tâches séquentielles de ~60 s. Il
 | Écran | Changement |
 |---|---|
 | S02 Accueil | La liste passe de 7 à 10 cartes. **Pas de regroupement** (aucune catégorie évidente, un titre de plus coûte de la hauteur) ; ordre : les 7 existants, puis les 3 nouveaux avec l'étiquette « Nouveau ». Le bandeau de séance du jour reste au-dessus, donc visible sans défiler. |
+| S02 Accueil, étiquette « Nouveau » | Elle disparaît après la première session **comptée** de l'exercice (terminée, ou inachevée avec du contenu), comme le compteur de sessions (ADR 0011). Une session inachevée sans contenu la laisse en place. |
 | S03 Séance du jour | Aucun changement de forme. Les nouveaux exercices entrent dans le tirage (pool de 10, One-Page toujours exclu). Un exercice jamais pratiqué compte 0 session, donc la règle « zone faible » (ADR 0011) le sélectionne naturellement : pas de règle de promotion à ajouter. DÉCISION V11-13 pour la séance déjà proposée le jour de la mise à jour. |
 | S08 Historique | La rangée de filtres passe de 9 à 12 puces (défilement horizontal déjà prévu). Filtre « Bijoux » reste en 2e position, avant les exercices, pour rester atteignable. |
 | S10 Progrès | La répartition par exercice passe à 10 lignes. Inchangé en logique : on ne pointe pas le moins pratiqué. Alternative textuelle déjà en liste. |

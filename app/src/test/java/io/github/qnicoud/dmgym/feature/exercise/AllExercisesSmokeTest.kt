@@ -56,7 +56,7 @@ class AllExercisesSmokeTest {
     }
 
     @Test
-    fun `the real registry holds the seven exercises`() {
+    fun `the real registry holds every exercise`() {
         assertEquals(
             ExerciseId.ALL.toSet(),
             ExerciseRegistry.Default.all
@@ -101,4 +101,7 @@ class AllExercisesSmokeTest {
 
     @Test
     fun `one page opens, starts and accepts typing`() = smoke(ExerciseId.ONE_PAGE)
+
+    @Test
+    fun `three clues opens, starts and accepts typing`() = smoke(ExerciseId.THREE_CLUES)
 }

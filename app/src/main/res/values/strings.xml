@@ -593,4 +593,20 @@
   <string name="import_error_write_title">L’import a échoué</string>
   <string name="import_error_write_text">Rien n’a été ajouté. Tes sessions n’ont pas changé.</string>
 
+  <!-- V2b : Règle des 3 indices, étiquette « Nouveau », icône PNJ -->
+  <string name="exercise_three_clues">Règle des 3 indices</string>
+  <string name="discipline_three_clues">enquête</string>
+  <string name="exercise_tag_new">Nouveau</string>
+  <string name="exercise_card_description_new">%1$s, %2$s, %3$s, nouveau</string>
+  <string name="category_npc">PNJ</string>
+  <string name="three_clues_instructions">Tes joueurs doivent découvrir cette conclusion. Écris 3 indices : un dans un objet, un chez un PNJ, un dans un lieu. Un seul suffit pour avancer.</string>
+  <string name="three_clues_object_label">Indice 1 · Objet</string>
+  <string name="three_clues_npc_label">Indice 2 · PNJ</string>
+  <string name="three_clues_place_label">Indice 3 · Lieu</string>
+  <string name="three_clues_object_hint">Qu’est-ce qu’on trouve ?</string>
+  <string name="three_clues_npc_hint">Que dit ou laisse échapper quelqu’un ?</string>
+  <string name="three_clues_place_hint">Que remarque-t-on sur place ?</string>
+  <string name="three_clues_rubric_points">Chaque indice pointe-t-il vers la conclusion sans la dire ?</string>
+  <string name="three_clues_rubric_reusable">Pourrais-je les glisser dans ma prochaine séance ?</string>
+
 </resources>

@@ -26,6 +26,7 @@ enum class CategoryIcon(
     Trait("trait", StoryIcons.Trait, R.string.connect_story_trait),
     Sensory("sensory", StoryIcons.Sensory, R.string.connect_story_sensory),
     Line("line", StoryIcons.Line, R.string.connect_story_line),
+    Npc("npc", StoryIcons.Npc, R.string.category_npc),
     ;
 
     companion object {

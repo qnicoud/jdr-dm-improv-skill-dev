@@ -69,7 +69,7 @@ class HomeScreenTest {
     }
 
     @Test
-    fun `shows the seven exercise cards`() {
+    fun `shows every exercise card`() {
         launch()
         ExerciseId.ALL.forEach { compose.onNodeWithTag(HomeTags.card(it)).assertIsDisplayed() }
     }
