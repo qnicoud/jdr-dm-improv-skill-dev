@@ -1,6 +1,5 @@
 package io.github.qnicoud.dmgym.feature.exercise
 
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.DemoExercise
 import io.github.qnicoud.dmgym.core.exercise.ExerciseAction
@@ -9,22 +8,37 @@ import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SessionLifecycleTest {
+    // `FieldStates` enregistre un `snapshotFlow` dans le snapshot global : des collecteurs d'autres tests peuvent
+    // encore y réagir et exigent un `Dispatchers.Main` de test, sinon l'enregistrement échoue au hasard.
+    @BeforeEach
+    fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
+
+    @AfterEach
+    fun tearDown() = Dispatchers.resetMain()
+
     private fun TestScope.rig(override: ((RecordingHistoryRepository) -> HistoryRepository)? = null) =
-        ControllerRig(backgroundScope, UnconfinedTestDispatcher(testScheduler), override)
+        ControllerRig(backgroundScope, StandardTestDispatcher(testScheduler), override)
 
     private fun ControllerRig.events() = generateSequence { channel.tryReceive().getOrNull() }.toList()
 
@@ -136,7 +150,8 @@ class SessionLifecycleTest {
             val rig = rig()
             rig.lifecycle.start()
             runCurrent()
-            rig.fields.get(DemoExercise.keyA).setTextAndPlaceCursorAtEnd("bonjour")
+            rig.typed[DemoExercise.keyA] = "bonjour"
+            rig.fields.get(DemoExercise.keyA)
             rig.lifecycle.flush()
             val saved = rig.history.snapshots.last()
             assertEquals("bonjour", saved.answers.single { it.fieldKey == DemoExercise.FIELD_A }.text)
@@ -174,8 +189,9 @@ class SessionLifecycleTest {
             val rig = rig()
             rig.lifecycle.start()
             runCurrent()
-            rig.fields.get(DemoExercise.keyA).setTextAndPlaceCursorAtEnd("brouillon")
+            rig.dispatch(ExerciseAction.AnswerChanged(DemoExercise.keyA, "brouillon"))
             rig.lifecycle.stop()
+            advanceUntilIdle()
             runCurrent()
             assertEquals(
                 "brouillon",

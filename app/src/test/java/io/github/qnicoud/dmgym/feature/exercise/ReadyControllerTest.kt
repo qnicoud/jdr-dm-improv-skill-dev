@@ -4,8 +4,8 @@ import io.github.qnicoud.dmgym.core.exercise.DemoExercise
 import io.github.qnicoud.dmgym.core.exercise.ExerciseAction
 import io.github.qnicoud.dmgym.core.timer.TimerState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ReadyControllerTest {
-    private fun TestScope.rig() = ControllerRig(backgroundScope, UnconfinedTestDispatcher(testScheduler))
+    private fun TestScope.rig() = ControllerRig(backgroundScope, StandardTestDispatcher(testScheduler))
 
     private fun ControllerRig.duration() = (model.value.timer as TimerState.Idle).durationMs
 

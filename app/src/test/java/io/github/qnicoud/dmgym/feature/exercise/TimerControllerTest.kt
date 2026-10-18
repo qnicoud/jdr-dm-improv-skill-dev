@@ -4,7 +4,7 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseAction
 import io.github.qnicoud.dmgym.core.exercise.Milestone
 import io.github.qnicoud.dmgym.core.timer.TimerState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class TimerControllerTest {
     private fun kotlinx.coroutines.test.TestScope.rig() =
-        ControllerRig(backgroundScope, UnconfinedTestDispatcher(testScheduler))
+        ControllerRig(backgroundScope, StandardTestDispatcher(testScheduler))
 
     private fun ControllerRig.started(plannedMs: Long? = 60_000) {
         timer.start(plannedMs, monotonic.now())

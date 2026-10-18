@@ -71,8 +71,13 @@ internal class ControllerRig(
             ),
             TimerAnnouncer(engine, deps, handle, scope, channel),
         )
+
+    /** Texte déjà présent dans un champ à sa création, sans passer par le snapshot global de Compose. */
+    val typed = mutableMapOf<io.github.qnicoud.dmgym.core.exercise.AnswerKey, String>()
     val fields =
-        FieldStates(scope, { model.value.session.textOf(it) }, { k, t -> dispatch(ExerciseAction.AnswerChanged(k, t)) })
+        FieldStates(scope, {
+            typed[it] ?: model.value.session.textOf(it)
+        }, { k, t -> dispatch(ExerciseAction.AnswerChanged(k, t)) })
     val ready =
         ReadyController(
             definition,
