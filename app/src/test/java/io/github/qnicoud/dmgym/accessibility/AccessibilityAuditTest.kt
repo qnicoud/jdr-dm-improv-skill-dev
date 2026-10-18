@@ -29,9 +29,12 @@ import io.github.qnicoud.dmgym.core.exercise.definitions.ConstraintBox
 import io.github.qnicoud.dmgym.core.exercise.definitions.CoreImage
 import io.github.qnicoud.dmgym.core.exercise.definitions.CrazyEights
 import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
+import io.github.qnicoud.dmgym.core.exercise.definitions.FailingForward
 import io.github.qnicoud.dmgym.core.exercise.definitions.OnePage
 import io.github.qnicoud.dmgym.core.exercise.definitions.RealTables
 import io.github.qnicoud.dmgym.core.exercise.definitions.StatusNumbers
+import io.github.qnicoud.dmgym.core.exercise.definitions.ThreeClues
+import io.github.qnicoud.dmgym.core.exercise.definitions.YesAnd
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.settings.ThemePalette
 import io.github.qnicoud.dmgym.core.streak.DayMark
@@ -92,46 +95,7 @@ import java.time.LocalDate
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = "w360dp-h10000dp")
-class AccessibilityAuditTest {
-    @get:Rule
-    val compose = createComposeRule()
-
-    private var fontScale by mutableFloatStateOf(1f)
-
-    private fun show(content: @Composable () -> Unit) {
-        compose.setContent {
-            val density = LocalDensity.current
-            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale)) {
-                DmGymTheme { content() }
-            }
-        }
-        compose.waitForIdle()
-    }
-
-    /** Audite l'écran affiché à 1x puis à 2x. */
-    private fun audit(
-        screen: String,
-        requireHeading: Boolean = true,
-    ) {
-        val audit = AccessibilityAudit(compose)
-        val problems = mutableListOf<String>()
-        listOf(1f, 2f).forEach { scale ->
-            fontScale = scale
-            compose.waitForIdle()
-            val at = "$screen @${scale}x"
-            problems += audit.smallTargets().map { "$at : $it" }
-            problems += audit.unlabelledClickables().map { "$at : $it" }
-            problems += audit.unlabelledTextFields().map { "$at : $it" }
-            problems += audit.statefulWithoutRole().map { "$at : $it" }
-            if (scale == 1f) audit.smallVisualTargets().forEach { println("VISUEL<48dp $at : $it") }
-            if (scale == 2f) problems += audit.clippedTexts().map { "$at : $it" }
-            if (requireHeading && audit.headingCount() == 0) problems += "$at : aucun titre (heading)"
-        }
-        fontScale = 1f
-        compose.waitForIdle()
-        assertTrue("Défauts d'accessibilité :\n" + problems.joinToString("\n"), problems.isEmpty())
-    }
-
+class AccessibilityAuditTest : AuditTestBase() {
     // --- Accueil -----------------------------------------------------------------------------------------------
 
     @Test
@@ -143,44 +107,6 @@ class AccessibilityAuditTest {
     }
 
     // --- Exercices : prêt, en cours, bilan ---------------------------------------------------------------------
-
-    private fun launchExercise(definition: ExerciseDefinition) {
-        val vm =
-            ExerciseViewModel(
-                definition = definition,
-                deps =
-                    ExerciseDependencies(
-                        RealTables.repository,
-                        RecordingHistoryRepository(),
-                        FakeSettingsRepository(Settings()),
-                        FakeEndSignal(),
-                        FakeMonotonicClock(1_000_000),
-                        MutableClock(),
-                        Dispatchers.Unconfined,
-                    ),
-                handle = SavedStateHandle(),
-                launch = ExerciseLaunch(seed = 11),
-            )
-        show { ExerciseRoute(vm, onBack = {}) }
-    }
-
-    private fun tap(tag: String) {
-        runCatching { compose.onNodeWithTag(tag).performScrollTo() }
-        compose.onNodeWithTag(tag).performClick()
-        compose.waitForIdle()
-    }
-
-    private fun exerciseJourney(
-        name: String,
-        definition: ExerciseDefinition,
-    ) {
-        launchExercise(definition)
-        audit("$name prêt")
-        tap(ExerciseTags.START)
-        audit("$name en cours")
-        tap(ExerciseTags.FINISH)
-        audit("$name bilan")
-    }
 
     @Test
     fun `crazy eights ready, running and end pass the audit`() = exerciseJourney("Crazy Eights", CrazyEights.definition)
@@ -206,6 +132,20 @@ class AccessibilityAuditTest {
 
     @Test
     fun `one page ready, running and end pass the audit`() = exerciseJourney("One-Page", OnePage.definition)
+
+    @Test
+    fun `failing forward ready, running and end pass the audit`() =
+        exerciseJourney("Failing Forward", FailingForward.definition)
+
+    @Test
+    fun `three clues ready, running and end pass the audit`() = exerciseJourney("Three Clues", ThreeClues.definition)
+
+    @Test
+    fun `yes and ready, running and end pass the audit`() = exerciseJourney("Yes And", YesAnd.definition)
+
+    @Test
+    fun `yes and in block mode ready, running and end pass the audit`() =
+        exerciseJourney("Yes And bloquer", YesAnd.definition, mapOf(YesAnd.BLOCK_FIRST to true))
 
     // --- Historique, détail, progrès ---------------------------------------------------------------------------
 
