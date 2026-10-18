@@ -4,9 +4,11 @@ import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.DrawRecord
 import io.github.qnicoud.dmgym.core.history.ExerciseCountRecord
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
+import io.github.qnicoud.dmgym.core.history.ImportResult
 import io.github.qnicoud.dmgym.core.history.RubricRecord
 import io.github.qnicoud.dmgym.core.history.SessionArchive
 import io.github.qnicoud.dmgym.core.history.SessionDetail
+import io.github.qnicoud.dmgym.core.history.SessionIdentity
 import io.github.qnicoud.dmgym.core.history.SessionNotFoundException
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.data.history.db.SessionDao
@@ -86,6 +88,16 @@ class RoomHistoryRepository(
         dao.deleteAll()
         checkpoint()
     }
+
+    override suspend fun identities(): Set<SessionIdentity> =
+        dao.identities().mapTo(HashSet()) { SessionIdentity(it.exerciseId, it.startedAtEpochMillis) }
+
+    override suspend fun importSessions(sessions: List<SessionDetail>): ImportResult {
+        val rows = dao.importAll(sessions.map { it.toNewRows() })
+        return ImportResult(rows.insertedIds, rows.skipped)
+    }
+
+    override suspend fun deleteSessions(ids: List<Long>) = dao.deleteSessions(ids)
 
     override suspend fun upsertDraws(
         sessionId: Long,

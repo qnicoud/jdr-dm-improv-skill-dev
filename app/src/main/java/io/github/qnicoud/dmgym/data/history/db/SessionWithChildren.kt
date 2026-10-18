@@ -15,6 +15,17 @@ data class ExerciseCount(
     val n: Int,
 )
 
+/** Identité naturelle d'une session en base (ADR 0015). */
+data class IdentityRow(
+    val exerciseId: String,
+    val startedAtEpochMillis: Long,
+)
+
+data class ImportRows(
+    val insertedIds: List<Long>,
+    val skipped: Int,
+)
+
 /** Ligne de la requête des aperçus. */
 data class PreviewRow(
     val sessionId: Long,

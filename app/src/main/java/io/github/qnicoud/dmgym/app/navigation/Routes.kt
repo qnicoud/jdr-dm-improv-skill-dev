@@ -43,6 +43,10 @@ data object Stats : Route
 @Serializable
 data object Settings : Route
 
+/** Import des sessions (S13), plein écran, sans barre d'onglets. */
+@Serializable
+data object ImportSessions : Route
+
 @Serializable
 data object About : Route
 
