@@ -17,12 +17,16 @@ class ExportLabels(
     private val fields: Map<Pair<String, String>, String> = emptyMap(),
     private val questions: Map<Pair<String, String>, String> = emptyMap(),
     private val slots: Map<Pair<String, String>, String> = emptyMap(),
+    /** Libellé du choix du bilan par exercice (`endChoiceLabel`) ; sinon [playedFirst]. */
+    private val endChoices: Map<String, String> = emptyMap(),
     val playedFirst: String = "Jouée en premier",
     val rubricTitle: String = "Grille",
     val yes: String = "oui",
     val no: String = "non",
 ) {
     fun exercise(id: String): String = exercises[id] ?: id
+
+    fun endChoice(exerciseId: String): String = endChoices[exerciseId] ?: playedFirst
 
     fun field(
         exerciseId: String,
@@ -52,6 +56,10 @@ class ExportLabels(
                 yes = resolve(R.string.export_yes),
                 no = resolve(R.string.export_no),
                 exercises = definitions.associate { it.id.value to resolve(it.name) },
+                endChoices =
+                    definitions
+                        .mapNotNull { d -> d.endChoiceLabel?.let { d.id.value to resolve(it) } }
+                        .toMap(),
                 fields =
                     definitions.keyed(resolve) {
                         it.allFields().mapNotNull { f ->
@@ -76,7 +84,7 @@ class ExportLabels(
             when (val l = layout) {
                 is FieldLayout.Fixed -> l.fields
                 is FieldLayout.Single -> listOf(l.field)
-                is FieldLayout.Sequential -> listOf(l.field)
+                is FieldLayout.Sequential -> l.fields
                 is FieldLayout.RepeatableGroup -> l.before + l.fields + l.after
                 is FieldLayout.None -> emptyList()
             } + listOfNotNull(endNote)

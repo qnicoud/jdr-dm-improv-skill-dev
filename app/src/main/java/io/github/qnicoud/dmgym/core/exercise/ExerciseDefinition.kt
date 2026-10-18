@@ -11,6 +11,9 @@ import kotlin.time.Duration
  */
 typealias StringResId = Int
 
+/** Code texte d'une icône de champ (`"object"`, `"place"`...) ; l'interface le traduit, `core` ne connaît pas Compose. */
+typealias IconKey = String
+
 /** Politique de minuteur d'un exercice (ADR 0006, 0012). */
 sealed interface TimerPolicy {
     data class Required(
@@ -135,23 +138,44 @@ data class FieldSpec(
     val visibleWhen: OptionCondition? = null,
     /** Plafond conseillé de caractères : compteur souple, jamais bloquant. */
     val softLimit: Int? = null,
+    /** Icône devant le libellé (3 indices : objet / PNJ / lieu). */
+    val icon: IconKey? = null,
+    /** Préfixe visuel non modifiable devant la saisie (« Oui, et »), jamais enregistré avec la réponse. */
+    val prefix: StringResId? = null,
 )
 
 /** Disposition de la saisie (ADR 0012). */
 sealed interface FieldLayout {
+    /**
+     * Champs en nombre fixe. Avec [boundSlot], le champ i est lié au tirage i de ce slot de table : son libellé, son
+     * icône et son indication suivent le code (l'`id`) de l'entrée tirée ([hintByCode] donne l'indication).
+     */
     data class Fixed(
         val fields: List<FieldSpec>,
+        val boundSlot: String? = null,
+        val hintByCode: Map<String, StringResId> = emptyMap(),
     ) : FieldLayout
 
     data class Single(
         val field: FieldSpec,
     ) : FieldLayout
 
-    /** Une question à la fois ; les questions sont les tirages de [questionsSlot]. */
+    /**
+     * Une question à la fois ; les questions sont les tirages de [questionsSlot]. Chaque question porte les [fields]
+     * visibles pour les options de la session (réponses adressées par `AnswerKey(clé, indice de la question)`).
+     * [itemLabel] remplace « Question i sur n ». Avec [revealProgressively], l'écran Prêt ne montre pas les tirages et
+     * seule la question courante est épinglée (aucune liste complète avant le bilan).
+     */
     data class Sequential(
         val questionsSlot: String,
-        val field: FieldSpec,
-    ) : FieldLayout
+        val fields: List<FieldSpec>,
+        val itemLabel: StringResId? = null,
+        val revealProgressively: Boolean = false,
+    ) : FieldLayout {
+        init {
+            require(fields.isNotEmpty()) { "a sequential layout needs at least one field" }
+        }
+    }
 
     /**
      * Pas de saisie pendant le jeu (Status Numbers) : un grand bouton [finishLabel] termine la scène ; les notes
@@ -204,6 +228,8 @@ data class ExerciseOption(
 data class RubricQuestion(
     val key: String,
     val text: StringResId,
+    /** La question n'est posée que si l'option est remplie. */
+    val visibleWhen: OptionCondition? = null,
 )
 
 /**
@@ -257,11 +283,48 @@ data class ExerciseDefinition(
     val endFlagHint: StringResId? = null,
     /** Vrai si le bilan propose de choisir l'une des réponses du formulaire (Decision Point, [FirstPick]). */
     val endChoice: Boolean = false,
+    /** Libellé du choix du bilan dans le détail et l'export (« Jouée en premier », « Ma préférée »). */
+    val endChoiceLabel: StringResId? = null,
 ) {
     init {
-        require(rubric.size in RUBRIC_SIZE) { "rubric must have 2 or 3 questions" }
         require(slots.map { it.key }.distinct().size == slots.size) { "slot keys must be unique" }
+        require(optionCombinations().all { rubricFor(it).size in RUBRIC_SIZE }) {
+            "rubric must have 2 or 3 visible questions for every combination of options"
+        }
+        checkLayout()
     }
+
+    private fun checkLayout() {
+        when (layout) {
+            is FieldLayout.Fixed -> {
+                val bound = layout.boundSlot ?: return
+                val slot = slots.firstOrNull { it.key == bound } as? TableSlot
+                require(slot != null) { "bound slot '$bound' must be a table slot of the definition" }
+                require(slot.count == layout.fields.size) { "bound slot needs as many fields as draws" }
+            }
+
+            is FieldLayout.Sequential -> {
+                require(slots.any { it.key == layout.questionsSlot }) { "unknown questions slot" }
+            }
+
+            else -> {
+                Unit
+            }
+        }
+    }
+
+    /** Questions de la grille posées pour les options de la session (les valeurs par défaut complètent). */
+    fun rubricFor(stored: Map<String, Boolean>): List<RubricQuestion> {
+        val resolved = resolveOptions(stored)
+        return rubric.filter { it.visibleWhen?.holds(resolved) ?: true }
+    }
+
+    /** Toutes les valeurs possibles des options qui conditionnent une question de la grille. */
+    private fun optionCombinations(): List<Map<String, Boolean>> =
+        rubric
+            .mapNotNull { it.visibleWhen?.option }
+            .distinct()
+            .fold(listOf(emptyMap())) { acc, key -> acc.flatMap { listOf(it + (key to false), it + (key to true)) } }
 
     /** Valeur des options de la session, complétée par les valeurs par défaut de celles qui manquent. */
     fun resolveOptions(stored: Map<String, Boolean>): Map<String, Boolean> =
@@ -277,7 +340,7 @@ data class ExerciseDefinition(
             when (layout) {
                 is FieldLayout.Fixed -> layout.fields.map { it.key }
                 is FieldLayout.Single -> listOf(layout.field.key)
-                is FieldLayout.Sequential -> listOf(layout.field.key)
+                is FieldLayout.Sequential -> layout.fields.map { it.key }
                 is FieldLayout.RepeatableGroup -> (layout.before + layout.fields + layout.after).map { it.key }
                 is FieldLayout.None -> emptyList()
             }

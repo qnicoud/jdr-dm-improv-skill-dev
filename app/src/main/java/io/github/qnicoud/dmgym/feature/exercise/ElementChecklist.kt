@@ -89,7 +89,7 @@ private fun PlainDraw(
     DrawCard(
         draws = shown,
         rerollCount = state.session.rerollCount,
-        showReroll = state.session.phase != Phase.Ended,
+        showReroll = state.session.phase != Phase.Ended && !state.definition.revealsOneByOne,
         showChecks = false,
         onReroll = { actions.onReroll(null) },
         onCheckToggled = actions.onCheckToggled,

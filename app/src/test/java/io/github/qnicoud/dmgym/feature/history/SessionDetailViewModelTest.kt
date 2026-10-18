@@ -1,7 +1,9 @@
 package io.github.qnicoud.dmgym.feature.history
 
 import app.cash.turbine.test
+import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.app.FakeHistoryRepository
+import io.github.qnicoud.dmgym.core.exercise.DemoEngine
 import io.github.qnicoud.dmgym.core.exercise.DemoExercise
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
@@ -114,6 +116,32 @@ class SessionDetailViewModelTest {
                 val detail = expectMostRecentItem().detail!!
                 assertEquals("négocier", detail.firstPick)
                 assertEquals(1, detail.rubric.size)
+            }
+        }
+
+    @Test
+    fun `the title of the chosen answer comes from the end choice label of the definition`() =
+        runTest {
+            val labelled = DemoEngine.bound.copy(endChoiceLabel = R.string.export_rubric)
+            store(
+                record = record(exercise = labelled.id),
+                answers = listOf(AnswerRecord("complication_1", 0, "un orage")),
+                rubric = listOf(RubricRecord("first_pick:complication_1", true)),
+            )
+            SessionDetailViewModel(7, repo, ExerciseRegistry(listOf(labelled)), RealTables.repository).uiState.test {
+                val detail = expectMostRecentItem().detail!!
+                assertEquals(R.string.export_rubric, detail.firstPickTitle)
+                assertEquals("un orage", detail.firstPick)
+            }
+        }
+
+    @Test
+    fun `a definition without end choice label keeps the generic title`() =
+        runTest {
+            val decision = DecisionPoint.definition
+            store(record = record(exercise = decision.id))
+            SessionDetailViewModel(7, repo, ExerciseRegistry(listOf(decision)), RealTables.repository).uiState.test {
+                assertEquals(null, expectMostRecentItem().detail!!.firstPickTitle)
             }
         }
 

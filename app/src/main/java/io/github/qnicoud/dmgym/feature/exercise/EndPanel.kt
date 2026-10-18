@@ -253,7 +253,7 @@ private fun RubricGrid(
         Text(stringResource(R.string.end_rubric_title))
     }
     if (!open) return
-    definition.rubric.forEach { question ->
+    definition.rubricFor(session.options).forEach { question ->
         val answer = session.rubric[question.key]
         Text(stringResource(question.text), style = MaterialTheme.typography.bodyLarge)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

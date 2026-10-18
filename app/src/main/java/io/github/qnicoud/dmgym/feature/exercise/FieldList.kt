@@ -33,11 +33,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
+import io.github.qnicoud.dmgym.core.exercise.BoundField
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseSession
 import io.github.qnicoud.dmgym.core.exercise.FieldLayout
 import io.github.qnicoud.dmgym.core.exercise.FieldSpec
 import io.github.qnicoud.dmgym.core.exercise.Progress
+import io.github.qnicoud.dmgym.core.exercise.boundFields
 
 /** Ce dont la liste de champs a besoin du ViewModel, sans en dépendre. */
 class FieldHandlers(
@@ -129,6 +131,7 @@ private fun FixedFields(
     handlers: FieldHandlers,
     firstFieldFocus: FocusRequester,
 ) {
+    val bound = layout.boundFields(session.draws)
     layout.fields.forEachIndexed { index, spec ->
         Field(
             spec = spec,
@@ -137,6 +140,7 @@ private fun FixedFields(
             session = session,
             handlers = handlers,
             focus = if (index == 0) firstFieldFocus else null,
+            bound = bound[index],
         )
     }
 }
@@ -183,9 +187,13 @@ internal fun Field(
     session: ExerciseSession,
     handlers: FieldHandlers,
     focus: FocusRequester?,
+    /** Tirage qui impose son type au champ (disposition liée) : libellé, icône et indication en dépendent. */
+    bound: BoundField? = null,
 ) {
-    val label =
-        spec.label?.let { stringResource(it) } ?: stringResource(R.string.field_default_label, (position?.first ?: 1))
+    val number = position?.first ?: 1
+    val base = spec.label?.let { stringResource(it) } ?: stringResource(R.string.field_default_label, number)
+    val label = if (bound == null) base else stringResource(R.string.field_bound_label, base, number, bound.name)
+    val icon = fieldIcon(spec.icon ?: bound?.code)
     val state = handlers.fieldState(key)
     val focusModifier = focus?.let { Modifier.focusRequester(it) } ?: Modifier
     OutlinedTextField(
@@ -197,8 +205,9 @@ internal fun Field(
                 .then(focusModifier)
                 .testTag(ExerciseTags.field(key)),
         textStyle = MaterialTheme.typography.bodyLarge,
-        label = { Text(label) },
-        placeholder = { Text(stringResource(spec.hint ?: R.string.field_default_hint)) },
+        label = { FieldLabel(label, icon) },
+        leadingIcon = spec.prefix?.let { prefix -> { FieldPrefix(prefix) } },
+        placeholder = { Text(stringResource(bound?.hint ?: spec.hint ?: R.string.field_default_hint)) },
         lineLimits =
             TextFieldLineLimits.MultiLine(
                 minHeightInLines = spec.minLines,

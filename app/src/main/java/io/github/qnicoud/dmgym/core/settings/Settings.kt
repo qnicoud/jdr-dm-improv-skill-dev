@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.core.settings
 
+import io.github.qnicoud.dmgym.core.daily.DailyPlan
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.reminder.ReminderSettings
 import kotlin.time.Duration
@@ -26,4 +27,6 @@ data class Settings(
     val reduceAnimations: Boolean? = null,
     /** Rappel d'entraînement (ADR 0014), désactivé par défaut. */
     val reminder: ReminderSettings = ReminderSettings(),
+    /** Séance du jour figée à son premier calcul du jour (ADR 0017 §4, D69) ; `null` : pas encore calculée. */
+    val frozenPlan: DailyPlan? = null,
 )

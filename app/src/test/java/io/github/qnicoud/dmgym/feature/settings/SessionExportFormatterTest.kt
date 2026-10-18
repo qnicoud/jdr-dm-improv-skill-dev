@@ -1,6 +1,8 @@
 package io.github.qnicoud.dmgym.feature.settings
 
 import io.github.qnicoud.dmgym.R
+import io.github.qnicoud.dmgym.core.exercise.DemoEngine
+import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.DrawRecord
@@ -192,6 +194,25 @@ class SessionExportFormatterTest {
             )
         assertTrue(text.contains("str${R.string.export_played_first} : négocier"))
         assertTrue(!text.contains("first_pick"))
+    }
+
+    @Test
+    fun `the label of the chosen answer comes from the definition`() {
+        val definition = DemoEngine.bound.copy(id = ExerciseId("demo_pick"), endChoiceLabel = R.string.export_rubric)
+        val labels = ExportLabels.from(ExerciseRegistry(listOf(definition))) { "str$it" }
+        val text =
+            SessionExportFormatter(labels).format(
+                listOf(
+                    detail(
+                        session(1, exercise = "demo_pick"),
+                        answers = listOf(AnswerRecord("complication_2", 0, "un orage")),
+                        rubric = listOf(RubricRecord("first_pick:complication_2", true)),
+                    ),
+                ),
+                exportedAt,
+            )
+        assertTrue(text.contains("str${R.string.export_rubric} : un orage"))
+        assertFalse(text.contains("str${R.string.export_played_first}"))
     }
 
     @Test

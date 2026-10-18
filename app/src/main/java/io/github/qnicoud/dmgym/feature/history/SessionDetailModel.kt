@@ -53,6 +53,8 @@ data class SessionDetailUi(
     val shareText: String?,
     /** Texte de la réponse choisie dans le bilan « jouée en premier » (Decision Point), ou `null`. */
     val firstPick: String? = null,
+    /** Titre de ce choix (`endChoiceLabel` de la définition), `null` : le titre générique. */
+    val firstPickTitle: StringResId? = null,
 )
 
 internal fun SessionDetail.toUi(definition: ExerciseDefinition?): SessionDetailUi {
@@ -69,6 +71,7 @@ internal fun SessionDetail.toUi(definition: ExerciseDefinition?): SessionDetailU
         answers = answers,
         rubric = rubricLines(definition),
         firstPick = firstPickText(),
+        firstPickTitle = definition?.endChoiceLabel,
         selfRating = session.selfRating,
         isGem = session.isGem,
         shareText = answers.joinToString("\n\n") { it.text }.takeIf { it.isNotBlank() },
@@ -112,7 +115,7 @@ private fun ExerciseDefinition.fieldSpecs() =
     when (val l = layout) {
         is FieldLayout.Fixed -> l.fields
         is FieldLayout.Single -> listOf(l.field)
-        is FieldLayout.Sequential -> listOf(l.field)
+        is FieldLayout.Sequential -> l.fields
         is FieldLayout.RepeatableGroup -> l.before + l.fields + l.after
         is FieldLayout.None -> emptyList()
     } + listOfNotNull(endNote)

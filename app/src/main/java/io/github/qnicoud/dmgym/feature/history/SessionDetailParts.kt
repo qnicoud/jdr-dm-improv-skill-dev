@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.history
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -229,11 +230,14 @@ fun RubricSection(rubric: List<RubricLine>) {
 
 /** Réponse choisie dans le bilan « Laquelle aurais-tu jouée en premier ? », en lecture seule. */
 @Composable
-fun FirstPickSection(text: String?) {
+fun FirstPickSection(
+    text: String?,
+    @StringRes title: Int = R.string.detail_first_pick_title,
+) {
     if (text == null) return
     Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.testTag(DetailTags.FIRST_PICK)) {
         Text(
-            stringResource(R.string.detail_first_pick_title),
+            stringResource(title),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.semantics { heading() },
         )
