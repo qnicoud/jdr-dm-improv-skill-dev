@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Langues de l'app (ADR 0016, D54/D55) : une entrée par ContentLanguage livrée. Français seul pour l'instant. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+  <locale android:name="fr" />
+</locale-config>
