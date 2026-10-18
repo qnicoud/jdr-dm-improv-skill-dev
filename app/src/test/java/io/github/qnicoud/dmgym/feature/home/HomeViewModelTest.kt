@@ -147,27 +147,25 @@ class HomeViewModelTest {
         }
 
     @Test
-    fun `an exercise of the latest release is new until a session of it exists`() =
+    fun `an exercise of the latest release is new until a counted session of it exists`() =
         runTest {
-            val history = MutableStateFlow<List<SessionRecord>>(emptyList())
-            val vm = HomeViewModel(SettingsExerciseCatalog(settings), FakeHistoryRepository(history = history))
+            val counted = MutableStateFlow<Set<String>>(emptySet())
+            val vm =
+                HomeViewModel(SettingsExerciseCatalog(settings), FakeHistoryRepository(countedExerciseIds = counted))
             vm.uiState.test {
-                val fresh = expectMostRecentItem().exercises
-                assertEquals(listOf(ExerciseId.THREE_CLUES), fresh.filter { it.isNew }.map { it.id })
-                history.value = listOf(sessionOf(ExerciseId.THREE_CLUES))
+                assertEquals(
+                    ExerciseId.NEW_IN_LATEST_RELEASE,
+                    expectMostRecentItem()
+                        .exercises
+                        .filter { it.isNew }
+                        .map { it.id }
+                        .toSet(),
+                )
+                // Unfinished without content: not counted, the set stays empty and the tag stays.
+                counted.value = setOf(ExerciseId.THREE_CLUES.value)
                 assertTrue(expectMostRecentItem().exercises.none { it.isNew })
+                counted.value = emptySet()
+                assertTrue(expectMostRecentItem().exercises.any { it.isNew })
             }
         }
-
-    private fun sessionOf(id: ExerciseId) =
-        SessionRecord(
-            id = 1,
-            exerciseId = id.value,
-            status = SessionStatus.COMPLETED,
-            startedAtEpochMillis = 1_000,
-            lastActivityAtEpochMillis = 2_000,
-            zoneId = "UTC",
-            localEpochDay = 1,
-            activeDurationSec = 60,
-        )
 }

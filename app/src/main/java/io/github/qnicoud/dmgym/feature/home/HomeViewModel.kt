@@ -8,7 +8,6 @@ import io.github.qnicoud.dmgym.core.history.SessionDetail
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 /**
@@ -42,7 +41,7 @@ class HomeViewModel(
             catalog.exercises,
             history.observeSessionCount(),
             history.observeResumable(),
-            history.observeHistory().map { sessions -> sessions.map { it.exerciseId }.toSet() },
+            history.observeCountedExerciseIds(ExerciseId.NEW_IN_LATEST_RELEASE.map { it.value }.toSet()),
         ) { exercises, count, resumable, practised ->
             HomeUiState(
                 isLoading = false,

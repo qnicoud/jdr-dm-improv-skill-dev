@@ -138,6 +138,12 @@ class RoomHistoryRepository(
 
     override fun observeSessionCount(): Flow<Int> = staleThresholds.flatMapLatest { dao.observeSessionCount(it) }
 
+    override fun observeCountedExerciseIds(exerciseIds: Set<String>): Flow<Set<String>> =
+        staleThresholds
+            .flatMapLatest { dao.observeCountedExerciseIds(exerciseIds.toList(), it) }
+            .map { it.toSet() }
+            .distinctUntilChanged()
+
     override suspend fun countSessionsByExercise(
         fromEpochDay: Long,
         toEpochDay: Long,

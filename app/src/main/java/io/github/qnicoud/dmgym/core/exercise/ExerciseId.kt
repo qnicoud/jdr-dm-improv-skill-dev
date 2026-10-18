@@ -54,7 +54,10 @@ value class ExerciseId(
         /** Exercices courts (≤ 5 min) éligibles comme échauffement de la séance du jour (ADR 0011). */
         val DAILY_WARM_UPS: Set<ExerciseId> = setOf(DECISION_POINT, CONSTRAINT_BOX, STATUS_NUMBERS)
 
-        /** Exercices de la dernière version : la carte d'accueil porte « Nouveau » tant qu'aucune session n'existe. */
+        /**
+         * Exercices de la dernière version. La carte d'accueil porte « Nouveau » jusqu'à la première session comptée
+         * de l'exercice : terminée, ou inachevée avec contenu (même règle que le compteur de sessions, ADR 0011).
+         */
         val NEW_IN_LATEST_RELEASE: Set<ExerciseId> = setOf(THREE_CLUES)
 
         val UNTIMED_BY_DEFAULT: Set<ExerciseId> = setOf(ONE_PAGE)

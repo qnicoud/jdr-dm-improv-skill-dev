@@ -93,6 +93,8 @@ class RecordingHistoryRepository : HistoryRepository {
 
     override fun observeSessionCount(): Flow<Int> = flowOf(0)
 
+    override fun observeCountedExerciseIds(exerciseIds: Set<String>): Flow<Set<String>> = flowOf(emptySet())
+
     override suspend fun countSessionsByExercise(
         fromEpochDay: Long,
         toEpochDay: Long,
