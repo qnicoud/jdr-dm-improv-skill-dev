@@ -42,5 +42,6 @@ object CrazyEights {
                     RubricQuestion("surprising_idea", R.string.crazy_eights_rubric_surprise),
                 ),
             acceptsFreeSubject = true,
+            warmUp = false,
         )
 }

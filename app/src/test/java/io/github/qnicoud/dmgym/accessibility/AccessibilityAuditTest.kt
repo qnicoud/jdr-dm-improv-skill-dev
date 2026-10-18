@@ -332,7 +332,9 @@ class AccessibilityAuditTest {
         audit("fin de séance")
     }
 
+    // Une ligne de durée par exercice : à 2x la liste dépasse 5000 dp, la fenêtre est donc plus haute ici.
     @Test
+    @Config(sdk = [34], qualifiers = "w360dp-h9000dp")
     fun `settings screen passes the audit`() {
         val actions = SettingsActions()
         val state =

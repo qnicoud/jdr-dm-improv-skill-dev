@@ -12,12 +12,13 @@ import org.junit.jupiter.api.Test
 class CategoryIconTest {
     private val senses = listOf("sight", "hearing", "smell", "touch", "taste")
     private val story = listOf("place", "object", "trait", "sensory", "line", "npc")
+    private val complications = listOf("cost", "time", "information", "relation", "position", "danger")
 
     @Test
     fun `each category has its own icon and label`() {
-        val all = (senses + story).map { checkNotNull(CategoryIcon.fromCategory(it)) }
-        assertEquals(11, all.map { it.icon.name }.distinct().size)
-        assertEquals(11, all.map { it.label }.distinct().size)
+        val all = (senses + story + complications).map { checkNotNull(CategoryIcon.fromCategory(it)) }
+        assertEquals(17, all.map { it.icon.name }.distinct().size)
+        assertEquals(17, all.map { it.label }.distinct().size)
     }
 
     @Test
@@ -25,6 +26,21 @@ class CategoryIconTest {
         assertEquals(R.string.connect_story_place, CategoryIcon.fromCategory("place")?.label)
         assertEquals(R.string.connect_story_line, CategoryIcon.fromCategory("line")?.label)
     }
+
+    @Test
+    fun `complication types are labelled with their name`() {
+        assertEquals(R.string.complication_cost, CategoryIcon.fromCategory("cost")?.label)
+        assertEquals(R.string.complication_danger, CategoryIcon.fromCategory("danger")?.label)
+    }
+
+    @Test
+    fun `every complication type of the table has an icon`() =
+        runTest {
+            RealTables.repository
+                .table(TableId.ComplicationTypes)
+                .entries
+                .forEach { assertNotNull(CategoryIcon.fromCategory(it.id), it.id) }
+        }
 
     @Test
     fun `the npc icon is labelled for talkback`() {

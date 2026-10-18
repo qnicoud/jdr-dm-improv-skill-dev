@@ -80,6 +80,9 @@ internal class SessionLifecycle(
     /** « Terminer » : fige le chrono, enregistre COMPLETED, ouvre le bilan. */
     fun finish() {
         if (model.value.session.phase != Phase.Active) return
+        // Lecture directe des champs : une frappe de la même frame n'a pas encore traversé le snapshotFlow, et le
+        // réducteur ignore les saisies une fois l'exercice terminé.
+        fields.syncNow()
         timer.freeze()
         recorder.markEnded()
         dispatch(ExerciseAction.Finished)

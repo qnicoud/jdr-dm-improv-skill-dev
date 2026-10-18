@@ -42,6 +42,7 @@ import io.github.qnicoud.dmgym.core.exercise.CardSlot
 import io.github.qnicoud.dmgym.core.exercise.Draw
 import io.github.qnicoud.dmgym.core.exercise.DrawKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
+import io.github.qnicoud.dmgym.core.exercise.FieldLayout
 import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.ui.components.CategoryIcon
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
@@ -94,6 +95,7 @@ private fun PlainDraw(
         onReroll = { actions.onReroll(null) },
         onCheckToggled = actions.onCheckToggled,
         cardSlots = slots.filterIsInstance<CardSlot>().map { it.key }.toSet(),
+        iconSlots = setOfNotNull((state.definition.layout as? FieldLayout.Fixed)?.boundSlot),
     )
 }
 

@@ -33,6 +33,8 @@
   <string name="discipline_decision_point">science du sport</string>
   <string name="discipline_connect_story">écriture</string>
   <string name="discipline_one_page">game design</string>
+  <string name="exercise_unknown">Exercice</string>
+  <string name="discipline_unknown">autre version de l’app</string>
   <string name="exercise_tag_preparation">Préparation</string>
 
   <!-- Durées -->
@@ -593,6 +595,34 @@
   <string name="import_error_write_title">L’import a échoué</string>
   <string name="import_error_write_text">Rien n’a été ajouté. Tes sessions n’ont pas changé.</string>
 
+  <!-- V2a : Échec qui avance (ADR 0017) -->
+  <string name="exercise_failing_forward">Échec qui avance</string>
+  <string name="discipline_failing_forward">game design narratif</string>
+  <string name="failing_forward_instructions">Le jet est raté. Ne dis pas non : fais avancer l’histoire. Écris 3 complications, chacune d’un type différent.</string>
+  <string name="failing_forward_field_label">Complication</string>
+  <string name="failing_forward_hint_cost">Ça coûte quoi ?</string>
+  <string name="failing_forward_hint_time">Qu’est-ce qui presse ?</string>
+  <string name="failing_forward_hint_information">Qu’apprend-on, ou que perd-on de vue ?</string>
+  <string name="failing_forward_hint_relation">Qui est touché ?</string>
+  <string name="failing_forward_hint_position">Où se retrouve-t-on ?</string>
+  <string name="failing_forward_hint_danger">Qu’est-ce qui menace ?</string>
+  <string name="failing_forward_rubric_changes">Chaque complication change-t-elle la situation ?</string>
+  <string name="failing_forward_rubric_surprise">Une complication m’a-t-elle surpris ?</string>
+  <string name="failing_forward_end_prompt">Laquelle ferait le plus avancer l’histoire ?</string>
+  <string name="failing_forward_types_hint">Un type par complication. Il t’oblige à ne pas répéter la même idée.</string>
+  <string name="failing_forward_favourite">Ma préférée</string>
+  <string name="complication_cost">Coût</string>
+  <string name="complication_time">Temps</string>
+  <string name="complication_information">Information</string>
+  <string name="complication_relation">Relation</string>
+  <string name="complication_position">Position</string>
+  <string name="complication_danger">Danger</string>
+  <string name="complication_cost_help">Il faut payer, perdre ou sacrifier quelque chose : la serrure cède, mais le crochet casse.</string>
+  <string name="complication_time_help">Le délai se réduit ou une échéance apparaît : la porte s’ouvre, mais les gardes reviennent dans une minute.</string>
+  <string name="complication_information_help">On apprend, ou l’on perd de vue, un fait important : on entend la conversation, mais on est repéré.</string>
+  <string name="complication_relation_help">Un PNJ, un allié ou une faction en est affecté : le portier cède, mais il vous en voudra.</string>
+  <string name="complication_position_help">On se retrouve ailleurs ou dans une situation plus exposée : on franchit la porte, côté ennemi.</string>
+  <string name="complication_danger_help">Une menace nouvelle surgit : la porte s’ouvre sur une pièce où quelque chose s’éveille.</string>
   <!-- V2b : Règle des 3 indices, étiquette « Nouveau », icône PNJ -->
   <string name="exercise_three_clues">Règle des 3 indices</string>
   <string name="discipline_three_clues">enquête</string>

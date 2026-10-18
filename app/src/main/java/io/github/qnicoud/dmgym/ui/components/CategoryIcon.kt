@@ -3,12 +3,14 @@ package io.github.qnicoud.dmgym.ui.components
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import io.github.qnicoud.dmgym.R
+import io.github.qnicoud.dmgym.ui.icons.ComplicationIcons
 import io.github.qnicoud.dmgym.ui.icons.SenseIcons
 import io.github.qnicoud.dmgym.ui.icons.StoryIcons
 
 /**
- * Icône d'une catégorie d'élément tiré : les cinq sens d'un mot sensoriel (Constraint Box) et les cinq types
- * d'élément d'histoire (Connect the Story). Chaque catégorie a une forme propre et un libellé lu par TalkBack :
+ * Icône d'une catégorie d'élément tiré : les cinq sens d'un mot sensoriel (Constraint Box), les types d'élément
+ * d'histoire et le PNJ (Connect the Story, Règle des 3 indices) et les six types de complication (Échec qui
+ * avance, clé = `id`). Chaque catégorie a une forme propre et un libellé lu par TalkBack :
  * la couleur ne porte jamais l'information.
  */
 enum class CategoryIcon(
@@ -26,6 +28,12 @@ enum class CategoryIcon(
     Trait("trait", StoryIcons.Trait, R.string.connect_story_trait),
     Sensory("sensory", StoryIcons.Sensory, R.string.connect_story_sensory),
     Line("line", StoryIcons.Line, R.string.connect_story_line),
+    Cost("cost", ComplicationIcons.Cost, R.string.complication_cost),
+    Time("time", ComplicationIcons.Time, R.string.complication_time),
+    Information("information", ComplicationIcons.Information, R.string.complication_information),
+    Relation("relation", ComplicationIcons.Relation, R.string.complication_relation),
+    Position("position", ComplicationIcons.Position, R.string.complication_position),
+    Danger("danger", ComplicationIcons.Danger, R.string.complication_danger),
     Npc("npc", StoryIcons.Npc, R.string.category_npc),
     ;
 

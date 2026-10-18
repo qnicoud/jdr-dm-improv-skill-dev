@@ -135,6 +135,17 @@ class StatsViewModelTest {
         }
 
     @Test
+    fun `a session of an unknown exercise is counted but not listed per exercise`() =
+        runTest {
+            fill(session(ExerciseId("from_the_future")), session(ExerciseId.CRAZY_EIGHTS))
+            viewModel().uiState.test {
+                val state = expectMostRecentItem()
+                assertEquals(2, state.sessions)
+                assertEquals(listOf(ExerciseId.CRAZY_EIGHTS), state.perExercise.map { it.id })
+            }
+        }
+
+    @Test
     fun `exercises are ranked by count without listing the unpracticed ones`() =
         runTest {
             fill(

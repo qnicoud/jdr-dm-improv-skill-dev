@@ -104,4 +104,7 @@ class AllExercisesSmokeTest {
 
     @Test
     fun `three clues opens, starts and accepts typing`() = smoke(ExerciseId.THREE_CLUES)
+
+    @Test
+    fun `failing forward opens, starts and accepts typing`() = smoke(ExerciseId.FAILING_FORWARD)
 }
