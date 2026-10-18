@@ -51,6 +51,10 @@ object ReminderTags {
     const val CHANNEL = "reminder_channel"
 
     fun day(day: DayOfWeek) = "reminder_day_${day.name}"
+
+    fun dayLetter(day: DayOfWeek) = "reminder_day_letter_${day.name}"
+
+    fun dayCheck(day: DayOfWeek) = "reminder_day_check_${day.name}"
 }
 
 /** Ce que la section Rappels peut demander ; les valeurs par défaut servent aux aperçus et aux tests. */

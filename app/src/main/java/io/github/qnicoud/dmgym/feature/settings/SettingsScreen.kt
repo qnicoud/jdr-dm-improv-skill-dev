@@ -101,8 +101,8 @@ data class SettingsActions(
 fun SettingsScreen(
     state: SettingsUiState,
     actions: SettingsActions,
-    modifier: Modifier = Modifier,
     reminder: @Composable () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         modifier = modifier,

@@ -17,6 +17,7 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.assertWidthIsAtLeast
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -214,6 +216,19 @@ class ReminderSectionTest {
         compose.onNodeWithTag(ReminderTags.HELP).performScrollTo().assertIsDisplayed()
         DayOfWeek.entries.forEach {
             compose.onNodeWithTag(ReminderTags.day(it)).performScrollTo().assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun `at 200 percent the check never overlaps the letter`() {
+        show(on, fontScale = 2f)
+
+        DayOfWeek.entries.filter { it in on.days }.forEach {
+            val letter = compose.onNodeWithTag(ReminderTags.dayLetter(it), useUnmergedTree = true).performScrollTo()
+            val check = compose.onNodeWithTag(ReminderTags.dayCheck(it), useUnmergedTree = true)
+            val l = letter.getUnclippedBoundsInRoot()
+            val c = check.getUnclippedBoundsInRoot()
+            assertTrue("check overlaps letter for $it", c.top >= l.bottom || c.bottom <= l.top)
         }
     }
 }

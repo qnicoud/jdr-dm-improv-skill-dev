@@ -2,12 +2,13 @@ package io.github.qnicoud.dmgym.feature.settings
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -103,12 +104,12 @@ private fun DayToggle(
     Surface(
         selected = selected,
         onClick = { onToggle(day) },
-        shape = CircleShape,
+        shape = RoundedCornerShape(DayButtonSize / 2),
         color = if (selected) colors.primaryContainer else colors.surface,
         border = BorderStroke(if (selected) 2.dp else 1.dp, if (selected) colors.primary else colors.outline),
         modifier =
             Modifier
-                .size(DayButtonSize)
+                .sizeIn(minWidth = DayButtonSize, minHeight = DayButtonSize)
                 .testTag(ReminderTags.day(day))
                 .clearAndSetSemantics {
                     contentDescription = name
@@ -120,14 +121,23 @@ private fun DayToggle(
                     }
                 },
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            Text(dayLetter(day), style = MaterialTheme.typography.labelLarge)
+        Column(
+            modifier = Modifier.padding(vertical = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                dayLetter(day),
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.testTag(ReminderTags.dayLetter(day)),
+            )
             if (selected) {
                 // La coche s'ajoute à la couleur et au contour : l'état ne repose jamais sur la couleur seule.
+                // Elle se place sous la lettre, qui grandit avec la police sans la recouvrir.
                 Icon(
                     DmIcons.Check,
                     contentDescription = null,
-                    modifier = Modifier.align(Alignment.TopEnd).padding(6.dp).size(12.dp),
+                    modifier = Modifier.size(12.dp).testTag(ReminderTags.dayCheck(day)),
                 )
             }
         }
