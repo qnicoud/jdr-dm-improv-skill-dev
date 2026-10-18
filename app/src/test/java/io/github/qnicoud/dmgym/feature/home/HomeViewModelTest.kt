@@ -44,7 +44,40 @@ class HomeViewModelTest {
             viewModel().uiState.test {
                 val state = expectMostRecentItem()
                 assertEquals(ExerciseId.ALL, state.exercises.map { it.id })
-                assertEquals(listOf(480, 300, 600, 180, 30, 600, null, 300), state.exercises.map { it.durationSeconds })
+                assertEquals(
+                    listOf(480, 300, 600, 180, 30, 600, null, 240, 300, 300),
+                    state.exercises.map { it.durationSeconds },
+                )
+            }
+        }
+
+    @Test
+    fun `a resumable session of an unknown exercise neither crashes nor adds a card`() =
+        runTest {
+            val unknown = ExerciseId("from_the_future")
+            val resumable =
+                MutableStateFlow<SessionDetail?>(
+                    SessionDetail(
+                        SessionRecord(
+                            id = 9,
+                            exerciseId = unknown.value,
+                            status = SessionStatus.IN_PROGRESS,
+                            startedAtEpochMillis = 1_000,
+                            lastActivityAtEpochMillis = 5_000,
+                            zoneId = "UTC",
+                            localEpochDay = 1,
+                            activeDurationSec = 5,
+                        ),
+                        draws = emptyList(),
+                        answers = listOf(AnswerRecord("a", 0, "texte")),
+                        rubric = emptyList(),
+                    ),
+                )
+            val vm = HomeViewModel(SettingsExerciseCatalog(settings), FakeHistoryRepository(resumable = resumable))
+            vm.uiState.test {
+                val state = expectMostRecentItem()
+                assertEquals(unknown, state.resume?.exerciseId)
+                assertEquals(ExerciseId.ALL, state.exercises.map { it.id })
             }
         }
 
@@ -143,6 +176,29 @@ class HomeViewModelTest {
                 assertEquals(720, awaitItem().exercises.first().durationSeconds)
                 settings.update { it.copy(untimed = setOf(ExerciseId.CRAZY_EIGHTS)) }
                 assertNull(awaitItem().exercises.first().durationSeconds)
+            }
+        }
+
+    @Test
+    fun `an exercise of the latest release is new until a counted session of it exists`() =
+        runTest {
+            val counted = MutableStateFlow<Set<String>>(emptySet())
+            val vm =
+                HomeViewModel(SettingsExerciseCatalog(settings), FakeHistoryRepository(countedExerciseIds = counted))
+            vm.uiState.test {
+                assertEquals(
+                    ExerciseId.NEW_IN_LATEST_RELEASE,
+                    expectMostRecentItem()
+                        .exercises
+                        .filter { it.isNew }
+                        .map { it.id }
+                        .toSet(),
+                )
+                // Unfinished without content: not counted, the set stays empty and the tag stays.
+                counted.value = ExerciseId.NEW_IN_LATEST_RELEASE.map { it.value }.toSet()
+                assertTrue(expectMostRecentItem().exercises.none { it.isNew })
+                counted.value = emptySet()
+                assertTrue(expectMostRecentItem().exercises.any { it.isNew })
             }
         }
 }

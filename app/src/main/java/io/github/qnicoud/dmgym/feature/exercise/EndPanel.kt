@@ -38,7 +38,9 @@ import io.github.qnicoud.dmgym.core.daily.DailyStep
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseSession
+import io.github.qnicoud.dmgym.core.exercise.FieldLayout
 import io.github.qnicoud.dmgym.core.exercise.FirstPick
+import io.github.qnicoud.dmgym.core.exercise.boundFields
 import io.github.qnicoud.dmgym.core.exercise.firstPickFields
 import io.github.qnicoud.dmgym.ui.icons.ExerciseIcons
 
@@ -167,6 +169,7 @@ private fun FirstPickChoice(
             .map { it to session.textOf(AnswerKey(it)) }
             .filter { it.second.isNotBlank() }
     if (options.isEmpty()) return
+    val typeNames = boundTypeNames(definition, session)
     val chosen = FirstPick.chosen(session.rubric)
     Column(modifier = Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         options.forEach { (fieldKey, text) ->
@@ -185,11 +188,29 @@ private fun FirstPickChoice(
                         ),
             ) {
                 RadioButton(selected = selected, onClick = null)
-                Text(text, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(start = 12.dp))
+                Column(modifier = Modifier.padding(start = 12.dp, top = 4.dp, bottom = 4.dp)) {
+                    // Champ lié à un type tiré : le type précède le texte (Échec qui avance).
+                    typeNames[fieldKey]?.let { Text(it, style = MaterialTheme.typography.labelLarge) }
+                    Text(text, style = MaterialTheme.typography.bodyLarge, maxLines = FIRST_PICK_MAX_LINES)
+                }
             }
         }
     }
 }
+
+/** Nom du type tiré pour chaque champ lié (clé du champ), vide si la disposition n'est pas liée. */
+private fun boundTypeNames(
+    definition: ExerciseDefinition,
+    session: ExerciseSession,
+): Map<String, String> {
+    val layout = definition.layout as? FieldLayout.Fixed ?: return emptyMap()
+    val bound = layout.boundFields(session.draws)
+    return layout.fields.indices
+        .mapNotNull { i -> bound[i]?.let { layout.fields[i].key to it.name } }
+        .toMap()
+}
+
+private const val FIRST_PICK_MAX_LINES = 3
 
 @Composable
 private fun LevelPicker(

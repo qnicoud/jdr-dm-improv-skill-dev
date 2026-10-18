@@ -154,6 +154,10 @@ sealed interface FieldLayout {
         val fields: List<FieldSpec>,
         val boundSlot: String? = null,
         val hintByCode: Map<String, StringResId> = emptyMap(),
+        /** Définition de chaque type tiré, affichée sur l'écran Prêt (clé : code de l'entrée). */
+        val helpByCode: Map<String, StringResId> = emptyMap(),
+        /** Phrase d'aide sous les types tirés, sur l'écran Prêt. */
+        val boundHint: StringResId? = null,
     ) : FieldLayout
 
     data class Single(
@@ -268,6 +272,7 @@ data class ExerciseDefinition(
     val progress: ProgressRule = ProgressRule.None,
     val events: List<ScheduledEvent> = emptyList(),
     val options: List<ExerciseOption> = emptyList(),
+    /** Vrai si l'exercice, court, peut ouvrir la séance du jour (ADR 0011) : source de `ExerciseId.DAILY_WARM_UPS`. */
     val warmUp: Boolean = true,
     /** Vrai si l'exercice accepte « Écrire mon propre sujet » quand la table est illisible (DÉCISION 12). */
     val acceptsFreeSubject: Boolean = false,

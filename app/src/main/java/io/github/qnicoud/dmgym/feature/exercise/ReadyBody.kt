@@ -119,6 +119,7 @@ internal fun DrawArea(
 
         LoadStatus.Ready -> {
             ReadyDraw(state.withoutQuestionDraws(), actions)
+            if (state.session.phase == Phase.Ready) BoundTypesHelp(state)
             if (state.session.phase == Phase.Ready) ReadyQuestions(state)
         }
     }

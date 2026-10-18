@@ -46,6 +46,8 @@ fun DrawCard(
     modifier: Modifier = Modifier,
     /** Slots affichés comme une carte de statut en grand (Status Numbers). */
     cardSlots: Set<String> = emptySet(),
+    /** Slots dont chaque tirage est précédé de son icône (types de complication, liés aux champs). */
+    iconSlots: Set<String> = emptySet(),
 ) {
     val (cards, others) = draws.partition { it.slotKey in cardSlots }
     val spoken = stringResource(R.string.draw_description, others.joinToString(", ") { it.text })
@@ -60,7 +62,7 @@ fun DrawCard(
             cards.forEach { StatusCardLine(it) }
             if (others.isNotEmpty()) {
                 Column(modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = spoken }) {
-                    others.forEach { DrawLine(it, showChecks, onCheckToggled) }
+                    others.forEach { DrawLine(it, showChecks, it.slotKey in iconSlots, onCheckToggled) }
                 }
             }
             if (showReroll) RerollRow(rerollCount, onReroll)
@@ -72,9 +74,14 @@ fun DrawCard(
 private fun DrawLine(
     draw: Draw,
     showCheck: Boolean,
+    showIcon: Boolean,
     onCheckToggled: (DrawKey) -> Unit,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.heightIn(min = 40.dp)) {
+        // Icône décorative : le mot qui la suit porte le sens.
+        fieldIcon(draw.entryId)?.takeIf { showIcon }?.let {
+            Icon(it, contentDescription = null, modifier = Modifier.padding(end = 12.dp))
+        }
         Text(draw.text, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
         if (showCheck) {
             Checkbox(

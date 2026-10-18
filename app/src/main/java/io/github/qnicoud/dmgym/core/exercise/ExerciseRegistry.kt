@@ -5,8 +5,10 @@ import io.github.qnicoud.dmgym.core.exercise.definitions.ConstraintBox
 import io.github.qnicoud.dmgym.core.exercise.definitions.CoreImage
 import io.github.qnicoud.dmgym.core.exercise.definitions.CrazyEights
 import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
+import io.github.qnicoud.dmgym.core.exercise.definitions.FailingForward
 import io.github.qnicoud.dmgym.core.exercise.definitions.OnePage
 import io.github.qnicoud.dmgym.core.exercise.definitions.StatusNumbers
+import io.github.qnicoud.dmgym.core.exercise.definitions.ThreeClues
 import io.github.qnicoud.dmgym.core.exercise.definitions.YesAnd
 
 /**
@@ -28,20 +30,27 @@ class ExerciseRegistry(
     operator fun get(id: ExerciseId): ExerciseDefinition? = byId[id]
 
     companion object {
-        /** Registre livré : les exercices s'ajoutent par lots (L8, L10), une ligne par exercice. */
+        /**
+         * Registre livré. Son ordre est celui de l'accueil, et c'est la **seule source** du catalogue
+         * ([ExerciseId.ALL], les durées par défaut, les échauffements) : un exercice s'ajoute par une ligne ici,
+         * dans le bloc de son lot, plus son identifiant dans `ExerciseId`.
+         */
         val Default =
             ExerciseRegistry(
                 listOf(
-                    // L8 : Crazy Eights, Constraint Box, Connect the Story
+                    // v1
                     CrazyEights.definition,
                     ConstraintBox.definition,
-                    ConnectStory.definition,
-                    // L10 : exercices 3, 4, 5 et 7
                     CoreImage.definition,
                     StatusNumbers.definition,
                     DecisionPoint.definition,
+                    ConnectStory.definition,
                     OnePage.definition,
-                    // V2c : Oui, et…
+                    // v1.1 : V2a
+                    FailingForward.definition,
+                    // v1.1 : V2b
+                    ThreeClues.definition,
+                    // v1.1 : V2c
                     YesAnd.definition,
                 ),
             )

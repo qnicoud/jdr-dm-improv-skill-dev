@@ -2,8 +2,6 @@ package io.github.qnicoud.dmgym.core.exercise
 
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 
 /** Identifiant stable d'un exercice (clé de réglages, d'historique et de route). */
 @JvmInline
@@ -24,35 +22,37 @@ value class ExerciseId(
         val CONNECT_STORY = ExerciseId("connect_story")
         val ONE_PAGE = ExerciseId("one_page")
         val YES_AND = ExerciseId("yes_and")
+        val THREE_CLUES = ExerciseId("three_clues")
 
-        /** Les exercices dans l'ordre d'affichage de l'accueil. */
-        val ALL: List<ExerciseId> =
-            listOf(
-                CRAZY_EIGHTS,
-                CONSTRAINT_BOX,
-                CORE_IMAGE,
-                STATUS_NUMBERS,
-                DECISION_POINT,
-                CONNECT_STORY,
-                ONE_PAGE,
-                YES_AND,
-            )
+        // v1.1 : un identifiant par exercice, une ligne chacun (V2b et V2c ajoutent la leur ici).
+        val FAILING_FORWARD = ExerciseId("failing_forward")
 
-        /** Durées par défaut (docs/ux/parcours.md, DÉCISION 4). One-Page : 15 min conseillées mais sans minuteur par défaut. */
-        val DEFAULT_DURATIONS: Map<ExerciseId, Duration> =
-            mapOf(
-                CRAZY_EIGHTS to 8.minutes,
-                CONSTRAINT_BOX to 5.minutes,
-                CORE_IMAGE to 10.minutes,
-                STATUS_NUMBERS to 3.minutes,
-                DECISION_POINT to 30.seconds,
-                CONNECT_STORY to 10.minutes,
-                ONE_PAGE to 15.minutes,
-                YES_AND to 5.minutes,
-            )
+        // Le catalogue est dérivé du registre. `by lazy` évite la dépendance circulaire à l'initialisation :
+        // les définitions lisent les constantes ci-dessus, le registre les définitions.
 
-        /** Exercices courts (≤ 5 min) éligibles comme échauffement de la séance du jour (ADR 0011). */
-        val DAILY_WARM_UPS: Set<ExerciseId> = setOf(DECISION_POINT, CONSTRAINT_BOX, STATUS_NUMBERS, YES_AND)
+        /** Tous les exercices, dans l'ordre d'affichage de l'accueil (celui du registre). */
+        val ALL: List<ExerciseId> by lazy { ExerciseRegistry.Default.all.map { it.id } }
+
+        /** Durées par défaut : celles de la politique de minuteur de chaque définition (One-Page : conseillée). */
+        val DEFAULT_DURATIONS: Map<ExerciseId, Duration> by lazy {
+            ExerciseRegistry.Default.all
+                .mapNotNull { d -> d.timer.defaultDuration?.let { d.id to it } }
+                .toMap()
+        }
+
+        /** Exercices courts éligibles comme échauffement de la séance du jour (ADR 0011) : `warmUp` des définitions. */
+        val DAILY_WARM_UPS: Set<ExerciseId> by lazy {
+            ExerciseRegistry.Default.all
+                .filter { it.warmUp }
+                .map { it.id }
+                .toSet()
+        }
+
+        /**
+         * Exercices de la dernière version. La carte d'accueil porte « Nouveau » jusqu'à la première session comptée
+         * de l'exercice : terminée, ou inachevée avec contenu (même règle que le compteur de sessions, ADR 0011).
+         */
+        val NEW_IN_LATEST_RELEASE: Set<ExerciseId> = setOf(FAILING_FORWARD, THREE_CLUES)
 
         val UNTIMED_BY_DEFAULT: Set<ExerciseId> = setOf(ONE_PAGE)
     }

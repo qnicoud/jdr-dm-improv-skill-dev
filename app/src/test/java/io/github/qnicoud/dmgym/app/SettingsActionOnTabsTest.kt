@@ -17,7 +17,7 @@ import org.robolectric.annotation.Config
 
 /** Remarque de recette 8.1 : l'engrenage des Réglages est dans la barre du haut des trois onglets. */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34], qualifiers = "w360dp-h2400dp")
+@Config(sdk = [34], qualifiers = "w360dp-h2800dp")
 class SettingsActionOnTabsTest {
     @get:Rule
     val compose = createComposeRule()

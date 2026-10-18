@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.map
 data class ExerciseSummary(
     val id: ExerciseId,
     val durationSeconds: Int?,
+    /** Vrai tant qu'aucune session de cet exercice récent n'existe : la carte porte « Nouveau ». */
+    val isNew: Boolean = false,
 )
 
 /** Port de l'accueil : la liste des exercices avec leur durée réglée. */

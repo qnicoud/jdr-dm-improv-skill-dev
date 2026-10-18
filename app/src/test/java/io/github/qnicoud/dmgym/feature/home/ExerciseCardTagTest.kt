@@ -2,6 +2,7 @@ package io.github.qnicoud.dmgym.feature.home
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
@@ -47,5 +48,29 @@ class ExerciseCardTagTest {
         val duration = compose.onNodeWithTag(HomeTags.DURATION_TAG, useUnmergedTree = true)
         val tag = compose.onNodeWithTag(HomeTags.PREPARATION_TAG, useUnmergedTree = true)
         assertEquals(duration.getUnclippedBoundsInRoot().height, tag.getUnclippedBoundsInRoot().height)
+    }
+
+    @Test
+    fun `a new exercise shows the new tag, as tall as the duration tag, and says so to talkback`() {
+        compose.setContent {
+            DmGymTheme {
+                ExerciseCard(ExerciseSummary(ExerciseId.THREE_CLUES, 300, isNew = true), onClick = {})
+            }
+        }
+        val duration = compose.onNodeWithTag(HomeTags.DURATION_TAG, useUnmergedTree = true)
+        compose.onNodeWithTag(HomeTags.NEW_TAG, useUnmergedTree = true).assertIsDisplayed()
+        assertEquals(
+            duration.getUnclippedBoundsInRoot().height,
+            compose.onNodeWithTag(HomeTags.NEW_TAG, useUnmergedTree = true).getUnclippedBoundsInRoot().height,
+        )
+        compose
+            .onNodeWithTag(HomeTags.card(ExerciseId.THREE_CLUES))
+            .assertContentDescriptionEquals("Règle des 3 indices, enquête, 5 minutes, nouveau")
+    }
+
+    @Test
+    fun `an exercise already practised has no new tag`() {
+        compose.setContent { DmGymTheme { ExerciseCard(ExerciseSummary(ExerciseId.THREE_CLUES, 300), onClick = {}) } }
+        compose.onNodeWithTag(HomeTags.NEW_TAG, useUnmergedTree = true).assertDoesNotExist()
     }
 }

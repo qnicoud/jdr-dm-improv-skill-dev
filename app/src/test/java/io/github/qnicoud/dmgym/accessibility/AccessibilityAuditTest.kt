@@ -85,13 +85,13 @@ import java.time.LocalDate
 
 /**
  * Audit d'accessibilité de la recette RC1 (design system §7) sur les écrans principaux, largeur 360 dp. La fenêtre
- * est haute (5000 dp) pour que tous les nœuds soient placés et mesurables : cibles de 48 dp, libellés des éléments
+ * est haute (10 000 dp) pour que tous les nœuds soient placés et mesurables : cibles de 48 dp, libellés des éléments
  * cliquables, titres, et textes non coupés à `fontScale = 2`. Le contrôle « zone épinglée sur 640 dp avec clavier »
  * reste manuel (checklist RC1).
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [34], qualifiers = "w360dp-h5000dp")
+@Config(sdk = [34], qualifiers = "w360dp-h10000dp")
 class AccessibilityAuditTest {
     @get:Rule
     val compose = createComposeRule()
@@ -332,7 +332,9 @@ class AccessibilityAuditTest {
         audit("fin de séance")
     }
 
+    // Une ligne de durée par exercice : à 2x la liste dépasse 5000 dp, la fenêtre est donc plus haute ici.
     @Test
+    @Config(sdk = [34], qualifiers = "w360dp-h9000dp")
     fun `settings screen passes the audit`() {
         val actions = SettingsActions()
         val state =

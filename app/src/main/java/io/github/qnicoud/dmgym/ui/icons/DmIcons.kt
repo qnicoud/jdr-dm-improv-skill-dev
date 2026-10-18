@@ -64,20 +64,36 @@ object DmIcons {
             "M4 4h11a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
             "M20 9h0a2 2 0 0 1 2 2v7l-3-2h-6a2 2 0 0 1-2-2",
         )
+    val Forward = icon("forward", "M4 12h14M12 5l7 7-7 7")
+    val Search = icon("search", circle(11f, 11f, 7f), "M20 20l-4-4")
     val Minus = icon("minus", "M5 12h14")
     val Plus = icon("plus", "M12 5v14M5 12h14")
 
+    /** Icône de l'exercice ; un identifiant inconnu prend l'icône générique [Doc]. */
     fun forExercise(id: ExerciseId): ImageVector =
         when (id) {
             ExerciseId.CRAZY_EIGHTS -> CrazyEights
+
             ExerciseId.CONSTRAINT_BOX -> Cube
+
             ExerciseId.CORE_IMAGE -> Hub
+
             ExerciseId.STATUS_NUMBERS -> Cards
+
             ExerciseId.DECISION_POINT -> Route
+
             ExerciseId.CONNECT_STORY -> Link
+
             ExerciseId.ONE_PAGE -> Doc
+
+            // v1.1 : une ligne par exercice
+            ExerciseId.FAILING_FORWARD -> Forward
+
+            ExerciseId.THREE_CLUES -> Search
+
             ExerciseId.YES_AND -> Forum
-            else -> error("Unknown exercise: ${id.value}")
+
+            else -> Doc
         }
 }
 

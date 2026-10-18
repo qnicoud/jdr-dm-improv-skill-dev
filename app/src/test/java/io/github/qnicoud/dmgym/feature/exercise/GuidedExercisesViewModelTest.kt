@@ -3,10 +3,14 @@ package io.github.qnicoud.dmgym.feature.exercise
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.lifecycle.SavedStateHandle
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
+import io.github.qnicoud.dmgym.core.exercise.FieldLayout
+import io.github.qnicoud.dmgym.core.exercise.FirstPick
 import io.github.qnicoud.dmgym.core.exercise.Phase
+import io.github.qnicoud.dmgym.core.exercise.boundFields
 import io.github.qnicoud.dmgym.core.exercise.definitions.ConstraintBox
 import io.github.qnicoud.dmgym.core.exercise.definitions.CoreImage
 import io.github.qnicoud.dmgym.core.exercise.definitions.DecisionPoint
+import io.github.qnicoud.dmgym.core.exercise.definitions.FailingForward
 import io.github.qnicoud.dmgym.core.exercise.definitions.OnePage
 import io.github.qnicoud.dmgym.core.exercise.definitions.RealTables
 import io.github.qnicoud.dmgym.core.exercise.definitions.StatusNumbers
@@ -223,6 +227,52 @@ class GuidedExercisesViewModelTest : ExerciseViewModelTestBase() {
                     .text
                     .isNotBlank(),
             )
+        }
+
+    @Test
+    fun `failing forward imposes three types, keeps the favourite and saves it`() =
+        runTest {
+            val vm = started(FailingForward.definition)
+            val layout = FailingForward.definition.layout as FieldLayout.Fixed
+            val types = layout.boundFields(vm.session().draws).map { checkNotNull(it).code }
+            assertEquals(3, types.distinct().size)
+            FailingForward.FIELD_KEYS.forEachIndexed { i, key ->
+                vm.fieldState(AnswerKey(key)).setTextAndPlaceCursorAtEnd("complication ${types[i]}")
+                pass(1_000)
+            }
+            vm.onFinish()
+            runCurrent()
+            val favourite = FailingForward.FIELD_KEYS[1]
+            vm.onAssess(2, false, FirstPick.with(vm.session().rubric, favourite))
+            runCurrent()
+            assertEquals(favourite, FirstPick.chosen(vm.session().rubric))
+            vm.onStop()
+            runCurrent()
+            val saved = history.sessions.values.single()
+            assertEquals(favourite, FirstPick.chosen(saved.rubric.associate { it.questionKey to it.value }))
+            assertEquals(
+                3,
+                vm
+                    .session()
+                    .answers.values
+                    .count { it.text.isNotBlank() },
+            )
+        }
+
+    @Test
+    fun `finishing right after the last keystroke keeps that text`() =
+        runTest {
+            val vm = started(FailingForward.definition)
+            val key = AnswerKey(FailingForward.FIELD_KEYS.last())
+            vm.fieldState(key).setTextAndPlaceCursorAtEnd("dernière frappe")
+            // No frame in between: the snapshotFlow has not delivered the text yet.
+            vm.onFinish()
+            runCurrent()
+            assertEquals("dernière frappe", vm.session().textOf(key))
+            vm.onStop()
+            runCurrent()
+            val saved = history.sessions.values.single()
+            assertEquals(listOf("dernière frappe"), saved.answers.map { it.text }.filter { it.isNotBlank() })
         }
 
     @Test

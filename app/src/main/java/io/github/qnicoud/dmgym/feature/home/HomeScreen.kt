@@ -44,6 +44,7 @@ object HomeTags {
     const val WELCOME = "home_welcome"
     const val SETTINGS_BUTTON = SettingsActionTag
     const val PREPARATION_TAG = "exercise_tag_preparation"
+    const val NEW_TAG = "exercise_tag_new"
     const val DURATION_TAG = "exercise_tag_duration"
 
     fun card(id: ExerciseId) = "exercise_card_${id.value}"
