@@ -14,7 +14,10 @@ class ExerciseDefinitionTest {
     fun `field keys follow the layout`() {
         assertEquals(listOf("a", "b"), demo.fieldKeys)
         assertEquals(listOf("x"), demo.copy(layout = FieldLayout.Single(FieldSpec("x"))).fieldKeys)
-        assertEquals(listOf("q"), demo.copy(layout = FieldLayout.Sequential("s", FieldSpec("q"))).fieldKeys)
+        assertEquals(
+            listOf("q"),
+            demo.copy(layout = FieldLayout.Sequential("prompt", listOf(FieldSpec("q")))).fieldKeys,
+        )
         assertEquals(
             listOf("n", "m"),
             demo.copy(layout = FieldLayout.RepeatableGroup(listOf(FieldSpec("n"), FieldSpec("m")), 5)).fieldKeys,

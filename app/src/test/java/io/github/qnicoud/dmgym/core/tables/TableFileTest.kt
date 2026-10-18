@@ -47,7 +47,7 @@ class TableFileTest {
     @Test
     fun `table ids map to unique file names`() {
         assertEquals(
-            10,
+            14,
             TableId.entries
                 .map { it.fileName }
                 .toSet()

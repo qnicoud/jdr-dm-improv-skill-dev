@@ -57,6 +57,8 @@ class GuidedDefinitionsTest {
             assertEquals(TimerPolicy.Required(10.minutes), def.timer)
             val layout = def.layout as FieldLayout.Sequential
             assertEquals(CoreImage.QUESTIONS_SLOT, layout.questionsSlot)
+            assertEquals(listOf(CoreImage.ANSWER_FIELD), layout.fields.map { it.key })
+            assertEquals(listOf(CoreImage.ANSWER_FIELD), def.fieldKeys)
             val draws = drawer().drawAll(def.slots)
             assertEquals(1, draws.count { it.slotKey == CoreImage.IMAGE_SLOT })
             val questions = draws.filter { it.slotKey == CoreImage.QUESTIONS_SLOT }

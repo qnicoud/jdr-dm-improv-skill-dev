@@ -32,8 +32,11 @@ import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.AnswerKey
 import io.github.qnicoud.dmgym.core.exercise.Draw
+import io.github.qnicoud.dmgym.core.exercise.ExerciseDefinition
 import io.github.qnicoud.dmgym.core.exercise.ExerciseSession
 import io.github.qnicoud.dmgym.core.exercise.FieldLayout
+import io.github.qnicoud.dmgym.core.exercise.revealedQuestions
+import io.github.qnicoud.dmgym.core.exercise.visibleFields
 import kotlinx.coroutines.flow.drop
 
 /** Identifiants de test propres aux questions successives (Core Image Threading). */
@@ -46,20 +49,28 @@ object QuestionTags {
     const val TOGGLE_LIST = "exercise_questions_toggle"
     const val LIST = "exercise_questions_list"
     const val READY_LIST = "exercise_questions_ready"
+    const val READY_HIDDEN = "exercise_questions_ready_hidden"
 
     fun item(index: Int) = "exercise_question_$index"
 }
 
 /**
- * Retire de l'état les tirages de questions d'une disposition séquentielle : ils ne vont pas dans la zone
- * épinglée sous le minuteur, où ils chassent le champ de saisie quand le clavier s'ouvre.
+ * Ne garde dans l'état, pour la zone épinglée sous le minuteur, que les tirages de questions à y montrer : aucun en
+ * disposition séquentielle ordinaire (ils chassent le champ de saisie quand le clavier s'ouvre), la seule question
+ * courante quand les tirages sont révélés un à un.
  */
 internal fun ExerciseUiState.withoutQuestionDraws(): ExerciseUiState {
     val layout = definition.layout as? FieldLayout.Sequential ?: return this
-    return copy(session = session.copy(draws = session.draws.filter { it.slotKey != layout.questionsSlot }))
+    val others = session.draws.filter { it.slotKey != layout.questionsSlot }
+    val pinned = if (layout.revealProgressively) layout.revealedQuestions(session) else emptyList()
+    return copy(session = session.copy(draws = others + pinned))
 }
 
-/** Questions numérotées de l'écran Prêt, lisibles avant de lancer l'exercice. */
+/** Vrai quand les tirages de la disposition séquentielle ne sont montrés qu'un à un (aucune relance, aucune liste). */
+internal val ExerciseDefinition.revealsOneByOne: Boolean
+    get() = (layout as? FieldLayout.Sequential)?.revealProgressively == true
+
+/** Questions numérotées de l'écran Prêt, lisibles avant de lancer l'exercice (ou seulement leur nombre). */
 @Composable
 internal fun ReadyQuestions(
     state: ExerciseUiState,
@@ -68,6 +79,14 @@ internal fun ReadyQuestions(
     val layout = state.definition.layout as? FieldLayout.Sequential ?: return
     val questions = state.session.drawsOf(layout.questionsSlot)
     if (questions.isEmpty()) return
+    if (layout.revealProgressively) {
+        Text(
+            stringResource(R.string.questions_ready_hidden, questions.size),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = modifier.testTag(QuestionTags.READY_HIDDEN),
+        )
+        return
+    }
     Card(
         modifier = modifier.fillMaxWidth().testTag(QuestionTags.READY_LIST),
         shape = MaterialTheme.shapes.large,
@@ -114,33 +133,66 @@ internal fun SequentialField(
 ) {
     val questions = session.drawsOf(layout.questionsSlot)
     val index = session.currentQuestion.coerceIn(0, (questions.size - 1).coerceAtLeast(0))
-    val key = AnswerKey(layout.field.key, index)
-    val answer = handlers.fieldState(key)
+    val specs = layout.visibleFields(session.options)
+    val keys = specs.map { AnswerKey(it.key, index) }
+    val states = keys.map { handlers.fieldState(it) }
     var showAll by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(index) { showAll = false }
-    LaunchedEffect(answer) {
-        snapshotFlow { answer.text.toString() }.drop(1).collect { showAll = false }
+    LaunchedEffect(states) {
+        snapshotFlow { states.map { it.text.toString() } }.drop(1).collect { showAll = false }
     }
-    questions.getOrNull(index)?.let {
-        Text(
-            stringResource(R.string.question_numbered, index + 1, questions.size, it.text),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.testTag(QuestionTags.CURRENT),
-        )
+    QuestionHeading(layout, questions.getOrNull(index), index, questions.size)
+    specs.forEachIndexed { i, spec ->
+        val position = if (specs.size > 1) i + 1 to specs.size else null
+        Field(spec, keys[i], position, session, handlers, if (i == 0) firstFieldFocus else null)
     }
-    Field(layout.field, key, null, session, handlers, firstFieldFocus)
     QuestionNavigation(index, questions.size, handlers)
-    if (index < questions.size - 1 && answer.text.isBlank()) {
+    if (index < questions.size - 1 && states.all { it.text.isBlank() }) {
         TextButton(
             onClick = handlers.onNextQuestion,
             modifier = Modifier.heightIn(min = 48.dp).testTag(QuestionTags.SKIP),
         ) { Text(stringResource(R.string.question_skip)) }
     }
+    if (layout.revealProgressively) return
     TextButton(
         onClick = { showAll = !showAll },
         modifier = Modifier.heightIn(min = 48.dp).testTag(QuestionTags.TOGGLE_LIST),
     ) { Text(stringResource(if (showAll) R.string.questions_hide_all else R.string.questions_show_all)) }
     if (showAll) NumberedQuestions(questions, Modifier.testTag(QuestionTags.LIST))
+}
+
+/**
+ * Titre de la question : « i/n — texte », ou [FieldLayout.Sequential.itemLabel] seul quand le texte est déjà épinglé
+ * sous le minuteur (tirages révélés un à un), ou libellé puis texte quand l'exercice a son propre libellé.
+ */
+@Composable
+private fun QuestionHeading(
+    layout: FieldLayout.Sequential,
+    question: Draw?,
+    index: Int,
+    count: Int,
+) {
+    if (question == null) return
+    val tag = Modifier.testTag(QuestionTags.CURRENT)
+    val label = layout.itemLabel?.let { stringResource(it, index + 1, count) }
+    when {
+        layout.revealProgressively -> {
+            val text = label ?: stringResource(R.string.question_position, index + 1, count)
+            Text(text, style = MaterialTheme.typography.titleMedium, modifier = tag)
+        }
+
+        label != null -> {
+            Column(modifier = tag) {
+                Text(label, style = MaterialTheme.typography.labelLarge)
+                Text(question.text, style = MaterialTheme.typography.titleLarge)
+            }
+        }
+
+        else -> {
+            val text = stringResource(R.string.question_numbered, index + 1, count, question.text)
+            Text(text, style = MaterialTheme.typography.titleLarge, modifier = tag)
+        }
+    }
 }
 
 @Composable

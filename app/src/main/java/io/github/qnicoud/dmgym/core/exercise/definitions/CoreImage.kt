@@ -44,12 +44,14 @@ object CoreImage {
             layout =
                 FieldLayout.Sequential(
                     questionsSlot = QUESTIONS_SLOT,
-                    field =
-                        FieldSpec(
-                            key = ANSWER_FIELD,
-                            label = R.string.core_image_answer_label,
-                            hint = R.string.core_image_answer_hint,
-                            minLines = 2,
+                    fields =
+                        listOf(
+                            FieldSpec(
+                                key = ANSWER_FIELD,
+                                label = R.string.core_image_answer_label,
+                                hint = R.string.core_image_answer_hint,
+                                minLines = 2,
+                            ),
                         ),
                 ),
             rubric =
