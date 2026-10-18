@@ -52,6 +52,36 @@ class HomeViewModelTest {
         }
 
     @Test
+    fun `a resumable session of an unknown exercise neither crashes nor adds a card`() =
+        runTest {
+            val unknown = ExerciseId("from_the_future")
+            val resumable =
+                MutableStateFlow<SessionDetail?>(
+                    SessionDetail(
+                        SessionRecord(
+                            id = 9,
+                            exerciseId = unknown.value,
+                            status = SessionStatus.IN_PROGRESS,
+                            startedAtEpochMillis = 1_000,
+                            lastActivityAtEpochMillis = 5_000,
+                            zoneId = "UTC",
+                            localEpochDay = 1,
+                            activeDurationSec = 5,
+                        ),
+                        draws = emptyList(),
+                        answers = listOf(AnswerRecord("a", 0, "texte")),
+                        rubric = emptyList(),
+                    ),
+                )
+            val vm = HomeViewModel(SettingsExerciseCatalog(settings), FakeHistoryRepository(resumable = resumable))
+            vm.uiState.test {
+                val state = expectMostRecentItem()
+                assertEquals(unknown, state.resume?.exerciseId)
+                assertEquals(ExerciseId.ALL, state.exercises.map { it.id })
+            }
+        }
+
+    @Test
     fun `one page has no timer by default`() =
         runTest {
             viewModel().uiState.test {

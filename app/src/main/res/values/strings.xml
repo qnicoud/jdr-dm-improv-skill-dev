@@ -33,6 +33,8 @@
   <string name="discipline_decision_point">science du sport</string>
   <string name="discipline_connect_story">écriture</string>
   <string name="discipline_one_page">game design</string>
+  <string name="exercise_unknown">Exercice</string>
+  <string name="discipline_unknown">autre version de l’app</string>
   <string name="exercise_tag_preparation">Préparation</string>
 
   <!-- Durées -->

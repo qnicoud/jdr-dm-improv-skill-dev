@@ -63,6 +63,7 @@ object DmIcons {
     val Minus = icon("minus", "M5 12h14")
     val Plus = icon("plus", "M12 5v14M5 12h14")
 
+    /** Icône de l'exercice ; un identifiant inconnu prend l'icône générique [Doc]. */
     fun forExercise(id: ExerciseId): ImageVector =
         when (id) {
             ExerciseId.CRAZY_EIGHTS -> CrazyEights
@@ -84,7 +85,7 @@ object DmIcons {
 
             ExerciseId.THREE_CLUES -> Search
 
-            else -> error("Unknown exercise: ${id.value}")
+            else -> Doc
         }
 }
 
