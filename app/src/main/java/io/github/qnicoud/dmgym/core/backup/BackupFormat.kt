@@ -3,11 +3,17 @@ package io.github.qnicoud.dmgym.core.backup
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import kotlinx.serialization.Serializable
 
+/** Première ligne de l'export texte lisible, que l'import reconnaît pour dire « export à lire ». */
+const val READABLE_EXPORT_HEADER = "DM Gym - export de mes sessions"
+
 /** Nom du format et version que cette app écrit (ADR 0015 §1, §2). */
 internal const val BACKUP_FORMAT = "dmgym-sessions"
 internal const val BACKUP_VERSION = 1
 
-/** Langue du contenu écrite tant que la colonne `contentLocale` n'existe pas (ADR 0016, lot V5). */
+/**
+ * Langue du contenu écrite tant que la colonne `contentLocale` n'existe pas (ADR 0016, lot V5).
+ * TODO(V5): la remplacer par la colonne `contentLocale` de la session et lire le champ.
+ */
 internal const val DEFAULT_CONTENT_LOCALE = "fr"
 
 /** Raisons pour lesquelles un fichier est refusé en entier ; chacune a son message dans l'écran d'import (UX §3.3). */
@@ -39,6 +45,8 @@ sealed interface DecodeResult {
     data class Success(
         val sessions: List<SessionDetail>,
         val unknownExercise: Int,
+        /** Sessions écartées parce qu'une de leurs valeurs est hors bornes ; le reste du fichier est importé. */
+        val invalid: Int = 0,
     ) : DecodeResult
 
     data class Failure(

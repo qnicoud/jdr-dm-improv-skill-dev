@@ -1,5 +1,11 @@
 package io.github.qnicoud.dmgym.core.backup
 
+import io.github.qnicoud.dmgym.core.history.AnswerRecord
+import io.github.qnicoud.dmgym.core.history.DrawRecord
+import io.github.qnicoud.dmgym.core.history.RubricRecord
+import io.github.qnicoud.dmgym.core.history.SessionDetail
+import io.github.qnicoud.dmgym.core.history.SessionRecord
+import io.github.qnicoud.dmgym.core.history.SessionStatus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -14,21 +20,68 @@ class BackupWitnessFilesTest {
     private fun decode(name: String) = BackupDecoder.decode(witness(name), KNOWN_EXERCISES, BACKUP_NOW)
 
     @Test
-    fun `the complete v1 witness stays importable and keeps its content`() {
+    fun `the complete v1 witness stays importable and decodes to exactly this`() {
         val result = decode("valid-complete.json") as DecodeResult.Success
 
-        assertEquals(listOf("crazy_eights", "constraint_box"), result.sessions.map { it.session.exerciseId })
-        val first = result.sessions.first()
-        assertEquals(1_792_220_400_000L, first.session.startedAtEpochMillis)
-        assertEquals("""{"situation_mode":true,"event:minute":true}""", first.session.optionsJson)
-        assertEquals("sight", first.draws.single().category)
-        assertEquals(true, first.rubric.any { it.questionKey == "first_pick:idea" && it.value })
-        assertEquals(
-            null,
-            result.sessions
-                .last()
-                .session.endedAtEpochMillis,
-        )
+        val first =
+            SessionDetail(
+                session =
+                    SessionRecord(
+                        exerciseId = "crazy_eights",
+                        status = SessionStatus.COMPLETED,
+                        startedAtEpochMillis = 1_792_220_400_000L,
+                        lastActivityAtEpochMillis = 1_792_220_880_000L,
+                        endedAtEpochMillis = 1_792_220_892_000L,
+                        zoneId = "Europe/Paris",
+                        localEpochDay = 20_743,
+                        plannedDurationSec = 480,
+                        activeDurationSec = 470,
+                        overtimeSec = 12,
+                        difficulty = 2,
+                        optionsJson = """{"situation_mode":true,"event:minute":true}""",
+                        selfRating = 3,
+                        isGem = true,
+                        fromDaily = true,
+                        drawSeed = 123_456_789,
+                    ),
+                draws =
+                    listOf(
+                        DrawRecord("item", 0, "sensory_words", "poussiereux", "poussiéreux", true, false, "sight"),
+                    ),
+                answers =
+                    listOf(
+                        AnswerRecord("idea", 0, "Une idée\nsur deux lignes", flagged = true, isGem = true),
+                    ),
+                rubric = listOf(RubricRecord("beyond_first_ideas", true), RubricRecord("first_pick:idea", true)),
+            )
+        val second =
+            SessionDetail(
+                session =
+                    SessionRecord(
+                        exerciseId = "constraint_box",
+                        status = SessionStatus.IN_PROGRESS,
+                        startedAtEpochMillis = 1_792_224_000_000L,
+                        lastActivityAtEpochMillis = 1_792_224_060_000L,
+                        endedAtEpochMillis = null,
+                        zoneId = "UTC",
+                        localEpochDay = 20_743,
+                        plannedDurationSec = null,
+                        activeDurationSec = 60,
+                        overtimeSec = 0,
+                        difficulty = 1,
+                        optionsJson = "{}",
+                        selfRating = null,
+                        isGem = false,
+                        fromDaily = false,
+                        drawSeed = 0,
+                    ),
+                draws = emptyList(),
+                answers = listOf(AnswerRecord("scene", 0, "Début", flagged = false, isGem = false)),
+                rubric = emptyList(),
+            )
+        assertEquals(listOf(first, second), result.sessions)
+        assertEquals(0, result.unknownExercise)
+        assertEquals(0, result.invalid)
     }
 
     @Test
