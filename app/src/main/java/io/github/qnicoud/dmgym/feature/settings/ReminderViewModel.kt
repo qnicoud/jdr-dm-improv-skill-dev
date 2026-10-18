@@ -8,6 +8,7 @@ import io.github.qnicoud.dmgym.core.reminder.ReminderPolicy
 import io.github.qnicoud.dmgym.core.reminder.ReminderSettings
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import io.github.qnicoud.dmgym.core.time.localEpochDay
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Clock
 import java.time.DayOfWeek
 
@@ -65,7 +67,7 @@ class ReminderViewModel(
     private val clock: Clock,
 ) : ViewModel() {
     private val allowed = MutableStateFlow(gate.notificationsAllowed())
-    private val local = MutableStateFlow(LocalState())
+    private val local = MutableStateFlow(LocalState(today = clock.localEpochDay()))
     private val effectChannel = Channel<ReminderEffect>(Channel.BUFFERED)
 
     val effects: Flow<ReminderEffect> = effectChannel.receiveAsFlow()
@@ -80,7 +82,7 @@ class ReminderViewModel(
                 days = reminder.days,
                 paused =
                     reminder.enabled &&
-                        ReminderPolicy.isPaused(clock.localEpochDay(), days.toSet(), reminder.resumedEpochDay),
+                        ReminderPolicy.isPaused(extra.today, days.toSet(), reminder.resumedEpochDay),
                 blocked = reminder.enabled && !ok,
                 permissionDenied = extra.permissionDenied,
                 keepOneDayHint = extra.keepOneDayHint,
@@ -107,6 +109,7 @@ class ReminderViewModel(
     fun refresh() {
         val ok = gate.notificationsAllowed()
         allowed.value = ok
+        local.update { it.copy(today = clock.localEpochDay()) }
         if (ok) local.update { it.copy(permissionDenied = false) }
     }
 
@@ -149,11 +152,13 @@ class ReminderViewModel(
     private fun change(transform: (ReminderSettings) -> ReminderSettings) {
         viewModelScope.launch {
             settings.update { it.copy(reminder = transform(it.reminder)) }
-            delivery.resync()
+            // Quitter l'écran ne doit pas laisser l'alarme désynchronisée des réglages déjà écrits.
+            withContext(NonCancellable) { delivery.resync() }
         }
     }
 
     private data class LocalState(
+        val today: Long,
         val permissionDenied: Boolean = false,
         val keepOneDayHint: Boolean = false,
     )

@@ -9,9 +9,12 @@ import io.github.qnicoud.dmgym.core.reminder.RecordingScheduler
 import io.github.qnicoud.dmgym.core.reminder.ReminderDelivery
 import io.github.qnicoud.dmgym.core.reminder.ReminderSettings
 import io.github.qnicoud.dmgym.core.settings.Settings
+import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.job
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -226,6 +229,40 @@ class ReminderViewModelTest {
     fun `a recent session is not paused`() {
         settings.state.value = Settings(reminder = ReminderSettings(enabled = true, resumedEpochDay = today - 30))
         assertFalse(viewModel().uiState.value.paused)
+    }
+
+    @Test
+    fun `refresh recomputes the paused state when the day changes`() {
+        settings.state.value = Settings(reminder = ReminderSettings(enabled = true, resumedEpochDay = today - 5))
+        practiced.value = emptyList()
+        val vm = viewModel()
+        assertFalse(vm.uiState.value.paused)
+
+        clock.now = Instant.parse("2026-10-30T10:00:00Z")
+        vm.refresh()
+
+        assertTrue(vm.uiState.value.paused)
+    }
+
+    @Test
+    fun `leaving the screen right after the write still re-arms the alarm`() {
+        val cancelling =
+            object : SettingsRepository {
+                override val settings = this@ReminderViewModelTest.settings.settings
+
+                override suspend fun update(transform: (Settings) -> Settings) {
+                    this@ReminderViewModelTest.settings.update(transform)
+                    currentCoroutineContext().job.cancel()
+                }
+            }
+        val history = FakeHistoryRepository(practicedDays = practiced, sessionCount = MutableStateFlow(3))
+        val delivery = ReminderDelivery(cancelling, history, notifier, scheduler, clock)
+        val vm = ReminderViewModel(cancelling, history, delivery, gate, clock)
+
+        vm.onSwitch(true)
+
+        assertTrue(reminder().enabled)
+        assertTrue(scheduler.synced.last().enabled)
     }
 
     @Test
