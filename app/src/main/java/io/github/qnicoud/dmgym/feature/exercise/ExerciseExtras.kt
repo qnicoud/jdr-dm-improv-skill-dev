@@ -51,6 +51,8 @@ object ExerciseExtraTags {
     const val SHIFT_BANNER = "exercise_shift_banner"
     const val SCENE_DONE = "exercise_scene_done"
     const val END_NOTE = "exercise_end_note"
+    const val BOUND_HINT = "exercise_bound_hint"
+    const val BOUND_HELP = "exercise_bound_help"
 
     fun option(key: String) = "exercise_option_$key"
 

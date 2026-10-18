@@ -54,6 +54,7 @@ class FailingForwardTest {
                 .map { it.id }
                 .toSet()
         assertEquals(ids, layout.hintByCode.keys)
+        assertEquals(ids, layout.helpByCode.keys)
         assertEquals(ProgressRule.FilledFields, definition.progress)
     }
 

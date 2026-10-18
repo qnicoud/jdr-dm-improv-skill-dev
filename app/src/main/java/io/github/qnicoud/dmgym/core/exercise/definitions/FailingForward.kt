@@ -35,6 +35,17 @@ object FailingForward {
             "danger" to R.string.failing_forward_hint_danger,
         )
 
+    /** Définition et exemple de chaque type, montrés sur l'écran Prêt. */
+    private val helps =
+        mapOf(
+            "cost" to R.string.complication_cost_help,
+            "time" to R.string.complication_time_help,
+            "information" to R.string.complication_information_help,
+            "relation" to R.string.complication_relation_help,
+            "position" to R.string.complication_position_help,
+            "danger" to R.string.complication_danger_help,
+        )
+
     val definition =
         ExerciseDefinition(
             id = ExerciseId.FAILING_FORWARD,
@@ -56,6 +67,8 @@ object FailingForward {
                         },
                     boundSlot = TYPES,
                     hintByCode = hints,
+                    helpByCode = helps,
+                    boundHint = R.string.failing_forward_types_hint,
                 ),
             rubric =
                 listOf(

@@ -607,6 +607,7 @@
   <string name="failing_forward_rubric_changes">Chaque complication change-t-elle la situation ?</string>
   <string name="failing_forward_rubric_surprise">Une complication m’a-t-elle surpris ?</string>
   <string name="failing_forward_end_prompt">Laquelle ferait le plus avancer l’histoire ?</string>
+  <string name="failing_forward_types_hint">Un type par complication. Il t’oblige à ne pas répéter la même idée.</string>
   <string name="failing_forward_favourite">Ma préférée</string>
   <string name="complication_cost">Coût</string>
   <string name="complication_time">Temps</string>

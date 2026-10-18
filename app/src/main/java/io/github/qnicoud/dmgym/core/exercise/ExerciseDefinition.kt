@@ -154,6 +154,10 @@ sealed interface FieldLayout {
         val fields: List<FieldSpec>,
         val boundSlot: String? = null,
         val hintByCode: Map<String, StringResId> = emptyMap(),
+        /** Définition de chaque type tiré, affichée sur l'écran Prêt (clé : code de l'entrée). */
+        val helpByCode: Map<String, StringResId> = emptyMap(),
+        /** Phrase d'aide sous les types tirés, sur l'écran Prêt. */
+        val boundHint: StringResId? = null,
     ) : FieldLayout
 
     data class Single(
