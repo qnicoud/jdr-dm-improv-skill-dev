@@ -17,6 +17,8 @@ data class TimerUi(
     val fraction: Float,
     val overtime: Boolean = false,
     val elapsedMs: Long = 0,
+    /** Durée du décompte en cours (hors temps additionnel) ; `null` sans minuteur ou en temps additionnel. */
+    val durationMs: Long? = null,
 )
 
 /** Jalons annoncés une seule fois (TalkBack, polite). */
@@ -47,7 +49,13 @@ fun timerUi(
         is TimerState.Running -> {
             val remaining = engine.remainingMs(state, now)
             val kind = if (isLastMinute(remaining, state.durationMs)) TimerKind.LastMinute else TimerKind.Running
-            TimerUi(kind, ceilToSecond(remaining), remaining.toFloat() / state.durationMs, elapsedMs = elapsed)
+            TimerUi(
+                kind,
+                ceilToSecond(remaining),
+                remaining.toFloat() / state.durationMs,
+                elapsedMs = elapsed,
+                durationMs = state.durationMs,
+            )
         }
 
         is TimerState.Paused -> {
@@ -56,6 +64,7 @@ fun timerUi(
                 ceilToSecond(state.remainingMs),
                 state.remainingMs.toFloat() / state.durationMs,
                 elapsedMs = elapsed,
+                durationMs = state.durationMs,
             )
         }
 

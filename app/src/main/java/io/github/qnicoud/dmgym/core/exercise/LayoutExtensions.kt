@@ -62,14 +62,22 @@ fun minuteFraction(
     periodMs: Long,
 ): Float = (elapsedMs.coerceAtLeast(0) % periodMs).toFloat() / periodMs
 
-/** Période du rythme (repère par minute) quand l'exercice a un rappel périodique, sinon `null`. */
-val ExerciseDefinition.rhythmPeriodMs: Long?
-    get() =
-        events
-            .map { it.timing }
-            .filterIsInstance<TimedEvent.Periodic>()
-            .firstOrNull()
-            ?.intervalMs
+/**
+ * Période du repère de rythme pour une durée de minuteur de [durationMs] : l'intervalle d'un rappel périodique, ou
+ * la durée divisée par le nombre d'étapes. `null` sans rappel de rythme ou sans minuteur.
+ */
+fun ExerciseDefinition.rhythmPeriodMs(durationMs: Long?): Long? =
+    events.map { it.timing }.firstNotNullOfOrNull { timing ->
+        when (timing) {
+            is TimedEvent.Periodic -> timing.intervalMs
+            is TimedEvent.Steps -> durationMs?.takeIf { it > 0 }?.let { it / timing.count }
+            is TimedEvent.Once -> null
+        }
+    }
+
+/** Vrai si l'exercice a un repère de rythme (rappel périodique ou par étape). */
+val ExerciseDefinition.hasRhythm: Boolean
+    get() = events.any { it.timing is TimedEvent.Periodic || it.timing is TimedEvent.Steps }
 
 /** Nombre de questions atteintes : jusqu'à la plus haute question répondue (au moins la première), dans [total]. */
 fun reachedQuestions(

@@ -207,7 +207,10 @@ private fun ColumnScope.ActiveBody(
         verticalArrangement = Arrangement.spacedBy(if (compact) 2.dp else 8.dp),
     ) {
         LiveTimerBar(timer, canPause = true, onPause = actions.onPause, onResume = actions.onResume, compact = compact)
-        state.definition.rhythmPeriodMs?.let { RhythmMarker(timer, it, Modifier.fillMaxWidth()) }
+        val rhythmPeriod by remember(state.definition) {
+            derivedStateOf { state.definition.rhythmPeriodMs(timer().durationMs) }
+        }
+        rhythmPeriod?.let { RhythmMarker(timer, it, Modifier.fillMaxWidth()) }
         if (compact) CompactDrawArea(state, actions) else DrawArea(state, actions)
     }
     Column(

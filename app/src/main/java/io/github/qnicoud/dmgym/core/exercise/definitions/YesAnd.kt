@@ -17,7 +17,7 @@ import kotlin.time.Duration.Companion.minutes
 
 /**
  * Oui, et… (théâtre d'impro, ADR 0017 §2) : cinq offres de joueurs révélées une à une, une réponse « Oui, et » à
- * chacune. Le minuteur est global ; le repère de 60 s ne fait jamais avancer d'offre (D58).
+ * chacune. Le minuteur est global ; les impulsions de rythme ne font jamais avancer d'offre (D58).
  */
 object YesAnd {
     const val OFFERS_SLOT = "offers"
@@ -26,7 +26,6 @@ object YesAnd {
     const val BLOCK_FIRST = "block_first"
     const val OFFER_COUNT = 5
     const val BEAT = "minute_beat"
-    private const val MINUTE_MS = 60_000L
     private const val BLOCK_SOFT_LIMIT = 80
 
     /** Catégories de `player_offers`, dans l'ordre où les offres sont tirées. */
@@ -58,16 +57,15 @@ object YesAnd {
                             ),
                             FieldSpec(
                                 key = YES_AND_FIELD,
-                                label = R.string.yes_and_answer_label,
+                                label = R.string.yes_and_title,
                                 hint = R.string.yes_and_answer_hint,
                                 minLines = 2,
-                                prefix = R.string.yes_and_prefix,
                             ),
                         ),
                     itemLabel = R.string.yes_and_item_label,
                     revealProgressively = true,
                 ),
-            events = listOf(ScheduledEvent(BEAT, TimedEvent.Periodic(MINUTE_MS, haptic = true))),
+            events = listOf(ScheduledEvent(BEAT, TimedEvent.Steps(OFFER_COUNT, haptic = true))),
             options =
                 listOf(
                     ExerciseOption(

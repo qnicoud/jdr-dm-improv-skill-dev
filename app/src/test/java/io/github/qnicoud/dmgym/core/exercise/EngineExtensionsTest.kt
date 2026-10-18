@@ -42,7 +42,6 @@ class EngineExtensionsTest {
     fun `new field options are neutral by default`() {
         val spec = FieldSpec("a")
         assertNull(spec.icon)
-        assertNull(spec.prefix)
         val fixed = FieldLayout.Fixed(listOf(spec))
         assertNull(fixed.boundSlot)
         assertTrue(fixed.hintByCode.isEmpty())
@@ -197,9 +196,18 @@ class EngineExtensionsTest {
     @Test
     fun `the marker period comes from a periodic event`() {
         val base = define(FieldLayout.Single(FieldSpec("a")), listOf(offers))
-        assertNull(base.rhythmPeriodMs)
+        assertNull(base.rhythmPeriodMs(300_000))
         val periodic = base.copy(events = listOf(ScheduledEvent("beat", TimedEvent.Periodic(60_000, haptic = true))))
-        assertEquals(60_000L, periodic.rhythmPeriodMs)
+        assertEquals(60_000L, periodic.rhythmPeriodMs(300_000))
+    }
+
+    @Test
+    fun `the marker period of a step event is the duration divided by the steps`() {
+        val base = define(FieldLayout.Single(FieldSpec("a")), listOf(offers))
+        val steps = base.copy(events = listOf(ScheduledEvent("beat", TimedEvent.Steps(8, haptic = true))))
+        assertEquals(60_000L, steps.rhythmPeriodMs(8 * 60_000L))
+        assertEquals(30_000L, steps.rhythmPeriodMs(4 * 60_000L))
+        assertNull(steps.rhythmPeriodMs(null))
     }
 
     @Test

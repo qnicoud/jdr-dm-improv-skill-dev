@@ -185,6 +185,7 @@
   <string name="level_ready">Prêt pour la table</string>
   <string name="level_description">%1$s, %2$d sur 3</string>
   <string name="end_rubric_title">Quelques questions</string>
+  <string name="end_rubric_toggle">Quelques questions (%1$d)</string>
   <string name="rubric_yes">Oui</string>
   <string name="rubric_no">Non</string>
   <string name="gem_keep">Garder comme bijou</string>
@@ -212,7 +213,7 @@
   <string name="question_position">%1$d sur %2$d</string>
   <string name="questions_ready_hidden">%1$d éléments seront révélés un à un pendant l’exercice.</string>
   <string name="field_bound_label">%1$s %2$d · %3$s</string>
-  <string name="rhythm_marker_description">Minute en cours : %1$d s sur %2$d</string>
+  <string name="rhythm_marker_description">Étape en cours : %1$d s sur %2$d</string>
   <string name="core_image_instructions">Une image centrale est tirée. Réponds aux questions une à la fois : chaque réponse relie l’image au reste de ton monde.</string>
   <string name="core_image_answer_label">Ta réponse</string>
   <string name="core_image_answer_hint">Quelques phrases suffisent</string>
@@ -642,10 +643,9 @@
   <!-- V2c : Oui, et… -->
   <string name="exercise_yes_and">Oui, et…</string>
   <string name="discipline_yes_and">théâtre d’impro</string>
-  <string name="yes_and_instructions">Un joueur fait une proposition. Réponds « Oui, et… » et ajoute quelque chose. Compte environ une minute par offre.</string>
+  <string name="yes_and_instructions">Un joueur fait une proposition. Réponds « Oui, et… » et ajoute quelque chose. Une impulsion marque le moment de passer à l’offre suivante.</string>
   <string name="yes_and_item_label">Offre %1$d sur %2$d</string>
-  <string name="yes_and_prefix">Oui, et</string>
-  <string name="yes_and_answer_label">Ma réponse</string>
+  <string name="yes_and_title">Oui, et…</string>
   <string name="yes_and_answer_hint">…ajoute quelque chose</string>
   <string name="yes_and_block_label">Mon réflexe : je bloque…</string>
   <string name="yes_and_block_hint">Comment tu bloquerais, en quelques mots</string>

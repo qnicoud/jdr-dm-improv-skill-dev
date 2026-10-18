@@ -19,6 +19,27 @@ class TimedEventsTest {
     }
 
     @Test
+    fun `step event pulses at each boundary between two steps and not at the start or the end`() {
+        val steps = TimedEvent.Steps(count = 5, haptic = true)
+        val plan = engine.plan(listOf(steps), durationMs = 5 * 60_000L, random = Random(1))
+
+        assertEquals(listOf(60_000L, 120_000L, 180_000L, 240_000L), plan.map { it.offsetMs })
+    }
+
+    @Test
+    fun `step event interval follows the duration, 8 ideas in 4 minutes pulse every 30 seconds`() {
+        val steps = TimedEvent.Steps(count = 8, haptic = true)
+        val plan = engine.plan(listOf(steps), durationMs = 4 * 60_000L, random = Random(1))
+
+        assertEquals((1..7).map { it * 30_000L }, plan.map { it.offsetMs })
+    }
+
+    @Test
+    fun `step event with a single step never pulses`() {
+        assertEquals(emptyList<PlannedEvent>(), engine.plan(listOf(TimedEvent.Steps(1, true)), 60_000, Random(0)))
+    }
+
+    @Test
     fun `once event lands between 40 and 60 percent for any seed`() {
         repeat(200) { seed ->
             val plan = engine.plan(listOf(once), durationMs = 180_000, random = Random(seed))

@@ -19,7 +19,6 @@ object CrazyEights {
     const val PROBLEM = "problem"
     const val IDEA_COUNT = 8
     const val MINUTE_REMINDER = "minute_reminder"
-    private const val MINUTE_MS = 60_000L
 
     val definition =
         ExerciseDefinition(
@@ -35,7 +34,7 @@ object CrazyEights {
                     (1..IDEA_COUNT).map { FieldSpec(key = "idea$it", hint = R.string.crazy_eights_hint) },
                 ),
             progress = ProgressRule.FilledFields,
-            events = listOf(ScheduledEvent(MINUTE_REMINDER, TimedEvent.Periodic(MINUTE_MS, haptic = true))),
+            events = listOf(ScheduledEvent(MINUTE_REMINDER, TimedEvent.Steps(IDEA_COUNT, haptic = true))),
             rubric =
                 listOf(
                     RubricQuestion("beyond_first_ideas", R.string.crazy_eights_rubric_beyond),

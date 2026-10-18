@@ -126,10 +126,9 @@ class EngineExtensionsScreenTest {
     }
 
     @Test
-    fun `the prefix is shown but never typed into the answer`() {
+    fun `the answer is typed as is, under the field label`() {
         val vm = launch(DemoEngine.offers)
         tap(ExerciseTags.START)
-        compose.onNodeWithTag(ExerciseTags.FIELD_PREFIX, useUnmergedTree = true).assertExists()
         compose.onNodeWithTag(ExerciseTags.field(AnswerKey(DemoEngine.YES_FIELD, 0))).performTextInput("et il accepte")
         compose.waitForIdle()
         assertEquals(
@@ -140,13 +139,13 @@ class EngineExtensionsScreenTest {
     }
 
     @Test
-    fun `the prefix is read with the field by screen readers`() {
+    fun `the field label is read with the field by screen readers`() {
         launch(DemoEngine.offers)
         tap(ExerciseTags.START)
-        val prefix = ApplicationProvider.getApplicationContext<Context>().getString(R.string.rubric_yes)
+        val label = ApplicationProvider.getApplicationContext<Context>().getString(R.string.rubric_yes)
         compose
             .onNodeWithTag(ExerciseTags.field(AnswerKey(DemoEngine.YES_FIELD, 0)))
-            .assert(hasText(prefix, substring = true))
+            .assert(hasText(label, substring = true))
     }
 
     @Test

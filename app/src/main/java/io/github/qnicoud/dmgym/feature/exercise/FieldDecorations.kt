@@ -20,7 +20,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.exercise.IconKey
-import io.github.qnicoud.dmgym.core.exercise.StringResId
 import io.github.qnicoud.dmgym.core.exercise.TimerUi
 import io.github.qnicoud.dmgym.core.exercise.minuteFraction
 import io.github.qnicoud.dmgym.ui.components.CategoryIcon
@@ -49,19 +48,8 @@ internal fun FieldLabel(
     }
 }
 
-/** Préfixe visuel non modifiable devant la saisie : il n'entre jamais dans le texte de la réponse. */
-@Composable
-internal fun FieldPrefix(prefix: StringResId) {
-    Text(
-        stringResource(prefix),
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(start = 12.dp).testTag(ExerciseTags.FIELD_PREFIX),
-    )
-}
-
 /**
- * Repère discret de la minute en cours (D58) : une fine barre qui se remplit sur [periodMs]. Il informe seulement,
+ * Repère discret de l'étape en cours (D58) : une fine barre qui se remplit sur [periodMs] (durée / étapes). Il informe seulement,
  * il ne déclenche jamais d'avance automatique. Lit [timer] dans sa propre portée, comme la barre du minuteur.
  */
 @Composable

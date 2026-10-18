@@ -209,7 +209,6 @@ internal fun Field(
                 .testTag(ExerciseTags.field(key)),
         textStyle = MaterialTheme.typography.bodyLarge,
         label = { FieldLabel(label, icon) },
-        leadingIcon = spec.prefix?.let { prefix -> { FieldPrefix(prefix) } },
         placeholder = { Text(stringResource(bound?.hint ?: spec.hint ?: R.string.field_default_hint)) },
         lineLimits =
             TextFieldLineLimits.MultiLine(

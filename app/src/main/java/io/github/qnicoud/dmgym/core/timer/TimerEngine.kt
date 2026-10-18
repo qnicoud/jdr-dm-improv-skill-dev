@@ -238,6 +238,10 @@ class TimerEngine(
                             .toList()
                     }
 
+                    is TimedEvent.Steps -> {
+                        (1 until event.count).map { PlannedEvent(event, durationMs * it / event.count) }
+                    }
+
                     is TimedEvent.Once -> {
                         listOf(PlannedEvent(event, onceOffset(event, durationMs, random)))
                     }
@@ -262,11 +266,11 @@ class TimerEngine(
         val latestPeriodic =
             crossed
                 .filter {
-                    it.event is TimedEvent.Periodic
+                    it.event.isRecurring()
                 }.groupBy { it.event }
                 .mapValues { it.value.last() }
         return crossed
-            .filter { it.event !is TimedEvent.Periodic || latestPeriodic[it.event] == it }
+            .filter { !it.event.isRecurring() || latestPeriodic[it.event] == it }
             .map { FiredEvent(it.event, it.offsetMs, stale = elapsedMs - it.offsetMs > staleAfterMs) }
     }
 
@@ -278,6 +282,8 @@ class TimerEngine(
         val fraction = event.fromFraction + random.nextDouble() * (event.toFraction - event.fromFraction)
         return (durationMs * fraction).toLong()
     }
+
+    private fun TimedEvent.isRecurring() = this is TimedEvent.Periodic || this is TimedEvent.Steps
 
     companion object {
         const val STALE_AFTER_MS = 2_000L
