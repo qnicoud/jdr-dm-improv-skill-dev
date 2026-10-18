@@ -45,7 +45,8 @@
 
 - Conception v1.1 faite : `docs/ux/parcours-v1.1.md`, `docs/ux/brief-maquettes-v1.1.md`, ADR 0014 (rappels), 0015 (sauvegarde/import), 0016 (langues), 0017 (moteur v1.1), `architecture.md` §16 (lots V0 dette, V1 moteur, C1 tables FR, V2a/b/c exercices, V3 rappels, V4 sauvegarde/import, V5 langues + Room v3, V6 release ; anglais E1–E4 optionnels). Vagues : (V0, V3, V4, C1) → (V1, V5) → V2 → V6.
 - **Décisions ouvertes D54–D70** dans l'artefact (langue, sélecteur — désaccord UX/architecte —, complications, Oui et…, rappels, export/import, passage à l'APK signé, séance du jour, sauvegarde des réglages).
-- **Prochaine action** : relire D54–D70 via `ArtifactData`, reporter dans les ADR/UX, puis lancer la vague 1 (V0, V3, V4, C1) en parallèle.
+- D54–D70 tranchées (toutes les recommandations ; D55 = sélecteur in-app AppCompat). Vague 1 lancée : V0, V3, V4, C1.
+- C1 fusionné : `failure_situations` (36), `complication_types` (6, exception « vocabulaire » au minimum de 30 à appliquer dans `TablesContentTest` en V1), `clue_conclusions` (34), `player_offers` (46). Définitions des types de complication → `strings.xml` en V2a. Tables à la racine de `assets/tables/` (déplacement vers `fr/` en V5).
 
 ## Décisions (issues de la phase 0) — TRANCHÉES le 2026-10-16
 

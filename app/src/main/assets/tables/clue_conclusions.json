@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 1,
+  "table": "clue_conclusions",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "maire-complice-contrebandiers",
+      "text": "Le maire est complice des contrebandiers.",
+      "difficulty": 1,
+      "category": "identity"
+    },
+    {
+      "id": "nouvelle-servante-fille-disparue",
+      "text": "La nouvelle servante est la fille disparue du seigneur.",
+      "difficulty": 1,
+      "category": "identity"
+    },
+    {
+      "id": "bourgmestre-imposteur",
+      "text": "Le bourgmestre est un imposteur.",
+      "difficulty": 2,
+      "category": "identity"
+    },
+    {
+      "id": "vieux-mendiant-pont-ancien",
+      "text": "Le vieux mendiant du pont est un ancien général.",
+      "difficulty": 2,
+      "category": "identity"
+    },
+    {
+      "id": "heros-ville-jamais-tue",
+      "text": "Le héros de la ville n'a jamais tué le dragon.",
+      "difficulty": 2,
+      "category": "identity"
+    },
+    {
+      "id": "voix-guide-groupe-depuis",
+      "text": "La voix qui guide le groupe depuis des semaines est celle de son pire ennemi.",
+      "difficulty": 3,
+      "category": "identity"
+    },
+    {
+      "id": "juge-accuse-sont-freres",
+      "text": "Le juge et l'accusé sont frères, et l'un des deux le cache.",
+      "difficulty": 3,
+      "category": "identity"
+    },
+    {
+      "id": "capitaine-navire-dernier-survivant",
+      "text": "Le capitaine du navire est le dernier survivant d'un naufrage qu'il a provoqué.",
+      "difficulty": 2,
+      "category": "identity"
+    },
+    {
+      "id": "tresor-cache-autel-chapelle",
+      "text": "Le trésor est caché sous l'autel de la chapelle.",
+      "difficulty": 1,
+      "category": "location"
+    },
+    {
+      "id": "prisonnier-evade-terre-moulin",
+      "text": "Le prisonnier évadé se terre dans le moulin abandonné.",
+      "difficulty": 1,
+      "category": "location"
+    },
+    {
+      "id": "entree-repaire-derriere-chute",
+      "text": "L'entrée du repaire est derrière la chute d'eau.",
+      "difficulty": 2,
+      "category": "location"
+    },
+    {
+      "id": "enfants-disparus-sont-retenus",
+      "text": "Les enfants disparus sont retenus dans les caves de l'auberge.",
+      "difficulty": 2,
+      "category": "location"
+    },
+    {
+      "id": "tombe-roi-vide-corps",
+      "text": "La tombe du roi est vide, et son corps repose ailleurs.",
+      "difficulty": 2,
+      "category": "location"
+    },
+    {
+      "id": "veritable-cachette-sceptre-tableau",
+      "text": "La véritable cachette du sceptre est le tableau accroché dans la salle du trône.",
+      "difficulty": 3,
+      "category": "location"
+    },
+    {
+      "id": "aubergiste-empoisonne-clients-racheter",
+      "text": "L'aubergiste empoisonne ses clients pour racheter leurs terres.",
+      "difficulty": 1,
+      "category": "motive"
+    },
+    {
+      "id": "garde-laisse-passer-voleurs",
+      "text": "Le garde laisse passer les voleurs parce qu'on le fait chanter.",
+      "difficulty": 1,
+      "category": "motive"
+    },
+    {
+      "id": "pretre-veut-mort-baron",
+      "text": "Le prêtre veut la mort du baron pour couvrir une vieille faute.",
+      "difficulty": 2,
+      "category": "motive"
+    },
+    {
+      "id": "guilde-marchands-provoque-famine",
+      "text": "La guilde des marchands provoque la famine pour faire monter les prix.",
+      "difficulty": 2,
+      "category": "motive"
+    },
+    {
+      "id": "sorcier-veut-pouvoir-cherche",
+      "text": "Le sorcier ne veut pas le pouvoir : il cherche à ramener sa femme.",
+      "difficulty": 2,
+      "category": "motive"
+    },
+    {
+      "id": "conseiller-sabote-paix-parce",
+      "text": "Le conseiller sabote la paix parce que la guerre est la seule chose qui garde le royaume uni.",
+      "difficulty": 3,
+      "category": "motive"
+    },
+    {
+      "id": "monstre-foret-protege-village",
+      "text": "Le monstre de la forêt protège le village d'un mal bien pire.",
+      "difficulty": 3,
+      "category": "motive"
+    },
+    {
+      "id": "voleur-entre-toits-grace",
+      "text": "Le voleur est entré par les toits, grâce à un complice dans la maison.",
+      "difficulty": 1,
+      "category": "method"
+    },
+    {
+      "id": "poison-etait-vin-servi",
+      "text": "Le poison était dans le vin servi uniquement à la victime.",
+      "difficulty": 1,
+      "category": "method"
+    },
+    {
+      "id": "feu-ete-allume-huile",
+      "text": "Le feu a été allumé avec une huile qu'on ne trouve que chez l'apothicaire.",
+      "difficulty": 2,
+      "category": "method"
+    },
+    {
+      "id": "coffre-ete-vide-veille",
+      "text": "Le coffre a été vidé la veille du vol, par quelqu'un qui possédait la clé.",
+      "difficulty": 2,
+      "category": "method"
+    },
+    {
+      "id": "temoin-ete-envoute-croire",
+      "text": "Le témoin a été envoûté pour croire qu'il avait vu l'accusé.",
+      "difficulty": 3,
+      "category": "method"
+    },
+    {
+      "id": "rumeur-ete-lancee-trois",
+      "text": "La rumeur a été lancée par trois mendiants payés pour la répandre.",
+      "difficulty": 3,
+      "category": "method"
+    },
+    {
+      "id": "seigneur-gravement-malade-cache",
+      "text": "Le seigneur est gravement malade et le cache à tous.",
+      "difficulty": 1,
+      "category": "secret"
+    },
+    {
+      "id": "bibliothecaire-vend-cachette-livres",
+      "text": "La bibliothécaire vend en cachette les livres les plus rares.",
+      "difficulty": 1,
+      "category": "secret"
+    },
+    {
+      "id": "village-bati-ruines-temple",
+      "text": "Le village est bâti sur les ruines d'un temple interdit.",
+      "difficulty": 2,
+      "category": "secret"
+    },
+    {
+      "id": "reine-heritier-cache-eleve",
+      "text": "La reine a un héritier caché, élevé dans un monastère.",
+      "difficulty": 2,
+      "category": "secret"
+    },
+    {
+      "id": "mines-sont-presque-epuisees",
+      "text": "Les mines sont presque épuisées, et le duc truque les comptes.",
+      "difficulty": 2,
+      "category": "secret"
+    },
+    {
+      "id": "serment-sacre-lie-deux",
+      "text": "Le serment sacré qui lie les deux royaumes a été falsifié dès le premier jour.",
+      "difficulty": 3,
+      "category": "secret"
+    },
+    {
+      "id": "dieu-prie-toute-ville",
+      "text": "Le dieu que prie toute la ville n'est plus là depuis des siècles.",
+      "difficulty": 3,
+      "category": "secret"
+    }
+  ]
+}

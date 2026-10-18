@@ -43,3 +43,18 @@ Critères de difficulté : D1 = situation simple, un seul enjeu, un cliché assu
 ## Vérification
 
 Script de contrôle (hors dépôt) : JSON valide, `table`/`schemaVersion`/`locale`, identifiants kebab-case uniques, `difficulty` ∈ 1..3 avec les trois niveaux présents, texte ≤ 200 caractères en NFC, pas de doublon normalisé, `category` et `tags` dans le vocabulaire, 1 à 4 `keywords` sans doublon là où ils sont obligatoires.
+
+## Tables v1.1 (lot C1)
+
+- `failure_situations` (36) : « qui rate quoi », une phrase, sans conséquence imposée. Catégories `combat`, `social`, `exploration`, `stealth`, `knowledge` (7 à 8 chacune). D1 = échec banal, D3 = échec devant témoins ou à enjeu public.
+- `complication_types` (6) : `cost`, `time`, `information`, `relation`, `position`, `danger`. Définitions de travail (le fichier ne porte que le nom) :
+  - Coût : il faut payer, perdre ou sacrifier quelque chose (« la serrure cède, mais le crochet casse »).
+  - Temps : le délai se réduit ou une échéance apparaît (« la porte s'ouvre, mais les gardes reviennent dans une minute »).
+  - Information : on apprend, ou l'on perd de vue, un fait important (« on entend la conversation, mais on est repéré »).
+  - Relation : un PNJ, un allié ou une faction en est affecté (« le portier cède, mais il vous en voudra »).
+  - Position : on se retrouve ailleurs ou dans une situation plus exposée (« on franchit la porte, côté ennemi »).
+  - Danger : une menace nouvelle surgit (« la porte s'ouvre sur une pièce où quelque chose s'éveille »).
+  - `resource` et `ally` n'ont pas été ajoutés : ils recoupent Coût et Relation.
+- `clue_conclusions` (34) : un fait énoncé à l'indicatif, découvrable par un objet, un PNJ ou un lieu. Catégories `identity`, `location`, `motive`, `method`, `secret`.
+- `player_offers` (46) : répliques à la 1re personne, ≤ 120 caractères, recevables (aucun piège). 11 à 12 par catégorie `social`, `action`, `exploration`, `unexpected`.
+- Aucun `keywords`. Tables à déposer dans `tables/` (ou `tables/fr/` si V5 est fusionné).

@@ -1,0 +1,283 @@
+{
+  "schemaVersion": 1,
+  "table": "player_offers",
+  "locale": "fr",
+  "entries": [
+    {
+      "id": "veux-seduire-dragon",
+      "text": "Je veux séduire le dragon.",
+      "difficulty": 1,
+      "category": "social"
+    },
+    {
+      "id": "demande-sentinelle-si-aime",
+      "text": "Je demande à la sentinelle si elle aime son travail.",
+      "difficulty": 1,
+      "category": "social"
+    },
+    {
+      "id": "propose-payer-tournee-generale",
+      "text": "Je propose de payer une tournée générale à toute l'auberge.",
+      "difficulty": 1,
+      "category": "social"
+    },
+    {
+      "id": "veux-forgeron-raconte-histoire",
+      "text": "Je veux que le forgeron me raconte l'histoire de sa première épée.",
+      "difficulty": 1,
+      "category": "social"
+    },
+    {
+      "id": "veux-convaincre-bourreau-changer",
+      "text": "Je veux convaincre le bourreau de changer de métier.",
+      "difficulty": 2,
+      "category": "social"
+    },
+    {
+      "id": "organise-grand-banquet-reconcilier",
+      "text": "J'organise un grand banquet pour réconcilier les deux clans.",
+      "difficulty": 2,
+      "category": "social"
+    },
+    {
+      "id": "dis-capitaine-ennemi-suis",
+      "text": "Je dis au capitaine ennemi que je suis son cousin éloigné.",
+      "difficulty": 2,
+      "category": "social"
+    },
+    {
+      "id": "veux-apprendre-fantome-avoir",
+      "text": "Je veux apprendre à ce fantôme à ne plus avoir peur des vivants.",
+      "difficulty": 2,
+      "category": "social"
+    },
+    {
+      "id": "pleure-doucement-attendrir-geolier",
+      "text": "Je pleure doucement pour attendrir le geôlier.",
+      "difficulty": 2,
+      "category": "social"
+    },
+    {
+      "id": "demande-roi-adopter",
+      "text": "Je demande au roi de m'adopter.",
+      "difficulty": 3,
+      "category": "social"
+    },
+    {
+      "id": "fais-croire-toute-ville",
+      "text": "Je fais croire à toute la ville que le prince est amoureux de moi.",
+      "difficulty": 3,
+      "category": "social"
+    },
+    {
+      "id": "propose-duel-poesie-chef",
+      "text": "Je propose un duel de poésie au chef des brigands.",
+      "difficulty": 3,
+      "category": "social"
+    },
+    {
+      "id": "saute-balcon-attraper-lustre",
+      "text": "Je saute du balcon pour attraper le lustre.",
+      "difficulty": 1,
+      "category": "action"
+    },
+    {
+      "id": "lance-torche-tonneaux-huile",
+      "text": "Je lance ma torche sur les tonneaux d'huile.",
+      "difficulty": 1,
+      "category": "action"
+    },
+    {
+      "id": "cours-vers-porte-bloque",
+      "text": "Je cours vers la porte et je la bloque avec mon dos.",
+      "difficulty": 1,
+      "category": "action"
+    },
+    {
+      "id": "veux-dresser-loup-suit",
+      "text": "Je veux dresser le loup qui nous suit depuis ce matin.",
+      "difficulty": 2,
+      "category": "action"
+    },
+    {
+      "id": "coupe-cordes-pont-derriere",
+      "text": "Je coupe les cordes du pont derrière nous.",
+      "difficulty": 2,
+      "category": "action"
+    },
+    {
+      "id": "deguise-serveur-entrer-fete",
+      "text": "Je me déguise en serveur pour entrer dans la fête.",
+      "difficulty": 2,
+      "category": "action"
+    },
+    {
+      "id": "plonge-riviere-suivre-barque",
+      "text": "Je plonge dans la rivière pour suivre la barque.",
+      "difficulty": 2,
+      "category": "action"
+    },
+    {
+      "id": "prends-tete-cortege-funeraire",
+      "text": "Je prends la tête du cortège funéraire comme si c'était normal.",
+      "difficulty": 2,
+      "category": "action"
+    },
+    {
+      "id": "veux-voler-cheval-duc",
+      "text": "Je veux voler le cheval du duc pendant son discours.",
+      "difficulty": 3,
+      "category": "action"
+    },
+    {
+      "id": "prends-place-prisonnier-cellule",
+      "text": "Je prends la place du prisonnier dans la cellule.",
+      "difficulty": 3,
+      "category": "action"
+    },
+    {
+      "id": "grimpe-dos-monstre-murmurer",
+      "text": "Je grimpe sur le dos du monstre pour lui murmurer à l'oreille.",
+      "difficulty": 3,
+      "category": "action"
+    },
+    {
+      "id": "veux-fouiller-cave-fond",
+      "text": "Je veux fouiller la cave de fond en comble.",
+      "difficulty": 1,
+      "category": "exploration"
+    },
+    {
+      "id": "regarde-derriere-tableau",
+      "text": "Je regarde ce qu'il y a derrière le tableau.",
+      "difficulty": 1,
+      "category": "exploration"
+    },
+    {
+      "id": "ecoute-porte-savoir-dit",
+      "text": "J'écoute à la porte pour savoir ce qui se dit dans la salle.",
+      "difficulty": 1,
+      "category": "exploration"
+    },
+    {
+      "id": "veux-savoir-laisse-lanterne",
+      "text": "Je veux savoir qui a laissé cette lanterne encore chaude.",
+      "difficulty": 1,
+      "category": "exploration"
+    },
+    {
+      "id": "suis-traces-boue-jusqu",
+      "text": "Je suis les traces de boue jusqu'à leur origine.",
+      "difficulty": 2,
+      "category": "exploration"
+    },
+    {
+      "id": "cherche-passage-secret-bibliotheque",
+      "text": "Je cherche un passage secret dans la bibliothèque.",
+      "difficulty": 2,
+      "category": "exploration"
+    },
+    {
+      "id": "goute-eau-source-savoir",
+      "text": "Je goûte l'eau de la source pour savoir d'où elle vient.",
+      "difficulty": 2,
+      "category": "exploration"
+    },
+    {
+      "id": "veux-monter-tout-haut",
+      "text": "Je veux monter tout en haut de la tour, sans m'arrêter.",
+      "difficulty": 2,
+      "category": "exploration"
+    },
+    {
+      "id": "veux-marcher-reculons-voir",
+      "text": "Je veux marcher à reculons pour voir ce que la forêt cache derrière nous.",
+      "difficulty": 2,
+      "category": "exploration"
+    },
+    {
+      "id": "dessine-carte-endroit-pendant",
+      "text": "Je dessine la carte de cet endroit pendant que nous le traversons.",
+      "difficulty": 3,
+      "category": "exploration"
+    },
+    {
+      "id": "creuse-endroit-exact-ombre",
+      "text": "Je creuse à l'endroit exact où l'ombre de la statue touche le sol.",
+      "difficulty": 3,
+      "category": "exploration"
+    },
+    {
+      "id": "veux-ouvrir-boutique-parapluies",
+      "text": "Je veux ouvrir une boutique de parapluies en plein désert.",
+      "difficulty": 1,
+      "category": "unexpected"
+    },
+    {
+      "id": "chante-berceuse-gardien-pont",
+      "text": "Je chante une berceuse au gardien du pont.",
+      "difficulty": 1,
+      "category": "unexpected"
+    },
+    {
+      "id": "veux-apprendre-danser-troll",
+      "text": "Je veux apprendre à danser au troll.",
+      "difficulty": 1,
+      "category": "unexpected"
+    },
+    {
+      "id": "veux-faire-pique-nique",
+      "text": "Je veux faire un pique-nique dans le cimetière.",
+      "difficulty": 2,
+      "category": "unexpected"
+    },
+    {
+      "id": "adopte-rat-vient-voler",
+      "text": "J'adopte le rat qui vient de me voler ma bourse.",
+      "difficulty": 2,
+      "category": "unexpected"
+    },
+    {
+      "id": "veux-fonder-club-lecture",
+      "text": "Je veux fonder un club de lecture avec les gobelins.",
+      "difficulty": 2,
+      "category": "unexpected"
+    },
+    {
+      "id": "demande-statue-si-froid",
+      "text": "Je demande à la statue si elle a froid.",
+      "difficulty": 2,
+      "category": "unexpected"
+    },
+    {
+      "id": "veux-donner-nom-prochain",
+      "text": "Je veux donner mon nom au prochain nuage qui passera.",
+      "difficulty": 2,
+      "category": "unexpected"
+    },
+    {
+      "id": "propose-demon-contrat-colocation",
+      "text": "Je propose au démon un contrat de colocation.",
+      "difficulty": 3,
+      "category": "unexpected"
+    },
+    {
+      "id": "declare-montagne-appartient-veux",
+      "text": "Je déclare que cette montagne m'appartient, et je veux la baptiser.",
+      "difficulty": 3,
+      "category": "unexpected"
+    },
+    {
+      "id": "lis-voix-haute-derniere",
+      "text": "Je lis à voix haute la dernière lettre trouvée dans la poche du mort.",
+      "difficulty": 3,
+      "category": "unexpected"
+    },
+    {
+      "id": "veux-enterrer-arme-tous",
+      "text": "Je veux enterrer mon arme avec tous les honneurs.",
+      "difficulty": 3,
+      "category": "unexpected"
+    }
+  ]
+}
