@@ -1,6 +1,7 @@
 package io.github.qnicoud.dmgym.core.backup
 
 import io.github.qnicoud.dmgym.core.history.SessionStatus
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.tables.TableId
 import java.time.DateTimeException
 import java.time.Instant
@@ -8,11 +9,11 @@ import java.time.ZoneId
 
 /**
  * Règles de validation d'une session lue dans un fichier non fiable (ADR 0015 §3). Pure : une seule violation fait
- * refuser le fichier entier. Les langues de contenu connues sont celles de l'ADR 0016 (français seul pour l'instant).
+ * refuser le fichier entier. Les langues de contenu connues sont les [ContentLanguage] livrées (ADR 0016) ; sans langue, un fichier vaut le français.
  */
 internal class BackupValidator(
     now: Instant,
-    private val contentLocales: Set<String> = setOf(DEFAULT_CONTENT_LOCALE),
+    private val contentLocales: Set<String> = ContentLanguage.entries.map { it.code }.toSet(),
 ) {
     private val earliest = Instant.parse(EARLIEST_START).toEpochMilli()
     private val latest = now.plusSeconds(SECONDS_PER_DAY).toEpochMilli()

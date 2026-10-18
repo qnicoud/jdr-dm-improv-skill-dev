@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.data.history.db
 
+import androidx.room3.ColumnInfo
 import androidx.room3.Entity
 import androidx.room3.ForeignKey
 import androidx.room3.Index
@@ -31,6 +32,8 @@ data class SessionEntity(
     val isGem: Boolean,
     val fromDaily: Boolean,
     val drawSeed: Long,
+    /** Langue du contenu tiré (ADR 0016) ; `fr` pour toutes les sessions d'avant le schéma v3. */
+    @ColumnInfo(defaultValue = "'fr'") val contentLocale: String = "fr",
 )
 
 @Entity(

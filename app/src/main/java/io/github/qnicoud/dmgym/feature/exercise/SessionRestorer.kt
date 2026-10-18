@@ -6,6 +6,7 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseSession
 import io.github.qnicoud.dmgym.core.exercise.timerSnapshotOf
 import io.github.qnicoud.dmgym.core.exercise.toExerciseSession
 import io.github.qnicoud.dmgym.core.history.SessionDetail
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.timer.TimerEngine
 import io.github.qnicoud.dmgym.core.timer.TimerState
 import kotlinx.coroutines.flow.first
@@ -16,6 +17,7 @@ internal object HandleKeys {
     const val SESSION = "session_id"
     const val TIMER = "timer"
     const val QUESTION = "question"
+    const val LANGUAGE = "content_language"
 }
 
 /** Départ de l'écran : modèle neuf, ou session à reprendre si [detail] est présent. */
@@ -39,7 +41,7 @@ internal class SessionRestorer(
         val defaults = definition.options.associate { it.key to it.default }
         val model =
             ExerciseModel(
-                session = ExerciseSession(definition.id, options = defaults),
+                session = ExerciseSession(definition.id, options = defaults, language = sessionLanguage()),
                 timer = TimerState.Idle(durationMs),
                 untimed = untimed,
             )
@@ -47,6 +49,12 @@ internal class SessionRestorer(
         val detail = resumeId?.let { withContext(deps.ioDispatcher) { deps.history.observeDetail(it).first() } }
         return StartState(model, detail?.takeIf { it.session.exerciseId == definition.id.value })
     }
+
+    /** Langue d'une séance neuve : celle déjà gardée dans le `SavedStateHandle`, sinon la langue courante de l'app. */
+    private fun sessionLanguage(): ContentLanguage =
+        ContentLanguage.fromCode(handle.get<String>(HandleKeys.LANGUAGE))
+            ?: deps.language.current.value
+                .also { handle[HandleKeys.LANGUAGE] = it.code }
 
     /** Modèle d'une session reprise : minuteur restauré (ou en pause), question et groupes retrouvés. */
     fun restored(detail: SessionDetail): ExerciseModel {

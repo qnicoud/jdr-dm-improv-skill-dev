@@ -85,6 +85,18 @@ class BackupWitnessFilesTest {
     }
 
     @Test
+    fun `the v1 witness without any language is imported as french`() {
+        val stripped = Regex(",\\s*\"contentLocale\"\\s*:\\s*\"[a-z]+\"").replace(witness("valid-complete.json"), "")
+        assertEquals(false, stripped.contains("contentLocale"))
+
+        val result = BackupDecoder.decode(stripped, KNOWN_EXERCISES, BACKUP_NOW) as DecodeResult.Success
+
+        assertEquals(2, result.sessions.size)
+        result.sessions.forEach { assertEquals("fr", it.session.contentLocale) }
+        assertEquals(decode("valid-complete.json"), result)
+    }
+
+    @Test
     fun `a witness from a newer version is refused`() {
         assertEquals(DecodeResult.Failure(ImportError.NewerVersion), decode("invalid-newer-version.json"))
     }

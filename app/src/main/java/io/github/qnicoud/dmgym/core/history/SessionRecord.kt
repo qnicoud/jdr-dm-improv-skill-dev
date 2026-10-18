@@ -1,5 +1,7 @@
 package io.github.qnicoud.dmgym.core.history
 
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
+
 enum class SessionStatus { IN_PROGRESS, COMPLETED }
 
 /** Séance d'exercice. `localEpochDay` est écrit une seule fois, à la création (ADR 0011). */
@@ -22,6 +24,8 @@ data class SessionRecord(
     val isGem: Boolean = false,
     val fromDaily: Boolean = false,
     val drawSeed: Long = 0,
+    /** Code de la langue du contenu tiré (`ContentLanguage.code`) ; fixée à la création de la séance (ADR 0016 §3). */
+    val contentLocale: String = ContentLanguage.DEFAULT.code,
 )
 
 data class DrawRecord(

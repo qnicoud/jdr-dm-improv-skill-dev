@@ -8,6 +8,7 @@ import io.github.qnicoud.dmgym.core.exercise.withRecordCategories
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.history.SessionDetail
 import io.github.qnicoud.dmgym.core.history.SessionNotFoundException
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.tables.TableRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
@@ -58,7 +59,8 @@ class SessionDetailViewModel(
 
     val uiState: StateFlow<SessionDetailUiState> =
         combine(history.observeDetail(sessionId).onEach { latest = it }, flags) { stored, current ->
-            val detail = stored?.copy(draws = stored.draws.withRecordCategories(tables))
+            val language = ContentLanguage.fromCode(stored?.session?.contentLocale) ?: ContentLanguage.DEFAULT
+            val detail = stored?.copy(draws = stored.draws.withRecordCategories(tables, language))
             SessionDetailUiState(
                 isLoading = false,
                 detail = detail?.toUi(registry[ExerciseId(detail.session.exerciseId)]),

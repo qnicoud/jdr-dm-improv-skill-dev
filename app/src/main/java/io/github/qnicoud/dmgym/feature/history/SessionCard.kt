@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
+import io.github.qnicoud.dmgym.ui.components.currentLocale
 import io.github.qnicoud.dmgym.ui.components.nameRes
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 import io.github.qnicoud.dmgym.ui.icons.ExerciseIcons
@@ -60,7 +61,7 @@ fun SessionCard(
                 Icon(DmIcons.forExercise(item.exerciseId), contentDescription = null, Modifier.size(24.dp))
                 Text(stringResource(item.exerciseId.nameRes), style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = "· " + clockTime(item.startedAtEpochMillis, item.zoneId),
+                    text = "· " + clockTime(item.startedAtEpochMillis, item.zoneId, currentLocale()),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

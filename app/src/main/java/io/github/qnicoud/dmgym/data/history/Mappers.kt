@@ -33,6 +33,7 @@ internal fun SessionRecord.toEntity() =
         isGem = isGem,
         fromDaily = fromDaily,
         drawSeed = drawSeed,
+        contentLocale = contentLocale,
     )
 
 internal fun SessionEntity.toRecord() =
@@ -54,6 +55,7 @@ internal fun SessionEntity.toRecord() =
         isGem = isGem,
         fromDaily = fromDaily,
         drawSeed = drawSeed,
+        contentLocale = contentLocale,
     )
 
 internal fun DrawRecord.toEntity(sessionId: Long) =

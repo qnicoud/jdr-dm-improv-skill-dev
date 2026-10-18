@@ -1,6 +1,7 @@
 package io.github.qnicoud.dmgym.core.exercise
 
 import io.github.qnicoud.dmgym.core.exercise.definitions.RealTables
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.tables.TableId
 import io.github.qnicoud.dmgym.core.tables.TableLoadException
 import io.github.qnicoud.dmgym.core.tables.TableRepository
@@ -59,8 +60,10 @@ class KeywordAnswerDetectorTest {
                 KeywordAnswerDetector(
                     TableRepository(
                         object : TableSource {
-                            override suspend fun load(id: TableId) =
-                                throw TableLoadException(id, IllegalStateException())
+                            override suspend fun load(
+                                id: TableId,
+                                language: ContentLanguage,
+                            ) = throw TableLoadException(id, IllegalStateException())
                         },
                     ),
                 )
@@ -84,8 +87,10 @@ class KeywordAnswerDetectorTest {
                 KeywordAnswerDetector(
                     TableRepository(
                         object : TableSource {
-                            override suspend fun load(id: TableId) =
-                                throw TableLoadException(id, IllegalStateException())
+                            override suspend fun load(
+                                id: TableId,
+                                language: ContentLanguage,
+                            ) = throw TableLoadException(id, IllegalStateException())
                         },
                     ),
                     onFailure = { failures += it },

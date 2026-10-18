@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.reminder.ReminderSettings
+import io.github.qnicoud.dmgym.ui.components.currentLocale
 import io.github.qnicoud.dmgym.ui.icons.ReminderIcons
 import io.github.qnicoud.dmgym.ui.theme.DmGymTheme
 import java.time.DayOfWeek
@@ -78,7 +79,7 @@ fun ReminderSection(
 ) {
     Column(modifier) {
         SectionTitle(stringResource(R.string.settings_section_reminder))
-        val time = formatReminderTime(state.minuteOfDay, is24Hour)
+        val time = formatReminderTime(state.minuteOfDay, is24Hour, currentLocale())
         val summary =
             if (state.enabled) {
                 stringResource(

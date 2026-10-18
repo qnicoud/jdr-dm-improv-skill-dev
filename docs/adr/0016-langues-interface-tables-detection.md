@@ -106,3 +106,9 @@ Principe UX non négociable : **la langue est un seul commutateur**. L'interface
 
 - **D54** : la v1.1 livre l'architecture multilingue et le français seul ; le sélecteur reste masqué. Anglais complet plus tard (v1.2 si publication).
 - **D55** : **sélecteur dans l'app sur toutes les versions (AppCompat `setApplicationLocales`)**, synchronisé avec le sélecteur système d'Android 13+. Cela remplace la recommandation LocaleManager de cet ADR (choix de l'UX retenu par l'utilisateur).
+
+## Complément (lot V5, 2026-10-18)
+
+- Le branchement AppCompat `setApplicationLocales` (D55) est **reporté à l'arrivée d'une 2e langue** : le sélecteur est masqué (D54) et ce branchement imposerait une dépendance et la migration des thèmes sans bénéfice. `locales_config.xml` et `ConfigurationLanguageProvider` sont en place.
+- Les formats de date et d'heure suivent la **langue du contenu** de l'app (`ContentLanguage.resolve`), pas la locale brute du téléphone.
+- Reportés avec l'anglais : pluriels, textes d'export, mot de confirmation EFFACER, sémantique TalkBack traduite, test de complétude des traductions.

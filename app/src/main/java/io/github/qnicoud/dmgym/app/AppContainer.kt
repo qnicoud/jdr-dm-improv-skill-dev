@@ -9,6 +9,7 @@ import io.github.qnicoud.dmgym.core.exercise.ExerciseRegistry
 import io.github.qnicoud.dmgym.core.exercise.KeywordAnswerDetector
 import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.history.SessionArchive
+import io.github.qnicoud.dmgym.core.i18n.LanguageProvider
 import io.github.qnicoud.dmgym.core.reminder.ReminderDelivery
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import io.github.qnicoud.dmgym.core.signal.EndSignal
@@ -25,6 +26,7 @@ import io.github.qnicoud.dmgym.feature.home.ExerciseCatalog
 import io.github.qnicoud.dmgym.feature.home.SettingsExerciseCatalog
 import io.github.qnicoud.dmgym.feature.settings.NotificationPermissionGate
 import io.github.qnicoud.dmgym.platform.AndroidEndSignal
+import io.github.qnicoud.dmgym.platform.ConfigurationLanguageProvider
 import io.github.qnicoud.dmgym.platform.SystemMonotonicClock
 import io.github.qnicoud.dmgym.platform.reminder.AlarmReminderScheduler
 import io.github.qnicoud.dmgym.platform.reminder.AndroidNotificationPermissionGate
@@ -112,6 +114,8 @@ class DefaultAppContainer(
 
     override val exerciseRegistry: ExerciseRegistry = ExerciseRegistry.Default
 
+    private val languageProvider: LanguageProvider by lazy { ConfigurationLanguageProvider(application) }
+
     override val tableRepository: TableRepository by lazy {
         TableRepository(AssetTableSource(application.assets, Dispatchers.IO))
     }
@@ -145,6 +149,7 @@ class DefaultAppContainer(
             endSignal = endSignal,
             monotonicClock = SystemMonotonicClock(),
             wallClock = Clock.systemDefaultZone(),
+            language = languageProvider,
             detector =
                 KeywordAnswerDetector(tableRepository) {
                     Log.w(TAG, "Detection disabled: ${it.message}", it)

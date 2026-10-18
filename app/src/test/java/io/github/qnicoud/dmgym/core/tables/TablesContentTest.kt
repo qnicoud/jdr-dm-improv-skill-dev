@@ -1,6 +1,7 @@
 package io.github.qnicoud.dmgym.core.tables
 
 import io.github.qnicoud.dmgym.core.detection.TextNormalizer
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -88,11 +89,54 @@ class TablesContentTest {
         expected.forEach { assertTrue(File(TestTables.assetsDir(), "$it.json").exists(), "$it.json missing") }
     }
 
+    @Test
+    fun `every content language ships a folder with all the tables`() {
+        val root = File(TestTables.assetsDir(), "..").canonicalFile
+        val folders =
+            root
+                .listFiles { f -> f.isDirectory }
+                .orEmpty()
+                .map { it.name }
+                .toSet()
+        assertEquals(ContentLanguage.entries.map { it.code }.toSet(), folders, "tables/<lang> folders")
+        ContentLanguage.entries.forEach { lang ->
+            val names =
+                TestTables
+                    .assetsDir(lang)
+                    .list()
+                    .orEmpty()
+                    .toSet()
+            val expected = TableId.entries.map { "${it.fileName}.json" }
+            assertTrue(names.containsAll(expected), "files for ${lang.code}: missing ${expected - names}")
+        }
+    }
+
+    @Test
+    fun `tables are identical across languages except for text, keywords and fuzzy`() {
+        val reference = ContentLanguage.DEFAULT
+        ContentLanguage.entries.filter { it != reference }.forEach { lang ->
+            TableId.entries.forEach { id ->
+                val base = load(id, reference).entries.associateBy { it.id }
+                val other = load(id, lang).entries.associateBy { it.id }
+                assertEquals(base.keys, other.keys, "${id.fileName}: ids differ in ${lang.code}")
+                base.forEach { (entryId, entry) ->
+                    val twin = other.getValue(entryId)
+                    assertEquals(entry.category, twin.category, "${id.fileName}/$entryId category")
+                    assertEquals(entry.tags, twin.tags, "${id.fileName}/$entryId tags")
+                    assertEquals(entry.difficulty, twin.difficulty, "${id.fileName}/$entryId difficulty")
+                }
+            }
+        }
+    }
+
     private val idPattern = Regex("[a-z0-9]+(-[a-z0-9]+)*")
 
-    private fun load(id: TableId): TableFile {
-        val file = TestTables.assetFile(id)
-        assertTrue(file.exists(), "table ${id.fileName} is missing from the assets")
+    private fun load(
+        id: TableId,
+        language: ContentLanguage = ContentLanguage.DEFAULT,
+    ): TableFile {
+        val file = TestTables.assetFile(id, language)
+        assertTrue(file.exists(), "table ${id.fileName} is missing from the ${language.code} assets")
         return TableFile.decode(file.readText())
     }
 
@@ -103,7 +147,7 @@ class TablesContentTest {
 
         assertEquals(id.fileName, table.table)
         assertEquals(1, table.schemaVersion)
-        assertEquals("fr", table.locale)
+        assertEquals(ContentLanguage.DEFAULT.code, table.locale)
         val expected = rules[id]?.entryCount ?: 30..Int.MAX_VALUE
         assertTrue(table.entries.size in expected, "expected $expected entries, found ${table.entries.size}")
     }

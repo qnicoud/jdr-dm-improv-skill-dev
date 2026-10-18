@@ -60,7 +60,15 @@ internal class SessionLifecycle(
 
     private suspend fun createSession(plannedMs: Long?): Long? =
         try {
-            recorder.create(definition.id.value, plannedMs?.let { (it / MS).toInt() }, launch.fromDaily, seed)
+            recorder.create(
+                definition.id.value,
+                plannedMs?.let {
+                    (it / MS).toInt()
+                },
+                launch.fromDaily,
+                seed,
+                model.value.session.language,
+            )
         } catch (e: CancellationException) {
             throw e
         } catch (_: Exception) {
@@ -107,7 +115,7 @@ internal class SessionLifecycle(
     ) {
         recorder.adopt(detail.session)
         val base = restorer.restored(detail)
-        val draws = base.session.draws.withCategories(deps.tables)
+        val draws = base.session.draws.withCategories(deps.tables, base.session.language)
         val restored = base.copy(session = base.session.copy(draws = draws))
         model.value = restored
         handle[HandleKeys.SESSION] = detail.session.id

@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.core.detection
 
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.tables.TableEntry
 import io.github.qnicoud.dmgym.core.tables.TableFile
 import kotlinx.serialization.Serializable
@@ -7,13 +8,12 @@ import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import java.io.File
 
 /**
  * Golden corpus measurement (ADR 0008, `docs/qa/detection-corpus.md`). Each case of
- * `detection/corpus.json` tests one real entry of `story_elements` or `sensory_words`:
+ * `detection/fr/corpus.json` tests one real entry of `story_elements` or `sensory_words`:
  * `{"cases":[{"id","entryId","table","text","expected":bool,"tag"}]}`. Keywords and `fuzzy` are read from the
  * shipped tables. Recall and precision are computed in total, per category and per tag; a detailed report
  * is written to `build/reports/detection-report.txt`.
@@ -77,14 +77,19 @@ class GoldenCorpusTest {
         val byTag: Map<String, Score>,
     )
 
-    private fun load(): Corpus? =
-        javaClass.classLoader.getResourceAsStream(CORPUS)?.use {
+    private fun corpusPath(language: ContentLanguage) = "detection/${language.code}/corpus.json"
+
+    private fun load(language: ContentLanguage): Corpus? =
+        javaClass.classLoader.getResourceAsStream(corpusPath(language))?.use {
             Json.decodeFromString<Corpus>(it.readBytes().toString(Charsets.UTF_8))
         }
 
-    private fun loadTable(name: String): Map<String, TableEntry> =
+    private fun loadTable(
+        name: String,
+        language: ContentLanguage,
+    ): Map<String, TableEntry> =
         TableFile
-            .decode(File("src/main/assets/tables/$name.json").readText())
+            .decode(File("src/main/assets/tables/${language.code}/$name.json").readText())
             .entries
             .associateBy { it.id }
 
@@ -148,18 +153,26 @@ class GoldenCorpusTest {
     }
 
     @Test
-    fun `golden corpus meets the thresholds`() {
-        val corpus = load()
-        assumeTrue(REQUIRE_GOLDEN_CORPUS_PRESENT || corpus != null, "$CORPUS not provided yet")
-        val tables = TABLES.associateWith(::loadTable)
-        validate(requireNotNull(corpus) { "missing $CORPUS" }, tables, GOLDEN_MIN_CASES)
+    fun `every content language has a corpus that meets the thresholds`() {
+        ContentLanguage.entries.forEach(::checkThresholds)
+    }
+
+    @Test
+    fun `the french corpus is stored under detection fr`() {
+        assertTrue(load(ContentLanguage.FR) != null, "missing ${corpusPath(ContentLanguage.FR)}")
+    }
+
+    private fun checkThresholds(language: ContentLanguage) {
+        val corpus = requireNotNull(load(language)) { "missing ${corpusPath(language)}" }
+        val tables = TABLES.associateWith { loadTable(it, language) }
+        validate(corpus, tables, GOLDEN_MIN_CASES)
 
         val measure = measure(corpus, tables)
         val text = report(measure)
         File("build/reports").mkdirs()
-        File("build/reports/detection-report.txt").writeText(text)
+        File("build/reports/detection-report-${language.code}.txt").writeText(text)
 
-        val summary = text.lines().take(1).joinToString()
+        val summary = "${language.code}: " + text.lines().take(1).joinToString()
         assertTrue(measure.total.recall >= MIN_RECALL, "recall below $MIN_RECALL: $summary")
         assertTrue(measure.total.precision >= MIN_PRECISION, "precision below $MIN_PRECISION: $summary")
     }
@@ -192,9 +205,6 @@ class GoldenCorpusTest {
     }
 
     private companion object {
-        /** True now that corpus.json is merged: its absence fails the build instead of skipping the test. */
-        const val REQUIRE_GOLDEN_CORPUS_PRESENT = true
-        const val CORPUS = "detection/corpus.json"
         val TABLES = listOf("story_elements", "sensory_words")
         const val MIN_RECALL = 0.85
         const val MIN_PRECISION = 0.90

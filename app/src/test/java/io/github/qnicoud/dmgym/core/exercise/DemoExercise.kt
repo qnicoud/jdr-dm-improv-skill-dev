@@ -1,6 +1,7 @@
 package io.github.qnicoud.dmgym.core.exercise
 
 import io.github.qnicoud.dmgym.R
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.tables.TableFile
 import io.github.qnicoud.dmgym.core.tables.TableId
 import io.github.qnicoud.dmgym.core.tables.TableLoadException
@@ -53,7 +54,10 @@ object DemoExercise {
     class FixtureSource(
         var failing: Boolean = false,
     ) : TableSource {
-        override suspend fun load(id: TableId): TableFile {
+        override suspend fun load(
+            id: TableId,
+            language: ContentLanguage,
+        ): TableFile {
             if (failing) throw TableLoadException(id, IllegalStateException("broken"))
             return TableFile.decode(TestTables.resource("fixture_small.json"))
         }

@@ -16,6 +16,7 @@ import io.github.qnicoud.dmgym.core.exercise.SlotDrawer
 import io.github.qnicoud.dmgym.core.exercise.TimerUi
 import io.github.qnicoud.dmgym.core.exercise.reduce
 import io.github.qnicoud.dmgym.core.exercise.toExerciseSession
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.settings.VibrationStrength
 import io.github.qnicoud.dmgym.core.timer.TimerEngine
 import io.github.qnicoud.dmgym.core.timer.TimerState
@@ -49,7 +50,7 @@ class ExerciseViewModel(
 ) : ViewModel() {
     private val seed: Long = handle.get<Long>(KEY_SEED) ?: launch.seed.also { handle[KEY_SEED] = it }
     private val random = Random(seed)
-    private val drawer = SlotDrawer(deps.tables, random)
+    private val drawer = SlotDrawer(deps.tables, random) { model.value.session.language }
     private val model = MutableStateFlow(ExerciseModel(ExerciseSession(definition.id), TimerState.Idle(DEFAULT_MS)))
     private val channel = Channel<ExerciseEvent>(Channel.BUFFERED)
     private val scheduled =
@@ -96,6 +97,9 @@ class ExerciseViewModel(
             channel,
             ::dispatch,
         )
+
+    /** Langue des tirages de la séance en cours (ADR 0016 §3). */
+    internal val sessionLanguage: ContentLanguage get() = model.value.session.language
 
     /** Événements ponctuels (annonces, rappels). */
     val events: Flow<ExerciseEvent> = channel.receiveAsFlow()

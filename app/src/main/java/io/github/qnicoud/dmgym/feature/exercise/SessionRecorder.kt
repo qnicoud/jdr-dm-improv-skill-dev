@@ -10,6 +10,7 @@ import io.github.qnicoud.dmgym.core.history.HistoryRepository
 import io.github.qnicoud.dmgym.core.history.SessionNotFoundException
 import io.github.qnicoud.dmgym.core.history.SessionRecord
 import io.github.qnicoud.dmgym.core.history.SessionStatus
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.time.localEpochDay
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
@@ -42,6 +43,7 @@ class SessionRecorder(
         plannedSec: Int?,
         fromDaily: Boolean,
         seed: Long,
+        language: ContentLanguage,
     ): Long {
         val now = wallClock.millis()
         val record =
@@ -54,6 +56,7 @@ class SessionRecorder(
                 plannedDurationSec = plannedSec,
                 fromDaily = fromDaily,
                 drawSeed = seed,
+                contentLocale = language.code,
             )
         val id = withContext(io) { history.createSession(record) }
         base = record.copy(id = id)

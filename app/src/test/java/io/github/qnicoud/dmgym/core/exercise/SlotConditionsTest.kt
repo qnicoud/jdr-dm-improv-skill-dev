@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.core.exercise
 
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.tables.TableEntry
 import io.github.qnicoud.dmgym.core.tables.TableFile
 import io.github.qnicoud.dmgym.core.tables.TableId
@@ -20,7 +21,10 @@ class SlotConditionsTest {
     private fun drawer(vararg roles: TableEntry): SlotDrawer {
         val source =
             object : TableSource {
-                override suspend fun load(id: TableId): TableFile =
+                override suspend fun load(
+                    id: TableId,
+                    language: ContentLanguage,
+                ): TableFile =
                     TableFile(
                         1,
                         id.fileName,

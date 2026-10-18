@@ -4,16 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import io.github.qnicoud.dmgym.R
 import io.github.qnicoud.dmgym.core.daily.ExerciseProgress
+import io.github.qnicoud.dmgym.core.i18n.LocaleFormats
+import io.github.qnicoud.dmgym.ui.components.currentLocale
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-
-private val DayMonth: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM", Locale.FRENCH)
 
 /** « Séance du 16 octobre » à partir du `localEpochDay` du plan. */
 @Composable
 fun dailyDateTitle(epochDay: Long): String =
-    stringResource(R.string.daily_date_title, LocalDate.ofEpochDay(epochDay).format(DayMonth))
+    stringResource(R.string.daily_date_title, LocaleFormats.dayMonth(LocalDate.ofEpochDay(epochDay), currentLocale()))
 
 @Composable
 fun ExerciseProgress.label(): String =

@@ -3,9 +3,11 @@ package io.github.qnicoud.dmgym.core.exercise
 import io.github.qnicoud.dmgym.core.detection.CompiledTargets
 import io.github.qnicoud.dmgym.core.detection.DetectionTarget
 import io.github.qnicoud.dmgym.core.detection.KeywordDetector
+import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.tables.TableId
 import io.github.qnicoud.dmgym.core.tables.TableLoadException
 import io.github.qnicoud.dmgym.core.tables.TableRepository
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * [AnswerDetector] branché sur les `keywords` des tables (ADR 0008). [prepare] lit les mots-clés des tirages ;
@@ -13,13 +15,23 @@ import io.github.qnicoud.dmgym.core.tables.TableRepository
  */
 class KeywordAnswerDetector(
     private val tables: TableRepository,
+    private val language: ContentLanguage = ContentLanguage.DEFAULT,
     private val engine: KeywordDetector = KeywordDetector(),
     /** Appelé quand une table est illisible : la détection reste muette, le cochage manuel continue de marcher. */
     private val onFailure: (TableLoadException) -> Unit = {},
 ) : AnswerDetector {
     private val lock = Any()
+    private val siblings = ConcurrentHashMap<ContentLanguage, KeywordAnswerDetector>()
     private val targets = mutableMapOf<String, DetectionTarget>()
     private var compiled: Pair<List<String>, CompiledTargets>? = null
+
+    /** Un détecteur par langue, qui garde ses propres cibles : un mot-clé français n'est jamais lu en anglais. */
+    override fun forLanguage(language: ContentLanguage): AnswerDetector =
+        if (language == this.language) {
+            this
+        } else {
+            siblings.getOrPut(language) { KeywordAnswerDetector(tables, language, engine, onFailure) }
+        }
 
     override suspend fun prepare(draws: List<Draw>) {
         draws
@@ -32,7 +44,7 @@ class KeywordAnswerDetector(
         val id = TableId.entries.firstOrNull { it.fileName == fileName } ?: return
         val file =
             try {
-                tables.table(id)
+                tables.table(id, language)
             } catch (e: TableLoadException) {
                 onFailure(e)
                 return
