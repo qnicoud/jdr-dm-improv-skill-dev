@@ -1,11 +1,13 @@
 # DM Gym — Spécifications
 
-Application Android pour s'entraîner aux compétences de Maître du Jeu (D&D / JdR) via 7 exercices courts inspirés d'autres disciplines créatives.
+Application Android pour s'entraîner aux compétences de Maître du Jeu (D&D / JdR) via 10 exercices courts inspirés d'autres disciplines créatives.
 
 Source d'inspiration : vidéo d'Edariad « How to Get Better at DMing Crazy Fast » (https://www.youtube.com/watch?v=RhmlT8crkG4), résumée dans https://scipio202.bearblog.dev/growing-edges-and-gming-exercises/.
 
 **Positionnement** : « la salle de sport du MJ » — des séances courtes, hors partie, avec une contrainte, un chrono et une trace. Ni un générateur de contenu pour la table, ni un outil de campagne.
 
+> Révision du 2026-10-18 (v1.1) : 3 nouveaux exercices, rappels, sauvegarde et import des sessions, architecture multilingue (ADR 0014 à 0017, décisions D54 à D70).
+>
 > Révision du 2026-10-16 : décisions D1–D24 tranchées (voir `docs/pilotage.md` et les ADR de `docs/adr/`) et corrections issues de la recherche (`docs/research/`).
 
 ## Principes de conception
@@ -30,10 +32,10 @@ L'app doit fonctionner **entièrement hors ligne**. Pas de compte, pas de backen
 
 ## Fonctionnalités communes
 
-- Écran d'accueil : liste des 7 exercices (nom, discipline d'origine, durée).
+- Écran d'accueil : liste des 10 exercices (nom, discipline d'origine, durée).
 - Écran d'exercice : consigne, tirage aléatoire (si pertinent), minuteur, zone de saisie texte (ou plusieurs champs).
 - Bouton « Relancer le tirage ».
-- Minuteur par horodatage (survit à la rotation et à l'arrière-plan, sans service ni notification en v1) ; écran maintenu allumé pendant l'exercice.
+- Minuteur par horodatage (survit à la rotation et à l'arrière-plan, sans service ni notification de minuteur) ; écran maintenu allumé pendant l'exercice.
 - **Durée réglable** pour chaque exercice et **option « sans minuteur »** (WCAG 2.2.1).
 - À la fin du minuteur : vibration (réglable) + bip discret via SoundPool, joué seulement en mode sonnerie normal ; la saisie reste possible (passage en « temps additionnel », jamais de blocage ni de dialogue).
 - Sauvegarde automatique de chaque session (exercice, date, tirage, réponses).
@@ -42,9 +44,13 @@ L'app doit fonctionner **entièrement hors ligne**. Pas de compte, pas de backen
 - Statistiques simples : nombre de sessions (affiché en premier), puis série de jours consécutifs **avec jour de grâce, sans remise à zéro punitive** ; le jour bascule à minuit local.
 - **Thème** (D53) : réglage « Parchemin » (défaut, identité de l'app) / « Couleurs du téléphone » (Material You, Android 12+) / 3-4 palettes Material conformes.
 - **Saisie vocale** (D52) : la v1 s'appuie sur la dictée du clavier Android ; aucun bouton micro intégré, aucune permission audio.
-- **Séance du jour** suggérée (3 exercices, graine = date, chaque exercice remplaçable ; One-Page exclu par défaut).
+- **Séance du jour** suggérée (3 exercices, graine = date, chaque exercice remplaçable ; One-Page exclu par défaut). Depuis la v1.1 (D69), la séance proposée est **figée pour la journée** : le premier plan calculé est enregistré et réutilisé jusqu'au lendemain, même si une mise à jour agrandit le catalogue. Un identifiant d'exercice inconnu invalide le plan, qui est alors recalculé.
+- **Étiquette « Nouveau »** (v1.1) : les exercices de la dernière version l'affichent sur la carte d'accueil, jusqu'à la première session comptée (terminée, ou inachevée avec du contenu). Rien n'est stocké : elle se déduit de l'historique.
+- **Rappels** (v1.1, ADR 0014) : notification locale facultative, **désactivée par défaut**, activée depuis Réglages. Jours et heure au choix (défaut : lundi, mercredi, vendredi vers 18 h 30), au plus une par jour, jamais si l'utilisateur a déjà pratiqué ce jour-là, pause automatique après 14 jours sans session. Canal d'importance basse (silencieux) ; le texte ne cite jamais la série. Alarme inexacte (`AlarmManager`), reprogrammée après redémarrage, mise à jour ou changement de fuseau. La permission `POST_NOTIFICATIONS` n'est demandée qu'à l'activation.
+- **Sauvegarde et import des sessions** (v1.1, ADR 0015) : Réglages propose « Exporter pour lire » (texte lisible, non réimportable) et « Sauvegarder mes sessions » (fichier JSON versionné, écrit par le sélecteur de fichiers du système, sans permission de stockage). « Importer des sessions » lit ce fichier : aperçu (N sessions trouvées, plage de dates, déjà présentes, ignorées) avant de confirmer, ajout tout ou rien, « Annuler cet import » sur l'écran de résultat. Une session est identifiée par (exercice, instant de début) : celle déjà présente gagne, réimporter le même fichier ajoute 0 session. Le fichier est une entrée non fiable : lecture bornée, décodage strict, validation, sinon refus avec un motif clair. **Seules les sessions sont sauvegardées** (D70) : thème, durées, rappels et autres réglages sont à refaire après une réinstallation. Cela permet de passer de l'app de développement à l'APK signé (voir `docs/qa/release.md`).
+- **Langue** (v1.1, ADR 0016, D54) : l'architecture est prête (tables dans `assets/tables/fr/`, langue de contenu enregistrée par session, détection de mots par langue, formats de date suivant la langue du contenu), mais l'app reste **en français seul**, sans sélecteur visible. L'anglais est prévu en v1.2.
 
-## Les 7 exercices
+## Les 10 exercices
 
 ### 1. Crazy Eights (design thinking)
 - **But** : dépasser ses premières idées (les plus accessibles en mémoire) pour trouver les plus intéressantes.
@@ -92,6 +98,23 @@ L'app doit fonctionner **entièrement hors ligne**. Pas de compte, pas de backen
 
 > Durées : celles de Constraint Box, Core Image, Status et One-Page sont des choix du projet (non données par la source).
 
+### 8. Échec qui avance (jeux narratifs, *failing forward*)
+- **But** : transformer un jet raté en complication qui fait avancer l'histoire, au lieu d'un « rien ne se passe ».
+- **Déroulé** : une situation d'échec est tirée (« Le voleur rate son jet pour crocheter la porte du temple. »), avec **3 types de complication imposés** (coût, temps, information, relation, position, danger…) tirés d'une table de 6 à 8 types (D56). Trois champs, chacun lié à un type ; l'utilisateur écrit une complication par type.
+- Durée : 4 min. Bilan : choisir la complication préférée (« Laquelle ferait le plus avancer l'histoire ? »). Proposé à l'échauffement de la séance du jour.
+
+### 9. Règle des 3 indices (enquête)
+- **But** : concevoir une enquête sans point de blocage, avec plusieurs voies vers chaque conclusion.
+- **Déroulé** : une conclusion d'enquête est tirée, énoncée comme un fait (« Le bourgmestre est un imposteur. »). L'utilisateur écrit **trois indices** qui y mènent, un par champ fixe : un objet, un PNJ, un lieu.
+- Durée : 5 min. Non proposé à l'échauffement.
+
+### 10. Oui, et… (théâtre d'improvisation)
+- **But** : accueillir les propositions des joueurs et construire dessus, au lieu de les bloquer.
+- **Déroulé** : **5 offres de joueurs** (« Je veux séduire le dragon. ») sont tirées dans quatre catégories (sociale, action, exploration, inattendue). Elles sont **révélées une à une** (D57) : l'utilisateur répond à l'offre en cours par une phrase qui commence par un « Oui, et » non modifiable, puis passe à la suivante.
+- Option « bloquer d'abord » : un premier champ pour écrire le réflexe de refus, avant le « Oui, et ».
+- Durée : 5 min, avec une vibration de rythme chaque minute (réglable) ; le passage à l'offre suivante est manuel (D58). Proposé à l'échauffement de la séance du jour.
+- Ces trois exercices s'appuient sur le moteur générique (ADR 0012, 0017), n'utilisent pas la détection de mots et n'ont besoin d'aucune migration de l'historique.
+
 ## Détection des mots (Constraint Box, Connect the Story)
 
 - Normalisation par jeton (minuscules, accents retirés, œ/æ, apostrophes) ; comparaison avec les `keywords` fournis par le rédacteur pour chaque entrée.
@@ -101,7 +124,7 @@ L'app doit fonctionner **entièrement hors ligne**. Pas de compte, pas de backen
 
 ## Contenu (tables aléatoires)
 
-Fichiers JSON dans `assets/tables/` :
+Fichiers JSON dans `assets/tables/fr/` (un dossier par langue, ADR 0016) :
 - `problems.json` (Crazy Eights)
 - `places.json`, `sensory_words.json` (Constraint Box)
 - `core_images.json`, `threading_questions.json` (Core Image)
@@ -109,8 +132,11 @@ Fichiers JSON dans `assets/tables/` :
 - `surprise_situations.json` (Decision Point)
 - `story_elements.json` avec 5 catégories (Connect the Story)
 - `one_page_situations.json` (One-Page, mode sans campagne)
+- `failure_situations.json`, `complication_types.json` (Échec qui avance)
+- `clue_conclusions.json` (Règle des 3 indices)
+- `player_offers.json` (Oui, et…)
 
-Au moins 30 entrées par table pour la v1. Contenu original, en français.
+Au moins 30 entrées par table (`player_offers` : 40, dont 10 par catégorie ; `complication_types` : table de vocabulaire de 6 à 8 entrées). Contenu original, en français.
 Chaque entrée porte un `id` stable et un champ `difficulty` (1-3) ; le champ `keywords` (1 à 4 mots-clés/synonymes) est **obligatoire** dans `story_elements.json` et `sensory_words.json`.
 
 ## Hors périmètre v1
@@ -119,13 +145,15 @@ Chaque entrée porte un `id` stable et un champ `difficulty` (1-3) ; le champ `k
 - IA générative intégrée (prévue après la v1, en option : voir la feuille de route)
 - Enregistrement audio
 - Thèmes entièrement personnalisés (la v1 propose seulement un choix de palette, voir « Fonctionnalités communes »)
-- Notifications (rappels, fin de minuteur hors app) → v1.1, optionnelles, désactivées par défaut
+- Notification de fin de minuteur hors app (les rappels d'entraînement, eux, sont livrés en v1.1)
+- Synchronisation ou sauvegarde automatique dans le cloud : la sauvegarde de la v1.1 est un fichier que l'utilisateur déplace lui-même
 
-## Feuille de route après la v1
+## Feuille de route
 
-- **v1.1** : exercices « Échec qui avance », « Règle des 3 indices », « Oui, et… » ; rappels par notification locale optionnels.
-- **v1.2** : « PNJ éclair ».
-- **Après la v1 — LLM optionnel** (D51) : exercices interactifs (dialogue) et génération de situations. Désactivé par défaut ; service distant (ChatGPT, Claude, Mistral…) avec la clé d'API de l'utilisateur, ou modèle local. L'app reste entièrement utilisable sans. Demandera la permission réseau, donc un nouvel ADR qui amende l'ADR 0010.
+- **v1.0** : les 7 exercices, historique, statistiques, séance du jour.
+- **v1.1 (livrée)** : exercices « Échec qui avance », « Règle des 3 indices » et « Oui, et… » ; rappels par notification locale ; sauvegarde et import des sessions ; architecture multilingue (français seul) ; étiquette « Nouveau » ; séance du jour figée.
+- **v1.2** : exercice « PNJ éclair » ; interface et contenu en **anglais** si l'app est publiée (sélecteur de langue, tables, détection et textes d'export traduits ; relecture par un anglophone nécessaire).
+- **Ensuite — LLM optionnel** (D51) : exercices interactifs (dialogue) et génération de situations. Désactivé par défaut ; service distant (ChatGPT, Claude, Mistral…) avec la clé d'API de l'utilisateur, ou modèle local. L'app reste entièrement utilisable sans. Demandera la permission réseau, donc un nouvel ADR qui amende l'ADR 0010.
 - **Plus tard — saisie vocale intégrée** (D52) : bouton micro avec reconnaissance sur l'appareil.
 
 ## Identité
