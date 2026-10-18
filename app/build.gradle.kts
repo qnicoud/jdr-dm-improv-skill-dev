@@ -1,4 +1,5 @@
 import com.android.build.api.artifact.SingleArtifact
+import io.github.qnicoud.dmgym.build.PermissionWhitelist
 import io.github.qnicoud.dmgym.build.VerifyPermissionsTask
 
 plugins {
@@ -86,12 +87,7 @@ androidComponents.onVariants { variant ->
             "verify${variant.name.replaceFirstChar(Char::uppercase)}Permissions",
         ) {
             mergedManifest.set(variant.artifacts.get(SingleArtifact.MERGED_MANIFEST))
-            allowed.set(
-                listOf(
-                    "android.permission.VIBRATE",
-                    "${variant.applicationId.get()}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
-                ),
-            )
+            allowed.set(PermissionWhitelist.forApplication(variant.applicationId.get()))
         }
     verifyPermissions.configure { dependsOn(variantTask) }
 }

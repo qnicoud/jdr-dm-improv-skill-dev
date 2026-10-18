@@ -64,4 +64,38 @@ class ManifestPermissionsTest {
             runTask(manifest("android.permission.ACCESS_NETWORK_STATE", tag = "uses-permission-sdk-23"), emptyList())
         }
     }
+
+    @Test
+    fun `the v1_1 whitelist accepts the reminder permissions`() {
+        runTask(
+            manifest(
+                "android.permission.VIBRATE",
+                "android.permission.POST_NOTIFICATIONS",
+                "android.permission.RECEIVE_BOOT_COMPLETED",
+                "io.github.qnicoud.dmgym.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+            ),
+            PermissionWhitelist.forApplication("io.github.qnicoud.dmgym"),
+        )
+    }
+
+    @Test
+    fun `the whitelist rejects exact alarms and other forbidden permissions`() {
+        listOf(
+            "android.permission.SCHEDULE_EXACT_ALARM",
+            "android.permission.USE_EXACT_ALARM",
+            "android.permission.INTERNET",
+            "android.permission.ACCESS_NETWORK_STATE",
+            "android.permission.WAKE_LOCK",
+            "android.permission.FOREGROUND_SERVICE",
+            "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
+        ).forEach { forbidden ->
+            val error = assertThrows(GradleException::class.java) {
+                runTask(
+                    manifest("android.permission.POST_NOTIFICATIONS", forbidden),
+                    PermissionWhitelist.forApplication("io.github.qnicoud.dmgym"),
+                )
+            }
+            assertTrue(error.message!!.contains(forbidden))
+        }
+    }
 }
