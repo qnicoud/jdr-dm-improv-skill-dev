@@ -26,6 +26,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Pseudo-locales en-XA / ar-XB pour l'audit d'accessibilité (textes allongés), debug seulement.
+            isPseudoLocalesEnabled = true
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
