@@ -24,6 +24,8 @@ import io.github.qnicoud.dmgym.app.AppContainer
 import io.github.qnicoud.dmgym.core.daily.DailyStep
 import io.github.qnicoud.dmgym.core.daily.dailyStep
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.feature.backup.ImportRoute
+import io.github.qnicoud.dmgym.feature.backup.ImportViewModel
 import io.github.qnicoud.dmgym.feature.daily.DailyDoneRoute
 import io.github.qnicoud.dmgym.feature.daily.DailyDoneViewModel
 import io.github.qnicoud.dmgym.feature.daily.DailyRoute
@@ -37,6 +39,8 @@ import io.github.qnicoud.dmgym.feature.history.SessionDetailViewModel
 import io.github.qnicoud.dmgym.feature.home.HomeRoute
 import io.github.qnicoud.dmgym.feature.home.HomeViewModel
 import io.github.qnicoud.dmgym.feature.settings.AboutRoute
+import io.github.qnicoud.dmgym.feature.settings.ReminderRoute
+import io.github.qnicoud.dmgym.feature.settings.ReminderViewModel
 import io.github.qnicoud.dmgym.feature.settings.SettingsRoute
 import io.github.qnicoud.dmgym.feature.settings.SettingsViewModel
 import io.github.qnicoud.dmgym.feature.stats.StatsRoute
@@ -190,6 +194,38 @@ private fun appEntryProvider(
                     },
                 onBack = { navigator.back() },
                 onOpenAbout = navigator::openAbout,
+                onOpenImport = navigator::openImport,
+                reminder = {
+                    ReminderRoute(
+                        viewModel =
+                            viewModel {
+                                ReminderViewModel(
+                                    container.settingsRepository,
+                                    container.historyRepository,
+                                    container.reminderDelivery,
+                                    container.notificationPermissionGate,
+                                    container.clock,
+                                )
+                            },
+                    )
+                },
+            )
+        }
+        entry<ImportSessions> {
+            ImportRoute(
+                viewModel =
+                    viewModel {
+                        ImportViewModel(
+                            container.sessionArchive,
+                            container.exerciseRegistry.all
+                                .map { it.id.value }
+                                .toSet(),
+                            container.clock,
+                            createSavedStateHandle(),
+                        )
+                    },
+                onBack = { navigator.back() },
+                onOpenHistory = { navigator.openHistory(HistoryFilter.All) },
             )
         }
         entry<About> { AboutRoute(onBack = { navigator.back() }) }

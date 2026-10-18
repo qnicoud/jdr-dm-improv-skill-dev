@@ -1,5 +1,6 @@
 package io.github.qnicoud.dmgym.feature.settings
 
+import io.github.qnicoud.dmgym.core.backup.READABLE_EXPORT_HEADER
 import io.github.qnicoud.dmgym.core.exercise.FirstPick
 import io.github.qnicoud.dmgym.core.history.AnswerRecord
 import io.github.qnicoud.dmgym.core.history.SessionDetail
@@ -27,7 +28,7 @@ class SessionExportFormatter(
     ): String {
         val kept = details.filter { it.hasContent() }.sortedBy { it.session.startedAtEpochMillis }
         return buildString {
-            appendLine("DM Gym - export de mes sessions")
+            appendLine(READABLE_EXPORT_HEADER)
             appendLine("Exporté le ${DATE_TIME.format(exportedAt.atZone(ZoneOffset.UTC))} UTC")
             appendLine("${kept.size} ${if (kept.size > 1) "sessions" else "session"}")
             kept.forEach { appendSession(it) }

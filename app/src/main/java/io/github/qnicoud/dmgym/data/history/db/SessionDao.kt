@@ -20,6 +20,9 @@ private const val IS_STALE = "status = 'IN_PROGRESS' AND lastActivityAtEpochMill
 /** Session comptée : terminée, ou inachevée avec contenu ; la session en cours active est exclue. */
 private const val IS_COUNTED = "(status = 'COMPLETED' OR ($IS_STALE AND $HAS_CONTENT))"
 
+/** Nombre maximal d'identifiants par `DELETE ... IN (...)`, loin sous la limite de variables de SQLite. */
+private const val DELETE_CHUNK = 500
+
 @Dao
 abstract class SessionDao {
     @Insert
@@ -66,6 +69,51 @@ abstract class SessionDao {
     /** Les tirages, réponses et grilles partent avec leur session (clé étrangère en cascade). */
     @Query("DELETE FROM sessions")
     abstract suspend fun deleteAll()
+
+    /** Identités déjà en base : l'index `(exerciseId, startedAtEpochMillis)` les couvre. */
+    @Query("SELECT exerciseId, startedAtEpochMillis FROM sessions")
+    abstract suspend fun identities(): List<IdentityRow>
+
+    @Query("DELETE FROM sessions WHERE id IN (:ids)")
+    abstract suspend fun deleteByIds(ids: List<Long>)
+
+    /** Insertions strictes (échec sur doublon de clé), pour que l'import annule tout au premier problème. */
+    @Insert
+    abstract suspend fun insertDraws(draws: List<DrawEntity>)
+
+    @Insert
+    abstract suspend fun insertAnswers(answers: List<AnswerEntity>)
+
+    @Insert
+    abstract suspend fun insertRubric(rubric: List<RubricEntity>)
+
+    /**
+     * Import atomique (ADR 0015 §4). La présence est relue ici, dans la transaction : une session créée depuis
+     * l'aperçu, ou répétée dans [items], n'est pas dupliquée. Les `id` d'entrée sont ignorés.
+     */
+    @Transaction
+    open suspend fun importAll(items: List<SessionWithChildren>): ImportRows {
+        val seen = identities().toHashSet()
+        val inserted = ArrayList<Long>(items.size)
+        var skipped = 0
+        for (item in items) {
+            if (!seen.add(IdentityRow(item.session.exerciseId, item.session.startedAtEpochMillis))) {
+                skipped++
+                continue
+            }
+            val id = insert(item.session.copy(id = 0))
+            insertDraws(item.draws.map { it.copy(sessionId = id) })
+            insertAnswers(item.answers.map { it.copy(sessionId = id) })
+            insertRubric(item.rubric.map { it.copy(sessionId = id) })
+            inserted += id
+        }
+        return ImportRows(inserted, skipped)
+    }
+
+    @Transaction
+    open suspend fun deleteSessions(ids: List<Long>) {
+        ids.chunked(DELETE_CHUNK).forEach { deleteByIds(it) }
+    }
 
     @Upsert
     abstract suspend fun upsertDraws(draws: List<DrawEntity>)

@@ -2,6 +2,7 @@ package io.github.qnicoud.dmgym.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.qnicoud.dmgym.core.backup.BackupEncoder
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
 import io.github.qnicoud.dmgym.core.history.SessionArchive
 import io.github.qnicoud.dmgym.core.settings.Settings
@@ -40,7 +41,13 @@ data class DurationRow(
 }
 
 /** Résultat de la dernière action de la section Données, lu à voix haute par TalkBack. */
-enum class DataMessage { EXPORTED, EXPORT_FAILED, ERASED, ERASE_FAILED }
+enum class DataMessage { EXPORTED, EXPORT_FAILED, BACKED_UP, BACKUP_FAILED, ERASED, ERASE_FAILED }
+
+/** Preuve affichée après « Sauvegarder mes sessions » : le fichier et le nombre de sessions qu'il contient (UX §3.1). */
+data class BackupInfo(
+    val fileName: String,
+    val sessionCount: Int,
+)
 
 /** État de la section Données : la confirmation d'effacement est dans la page (pas de dialogue). */
 data class DataUiState(
@@ -48,6 +55,7 @@ data class DataUiState(
     /** Ce que l'utilisateur a tapé pour confirmer ; le mot attendu est [ERASE_WORD]. */
     val eraseInput: String = "",
     val message: DataMessage? = null,
+    val backup: BackupInfo? = null,
 ) {
     /** Le mot est accepté sans tenir compte de la casse ni des espaces autour. */
     val canErase: Boolean get() = eraseInput.trim().equals(ERASE_WORD, ignoreCase = true)
@@ -163,6 +171,30 @@ class SettingsViewModel(
                 }
             val outcome = if (done) DataMessage.EXPORTED else DataMessage.EXPORT_FAILED
             showData(DataUiState(message = outcome))
+            scheduleMessageClear(outcome)
+        }
+    }
+
+    /**
+     * Écrit la sauvegarde réimportable via [write] (fichier choisi par l'utilisateur) ; [write] renvoie le nom du
+     * fichier créé. Les réglages ne sont pas inclus (D70).
+     */
+    fun backup(
+        appVersion: String,
+        write: suspend (String) -> String,
+    ) {
+        showData(DataUiState())
+        viewModelScope.launch {
+            var info: BackupInfo? = null
+            val done =
+                attempt {
+                    val details = BackupEncoder.exportable(archive.readAll())
+                    val text =
+                        withContext(computation) { BackupEncoder.encode(details, clock.instant(), appVersion) }
+                    info = BackupInfo(write(text), details.size)
+                }
+            val outcome = if (done) DataMessage.BACKED_UP else DataMessage.BACKUP_FAILED
+            showData(DataUiState(message = outcome, backup = info.takeIf { done }))
             scheduleMessageClear(outcome)
         }
     }

@@ -1,6 +1,7 @@
 package io.github.qnicoud.dmgym.core.settings
 
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.core.reminder.ReminderSettings
 import kotlin.time.Duration
 
 /** Réglages utilisateur (ADR 0013). Une durée absente de [durations] signifie « durée par défaut ». */
@@ -23,4 +24,6 @@ data class Settings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     /** `null` : suit le réglage d'animations du système (voir [resolve]). */
     val reduceAnimations: Boolean? = null,
+    /** Rappel d'entraînement (ADR 0014), désactivé par défaut. */
+    val reminder: ReminderSettings = ReminderSettings(),
 )
