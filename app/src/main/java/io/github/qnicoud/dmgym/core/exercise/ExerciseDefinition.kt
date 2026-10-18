@@ -268,6 +268,7 @@ data class ExerciseDefinition(
     val progress: ProgressRule = ProgressRule.None,
     val events: List<ScheduledEvent> = emptyList(),
     val options: List<ExerciseOption> = emptyList(),
+    /** Vrai si l'exercice, court, peut ouvrir la séance du jour (ADR 0011) : source de `ExerciseId.DAILY_WARM_UPS`. */
     val warmUp: Boolean = true,
     /** Vrai si l'exercice accepte « Écrire mon propre sujet » quand la table est illisible (DÉCISION 12). */
     val acceptsFreeSubject: Boolean = false,

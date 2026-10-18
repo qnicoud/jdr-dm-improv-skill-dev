@@ -20,7 +20,7 @@ class ExerciseRegistryTest {
     }
 
     @Test
-    fun `the shipped registry has the 7 exercises, each under its own id`() {
+    fun `every catalogue exercise is registered under its own id`() {
         ExerciseId.ALL.forEach {
             assertEquals(it, ExerciseRegistry.Default[it]?.id)
         }

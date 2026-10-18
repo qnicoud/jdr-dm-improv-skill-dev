@@ -55,5 +55,6 @@ object ConnectStory {
                     RubricQuestion("linked_unexpected_element", R.string.connect_story_rubric_unexpected),
                 ),
             collapsiblePanel = true,
+            warmUp = false,
         )
 }

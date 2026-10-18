@@ -250,7 +250,7 @@ class DailyViewModelTest {
         runTest {
             viewModel().uiState.test {
                 val state = expectMostRecentItem()
-                assertEquals(4, state.alternatives.size)
+                assertEquals(ExerciseId.ALL.size - 3, state.alternatives.size)
                 assertTrue(ExerciseId.ONE_PAGE in state.alternatives.map { it.id })
                 assertTrue(
                     state.alternatives

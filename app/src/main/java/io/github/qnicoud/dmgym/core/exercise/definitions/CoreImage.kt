@@ -60,5 +60,6 @@ object CoreImage {
                     RubricQuestion("sentence", R.string.core_image_rubric_sentence),
                 ),
             acceptsFreeSubject = true,
+            warmUp = false,
         )
 }

@@ -39,12 +39,12 @@ class HomeViewModelTest {
     fun tearDown() = Dispatchers.resetMain()
 
     @Test
-    fun `lists the seven exercises in order with default durations`() =
+    fun `lists the exercises in order with default durations`() =
         runTest {
             viewModel().uiState.test {
                 val state = expectMostRecentItem()
                 assertEquals(ExerciseId.ALL, state.exercises.map { it.id })
-                assertEquals(listOf(480, 300, 600, 180, 30, 600, null), state.exercises.map { it.durationSeconds })
+                assertEquals(listOf(480, 300, 600, 180, 30, 600, null, 240), state.exercises.map { it.durationSeconds })
             }
         }
 
