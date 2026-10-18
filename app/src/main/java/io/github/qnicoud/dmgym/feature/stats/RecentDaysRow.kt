@@ -27,13 +27,12 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.qnicoud.dmgym.R
+import io.github.qnicoud.dmgym.core.i18n.LocaleFormats
 import io.github.qnicoud.dmgym.core.streak.DayMark
 import io.github.qnicoud.dmgym.core.streak.DayStatus
+import io.github.qnicoud.dmgym.ui.components.currentLocale
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.format.TextStyle
-import java.util.Locale
 
 private val DaySize = 36.dp
 private val RingPadding = 3.dp
@@ -65,7 +64,7 @@ private fun DayCell(
 ) {
     val date = LocalDate.ofEpochDay(day.epochDay)
     val markText = stringResource(day.mark.labelRes())
-    val name = date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.FRENCH)
+    val name = LocaleFormats.weekday(date.dayOfWeek, currentLocale())
     val description =
         if (isToday) {
             stringResource(
@@ -91,7 +90,7 @@ private fun DayCell(
             DayShape(day.mark)
         }
         Text(
-            text = date.dayOfWeek.initial(),
+            text = LocaleFormats.weekdayInitial(date.dayOfWeek, currentLocale()),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.clearAndSetSemantics {},
@@ -146,5 +145,3 @@ private fun DayMark.labelRes(): Int =
         DayMark.GRACE -> R.string.stats_day_grace
         DayMark.NONE -> R.string.stats_day_none
     }
-
-private fun DayOfWeek.initial(): String = getDisplayName(TextStyle.NARROW, Locale.FRENCH).uppercase(Locale.FRENCH)
