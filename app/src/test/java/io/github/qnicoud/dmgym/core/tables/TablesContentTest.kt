@@ -18,6 +18,12 @@ class TablesContentTest {
         val minPerCategory: Int = 0,
         val keywordsRequired: Boolean = false,
         val tags: Set<String> = emptySet(),
+        /** Les entrées peuvent ne pas avoir de catégorie (mais, si elles en ont une, elle est dans [categories]). */
+        val categoryOptional: Boolean = false,
+        val maxTextLength: Int = 200,
+        /** Table de vocabulaire (ADR 0017) : peu d'entrées, ids pris dans un vocabulaire fermé. */
+        val vocabulary: Set<String>? = null,
+        val entryCount: IntRange = 30..Int.MAX_VALUE,
     )
 
     private val senses = setOf("sight", "hearing", "smell", "taste", "touch")
@@ -28,6 +34,28 @@ class TablesContentTest {
             TableId.ThreadingQuestions to Rules(setOf("what", "origin", "who", "link")),
             TableId.NpcRoles to Rules(tags = setOf("rank:high", "rank:low")),
             TableId.StatusShifts to Rules(tags = setOf("shift:up", "shift:down")),
+            TableId.FailureSituations to
+                Rules(setOf("combat", "social", "exploration", "stealth", "knowledge"), categoryOptional = true),
+            TableId.ComplicationTypes to
+                Rules(
+                    vocabulary =
+                        setOf(
+                            "cost",
+                            "time",
+                            "information",
+                            "relation",
+                            "position",
+                            "danger",
+                            "resource",
+                            "ally",
+                        ),
+                    entryCount = 6..8,
+                    maxTextLength = 20,
+                ),
+            TableId.ClueConclusions to
+                Rules(setOf("identity", "location", "motive", "method", "secret"), categoryOptional = true),
+            TableId.PlayerOffers to
+                Rules(setOf("social", "action", "exploration", "unexpected"), minPerCategory = 10, maxTextLength = 120),
             TableId.StoryElements to
                 Rules(
                     setOf("place", "object", "trait", "sensory", "line"),
@@ -37,7 +65,7 @@ class TablesContentTest {
         )
 
     @Test
-    fun `the ten expected tables are shipped`() {
+    fun `the fourteen expected tables are shipped`() {
         val expected =
             setOf(
                 "problems",
@@ -50,6 +78,10 @@ class TablesContentTest {
                 "surprise_situations",
                 "story_elements",
                 "one_page_situations",
+                "failure_situations",
+                "complication_types",
+                "clue_conclusions",
+                "player_offers",
             )
 
         assertEquals(expected, TableId.entries.map { it.fileName }.toSet())
@@ -72,7 +104,8 @@ class TablesContentTest {
         assertEquals(id.fileName, table.table)
         assertEquals(1, table.schemaVersion)
         assertEquals("fr", table.locale)
-        assertTrue(table.entries.size >= 30, "at least 30 entries, found ${table.entries.size}")
+        val expected = rules[id]?.entryCount ?: 30..Int.MAX_VALUE
+        assertTrue(table.entries.size in expected, "expected $expected entries, found ${table.entries.size}")
     }
 
     @ParameterizedTest
@@ -90,7 +123,8 @@ class TablesContentTest {
         val entries = load(id).entries
 
         entries.forEach { assertTrue(it.difficulty in 1..3, "${it.id}: difficulty ${it.difficulty}") }
-        assertEquals(setOf(1, 2, 3), entries.map { it.difficulty }.toSet())
+        // A vocabulary table does not have to cover every level (ADR 0017).
+        if (rules[id]?.vocabulary == null) assertEquals(setOf(1, 2, 3), entries.map { it.difficulty }.toSet())
     }
 
     @ParameterizedTest
@@ -101,7 +135,7 @@ class TablesContentTest {
         entries.forEach {
             assertTrue(it.text.isNotBlank(), "${it.id}: blank text")
             assertEquals(it.text.trim(), it.text, "${it.id}: surrounding spaces")
-            assertTrue(it.text.length <= 200, "${it.id}: text too long")
+            assertTrue(it.text.length <= (rules[id]?.maxTextLength ?: 200), "${it.id}: text too long")
             assertTrue(Normalizer.isNormalized(it.text, Normalizer.Form.NFC), "${it.id}: not NFC")
         }
         assertEquals(entries.size, entries.map { TextNormalizer.normalize(it.text) }.toSet().size, "duplicate texts")
@@ -116,13 +150,27 @@ class TablesContentTest {
         if (allowed == null) {
             entries.forEach { assertEquals(null, it.category, "${it.id}: unexpected category") }
         } else {
-            entries.forEach { assertTrue(it.category in allowed, "${it.id}: category ${it.category}") }
+            val optional = rules.getValue(id).categoryOptional
+            entries.forEach {
+                assertTrue(
+                    it.category in allowed || (optional && it.category == null),
+                    "${it.id}: category ${it.category}",
+                )
+            }
             val counts = entries.groupingBy { it.category }.eachCount()
             allowed.forEach {
                 val min = rules.getValue(id).minPerCategory
                 assertTrue((counts[it] ?: 0) >= min, "category $it has ${counts[it] ?: 0} entries, expected >= $min")
             }
         }
+    }
+
+    @ParameterizedTest
+    @EnumSource(TableId::class)
+    fun `vocabulary tables use a closed set of ids`(id: TableId) {
+        val vocabulary = rules[id]?.vocabulary ?: return
+
+        load(id).entries.forEach { assertTrue(it.id in vocabulary, "${it.id}: not in the closed vocabulary") }
     }
 
     @ParameterizedTest

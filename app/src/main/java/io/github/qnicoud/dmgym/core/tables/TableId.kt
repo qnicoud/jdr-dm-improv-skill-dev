@@ -14,4 +14,8 @@ enum class TableId(
     SurpriseSituations("surprise_situations"),
     StoryElements("story_elements"),
     OnePageSituations("one_page_situations"),
+    FailureSituations("failure_situations"),
+    ComplicationTypes("complication_types"),
+    ClueConclusions("clue_conclusions"),
+    PlayerOffers("player_offers"),
 }
