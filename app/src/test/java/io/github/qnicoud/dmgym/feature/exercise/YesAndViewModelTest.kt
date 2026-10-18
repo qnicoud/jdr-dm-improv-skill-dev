@@ -96,4 +96,20 @@ class YesAndViewModelTest : ExerciseViewModelTestBase() {
                     .any { it.text == "et ça brille" },
             )
         }
+
+    @Test
+    fun `resuming from the history lands on the last answered offer`() =
+        runTest {
+            val first = started(YesAnd.definition)
+            first.onAnswerChanged(key(YesAnd.YES_AND_FIELD, 0), "un")
+            first.onAnswerChanged(key(YesAnd.YES_AND_FIELD, 2), "trois")
+            runCurrent()
+            first.onStop()
+            runCurrent()
+            val id = history.sessions.keys.single()
+            handle = androidx.lifecycle.SavedStateHandle()
+            val resumed = vm(YesAnd.definition, ExerciseLaunch(resumeSessionId = id, seed = 7))
+            collect(resumed)
+            assertEquals(2, resumed.session().currentQuestion)
+        }
 }
