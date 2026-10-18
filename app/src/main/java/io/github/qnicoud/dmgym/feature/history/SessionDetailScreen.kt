@@ -231,7 +231,7 @@ private fun DetailBody(
         AnswersSection(detail.answers)
         EvaluationSection(detail, actions.onLevelSelected, actions.onGemToggled)
         RubricSection(detail.rubric)
-        FirstPickSection(detail.firstPick)
+        FirstPickSection(detail.firstPick, detail.firstPickTitle ?: R.string.detail_first_pick_title)
         RedoButton({ actions.onRedo(detail.exerciseId) })
     }
 }

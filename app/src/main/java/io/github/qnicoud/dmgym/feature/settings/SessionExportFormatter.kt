@@ -62,7 +62,7 @@ class SessionExportFormatter(
         )
         val chosen = FirstPick.chosen(detail.rubric.associate { it.questionKey to it.value })
         detail.answers.firstOrNull { it.fieldKey == chosen && it.text.isNotBlank() }?.let {
-            appendLine("${labels.playedFirst} : ${it.text}")
+            appendLine("${labels.endChoice(exercise)} : ${it.text}")
         }
     }
 
