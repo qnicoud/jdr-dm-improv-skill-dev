@@ -89,9 +89,9 @@ Le fichier est un JSON UTF-8 compact, au nom ASCII daté (`dm-gym-sauvegarde-AAA
 
 La lecture se fait en deux temps, sans rien écrire avant que tout soit validé.
 
-1. **Lecture bornée** (`platform/DocumentReader`) : `ContentResolver.openInputStream(uri)` dans un flux qui **compte les octets et s'interrompt au-delà de 16 Mio**. On ne se fie pas à `OpenableColumns.SIZE`, que certains fournisseurs ne donnent pas. Le texte est décodé en UTF-8 strict : une séquence invalide est une erreur.
+1. **Lecture bornée** (`platform/DocumentReader`) : `ContentResolver.openInputStream(uri)` dans un flux qui **compte les octets et s'interrompt au-delà de 8 Mio**. On ne se fie pas à `OpenableColumns.SIZE`, que certains fournisseurs ne donnent pas. Le texte est décodé en UTF-8 strict : une séquence invalide est une erreur.
    - Ordre de grandeur : une session pèse de 1 à 5 Ko, et trois sessions par jour pendant trois ans donnent environ 10 Mo.
-   - 16 Mio de JSON restent décodables en mémoire sur un appareil d'entrée de gamme, ce que le lot mesurera sur un fichier synthétique de 15 Mio.
+   - 8 Mio de JSON restent décodables en mémoire sur un appareil d'entrée de gamme, ce que le lot mesurera sur un fichier synthétique de 7 Mio.
    - Au-delà de cette taille, l'erreur est « fichier trop gros » (UX §3.3).
 2. **Reconnaissance** : avant le décodage, l'en-tête du texte lisible (`DM Gym - export de mes sessions`, ou son équivalent traduit) produit l'erreur « export à lire » (UX §3.3).
 3. **Décodage** de l'enveloppe (`format`, `formatVersion`), puis du DTO de la version.
@@ -157,7 +157,7 @@ Elle est documentée dans `docs/qa/release.md` et dans l'écran S13. L'import du
     - idempotence ;
     - annulation ;
     - course : une session insérée entre l'aperçu et la confirmation n'est pas dupliquée ;
-    - lecteur borné : un flux de 16 Mio + 1 octet est refusé.
+    - lecteur borné : un flux de 8 Mio + 1 octet est refusé.
   - Compose : les états A, B, C, C′, D et E de S13.
   - Manuel : aller-retour réel debug → APK signée sur le téléphone de l'utilisateur.
 - Revue `security-reviewer` obligatoire sur ce lot, puisque c'est la première entrée externe de l'app.
@@ -165,3 +165,8 @@ Elle est documentée dans `docs/qa/release.md` et dans l'écran S13. L'import du
 ## Décisions de l'utilisateur (2026-10-18)
 
 - D64 : deux lignes dans Réglages (« Exporter pour lire », « Sauvegarder mes sessions »). D65 : identité = (exercice, instant de début), sans migration. D66 : la session déjà présente gagne. D67 : bouton « Annuler l'import » sur l'écran de résultat. D68 : passage à l'APK signé = installer la v1.1 de développement par-dessus, sauvegarder, puis changer d'app et importer ; pas d'import du texte lisible. D70 : sauvegarde des sessions seulement, pas des réglages.
+
+
+## Complément (revue de sécurité, 2026-10-18)
+
+La borne de lecture est abaissée de 16 à **8 Mio** (pic mémoire de plusieurs copies du texte), et un `OutOfMemoryError` pendant la lecture ou le décodage est affiché comme « fichier trop volumineux ». Une session `IN_PROGRESS` importée est rendue périmée, donc jamais reprenable ; une session invalide est écartée au lieu de faire refuser tout le fichier.

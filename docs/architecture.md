@@ -647,7 +647,7 @@ Référence de périmètre : `docs/pilotage.md`, section « v1.1 — périmètre
 | Sujet | Décision résumée | ADR | Paquets touchés |
 |---|---|---|---|
 | Rappels | AlarmManager inexact réarmé à chaque déclenchement, récepteur de redémarrage activé seulement si le rappel est actif, `POST_NOTIFICATIONS` demandée à l'activation, aucune notification si une session a été faite le jour même, pause calculée après 14 jours | 0014 | `core/reminder`, `platform/reminder`, `feature/settings/reminder`, manifeste, `verifyPermissions` |
-| Sauvegarde et import | JSON `dmgym-sessions` v1 (en plus du texte lisible), lecture bornée à 16 Mio, validation stricte, identité `(exerciseId, startedAtEpochMillis)`, transaction tout ou rien, annulation, DTO figés par version | 0015 | `core/backup`, `data/history`, `platform/DocumentReader`, `feature/backup` (S13), `feature/settings` |
+| Sauvegarde et import | JSON `dmgym-sessions` v1 (en plus du texte lisible), lecture bornée à 8 Mio, validation stricte, identité `(exerciseId, startedAtEpochMillis)`, transaction tout ou rien, annulation, DTO figés par version | 0015 | `core/backup`, `data/history`, `platform/DocumentReader`, `feature/backup` (S13), `feature/settings` |
 | Langues | `ContentLanguage` (`fr` seul en v1.1), tables `assets/tables/<lang>/`, langue fixée par session (schéma v3), corpus par langue, formats via la locale, sélecteur `LocaleManager` (API 33+) seulement à partir de 2 langues | 0016 | `core/i18n`, `core/tables`, `data/tables`, `data/history`, `core/detection`, formateurs, `platform` |
 | Exercices | Extensions facultatives du moteur (`boundSlot`, `Sequential.fields`, `revealProgressively`, préfixe, icône, grille conditionnelle, `endChoiceLabel`), 3 définitions, 4 tables, catalogue dérivé du registre, plan du jour figé | 0017 | `core/exercise`, `feature/exercise`, `core/daily`, `assets/tables` |
 
@@ -668,7 +668,7 @@ core/
 platform/
   reminder/   AlarmReminderScheduler.kt, ReminderAlarmReceiver.kt, ReminderRescheduleReceiver.kt,
               ReminderNotifier.kt, AndroidNotificationPermissionGate.kt
-  DocumentReader.kt          # lecture bornée (16 Mio) d'un Uri
+  DocumentReader.kt          # lecture bornée (8 Mio) d'un Uri
   AndroidLanguageProvider.kt
 feature/
   settings/reminder/  ReminderSection.kt, ReminderViewModel.kt
@@ -805,7 +805,7 @@ Règle anti-conflit pour l'écran Réglages, touché par V3, V4 et V5 :
   - procédure rc1 → APK signée dans `docs/qa/release.md`.
   - Le champ `contentLocale` est écrit (`"fr"`) et lu (facultatif) dès ce lot, même si la colonne n'arrive qu'en V5.
 - **Dépendances** : aucune. Si V5 est fusionné avant, `contentLocale` vient de la colonne ; sinon, il vaut la constante `"fr"`, remplacée par V5.
-- **Tests attendus** : ceux de l'ADR 0015, dont l'atomicité avec une erreur injectée, l'idempotence, la course aperçu ↔ confirmation, la borne de 16 Mio, la performance indicative et les fichiers témoins.
+- **Tests attendus** : ceux de l'ADR 0015, dont l'atomicité avec une erreur injectée, l'idempotence, la course aperçu ↔ confirmation, la borne de 8 Mio, la performance indicative et les fichiers témoins.
 - **Critère de fin** : sur le téléphone, un aller-retour sauvegarde → effacement → import restitue un historique, une série et des compteurs identiques ; un deuxième import ajoute 0 session ; tous les cas d'erreur de l'UX §3.3 s'affichent ; la revue `security-reviewer` ne laisse aucun point HIGH.
 - **Agents** : `dev-android`, `testeur`, `kotlin-reviewer`, `security-reviewer`.
 
@@ -883,7 +883,7 @@ Règle anti-conflit pour l'écran Réglages, touché par V3, V4 et V5 :
 |---|---|---|
 | Alarme retardée ou supprimée par le fabricant (veille prolongée Samsung) | Moyen | heure « vers » assumée, bouton « Envoyer un test », réarmement à chaque ouverture, résultat noté dans `docs/qa/` |
 | Importance du canal figée après la première création | Moyen | décision V11-7 tranchée avant la fusion de V3 |
-| Import d'un fichier hostile ou volumineux | Moyen | lecture bornée à 16 Mio, validation stricte, transaction, `security-reviewer` |
+| Import d'un fichier hostile ou volumineux | Moyen | lecture bornée à 8 Mio, validation stricte, transaction, `security-reviewer` |
 | Perte de l'historique au passage vers l'APK signée (la rc1 n'a pas de sauvegarde JSON) | **Élevé** pour l'utilisateur | procédure « debug v1.1 par-dessus → sauvegarde → APK signée → import », testée en V4 et en V6 avant toute désinstallation |
 | Conflits de fusion dans `feature/exercise` (V1, V5) et dans Réglages (V3, V4, V5) | Moyen | V0 d'abord, ordre de fusion V1 → V5, une section de Réglages par lot |
 | Qualité de l'anglais (option B) | Moyen | réécriture et non traduction littérale, corpus doré, relecture par un anglophone, lots non bloquants |
