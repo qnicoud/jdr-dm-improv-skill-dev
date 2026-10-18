@@ -24,6 +24,8 @@ import io.github.qnicoud.dmgym.app.AppContainer
 import io.github.qnicoud.dmgym.core.daily.DailyStep
 import io.github.qnicoud.dmgym.core.daily.dailyStep
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.feature.backup.ImportRoute
+import io.github.qnicoud.dmgym.feature.backup.ImportViewModel
 import io.github.qnicoud.dmgym.feature.daily.DailyDoneRoute
 import io.github.qnicoud.dmgym.feature.daily.DailyDoneViewModel
 import io.github.qnicoud.dmgym.feature.daily.DailyRoute
@@ -190,6 +192,23 @@ private fun appEntryProvider(
                     },
                 onBack = { navigator.back() },
                 onOpenAbout = navigator::openAbout,
+                onOpenImport = navigator::openImport,
+            )
+        }
+        entry<ImportSessions> {
+            ImportRoute(
+                viewModel =
+                    viewModel {
+                        ImportViewModel(
+                            container.sessionArchive,
+                            container.exerciseRegistry.all
+                                .map { it.id.value }
+                                .toSet(),
+                            container.clock,
+                        )
+                    },
+                onBack = { navigator.back() },
+                onOpenHistory = { navigator.openHistory(HistoryFilter.All) },
             )
         }
         entry<About> { AboutRoute(onBack = { navigator.back() }) }

@@ -56,6 +56,10 @@ object SettingsTags {
     const val ERASE_INPUT = "settings_erase_input"
     const val DATA_MESSAGE = "settings_data_message"
     const val EXPORT_DONE = "settings_export_done"
+    const val BACKUP = "settings_backup"
+    const val BACKUP_DONE = "settings_backup_done"
+    const val BACKUP_PROOF = "settings_backup_proof"
+    const val IMPORT = "settings_import"
 
     fun strength(strength: VibrationStrength) = "settings_strength_${strength.name}"
 
@@ -86,6 +90,8 @@ data class SettingsActions(
     val onThemeMode: (ThemeMode) -> Unit = {},
     val onReduceAnimations: (Boolean?) -> Unit = {},
     val onExport: () -> Unit = {},
+    val onBackup: () -> Unit = {},
+    val onImport: () -> Unit = {},
     val onRequestErase: () -> Unit = {},
     val onCancelErase: () -> Unit = {},
     val onConfirmErase: () -> Unit = {},

@@ -50,6 +50,10 @@ class AppNavigator(
         backStack.add(About)
     }
 
+    fun openImport() {
+        backStack.add(ImportSessions)
+    }
+
     fun openSettings() {
         backStack.add(Settings)
     }
