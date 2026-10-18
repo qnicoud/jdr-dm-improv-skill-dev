@@ -19,6 +19,12 @@ class ReminderFormatTest {
     }
 
     @Test
+    fun `12 hour format in english`() {
+        assertEquals("6:30 PM", formatReminderTime(1110, is24Hour = false, Locale.ENGLISH))
+        assertEquals("12:05 AM", formatReminderTime(5, is24Hour = false, Locale.ENGLISH))
+    }
+
+    @Test
     fun `days are listed from monday, lowercase after the first`() {
         val names = DayOfWeek.entries.associateWith { it.name.take(3) }
         assertEquals("MON, wed, sun", joinDays(setOf(DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY), names))

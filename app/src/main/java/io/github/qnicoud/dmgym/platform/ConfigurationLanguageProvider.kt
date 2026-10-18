@@ -3,7 +3,6 @@ package io.github.qnicoud.dmgym.platform
 import android.app.Application
 import android.content.ComponentCallbacks
 import android.content.res.Configuration
-import androidx.core.os.ConfigurationCompat
 import io.github.qnicoud.dmgym.core.i18n.ContentLanguage
 import io.github.qnicoud.dmgym.core.i18n.LanguageProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 class ConfigurationLanguageProvider(
     application: Application,
 ) : LanguageProvider {
-    private val state = MutableStateFlow(resolve(application.resources.configuration))
+    private val state = MutableStateFlow(application.resources.configuration.contentLanguage())
 
     override val current: StateFlow<ContentLanguage> = state
 
@@ -25,19 +24,12 @@ class ConfigurationLanguageProvider(
         application.registerComponentCallbacks(
             object : ComponentCallbacks {
                 override fun onConfigurationChanged(newConfig: Configuration) {
-                    state.value = resolve(newConfig)
+                    state.value = newConfig.contentLanguage()
                 }
 
                 @Deprecated("Deprecated in Java")
                 override fun onLowMemory() = Unit
             },
         )
-    }
-
-    private companion object {
-        fun resolve(configuration: Configuration): ContentLanguage {
-            val locales = ConfigurationCompat.getLocales(configuration)
-            return ContentLanguage.resolve((0 until locales.size()).mapNotNull { locales[it]?.toLanguageTag() })
-        }
     }
 }
