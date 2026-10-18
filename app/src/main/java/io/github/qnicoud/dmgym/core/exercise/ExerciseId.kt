@@ -23,10 +23,20 @@ value class ExerciseId(
         val DECISION_POINT = ExerciseId("decision_point")
         val CONNECT_STORY = ExerciseId("connect_story")
         val ONE_PAGE = ExerciseId("one_page")
+        val YES_AND = ExerciseId("yes_and")
 
-        /** Les 7 exercices de la v1, dans l'ordre d'affichage de l'accueil. */
+        /** Les exercices dans l'ordre d'affichage de l'accueil. */
         val ALL: List<ExerciseId> =
-            listOf(CRAZY_EIGHTS, CONSTRAINT_BOX, CORE_IMAGE, STATUS_NUMBERS, DECISION_POINT, CONNECT_STORY, ONE_PAGE)
+            listOf(
+                CRAZY_EIGHTS,
+                CONSTRAINT_BOX,
+                CORE_IMAGE,
+                STATUS_NUMBERS,
+                DECISION_POINT,
+                CONNECT_STORY,
+                ONE_PAGE,
+                YES_AND,
+            )
 
         /** Durées par défaut (docs/ux/parcours.md, DÉCISION 4). One-Page : 15 min conseillées mais sans minuteur par défaut. */
         val DEFAULT_DURATIONS: Map<ExerciseId, Duration> =
@@ -38,10 +48,11 @@ value class ExerciseId(
                 DECISION_POINT to 30.seconds,
                 CONNECT_STORY to 10.minutes,
                 ONE_PAGE to 15.minutes,
+                YES_AND to 5.minutes,
             )
 
         /** Exercices courts (≤ 5 min) éligibles comme échauffement de la séance du jour (ADR 0011). */
-        val DAILY_WARM_UPS: Set<ExerciseId> = setOf(DECISION_POINT, CONSTRAINT_BOX, STATUS_NUMBERS)
+        val DAILY_WARM_UPS: Set<ExerciseId> = setOf(DECISION_POINT, CONSTRAINT_BOX, STATUS_NUMBERS, YES_AND)
 
         val UNTIMED_BY_DEFAULT: Set<ExerciseId> = setOf(ONE_PAGE)
     }

@@ -105,7 +105,11 @@ class DailySessionPlannerTest {
     @Test
     fun `a catalog of only warm ups still yields three distinct exercises`() {
         val warm = ExerciseId.DAILY_WARM_UPS.toList()
-        days.forEach { assertEquals(warm.toSet(), plan(it, from = warm).exercises.toSet()) }
+        days.forEach {
+            val exercises = plan(it, from = warm).exercises
+            assertEquals(3, exercises.toSet().size)
+            assertTrue(warm.containsAll(exercises))
+        }
     }
 
     @Test
