@@ -47,6 +47,8 @@
 - **Décisions ouvertes D54–D70** dans l'artefact (langue, sélecteur — désaccord UX/architecte —, complications, Oui et…, rappels, export/import, passage à l'APK signé, séance du jour, sauvegarde des réglages).
 - D54–D70 tranchées (toutes les recommandations ; D55 = sélecteur in-app AppCompat). Vague 1 lancée : V0, V3, V4, C1.
 - C1 fusionné : `failure_situations` (36), `complication_types` (6, exception « vocabulaire » au minimum de 30 à appliquer dans `TablesContentTest` en V1), `clue_conclusions` (34), `player_offers` (46). Définitions des types de complication → `strings.xml` en V2a. Tables à la racine de `assets/tables/` (déplacement vers `fr/` en V5).
+- **Vague 1 v1.1 fusionnée** (2026-10-18) : V0 (ViewModel d'exercice découpé à 284 lignes en 3 contrôleurs testés ; test instable corrigé : `snapshotFlow` global + `Dispatchers.Main` de test ; actions CI épinglées par SHA + Dependabot), C1 (tables), V3 (rappels, AlarmManager inexact, canal bas, `POST_NOTIFICATIONS` + `RECEIVE_BOOT_COMPLETED`), V4 (sauvegarde JSON réimportable, import atomique avec aperçu et annulation persistée ; revue sécurité non bloquante, corrigée : 8 Mio, OOM, session importée jamais reprenable, bidi, écart par session). Installé sur le téléphone en mise à jour.
+- **Vague 2 en cours** : V1 (extensions du moteur, enregistrement des tables C1) ∥ V5 (langues : `assets/tables/fr/`, détection par langue, migration Room v3 `contentLocale`, `locales_config`, sélecteur masqué) ; fusion V1 avant V5. Puis V2a/b/c (exercices), V6 (release).
 
 ## Décisions (issues de la phase 0) — TRANCHÉES le 2026-10-16
 
