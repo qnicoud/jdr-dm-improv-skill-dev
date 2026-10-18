@@ -58,6 +58,7 @@ object DmIcons {
             "M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1",
         )
     val Doc = icon("doc", "M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7")
+    val Search = icon("search", circle(11f, 11f, 7f), "M20 20l-4-4")
     val Minus = icon("minus", "M5 12h14")
     val Plus = icon("plus", "M12 5v14M5 12h14")
 
@@ -70,6 +71,7 @@ object DmIcons {
             ExerciseId.DECISION_POINT -> Route
             ExerciseId.CONNECT_STORY -> Link
             ExerciseId.ONE_PAGE -> Doc
+            ExerciseId.THREE_CLUES -> Search
             else -> error("Unknown exercise: ${id.value}")
         }
 }

@@ -10,5 +10,11 @@ object StoryIcons {
             "story_sensory",
             "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7L19 16z",
         )
+    val Npc =
+        icon(
+            "story_npc",
+            circle(12f, 12f, 9f),
+            "M9 10h.01M15 10h.01M8.5 14.5c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8",
+        )
     val Line = icon("story_line", "M4 5h16v11H9l-5 4V5zM8 9.5h8M8 12.5h5")
 }
