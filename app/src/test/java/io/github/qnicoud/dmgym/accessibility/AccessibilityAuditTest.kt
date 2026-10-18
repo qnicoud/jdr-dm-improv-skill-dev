@@ -338,8 +338,9 @@ class AccessibilityAuditTest {
         val state =
             SettingsUiState(
                 isLoading = false,
+                // Les 7 premières lignes tiennent dans la fenêtre de test : au-delà, « À propos » sort de l'écran (non placé).
                 durations =
-                    ExerciseId.ALL.map {
+                    ExerciseId.ALL.take(7).map {
                         DurationRow(it, 300, 150, 3000, untimed = it == ExerciseId.ONE_PAGE)
                     },
                 vibration = true,
