@@ -11,7 +11,7 @@ Version : `versionCode 1`, `versionName 1.0.0-rc1` (`app/build.gradle.kts`). L'�
 - `release` : `isMinifyEnabled` et `isShrinkResources` actifs ; règles dans `app/proguard-rules.pro`
   (sérialiseurs `@Serializable` de l'app, `Companion`, `serializer()` ; Room 3 `RoomDatabase`).
   kotlinx.serialization, Room, DataStore et Navigation 3 apportent leurs propres règles consommateur.
-- Sortie : `app/build/outputs/apk/release/app-release-unsigned.apk`. `verifyReleasePermissions` (dans `check`) ne tolère que `VIBRATE`.
+- Sortie : `app/build/outputs/apk/release/app-release-unsigned.apk`. `verifyReleasePermissions` (dans `check`) ne tolère que la liste blanche (`VIBRATE`, `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`, ADR 0014) : aucune permission réseau ni d'alarme exacte.
 - La CI exécute `assembleRelease` sans signature.
 
 ## 2. Signature de publication (à faire par l'utilisateur)
