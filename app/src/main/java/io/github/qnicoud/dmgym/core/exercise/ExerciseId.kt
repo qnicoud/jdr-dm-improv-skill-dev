@@ -51,7 +51,7 @@ value class ExerciseId(
          * Exercices de la dernière version. La carte d'accueil porte « Nouveau » jusqu'à la première session comptée
          * de l'exercice : terminée, ou inachevée avec contenu (même règle que le compteur de sessions, ADR 0011).
          */
-        val NEW_IN_LATEST_RELEASE: Set<ExerciseId> = setOf(THREE_CLUES)
+        val NEW_IN_LATEST_RELEASE: Set<ExerciseId> = setOf(FAILING_FORWARD, THREE_CLUES)
 
         val UNTIMED_BY_DEFAULT: Set<ExerciseId> = setOf(ONE_PAGE)
     }

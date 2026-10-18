@@ -77,6 +77,7 @@ class ExerciseCatalogTest {
                         ExerciseId.CORE_IMAGE,
                         ExerciseId.CONNECT_STORY,
                         ExerciseId.ONE_PAGE,
+                        ExerciseId.THREE_CLUES,
                     ),
                 ).isEmpty(),
         )

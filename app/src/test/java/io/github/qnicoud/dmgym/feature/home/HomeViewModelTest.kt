@@ -165,7 +165,7 @@ class HomeViewModelTest {
                         .toSet(),
                 )
                 // Unfinished without content: not counted, the set stays empty and the tag stays.
-                counted.value = setOf(ExerciseId.THREE_CLUES.value)
+                counted.value = ExerciseId.NEW_IN_LATEST_RELEASE.map { it.value }.toSet()
                 assertTrue(expectMostRecentItem().exercises.none { it.isNew })
                 counted.value = emptySet()
                 assertTrue(expectMostRecentItem().exercises.any { it.isNew })
