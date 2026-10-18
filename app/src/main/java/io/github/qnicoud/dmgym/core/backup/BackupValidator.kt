@@ -99,7 +99,7 @@ internal class BackupValidator(
         private const val EARLIEST_START = "2026-01-01T00:00:00Z"
         private val RATING_RANGE = 1..3
         private val DIFFICULTY_RANGE = 1..3
-        private val BIDI_CONTROLS = ('\u202A'..'\u202E') + ('\u2066'..'\u2069')
+        private val BIDI_CONTROLS = ('\u202A'..'\u202E') + ('\u2066'..'\u2069') + listOf('\u200E', '\u200F', '\u061C')
         private val KEY = Regex("[a-z0-9_:.-]{1,64}")
         private val ENTRY = Regex("[A-Za-z0-9_-]{1,64}")
     }
