@@ -17,6 +17,10 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import io.github.qnicoud.dmgym.core.daily.decodeReplacements
 import io.github.qnicoud.dmgym.core.daily.encodeReplacements
 import io.github.qnicoud.dmgym.core.exercise.ExerciseId
+import io.github.qnicoud.dmgym.core.reminder.ReminderSettings
+import io.github.qnicoud.dmgym.core.reminder.boundedMinute
+import io.github.qnicoud.dmgym.core.reminder.decodeDays
+import io.github.qnicoud.dmgym.core.reminder.encodeDays
 import io.github.qnicoud.dmgym.core.settings.Settings
 import io.github.qnicoud.dmgym.core.settings.SettingsRepository
 import io.github.qnicoud.dmgym.core.settings.ThemeMode
@@ -69,8 +73,17 @@ class DataStoreSettingsRepository(
             vibrationStrength = VibrationStrength.parse(values[VIBRATION_STRENGTH] as? String),
             themeMode = ThemeMode.parse(values[THEME_MODE] as? String),
             reduceAnimations = values[REDUCE_ANIMATIONS] as? Boolean,
+            reminder = readReminder(values),
         )
     }
+
+    private fun readReminder(values: Map<String, Any>) =
+        ReminderSettings(
+            enabled = values.bool(REMINDER_ENABLED, default = false),
+            minuteOfDay = boundedMinute(values[REMINDER_MINUTE] as? Int),
+            days = decodeDays(values[REMINDER_DAYS] as? String),
+            resumedEpochDay = values[REMINDER_RESUMED] as? Long,
+        )
 
     private fun readDurations(values: Map<String, Any>): Map<ExerciseId, Duration> =
         values
@@ -110,6 +123,7 @@ class DataStoreSettingsRepository(
         prefs[stringPreferencesKey(THEME_MODE)] = settings.themeMode.name
         writeReduceAnimations(prefs, settings.reduceAnimations)
         writeDaily(prefs, settings)
+        writeReminder(prefs, settings.reminder)
         writeDurations(prefs, settings.durations)
         writeUntimed(prefs, settings.untimed)
     }
@@ -121,6 +135,18 @@ class DataStoreSettingsRepository(
     ) {
         val key = booleanPreferencesKey(REDUCE_ANIMATIONS)
         if (reduce == null) prefs.remove(key) else prefs[key] = reduce
+    }
+
+    private fun writeReminder(
+        prefs: MutablePreferences,
+        reminder: ReminderSettings,
+    ) {
+        prefs[booleanPreferencesKey(REMINDER_ENABLED)] = reminder.enabled
+        prefs[intPreferencesKey(REMINDER_MINUTE)] = boundedMinute(reminder.minuteOfDay)
+        prefs[stringPreferencesKey(REMINDER_DAYS)] = encodeDays(reminder.days)
+        val resumedKey = longPreferencesKey(REMINDER_RESUMED)
+        val resumed = reminder.resumedEpochDay
+        if (resumed == null) prefs.remove(resumedKey) else prefs[resumedKey] = resumed
     }
 
     private fun writeDaily(
@@ -188,6 +214,10 @@ class DataStoreSettingsRepository(
         private const val VIBRATION_STRENGTH = "vibration_strength"
         private const val THEME_MODE = "theme_mode"
         private const val REDUCE_ANIMATIONS = "reduce_animations"
+        private const val REMINDER_ENABLED = "reminder_enabled"
+        private const val REMINDER_MINUTE = "reminder_minute_of_day"
+        private const val REMINDER_DAYS = "reminder_days"
+        private const val REMINDER_RESUMED = "reminder_resumed_epoch_day"
         private const val DURATION_PREFIX = "duration_s."
         private const val UNTIMED_PREFIX = "untimed."
         private const val FILE_NAME = "settings"
