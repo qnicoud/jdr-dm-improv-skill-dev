@@ -60,6 +60,7 @@ import io.github.qnicoud.dmgym.core.exercise.Milestone
 import io.github.qnicoud.dmgym.core.exercise.Phase
 import io.github.qnicoud.dmgym.core.exercise.TimerKind
 import io.github.qnicoud.dmgym.core.exercise.TimerUi
+import io.github.qnicoud.dmgym.core.exercise.rhythmPeriodMs
 import io.github.qnicoud.dmgym.platform.KeepScreenOn
 import io.github.qnicoud.dmgym.ui.icons.DmIcons
 
@@ -206,6 +207,7 @@ private fun ColumnScope.ActiveBody(
         verticalArrangement = Arrangement.spacedBy(if (compact) 2.dp else 8.dp),
     ) {
         LiveTimerBar(timer, canPause = true, onPause = actions.onPause, onResume = actions.onResume, compact = compact)
+        state.definition.rhythmPeriodMs?.let { RhythmMarker(timer, it, Modifier.fillMaxWidth()) }
         if (compact) CompactDrawArea(state, actions) else DrawArea(state, actions)
     }
     Column(
